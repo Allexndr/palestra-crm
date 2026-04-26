@@ -1,0 +1,241 @@
+/* Pricing card */
+
+.tariff-constructor {
+  position: relative;
+  width: min(100%, 50rem);
+  margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  background:
+    radial-gradient(circle at 92% 8%, rgba(67, 56, 202, 0.12), transparent 28%),
+    linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 32px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.09);
+  overflow: hidden;
+}
+
+.tariff-constructor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.tariff-constructor__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: var(--space-4);
+  padding: 0.45rem 0.75rem;
+  color: var(--color-primary);
+  background: rgba(67, 56, 202, 0.08);
+  border: 1px solid rgba(67, 56, 202, 0.12);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.tariff-constructor__top {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-8);
+  margin-bottom: var(--space-6);
+}
+
+.tariff-constructor__intro {
+  min-width: 0;
+}
+
+.tariff-constructor__title {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-display);
+  font-size: clamp(2rem, 5vw, 3.15rem);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.95;
+}
+
+.tariff-constructor__subtitle {
+  max-width: 34rem;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.95rem, 2vw, 1.06rem);
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.tariff-constructor__base-price {
+  min-width: max-content;
+  padding-top: 0.1rem;
+  text-align: right;
+}
+
+.tariff-constructor__price-kzt {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  white-space: nowrap;
+}
+
+.tariff-constructor__price-kzt span {
+  font-family: var(--font-family-sans);
+  font-size: 0.42em;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.tariff-constructor__price-usd {
+  margin-top: var(--space-2);
+  color: #059669;
+  font-size: var(--text-sm);
+  font-weight: 800;
+}
+
+.tariff-constructor__base {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background: rgba(238, 242, 255, 0.72);
+  border: 1px solid rgba(67, 56, 202, 0.12);
+  border-radius: 24px;
+}
+
+.tariff-constructor__base-badge {
+  flex: 0 0 auto;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  box-shadow: 0 14px 28px rgba(67, 56, 202, 0.22);
+}
+
+.tariff-constructor__base-name {
+  margin: 0 0 0.2rem;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-display);
+  font-size: var(--text-lg);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
+.tariff-constructor__base-desc {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.tariff-constructor__list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+
+.tariff-constructor__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.tariff-constructor__item svg {
+  flex: 0 0 auto;
+  color: #10b981;
+}
+
+.tariff-constructor__footer {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.tariff-constructor__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 3.65rem;
+  padding: 1rem 1.5rem;
+  color: #fff;
+  background: linear-gradient(135deg, #111827 0%, #020617 100%);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.22);
+  cursor: pointer;
+  font-family: var(--font-family-sans);
+  font-size: var(--text-sm);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.tariff-constructor__cta:hover {
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.28);
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.tariff-constructor__cta:focus-visible {
+  outline: 3px solid rgba(67, 56, 202, 0.25);
+  outline-offset: 3px;
+}
+
+.tariff-constructor__hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .tariff-constructor {
+    border-radius: 28px;
+  }
+
+  .tariff-constructor__top {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .tariff-constructor__base-price {
+    text-align: left;
+  }
+
+  .tariff-constructor__base {
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tariff-constructor__cta {
+    transition: none;
+  }
+
+  .tariff-constructor__cta:hover {
+    transform: none;
+  }
+}

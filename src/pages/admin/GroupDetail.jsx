@@ -1,0 +1,114 @@
+import React from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useAdmin } from '../../context/AdminContext';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { ArrowLeft, Users, User, Phone, MapPin, Eye, ArrowRight } from 'lucide-react';
+
+export const GroupDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { groups, members, locations } = useAdmin();
+  
+  const group = groups.find(g => g.id === id);
+
+  if (!group) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <h2 className="h3 mb-4">Группа не найдена</h2>
+        <Button variant="primary" onClick={() => navigate('/admin/groups')}>Вернуться к списку</Button>
+      </div>
+    );
+  }
+
+  const location = locations.find(l => l.id === group.locationId);
+  const groupMembers = members.filter(m => m.groupId === group.id);
+  const studentCount = groupMembers.length;
+
+  return (
+    <div className="animate-fade-in pb-12">
+      <div className="mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin/groups')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors">
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 className="h2" style={{ fontFamily: 'var(--font-family-display)' }}>
+              {group.name}
+            </h1>
+            <p className="text-secondary">{group.sport} • {studentCount} учеников</p>
+          </div>
+        </div>
+        <Link to={`/admin/groups/${id}/edit`}>
+          <Button variant="outline">Настройки группы</Button>
+        </Link>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 'var(--space-8)' }}>
+        <div className="flex flex-col gap-6">
+          <Card style={{ padding: 'var(--space-6)' }}>
+            <h3 className="h5 mb-4 border-b pb-2">Информация</h3>
+            <div className="flex flex-col gap-4">
+              <div>
+                <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-1">Тренер</p>
+                <div className="flex items-center gap-2 font-bold text-slate-800"><User size={16} className="text-primary"/> {group.coach || 'Не назначен'}</div>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-1">Филиал</p>
+                <div className="flex items-center gap-2 font-bold text-slate-800"><MapPin size={16} className="text-primary"/> {location?.name || 'Основной'}</div>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-1">Заполненность</p>
+                <div className="mb-1 text-sm font-bold">{studentCount} из {group.maxCapacity || 20}</div>
+                <div style={{ width: '100%', height: '6px', backgroundColor: '#f1f5f9', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: `${(studentCount / (group.maxCapacity || 20)) * 100}%`, height: '100%', backgroundColor: 'var(--color-primary)' }} />
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <Card style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="p-6 border-b bg-slate-50 flex justify-between items-center">
+            <h3 className="h4 flex items-center gap-2"><Users className="text-primary"/> Состав группы</h3>
+            <span className="badge badge-primary">{studentCount} чел.</span>
+          </div>
+          
+          <div className="divide-y">
+            {groupMembers.map(m => (
+              <div key={m.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div style={{ width: 40, height: 40, borderRadius: '12px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                    {m.firstName.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold">{m.firstName} {m.lastName}</p>
+                    <p className="text-xs text-secondary flex items-center gap-2">
+                      <span>{m.skillLevel}</span> • 
+                      <span>Тариф: {m.plan}</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-sm text-secondary flex items-center gap-2 hidden md-flex"><Phone size={14}/>{m.phone}</div>
+                  <button onClick={() => navigate(`/admin/members/${m.id}`)} className="p-2 text-slate-400 hover:text-primary transition-colors hover:bg-indigo-50 rounded-lg">
+                    <Eye size={20} />
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {groupMembers.length === 0 && (
+              <div className="p-12 flex flex-col items-center justify-center text-center">
+                <Users size={48} className="text-slate-200 mb-4" />
+                <h4 className="text-lg font-bold text-slate-700 mb-2">Группа пуста</h4>
+                <p className="text-secondary mb-6">В эту группу еще не добавлены ученики.</p>
+                <Button variant="outline" onClick={() => navigate('/admin/members/new')}>Добавить ученика</Button>
+              </div>
+            )}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+};

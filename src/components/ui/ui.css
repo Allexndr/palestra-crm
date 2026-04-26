@@ -1,0 +1,143 @@
+/* Premium UI Components CSS */
+
+/* Buttons - Volumetric & High-End */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-sans);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border-radius: var(--radius-md);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-align: center;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  gap: var(--space-2);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn-sm { padding: 8px 16px; font-size: 0.75rem; height: 36px; border-radius: var(--radius-sm); }
+.btn-md { padding: 12px 24px; font-size: 0.875rem; height: 52px; }
+.btn-lg { padding: 16px 32px; font-size: 1rem; height: 64px; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  color: white;
+  box-shadow: var(--shadow-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 12px 24px rgba(30, 79, 134, 0.32);
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-bg);
+  border-color: var(--color-text-muted);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+/* Cards */
+.card {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Inputs & Forms - Spacing focus */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3); /* Increased gap between label and input */
+  margin-bottom: var(--space-6); /* Increased margin between input groups */
+  width: 100%;
+}
+
+.input-field {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-ice-100);
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  transition: all 0.2s;
+  font-family: var(--font-family-sans);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: white;
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.input-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 2px; /* Slight margin for precision */
+  display: block;
+}
+
+/* Action Items */
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: var(--color-ice-100);
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: left;
+}
+
+.action-item:hover {
+  background: white;
+  border-color: var(--color-primary-soft);
+  box-shadow: var(--shadow-sm);
+  transform: translateX(4px);
+}
