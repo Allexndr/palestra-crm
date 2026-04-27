@@ -16,9 +16,11 @@ export async function sendEmail({ to, subject, html }) {
     return { success: false, error: 'Credentials missing' };
   }
 
+  console.log('Creating transporter with user:', process.env.SMTP_USER, 'host:', smtpConfig.host);
   const transporter = nodemailer.createTransport(smtpConfig);
 
   try {
+    console.log('Sending email to:', to);
     const info = await transporter.sendMail({
       from: `"Palestra" <${process.env.SMTP_USER}>`,
       to,

@@ -53,14 +53,18 @@ export default async function handler(req, res) {
 
     if (session) setSessionCookies(res, session);
 
-    // Send Welcome Email (non-blocking for the response)
+    // Send Welcome Email
     if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      console.log('Attempting to send welcome email to:', formData.email);
       const { sendEmail, getWelcomeEmailHtml } = await import('../_lib/mail.js');
-      sendEmail({
+      const emailRes = await sendEmail({
         to: formData.email,
         subject: `Добро пожаловать в Palestra — ${formData.clubName}`,
         html: getWelcomeEmailHtml(formData.clubName, formData.email, password)
-      }).catch(err => console.error('Background email error:', err));
+      });
+      console.log('Email send result:', emailRes);
+    } else {
+      console.warn('SMTP credentials missing in env, skipping email.');
     }
 
     return sendJson(res, 200, {
