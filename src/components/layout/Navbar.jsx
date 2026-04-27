@@ -43,50 +43,48 @@ export const Navbar = () => {
             </Link>
           </div>
 
-          <div className="navbar-actions">
-            <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу">
-              {NAV_LINKS.map((link) => (
-                <a 
-                  key={link.label}
-                  href={link.href} 
-                  className="nav-link"
-                  style={{ 
-                    textDecoration: 'none',
-                    fontSize: '0.78rem',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    color: 'var(--color-text-secondary)',
-                    fontFamily: 'var(--font-family-display)',
-                    transition: 'all 0.2s ease',
-                    position: 'relative'
-                  }}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-            
-            <div className="navbar-auth-actions">
-              <Link to="/auth/login" style={{ textDecoration: 'none' }} className="mobile-hidden">
-                <Button variant="ghost" className="font-display" style={{ fontWeight: 700 }}>Войти</Button>
-              </Link>
-              <Link to="/auth/register" style={{ textDecoration: 'none' }} onClick={closeMenu}>
-                <Button variant="primary" size="md" className="font-display" style={{ paddingLeft: 'var(--space-8)', paddingRight: 'var(--space-8)' }}>
-                  Запустить Palestra
-                </Button>
-              </Link>
-              <button
-                type="button"
-                className="navbar-burger mobile-only"
-                aria-label={isMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
-                aria-expanded={isMenuOpen}
-                aria-controls="landing-mobile-menu"
-                onClick={() => setIsMenuOpen((value) => !value)}
+          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу">
+            {NAV_LINKS.map((link) => (
+              <a 
+                key={link.label}
+                href={link.href} 
+                className="nav-link"
+                style={{ 
+                  textDecoration: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: 'var(--color-text-secondary)',
+                  fontFamily: 'var(--font-family-display)',
+                  transition: 'all 0.2s ease',
+                  position: 'relative'
+                }}
               >
-                {isMenuOpen ? <X size={22} aria-hidden /> : <Menu size={22} aria-hidden />}
-              </button>
-            </div>
+                {link.label}
+              </a>
+            ))}
+          </nav>
+          
+          <div className="navbar-auth-actions">
+            <Link to="/auth/login" style={{ textDecoration: 'none' }} className="mobile-hidden">
+              <Button variant="ghost" className="font-display" style={{ fontWeight: 700 }}>Войти</Button>
+            </Link>
+            <Link to="/auth/register" style={{ textDecoration: 'none' }} onClick={closeMenu}>
+              <Button variant="primary" size="md" className="font-display" style={{ paddingLeft: 'var(--space-8)', paddingRight: 'var(--space-8)' }}>
+                Запустить Palestra
+              </Button>
+            </Link>
+            <button
+              type="button"
+              className="navbar-burger mobile-only"
+              aria-label={isMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
+              aria-expanded={isMenuOpen}
+              aria-controls="landing-mobile-menu"
+              onClick={() => setIsMenuOpen((value) => !value)}
+            >
+              {isMenuOpen ? <X size={22} aria-hidden /> : <Menu size={22} aria-hidden />}
+            </button>
           </div>
 
           <div
