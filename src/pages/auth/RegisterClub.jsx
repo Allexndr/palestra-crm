@@ -176,8 +176,8 @@ export const RegisterClub = () => {
   return (
     <>
       <Navbar />
-      <main id="main-content" tabIndex={-1} className="auth-page auth-page--wide">
-        <div className="auth-page__inner" style={{ alignItems: 'flex-start' }}>
+      <main id="main-content" tabIndex={-1} className={`auth-page ${pendingTariff && !isSuccess ? 'auth-page--wide' : ''}`}>
+        <div className="auth-page__inner">
           
           <Card style={{ flex: 1, padding: 'var(--space-8)', position: 'relative' }}>
             
