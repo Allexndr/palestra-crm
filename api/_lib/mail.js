@@ -1,13 +1,28 @@
 import nodemailer from 'nodemailer';
 
-const smtpConfig = {
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '465'),
-  secure: process.env.SMTP_PORT === '465' || !process.env.SMTP_PORT, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
+const getTransporterConfig = () => {
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const isGmail = host.includes('gmail.com');
+
+  if (isGmail) {
+    return {
+      service: 'gmail',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    };
+  }
+
+  return {
+    host,
+    port: parseInt(process.env.SMTP_PORT || '465'),
+    secure: process.env.SMTP_PORT === '465',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  };
 };
 
 export async function sendEmail({ to, subject, html }) {
@@ -16,11 +31,12 @@ export async function sendEmail({ to, subject, html }) {
     return { success: false, error: 'Credentials missing' };
   }
 
-  console.log('Creating transporter with user:', process.env.SMTP_USER, 'host:', smtpConfig.host);
-  const transporter = nodemailer.createTransport(smtpConfig);
+  const transporter = nodemailer.createTransport(getTransporterConfig());
 
   try {
-    console.log('Sending email to:', to);
+    console.log('Verifying SMTP connection...');
+    await transporter.verify();
+    console.log('SMTP connection verified. Sending email to:', to);
     const info = await transporter.sendMail({
       from: `"Palestra" <${process.env.SMTP_USER}>`,
       to,
