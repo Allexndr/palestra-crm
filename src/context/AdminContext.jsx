@@ -84,10 +84,10 @@ export const AdminProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [coaches, setCoaches] = useState([]);
   const [events, setEvents] = useState([]);
-  const [attendance, setAttendance] = useState(() => ensureAttendanceFixtures(defaultAttendance));
+  const [attendance, setAttendance] = useState([]);
   const [finances, setFinances] = useState(() => normalizeFinances({ revenue: 0, transactions: [] }));
 
-  const [achievements, setAchievements] = useState(() => ensureAchievementFixtures(defaultAchievements));
+  const [achievements, setAchievements] = useState([]);
 
   const [monthlyAward, setMonthlyAward] = useState(() => normalizeMonthlyAward({ title: '', description: '', daysLeft: 0 }));
 
