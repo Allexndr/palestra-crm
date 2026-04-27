@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { DEFAULT_SUBSCRIPTION, normalizeSubscription } from '../lib/tariff';
 
 const AdminContext = createContext();
 
@@ -93,6 +94,7 @@ export const AdminProvider = ({ children }) => {
 
   const [selectedLocationId, setSelectedLocationId] = useState('all');
   const [clubInfo, setClubInfo] = useState(() => normalizeClubInfo({ name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#4338ca' }));
+  const [subscription, setSubscription] = useState(() => normalizeSubscription(DEFAULT_SUBSCRIPTION));
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -127,6 +129,7 @@ export const AdminProvider = ({ children }) => {
         setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
         setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
         setClubInfo(normalizeClubInfo(remote.clubInfo));
+        setSubscription(normalizeSubscription(remote.subscription));
         setUser(meData.user || null);
       } catch (error) {
         console.error('Failed to hydrate Palestra state', error);
@@ -148,7 +151,7 @@ export const AdminProvider = ({ children }) => {
     const state = {
       members, leads, schedule, locations, groups, activities, leagues, plans, posts,
       coaches, events, attendance, finances, achievements, monthlyAward,
-      selectedLocationId, clubInfo,
+      selectedLocationId, clubInfo, subscription,
     };
 
     fetch('/api/app/state', {
@@ -162,7 +165,7 @@ export const AdminProvider = ({ children }) => {
     });
 
     return () => controller.abort();
-  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, selectedLocationId, clubInfo, activities, coaches]);
+  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, selectedLocationId, clubInfo, subscription, activities, coaches]);
 
   // --- ACTIONS ---
 
@@ -176,10 +179,55 @@ export const AdminProvider = ({ children }) => {
     setActivities(prev => [newActivity, ...prev].slice(0, 50));
   };
 
+  const usage = {
+    members: members.length,
+    coaches: coaches.length,
+    locations: locations.length,
+    groups: groups.length,
+  };
+
+  const getLimitStatus = (resource) => {
+    const limit = Number(subscription.limits?.[resource] ?? 0);
+    const used = Number(usage[resource] ?? 0);
+    return {
+      resource,
+      used,
+      limit,
+      remaining: Math.max(0, limit - used),
+      isReached: limit > 0 && used >= limit,
+      isWarning: limit > 0 && used / limit >= 0.8 && used < limit,
+      percent: limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0,
+    };
+  };
+
+  const canUseFeature = (feature) => Boolean(subscription.features?.[feature]);
+
+  const getUpgradeMessage = (kind, label) => {
+    if (kind === 'feature') {
+      return `${label} подключается в Growth. Starter остаётся бесплатным, а платите вы только за рост и нужные модули. Настройте тариф от 9 000 ₸ в разделе “Тариф Palestra”.`;
+    }
+    const status = getLimitStatus(kind);
+    return `Бесплатный Starter рассчитан на ${status.limit}. Сейчас используется ${status.used}. Чтобы продолжить рост, увеличьте ${label} в Growth от 9 000 ₸ в разделе “Тариф Palestra”.`;
+  };
+
+  const ensureCanCreate = (resource, label) => {
+    const status = getLimitStatus(resource);
+    if (!status.isReached) return true;
+    alert(getUpgradeMessage(resource, label));
+    return false;
+  };
+
+  const updateSubscription = (nextSubscription) => {
+    setSubscription(normalizeSubscription(nextSubscription));
+    logActivity('Обновлена конфигурация тарифа Palestra', 'success');
+  };
+
   const addGroup = (group) => {
+    if (!ensureCanCreate('groups', 'количество групп')) return false;
     const newGroup = { ...group, id: createId() };
     setGroups([...groups, newGroup]);
     logActivity(`Создана новая группа: ${group.name}`, 'info');
+    return true;
   };
 
   const updateGroup = (id, updatedData) => {
@@ -246,6 +294,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   const addMember = (memberData) => {
+    if (!ensureCanCreate('members', 'количество учеников')) return false;
     const newMember = { 
       id: createId(), 
       createdAt: new Date().toISOString(), 
@@ -257,9 +306,10 @@ export const AdminProvider = ({ children }) => {
     };
     setMembers(prev => [...prev, newMember]);
     logActivity(`Новый ученик: ${memberData.firstName} ${memberData.lastName}`, 'success');
-    if (memberData.paidAmount) {
+    if (memberData.paidAmount && canUseFeature('finance')) {
       addTransaction({ amount: parseFloat(memberData.paidAmount), type: 'income', description: `Оплата: ${memberData.firstName} ${memberData.lastName}` });
     }
+    return true;
   };
 
   const removeMember = (id) => {
@@ -299,9 +349,11 @@ export const AdminProvider = ({ children }) => {
   };
 
   const addLocation = (locData) => {
+    if (!ensureCanCreate('locations', 'количество филиалов / клубов')) return false;
     const newLoc = { id: createId(), isActive: true, ...locData };
     setLocations(prev => [...prev, newLoc]);
     logActivity(`Добавлен новый филиал: ${locData.name}`, 'info');
+    return true;
   };
 
   const addPlan = (planData) => {
@@ -361,9 +413,11 @@ export const AdminProvider = ({ children }) => {
   };
 
   const addCoach = (coachData) => {
+    if (!ensureCanCreate('coaches', 'количество тренеров')) return false;
     const newCoach = { id: createId(), createdAt: new Date().toISOString(), ...coachData };
     setCoaches(prev => [...prev, newCoach]);
     logActivity(`Зарегистрирован тренер: ${coachData.name}`, 'success');
+    return true;
   };
 
   const removeCoach = (id) => setCoaches(prev => prev.filter(c => c.id !== id));
@@ -474,6 +528,7 @@ export const AdminProvider = ({ children }) => {
     setMonthlyAward({ title: '', description: '', daysLeft: 0 });
     setSelectedLocationId('all');
     setClubInfo(normalizeClubInfo({ name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' }));
+    setSubscription(normalizeSubscription(DEFAULT_SUBSCRIPTION));
   };
 
   const value = {
@@ -495,6 +550,7 @@ export const AdminProvider = ({ children }) => {
     achievements, setAchievements, addAchievement, removeAchievement,
     monthlyAward, updateMonthlyAward,
     activities, logActivity,
+    subscription, updateSubscription, usage, getLimitStatus, canUseFeature, getUpgradeMessage, ensureCanCreate,
     user, login, logout,
     resetData
   };

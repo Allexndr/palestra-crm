@@ -116,7 +116,7 @@ export const Login = () => {
             <p className="text-xs text-secondary leading-loose">
               Palestra — это профессиональная CRM для школ единоборств. 
               <Link to="/auth/register" className="text-primary font-bold hover:underline mx-1">Зарегистрируйте свой клуб</Link> 
-              за 2 минуты и начните управлять группами и финансами эффективно.
+              за 2 минуты бесплатно: Starter включает 1 филиал, 15 учеников и 3 тренера. Growth подключите позже, когда клуб вырастет.
             </p>
 
             <div style={{ 

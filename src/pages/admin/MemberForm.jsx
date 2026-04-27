@@ -168,7 +168,8 @@ export const MemberForm = () => {
     if (isEditing) {
       updateMember(id, safeMemberData);
     } else {
-      addMember(safeMemberData);
+      const created = addMember(safeMemberData);
+      if (created === false) return;
     }
     
     navigate('/admin/members');

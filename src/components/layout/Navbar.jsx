@@ -72,7 +72,7 @@ export const Navbar = () => {
             </Link>
             <Link to="/auth/register" style={{ textDecoration: 'none' }} onClick={closeMenu}>
               <Button variant="primary" size="md" className="font-display" style={{ paddingLeft: 'var(--space-8)', paddingRight: 'var(--space-8)' }}>
-                Запустить Palestra
+                Подключить бесплатно
               </Button>
             </Link>
             <button
@@ -101,7 +101,7 @@ export const Navbar = () => {
             </nav>
             <div className="navbar-mobile-menu__actions">
               <Link to="/auth/login" onClick={closeMenu}>Войти</Link>
-              <Link to="/auth/register" onClick={closeMenu}>Запустить клуб</Link>
+              <Link to="/auth/register" onClick={closeMenu}>Подключить бесплатно</Link>
             </div>
           </div>
         </div>

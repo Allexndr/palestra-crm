@@ -34,7 +34,8 @@ export const Coaches = () => {
     if (editingCoachId) {
       updateCoach(editingCoachId, formData);
     } else {
-      addCoach(formData);
+      const created = addCoach(formData);
+      if (created === false) return;
     }
 
     setFormData(initialFormState);

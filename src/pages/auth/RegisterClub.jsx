@@ -34,7 +34,7 @@ export const RegisterClub = () => {
   const pendingTariff = useMemo(() => {
     const tariff = searchParams.get('tariff');
     if (tariff) {
-      const totalPrice = Number(searchParams.get('total')) || 9000;
+      const totalPrice = Number(searchParams.get('total')) || 0;
       return {
         selectedFeatures: (searchParams.get('features') || 'core').split(',').filter(Boolean),
         totalPrice,
@@ -335,10 +335,10 @@ export const RegisterClub = () => {
 
           {pendingTariff && !isSuccess && (
             <Card style={{ width: '320px', padding: 'var(--space-6)', backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-primary)' }} className="animate-fade-in hide-on-mobile">
-               <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">Ваш выбор</h3>
+               <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">Starter бесплатно</h3>
                <div className="flex flex-col gap-3 mb-6">
                  <div className="flex justify-between text-xs font-bold">
-                   <span>Базовая CRM</span>
+                   <span>1 филиал · 15 учеников · 3 тренера</span>
                    <span>Включено</span>
                  </div>
                  {pendingTariff.selectedFeatures.filter(f => f !== 'core').map(f => (
@@ -352,7 +352,7 @@ export const RegisterClub = () => {
                   <p className="text-[10px] font-bold text-muted uppercase mb-1">Итого в месяц</p>
                   <p className="h3 text-slate-900">{pendingTariff.totalPrice.toLocaleString()} ₸</p>
                </div>
-               <p className="text-[9px] text-muted mt-4">Вы сможете изменить набор функций в любое время в настройках клуба.</p>
+               <p className="text-[9px] text-muted mt-4">Growth от 9 000 ₸ подключается в настройках, когда лимитов Starter станет мало.</p>
             </Card>
           )}
 

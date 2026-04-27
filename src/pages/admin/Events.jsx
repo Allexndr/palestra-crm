@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Plus, Trophy, GraduationCap, Users, Calendar, Info, X, CheckCircle, Edit2, Trash2, Search } from 'lucide-react';
+import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const Events = () => {
-  const { events, addEvent, updateEvent, removeEvent, members, groups } = useAdmin();
+  const { events, addEvent, updateEvent, removeEvent, members, groups, canUseFeature, getUpgradeMessage } = useAdmin();
+  const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -17,6 +20,16 @@ export const Events = () => {
   });
   const [editingEventId, setEditingEventId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  if (!canUseFeature('events')) {
+    return (
+      <LockedFeature
+        title="События и турниры доступны в расширенном тарифе"
+        description={getUpgradeMessage('feature', 'События клуба')}
+        onConfigure={() => navigate('/admin/settings')}
+      />
+    );
+  }
 
   const getEventIcon = (type) => {
     switch (type) {

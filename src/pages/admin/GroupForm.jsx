@@ -33,7 +33,8 @@ export const GroupForm = () => {
     if (isEditing) {
       updateGroup(id, formData);
     } else {
-      addGroup(formData);
+      const created = addGroup(formData);
+      if (created === false) return;
     }
     navigate('/admin/groups');
   };

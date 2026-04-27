@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Shield } from 'lucide-react';
 import './tariff-constructor.css';
 
-const BASE_PRICE = 9000;
+const BASE_PRICE = 0;
 /** ~19 USD за базу 9000 ₸ (оценка для UI) */
-const usdApprox = (kzt) => Math.max(1, Math.round((kzt / BASE_PRICE) * 19));
+const usdApprox = (kzt) => (kzt > 0 ? Math.max(1, Math.round((kzt / 9000) * 19)) : 0);
 
 const CORE_FEATURE = {
   id: 'core',
@@ -15,7 +15,7 @@ const CORE_FEATURE = {
 };
 
 const INCLUDED_ITEMS = [
-  'Ученики, группы и филиалы в одной системе',
+  '1 филиал, 15 учеников и 3 тренера включены',
   'Расписание, посещаемость и база клиентов',
   'Личный кабинет для родителей и учеников',
 ];
@@ -38,15 +38,15 @@ export const TariffConstructor = () => {
 
   return (
     <article className="tariff-constructor" aria-labelledby="tariff-constructor-title">
-      <div className="tariff-constructor__eyebrow">Готовый старт для клуба</div>
+      <div className="tariff-constructor__eyebrow">Подключение бесплатно</div>
 
       <div className="tariff-constructor__top">
         <div className="tariff-constructor__intro">
           <h2 id="tariff-constructor-title" className="tariff-constructor__title">
-            Palestra Base
+            Palestra Starter
           </h2>
           <p className="tariff-constructor__subtitle">
-            Всё базовое для запуска CRM: клиенты, группы, филиалы и личный кабинет.
+            Соберите базу бесплатно: 1 филиал, 15 учеников, 3 тренера и базовая CRM. Когда клуб вырастет, включите Growth от 9 000 ₸ и нужные модули.
           </p>
         </div>
 
@@ -54,7 +54,7 @@ export const TariffConstructor = () => {
           <div className="tariff-constructor__price-kzt">
             {totalPrice.toLocaleString('ru-RU')} <span>₸/мес</span>
           </div>
-          <div className="tariff-constructor__price-usd">≈ ${usdApprox(totalPrice)} / мес</div>
+          <div className="tariff-constructor__price-usd">Growth от 9 000 ₸/мес</div>
         </div>
       </div>
 
@@ -81,9 +81,9 @@ export const TariffConstructor = () => {
 
       <div className="tariff-constructor__footer">
         <button type="button" className="tariff-constructor__cta" onClick={handleConnect}>
-          Запустить за {totalPrice.toLocaleString('ru-RU')} ₸
+          Подключить бесплатно
         </button>
-        <p className="tariff-constructor__hint">Без скрытых платежей. Отмена в любое время.</p>
+        <p className="tariff-constructor__hint">Дальше тариф собирается под ваш клуб: ученики, тренеры, филиалы и модули.</p>
       </div>
     </article>
   );

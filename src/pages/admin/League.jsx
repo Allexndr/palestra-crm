@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAdmin } from '../../context/AdminContext';
 import { Trophy, Medal, Target, TrendingUp, Award, Star, ArrowUpRight, Edit2, Trash2, X, Plus } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
+import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const League = () => {
-  const { members, user, leagues, addLeague, removeLeague, updateLeague, sports, achievements, addAchievement, removeAchievement, monthlyAward, groups, updateMember } = useAdmin();
+  const { members, user, leagues, addLeague, removeLeague, updateLeague, sports, achievements, addAchievement, removeAchievement, monthlyAward, groups, updateMember, canUseFeature, getUpgradeMessage } = useAdmin();
+  const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -26,6 +29,16 @@ export const League = () => {
   
   const [resultPoints, setResultPoints] = useState({}); // memberId -> points
   const [resultDesc, setResultDesc] = useState('');
+
+  if (!canUseFeature('league')) {
+    return (
+      <LockedFeature
+        title="Лига и RPG-мотивация доступны как модуль роста"
+        description={getUpgradeMessage('feature', 'Лига и RPG-геймификация')}
+        onConfigure={() => navigate('/admin/settings')}
+      />
+    );
+  }
 
   const currentLeague = leagues.find(l => l.id === selectedLeagueId);
   

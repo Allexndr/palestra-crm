@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAdmin } from '../../context/AdminContext';
 import { DollarSign, TrendingUp, TrendingDown, CreditCard, ArrowUpRight, ArrowDownRight, Download, Plus, Receipt } from 'lucide-react';
+import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const Billing = () => {
-  const { finances, addTransaction } = useAdmin();
+  const { finances, addTransaction, canUseFeature, getUpgradeMessage } = useAdmin();
+  const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({ amount: '', type: 'income', description: '' });
+
+  if (!canUseFeature('finance')) {
+    return (
+      <LockedFeature
+        title="Финансы доступны в расширенном тарифе"
+        description={getUpgradeMessage('feature', 'Финансовый модуль')}
+        onConfigure={() => navigate('/admin/settings')}
+      />
+    );
+  }
 
   // Simple stats
   const totalIncome = finances.transactions

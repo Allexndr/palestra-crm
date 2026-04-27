@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
 import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
@@ -7,10 +8,12 @@ import { Input } from '../../components/ui/Input';
 import { Plus, Search, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User, Phone, Tag } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
+import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const Shop = () => {
   const { products, categories, orders, addProduct, updateProduct, removeProduct, updateOrderStatus, placeOrder } = useShop();
-  const { user, members } = useAdmin();
+  const { user, members, canUseFeature, getUpgradeMessage } = useAdmin();
+  const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   
   const [activeTab, setActiveTab] = useState(isAdmin ? 'products' : 'browse');
@@ -31,6 +34,16 @@ export const Shop = () => {
     image: '',
     stock: 10
   });
+
+  if (!canUseFeature('shop')) {
+    return (
+      <LockedFeature
+        title="Магазин клуба подключается отдельно"
+        description={getUpgradeMessage('feature', 'Магазин клуба')}
+        onConfigure={() => navigate('/admin/settings')}
+      />
+    );
+  }
 
   const filteredProducts = products.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());

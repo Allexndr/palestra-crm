@@ -171,10 +171,10 @@ export const Landing = () => {
               </h1>
               
               <p className="text-body-lg mb-8" style={{ maxWidth: '480px' }}>
-                Palestra собирает учеников, группы, расписание, оплаты и прогресс в одну рабочую систему для клуба единоборств.
+                Подключите клуб бесплатно: соберите базу учеников, тренеров и расписание. Когда клуб вырастет, расширьте Palestra через Growth от 9 000 ₸.
               </p>
               <div className="landing-hero-points" aria-label="Ключевые преимущества">
-                {['CRM', 'Расписание', 'Оплаты', 'Личный кабинет'].map((item) => (
+                {['Бесплатный Starter', 'CRM', 'Расписание', 'Личный кабинет'].map((item) => (
                   <span key={item}>
                     <CheckCircle2 size={16} aria-hidden />
                     {item}
@@ -185,7 +185,7 @@ export const Landing = () => {
               <div className="flex gap-4">
                 <Link to="/auth/register">
                   <Button variant="primary" size="lg" className="gap-2 text-lg">
-                    Начать работу <ArrowRight size={24} />
+                    Подключить бесплатно <ArrowRight size={24} />
                   </Button>
                 </Link>
                 <a href="#features" style={{ textDecoration: 'none' }}>
@@ -392,10 +392,10 @@ export const Landing = () => {
           <div className="container">
             <h2 className="landing-cta__title">Соберите клуб в одну систему</h2>
             <p className="landing-cta__lead">
-              Начните с базы: ученики, расписание, оплаты и личные кабинеты. Дальше расширяйте клуб без потери контроля.
+              Начните бесплатно: 1 филиал, 15 учеников и 3 тренера. Дальше подключайте Growth и платите только за масштаб клуба.
             </p>
             <Link to="/auth/register">
-              <Button variant="primary" size="lg" className="text-xl px-14" style={{ fontWeight: 800 }}>Запустить Palestra</Button>
+              <Button variant="primary" size="lg" className="text-xl px-14" style={{ fontWeight: 800 }}>Подключить бесплатно</Button>
             </Link>
           </div>
         </section>
@@ -429,8 +429,8 @@ export const Landing = () => {
 
             <section className="landing-footer__cta" aria-label="Начать работу">
               <h2>Готовы собрать клуб в систему?</h2>
-              <p>Начните с базового тарифа и подключайте команду без долгого внедрения.</p>
-              <Link to="/auth/register">Запустить Palestra</Link>
+              <p>Подключите Starter бесплатно, а Growth включите, когда клубу станет тесно.</p>
+              <Link to="/auth/register">Подключить бесплатно</Link>
             </section>
           </div>
 

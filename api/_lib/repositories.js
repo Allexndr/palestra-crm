@@ -381,6 +381,7 @@ export async function getNormalizedState(user, fallbackState = createSeedState()
     activities: activities.map((row) => ({ id: row.id, text: row.text, type: row.type || 'info', date: row.created_at })),
     events: events.map((row) => ({ ...(row.data || {}), id: row.id, name: row.name, type: row.type || 'event', date: row.date || '', description: row.description || '', participantIds: row.participant_ids || [], image: row.image_blob_url || '' })),
     monthlyAward: monthlyAward ? { title: monthlyAward.title || '', description: monthlyAward.description || '', daysLeft: monthlyAward.days_left || 0 } : fallbackState.monthlyAward,
+    subscription: fallbackState.subscription,
     clubInfo: {
       name: club?.name || fallbackState.clubInfo?.name || 'Palestra Fight Club',
       logo: club?.logo_blob_url || fallbackState.clubInfo?.logo || '/palestra-logo-nav-full.png',

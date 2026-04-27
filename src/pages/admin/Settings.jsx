@@ -6,13 +6,15 @@ import { Input } from '../../components/ui/Input';
 import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2 } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
+import { AdminTariffConstructor } from '../../components/admin/AdminTariffConstructor';
 
 export const Settings = () => {
   const { 
-    locations, addLocation, plans, addPlan, removePlan, clubInfo, setClubInfo, 
-    achievements, addAchievement, removeAchievement, monthlyAward, updateMonthlyAward, resetData 
+    locations, addLocation, plans, addPlan, removePlan, clubInfo, setClubInfo,
+    members, coaches, groups, subscription, usage, getLimitStatus, updateSubscription,
+    achievements, addAchievement, removeAchievement, monthlyAward, updateMonthlyAward, resetData
   } = useAdmin();
-  const [activeTab, setActiveTab] = useState('club');
+  const [activeTab, setActiveTab] = useState('palestra-tariff');
   
   const [isAddingLoc, setIsAddingLoc] = useState(false);
   const [newLoc, setNewLoc] = useState({ name: '', address: '', phone: '', isActive: true });
@@ -46,7 +48,8 @@ export const Settings = () => {
 
   const handleAddLocation = (e) => {
     e.preventDefault();
-    addLocation(newLoc);
+    const created = addLocation(newLoc);
+    if (created === false) return;
     setNewLoc({ name: '', address: '', phone: '' });
     setIsAddingLoc(false);
   };
@@ -71,6 +74,7 @@ export const Settings = () => {
         {/* Sidebar Tabs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
           {[
+            { id: 'palestra-tariff', label: 'Тариф Palestra', icon: <SettingsIcon size={18} /> },
             { id: 'club', label: 'Профиль клуба', icon: <Globe size={18} /> },
             { id: 'locations', label: 'Филиалы', icon: <Globe size={18} /> },
             { id: 'plans', label: 'Абонементы', icon: <Save size={18} /> },
@@ -103,6 +107,52 @@ export const Settings = () => {
 
         {/* Content Area */}
         <Card style={{ padding: 'var(--space-8)' }}>
+          {activeTab === 'palestra-tariff' && (
+            <div className="animate-fade-in">
+              <div className="flex justify-between items-start gap-6 mb-8">
+                <div>
+                  <h3 className="h4 mb-2">Тариф Palestra</h3>
+                  <p className="text-secondary admin-readable">
+                    Подключение бесплатное: Starter помогает собрать базу и начать работу. Платный Growth от 9 000 ₸ включается только когда клубу стало мало лимитов или нужны модули роста.
+                  </p>
+                </div>
+                <span className="text-xs font-bold uppercase tracking-widest text-primary bg-indigo-50 px-4 py-2 rounded-full">
+                  {subscription.plan === 'starter' ? 'Starter бесплатно' : 'Growth'}
+                </span>
+              </div>
+
+              <div className="usage-limit-grid">
+                {[
+                  ['members', 'Ученики', members.length],
+                  ['coaches', 'Тренеры', coaches.length],
+                  ['locations', 'Филиалы', locations.length],
+                  ['groups', 'Группы', groups.length],
+                ].map(([key, label, count]) => {
+                  const status = getLimitStatus(key);
+                  return (
+                    <div key={key} className="usage-limit-card">
+                      <strong>{label}</strong>
+                      <span className="text-sm text-secondary">
+                        {count} из {status.limit}
+                        {status.isWarning ? ' · скоро нужен Growth' : ''}
+                      </span>
+                      <div className="usage-limit-card__bar">
+                        <span style={{ width: `${status.percent}%`, backgroundColor: status.isReached ? 'var(--color-danger)' : status.isWarning ? 'var(--color-warning)' : 'var(--color-primary)' }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <AdminTariffConstructor
+                subscription={subscription}
+                usage={usage}
+                getLimitStatus={getLimitStatus}
+                updateSubscription={updateSubscription}
+              />
+            </div>
+          )}
+
           {activeTab === 'club' && (
             <div className="animate-fade-in">
               <h3 className="h4 mb-8 flex items-center gap-3">
