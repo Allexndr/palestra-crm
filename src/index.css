@@ -1377,12 +1377,12 @@ a:focus:not(:focus-visible) {
 }
 
 .navbar-desktop-nav {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-8);
-  margin-right: auto;
-  margin-left: var(--space-12);
+  min-width: 0;
 }
 
 .navbar-auth-actions {
