@@ -53,7 +53,7 @@ export const Autocomplete = ({
   };
 
   return (
-    <div className={clsx('input-group', className)} ref={wrapperRef}>
+    <div className={clsx('input-group', className)} ref={wrapperRef} style={{ zIndex: isOpen ? 110 : 'auto', position: 'relative' }}>
       {label && <label className="input-label">{label}</label>}
       <div style={{ position: 'relative' }}>
         <input
@@ -83,7 +83,7 @@ export const Autocomplete = ({
             boxShadow: 'var(--shadow-md)',
             maxHeight: '200px',
             overflowY: 'auto',
-            zIndex: 20
+            zIndex: 100
           }}>
             {filteredOptions.length > 0 ? (
               filteredOptions.map((opt, idx) => (

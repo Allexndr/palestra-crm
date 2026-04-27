@@ -80,7 +80,6 @@
     border-color var(--duration-base) var(--ease-standard),
     background-color var(--duration-base) var(--ease-standard);
   position: relative;
-  overflow: hidden;
 }
 
 .card-hover:hover {
