@@ -53,7 +53,7 @@ export const Autocomplete = ({
   };
 
   return (
-    <div className={clsx('input-group', className)} ref={wrapperRef} style={{ zIndex: isOpen ? 110 : 'auto', position: 'relative' }}>
+    <div className={clsx('input-group', className)} ref={wrapperRef} style={{ zIndex: isOpen ? 1000 : 1, position: 'relative' }}>
       {label && <label className="input-label">{label}</label>}
       <div style={{ position: 'relative' }}>
         <input
@@ -77,13 +77,13 @@ export const Autocomplete = ({
             top: 'calc(100% + 4px)',
             left: 0,
             right: 0,
-            backgroundColor: 'var(--color-bg)',
+            backgroundColor: '#ffffff',
             border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius-md)',
-            boxShadow: 'var(--shadow-md)',
-            maxHeight: '200px',
+            boxShadow: 'var(--shadow-lg)',
+            maxHeight: '260px',
             overflowY: 'auto',
-            zIndex: 100
+            zIndex: 1100
           }}>
             {filteredOptions.length > 0 ? (
               filteredOptions.map((opt, idx) => (
