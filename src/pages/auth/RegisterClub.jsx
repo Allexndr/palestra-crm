@@ -157,14 +157,12 @@ export const RegisterClub = () => {
         throw new Error(apiData.error || 'Ошибка создания клуба');
       }
 
-      const res = await simulateSendEmail(formData.email, formData.clubName, accountLogin);
-      
-      if (res.success) {
+      if (apiData.credentials) {
         await signIn({ email: formData.email, password: tempPassword });
-        setSuccessData({ login: accountLogin, password: tempPassword });
+        setSuccessData({ login: apiData.credentials.login, password: apiData.credentials.password });
         setIsSuccess(true);
       } else {
-        throw new Error(res.error || "Ошибка отправки email");
+        throw new Error("Не удалось получить данные для входа");
       }
     } catch (err) {
       setErrors({ form: "Произошла ошибка при создании клуба: " + err.message });

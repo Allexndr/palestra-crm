@@ -53,6 +53,16 @@ export default async function handler(req, res) {
 
     if (session) setSessionCookies(res, session);
 
+    // Send Welcome Email (non-blocking for the response)
+    if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+      const { sendEmail, getWelcomeEmailHtml } = await import('../_lib/mail.js');
+      sendEmail({
+        to: formData.email,
+        subject: `Добро пожаловать в Palestra — ${formData.clubName}`,
+        html: getWelcomeEmailHtml(formData.clubName, formData.email, password)
+      }).catch(err => console.error('Background email error:', err));
+    }
+
     return sendJson(res, 200, {
       club,
       user: mapProfileToUser(profile) || {
@@ -63,6 +73,8 @@ export default async function handler(req, res) {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         clubId: club.id,
       },
+      // Include credentials in response just in case email fails or for instant UI feedback
+      credentials: { login: formData.email, password }
     });
   } catch (error) {
     if (error.statusCode) return sendJson(res, error.statusCode, { error: error.message });
