@@ -96,6 +96,7 @@ export const AdminProvider = ({ children }) => {
   const [clubInfo, setClubInfo] = useState(() => normalizeClubInfo({ name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#4338ca' }));
   const [subscription, setSubscription] = useState(() => normalizeSubscription(DEFAULT_SUBSCRIPTION));
   const [user, setUser] = useState(null);
+  const [activeChildId, setActiveChildId] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -131,6 +132,14 @@ export const AdminProvider = ({ children }) => {
         setClubInfo(normalizeClubInfo(remote.clubInfo));
         setSubscription(normalizeSubscription(remote.subscription));
         setUser(meData.user || null);
+        
+        // Auto-select first child for parents on load
+        if (meData.user?.role === 'parent' && Array.isArray(remote.members)) {
+          const children = remote.members.filter(m => m.parentId === meData.user.id);
+          if (children.length > 0) {
+            setActiveChildId(children[0].id);
+          }
+        }
       } catch (error) {
         console.error('Failed to hydrate Palestra state', error);
       } finally {
@@ -552,6 +561,7 @@ export const AdminProvider = ({ children }) => {
     activities, logActivity,
     subscription, updateSubscription, usage, getLimitStatus, canUseFeature, getUpgradeMessage, ensureCanCreate,
     user, login, logout,
+    activeChildId, setActiveChildId,
     resetData, fetchClubState: async () => {
       try {
         const stateResponse = await fetch('/api/app/state', { credentials: 'include' });

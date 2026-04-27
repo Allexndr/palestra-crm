@@ -15,21 +15,48 @@ function sessionOnDay(session, day) {
 }
 
 export const Schedule = () => {
-  const { schedule, addScheduleItem, updateScheduleItem, removeScheduleItem, members, markAttendance, user, selectedLocationId, groups, sports } = useAdmin();
+  const { schedule, addScheduleItem, updateScheduleItem, removeScheduleItem, members, markAttendance, user, selectedLocationId, groups, sports, coaches, activeChildId } = useAdmin();
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
+  const isParent = user?.role === 'parent';
+  const isStudent = user?.role === 'student';
   const memberView = useMatch({ path: '/schedule', end: true }) != null;
+  const currentCoach = coaches.find(c => c.name === user?.name || c.email === user?.email);
+  const myGroupIds = groups.filter(g => g.coachId === currentCoach?.id).map(g => g.id);
+  const myGroupNames = groups.filter(g => g.coachId === currentCoach?.id).map(g => g.name);
   const canTakeAttendance = (isAdmin || isCoach) && !memberView;
 
   // Filters state
   const [filterSport, setFilterSport] = useState('all');
   const [filterCoach, setFilterCoach] = useState('all');
 
-  // Filter schedule by location AND sport/coach
   const filteredSchedule = schedule.filter(s => {
     const locMatch = selectedLocationId === 'all' || s.locationId === selectedLocationId;
     const sportMatch = filterSport === 'all' || s.type === filterSport;
     const coachMatch = filterCoach === 'all' || s.coach === filterCoach;
+    
+    if (isCoach) {
+      // Coach only sees their own schedule (by coach name match or by group name match)
+      const isMyClass = s.coach === user?.name || myGroupNames.includes(s.groupName);
+      return locMatch && sportMatch && coachMatch && isMyClass;
+    }
+    
+    if (memberView) {
+      let targetMember = null;
+      if (isParent && activeChildId) {
+        targetMember = members.find(m => m.id === activeChildId);
+      } else if (isStudent) {
+        targetMember = members.find(m => m.id === user?.id || m.login === user?.login);
+      }
+      
+      if (targetMember && targetMember.groupId) {
+        const group = groups.find(g => g.id === targetMember.groupId);
+        if (group && s.groupName !== group.name) {
+          return false; // Filter out classes that don't belong to the member's group
+        }
+      }
+    }
+    
     return locMatch && sportMatch && coachMatch;
   });
 

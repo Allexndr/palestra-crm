@@ -9,9 +9,11 @@ import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const League = () => {
-  const { members, user, leagues, addLeague, removeLeague, updateLeague, sports, achievements, addAchievement, removeAchievement, monthlyAward, groups, updateMember, canUseFeature, getUpgradeMessage } = useAdmin();
+  const { members, user, leagues, addLeague, removeLeague, updateLeague, sports, achievements, addAchievement, removeAchievement, monthlyAward, groups, updateMember, canUseFeature, getUpgradeMessage, activeChildId } = useAdmin();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
+  const isParent = user?.role === 'parent';
+  const isStudent = user?.role === 'student';
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('ranking'); // ranking, results
@@ -277,9 +279,11 @@ export const League = () => {
                 <div className="p-4">
                   {sortedMembers.length === 0 ? (
                     <p className="text-center py-20 text-muted font-bold opacity-30 uppercase tracking-widest">Нет участников</p>
-                  ) : sortedMembers.map((member, idx) => (
-                    <div key={member.id} className="flex items-center gap-6 p-4 rounded-2xl hover:bg-slate-50 transition-all group cursor-pointer">
-                      <span className="w-8 font-black text-slate-300 group-hover:text-primary transition-all text-xl">{idx + 1}</span>
+                  ) : sortedMembers.map((member, idx) => {
+                    const isMe = (isParent && member.id === activeChildId) || (isStudent && member.id === user?.id);
+                    return (
+                    <div key={member.id} className={`flex items-center gap-6 p-4 rounded-2xl transition-all group cursor-pointer ${isMe ? 'bg-indigo-50 border border-primary' : 'hover:bg-slate-50 border border-transparent'}`}>
+                      <span className={`w-8 font-black transition-all text-xl ${isMe ? 'text-primary' : 'text-slate-300 group-hover:text-primary'}`}>{idx + 1}</span>
                       <img src={member.avatar} alt="" className="w-14 h-14 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-all" />
                       <div className="flex-1">
                         <p className="font-black text-slate-900 mb-0.5">{member.firstName} {member.lastName}</p>

@@ -9,7 +9,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 export const GroupForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { groups, addGroup, updateGroup, locations, sports } = useAdmin();
+  const { groups, addGroup, updateGroup, locations, sports, coaches } = useAdmin();
 
   const isEditing = !!id;
   const existingGroup = isEditing ? groups.find(g => g.id === id) : null;
@@ -18,7 +18,7 @@ export const GroupForm = () => {
     name: '', 
     sport: sports[0] || '', 
     locationId: locations[0]?.id || '1',
-    coach: '',
+    coachId: coaches[0]?.id || '',
     maxCapacity: '20'
   });
 
@@ -73,8 +73,13 @@ export const GroupForm = () => {
                 {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
             </div>
-            
-            <Input label="Тренер" placeholder="Иванов И." required value={formData.coach} onChange={e => setFormData({...formData, coach: e.target.value})} />
+            <div className="input-group">
+              <label className="input-label">Тренер</label>
+              <select className="input-field" value={formData.coachId || ''} onChange={e => setFormData({...formData, coachId: e.target.value})}>
+                <option value="">Не назначен</option>
+                {coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
             <Input label="Вместимость (чел)" type="number" min="1" value={formData.maxCapacity} onChange={e => setFormData({...formData, maxCapacity: e.target.value})} />
           </div>
           

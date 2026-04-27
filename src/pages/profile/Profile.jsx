@@ -7,8 +7,8 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 
 export const Profile = () => {
-  const { user, members, attendance, achievements, groups, schedule } = useAdmin();
-  const [activeChildId, setActiveChildId] = useState(null);
+  const { user, members, attendance, achievements, groups, schedule, activeChildId } = useAdmin();
+  const [activeTab, setActiveTab] = useState('sports'); // 'sports' or 'rpg'
   
   const isParent = user?.role === 'parent';
   const isStudent = user?.role === 'student';
@@ -17,12 +17,6 @@ export const Profile = () => {
     () => (isParent ? members.filter((m) => m.parentId === user?.id) : []),
     [isParent, members, user?.id]
   );
-  
-  useEffect(() => {
-    if (isParent && children.length > 0 && !activeChildId) {
-      setActiveChildId(children[0].id);
-    }
-  }, [activeChildId, children, isParent]);
 
   const profileData = (() => {
     if (isParent) {
@@ -115,107 +109,113 @@ export const Profile = () => {
         </div>
       </section>
 
-      {isParent && children.length > 1 && (
-        <section className="member-child-switcher">
-          {children.map((child) => (
-            <button
-              key={child.id}
-              type="button"
-              onClick={() => setActiveChildId(child.id)}
-              className={activeChildId === child.id ? 'is-active' : ''}
-            >
-              <span>{child.firstName} {child.lastName}</span>
-              <small>{child.points || 0} XP</small>
-            </button>
-          ))}
-        </section>
-      )}
+      <section className="flex gap-4 border-b border-slate-100 mb-8 mx-auto px-4 md:px-0" style={{ maxWidth: '100%' }}>
+        <button 
+          onClick={() => setActiveTab('sports')} 
+          className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'sports' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}
+        >
+          Спортивный паспорт
+        </button>
+        <button 
+          onClick={() => setActiveTab('rpg')} 
+          className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'rpg' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}
+        >
+          Геймификация
+        </button>
+      </section>
 
-      <section className="member-profile-grid">
-        <div className="member-profile-main">
-          <Card className="shadow-2xl shadow-slate-200/50">
-            <h3 className="member-card-title">
-              <TrendingUp size={18} className="text-primary" /> Физические показатели
-            </h3>
-            <div className="member-stats-grid">
-              {stats.map(stat => (
-                <div key={stat.label} className="member-stat">
-                  <div className="flex justify-between items-center mb-2">
-                    <span>{stat.label}</span>
-                    <strong>{stat.value}%</strong>
-                  </div>
-                  <div className="member-stat__bar">
-                    <div className={stat.color} style={{ width: `${stat.value}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card className="card-hover">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <p className="member-kicker">Текущий ранг</p>
-                <h3 className="h4 text-primary">{profileData.level || 'Новичок'}</h3>
-              </div>
-              <div className="text-right">
-                <p className="member-kicker">Прогресс</p>
-                <h3 className="h4 text-slate-900">{nextRankProgress}%</h3>
-              </div>
-            </div>
-            <div className="member-rank-bar">
-              <div style={{ width: `${nextRankProgress}%` }} />
-            </div>
-            <div className="member-rank-footer">
-              <span>Старт</span>
-              <span>Следующий ранг <ChevronRight size={12}/></span>
-            </div>
-          </Card>
-
-          <Card>
-            <h3 className="member-card-title"><Trophy size={18} className="text-primary" /> Коллекция наград</h3>
-            <div className="member-achievements-grid">
-              {memberAchievements.length > 0 ? memberAchievements.map((ach) => (
-                <div key={ach.id} className="member-achievement">
-                  <div style={{ backgroundColor: ach.color || '#EEF2FF', color: ach.iconColor || 'var(--color-primary)' }}>
-                    <Medal size={26} />
-                  </div>
-                  <span>{ach.title}</span>
-                  <small>{ach.desc || 'Достижение клуба'}</small>
-                </div>
-              )) : (
-                <div className="member-empty-inline">
-                  <Trophy size={36} />
-                  <p>Наград пока нет</p>
-                </div>
-              )}
-            </div>
-          </Card>
-
-          <Card>
-            <h3 className="member-card-title"><Calendar size={18} className="text-primary" /> Последняя активность</h3>
-            <div className="member-activity-list">
-              {studentAttendance.length === 0 ? (
-                <div className="member-empty-inline">
-                  <Calendar size={36} />
-                  <p>История тренировок пуста</p>
-                </div>
-              ) : (
-                studentAttendance.slice(0, 6).map((a, i) => (
-                  <div key={a.id || i} className="member-activity-row">
-                    <div>
-                      <Calendar size={18} />
+      <section className="member-profile-grid">        <div className="member-profile-main">
+          {activeTab === 'sports' && (
+            <>
+              <Card className="shadow-2xl shadow-slate-200/50 mb-8">
+                <h3 className="member-card-title">
+                  <TrendingUp size={18} className="text-primary" /> Физические показатели
+                </h3>
+                <div className="member-stats-grid">
+                  {stats.map(stat => (
+                    <div key={stat.label} className="member-stat">
+                      <div className="flex justify-between items-center mb-2">
+                        <span>{stat.label}</span>
+                        <strong>{stat.value}%</strong>
+                      </div>
+                      <div className="member-stat__bar">
+                        <div className={stat.color} style={{ width: `${stat.value}%` }} />
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-bold text-slate-800">Посещение занятия</p>
-                      <p className="text-[11px] text-muted font-medium">{new Date(a.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</p>
+                  ))}
+                </div>
+              </Card>
+
+              <Card>
+                <h3 className="member-card-title"><Calendar size={18} className="text-primary" /> Последняя активность</h3>
+                <div className="member-activity-list">
+                  {studentAttendance.length === 0 ? (
+                    <div className="member-empty-inline">
+                      <Calendar size={36} />
+                      <p>История тренировок пуста</p>
                     </div>
-                    <span>+10 XP</span>
+                  ) : (
+                    studentAttendance.slice(0, 6).map((a, i) => (
+                      <div key={a.id || i} className="member-activity-row">
+                        <div>
+                          <Calendar size={18} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-800">Посещение занятия</p>
+                          <p className="text-[11px] text-muted font-medium">{new Date(a.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</p>
+                        </div>
+                        <span>+10 XP</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </Card>
+            </>
+          )}
+
+          {activeTab === 'rpg' && (
+            <>
+              <Card className="card-hover mb-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <p className="member-kicker">Текущий ранг</p>
+                    <h3 className="h4 text-primary">{profileData.level || 'Новичок'}</h3>
                   </div>
-                ))
-              )}
-            </div>
-          </Card>
+                  <div className="text-right">
+                    <p className="member-kicker">Прогресс</p>
+                    <h3 className="h4 text-slate-900">{nextRankProgress}%</h3>
+                  </div>
+                </div>
+                <div className="member-rank-bar">
+                  <div style={{ width: `${nextRankProgress}%` }} />
+                </div>
+                <div className="member-rank-footer">
+                  <span>Старт</span>
+                  <span>Следующий ранг <ChevronRight size={12}/></span>
+                </div>
+              </Card>
+
+              <Card>
+                <h3 className="member-card-title"><Trophy size={18} className="text-primary" /> Коллекция наград</h3>
+                <div className="member-achievements-grid">
+                  {memberAchievements.length > 0 ? memberAchievements.map((ach) => (
+                    <div key={ach.id} className="member-achievement">
+                      <div style={{ backgroundColor: ach.color || '#EEF2FF', color: ach.iconColor || 'var(--color-primary)' }}>
+                        <Medal size={26} />
+                      </div>
+                      <span>{ach.title}</span>
+                      <small>{ach.desc || 'Достижение клуба'}</small>
+                    </div>
+                  )) : (
+                    <div className="member-empty-inline">
+                      <Trophy size={36} />
+                      <p>Наград пока нет</p>
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </>
+          )}
         </div>
 
         <aside className="member-profile-side">
@@ -246,27 +246,7 @@ export const Profile = () => {
             </Link>
           </Card>
 
-          {isParent && (
-            <Card>
-              <h3 className="member-card-title"><User size={18} className="text-primary" /> Дети</h3>
-              <div className="member-family-list">
-                {children.map((child) => (
-                  <button
-                    key={child.id}
-                    type="button"
-                    className={activeChildId === child.id ? 'is-active' : ''}
-                    onClick={() => setActiveChildId(child.id)}
-                  >
-                    <span>{child.firstName} {child.lastName}</span>
-                    <small>{child.points || 0} XP • {child.sport || 'Спорт'}</small>
-                  </button>
-                ))}
-              </div>
-            </Card>
-          )}
-
-          <EventCarousel isAdmin={false} />
-        </aside>
+          <EventCarousel isAdmin={false} />        </aside>
       </section>
     </main>
   );

@@ -8,16 +8,24 @@ import { Plus, Search, Trash2, Edit2, Eye } from 'lucide-react';
 
 export const Members = () => {
   const navigate = useNavigate();
-  const { members, removeMember, user, selectedLocationId, groups } = useAdmin();
+  const { members, removeMember, user, selectedLocationId, groups, coaches } = useAdmin();
   const isAdmin = user?.role === 'admin';
+  const isCoach = user?.role === 'coach';
   const [searchTerm, setSearchTerm] = useState('');
   const [memberToDelete, setMemberToDelete] = useState(null);
+
+  const currentCoach = coaches.find(c => c.name === user?.name || c.email === user?.email);
+  const myGroupIds = groups.filter(g => g.coachId === currentCoach?.id).map(g => g.id);
 
   const filteredMembers = members.filter(m => {
     const fullName = `${m.firstName || ''} ${m.lastName || ''}`.toLowerCase();
     const matchesSearch = fullName.includes(searchTerm.toLowerCase()) ||
                           (m.phone && m.phone.includes(searchTerm));
     const matchesLocation = selectedLocationId === 'all' || m.locationId === selectedLocationId;
+    
+    if (isCoach) {
+      return matchesSearch && matchesLocation && myGroupIds.includes(m.groupId);
+    }
     return matchesSearch && matchesLocation;
   });
 

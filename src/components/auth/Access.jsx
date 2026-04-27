@@ -16,8 +16,10 @@ export function RequireAuth() {
 
 /** Лента, расписание, лига, профиль: нижняя навигация одним блоком. */
 export function MemberLayout() {
-  const { user, logout, clubInfo } = useAdmin();
+  const { user, logout, clubInfo, members, activeChildId, setActiveChildId } = useAdmin();
   const navigate = useNavigate();
+  const children = user?.role === 'parent' ? members.filter(m => m.parentId === user.id) : [];
+  
   const links = [
     { to: '/feed', icon: Home, label: 'Лента' },
     { to: '/schedule', icon: Calendar, label: 'Расписание' },
@@ -78,16 +80,34 @@ export function MemberLayout() {
       </aside>
 
       <section className="member-main-region">
-        <header className="member-desktop-header desktop-only">
+        <header className="member-desktop-header">
           <div>
             <p className="member-kicker">Личный кабинет</p>
-            <h1>{roleLabel}</h1>
+            <h1 className="desktop-only">{roleLabel}</h1>
+            
+            {user?.role === 'parent' && children.length > 0 && (
+              <div className="mt-2 flex gap-2 overflow-x-auto pb-2 scrollbar-hide w-full max-w-md">
+                {children.map(child => (
+                  <button
+                    key={child.id}
+                    onClick={() => setActiveChildId(child.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all border-none cursor-pointer ${
+                      activeChildId === child.id 
+                        ? 'bg-primary text-white shadow-md' 
+                        : 'bg-white text-slate-600 border border-slate-200'
+                    }`}
+                  >
+                    {child.firstName} {child.lastName}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="member-header-pill">
+          <div className="member-header-pill desktop-only">
             <span>{user?.email || `${user?.role || 'user'}@palestra.fit`}</span>
           </div>
         </header>
-        <div className="member-page-frame">
+        <div className="member-page-frame" style={{ paddingTop: user?.role === 'parent' ? '16px' : '0' }}>
           <Outlet />
         </div>
       </section>

@@ -9,10 +9,15 @@ import { formatKzt } from '../../utils/money';
 import { scheduleTypeLabel, coachLine, firstGrapheme } from '../../utils/displayStrings';
 
 export const Dashboard = () => {
-  const { members, leads, schedule, finances, user, events, selectedLocationId, achievements, monthlyAward, activities } = useAdmin();
+  const { members, leads, schedule, finances, user, events, selectedLocationId, achievements, monthlyAward, activities, markAttendance, groups } = useAdmin();
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
   const navigate = useNavigate();
+
+  // Attendance state for Coach Dashboard
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedMemberIds, setSelectedMemberIds] = useState([]);
+  const [isAttendanceSuccess, setIsAttendanceSuccess] = useState(false);
 
   // Filter data by location
   const filteredMembers = selectedLocationId === 'all' ? members : members.filter(m => m.locationId === selectedLocationId);
@@ -22,11 +27,33 @@ export const Dashboard = () => {
   // Filter schedule for coaches (only their classes)
   const coachSchedule = isCoach ? filteredSchedule.filter(s => s.coach === user.name) : filteredSchedule;
 
-  // Calculate stats
   const activeMembers = filteredMembers.length;
   const monthlyRevenue = Number(finances?.revenue) || 0; 
   const todayTrainings = coachSchedule.length || 0; 
   const newLeadsCount = filteredLeads.filter(l => l.status === 'new').length;
+
+  const handleSelectAll = () => {
+    if (!selectedClass) return;
+    const classGroup = groups.find(g => g.name === selectedClass.groupName);
+    const groupMemberIds = members.filter(m => m.groupId === classGroup?.id).map(m => m.id);
+    setSelectedMemberIds(groupMemberIds.length > 0 ? groupMemberIds : members.map(m => m.id));
+  };
+
+  const handleMarkAttendance = () => {
+    markAttendance(selectedClass.id, selectedMemberIds);
+    setIsAttendanceSuccess(true);
+    setTimeout(() => {
+      setIsAttendanceSuccess(false);
+      setSelectedClass(null);
+      setSelectedMemberIds([]);
+    }, 1500);
+  };
+
+  const toggleMemberSelection = (id) => {
+    setSelectedMemberIds(prev => 
+      prev.includes(id) ? prev.filter(mId => mId !== id) : [...prev, id]
+    );
+  };
   
   return (
     <div className="animate-fade-in pb-12">
@@ -128,7 +155,7 @@ export const Dashboard = () => {
                     {coachSchedule.slice(0, 5).map((item) => {
                       const coach = coachLine(item);
                       return (
-                      <tr key={item.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                      <tr key={item.id} onClick={() => isCoach ? setSelectedClass(item) : null} className={`border-b border-slate-50 transition-colors ${isCoach ? 'cursor-pointer hover:bg-slate-100' : 'hover:bg-slate-50/50'}`}>
                         <td className="px-6 py-4 font-bold text-sm text-slate-900 align-middle whitespace-nowrap">{item.time || '—'}</td>
                         <td className="px-6 py-4 align-middle">
                           <div className="flex items-center gap-3" style={{ minWidth: 0 }}>
@@ -273,6 +300,65 @@ export const Dashboard = () => {
           </Card>
         </div>
       </div>
+
+      {selectedClass && isCoach && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 100, backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)' }}>
+          <Card className="animate-up" style={{ width: '100%', maxWidth: '540px', padding: 0, overflow: 'hidden', borderRadius: '32px', border: '1px solid var(--color-primary)' }}>
+            {isAttendanceSuccess ? (
+              <div style={{ padding: '80px 40px', textAlign: 'center' }} className="animate-fade-in">
+                <div style={{ width: 100, height: 100, backgroundColor: 'var(--color-success)', color: 'white', borderRadius: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px' }}><CheckCircle size={64} /></div>
+                <h3 className="h3 mb-2">Тренировка завершена!</h3>
+                <p className="text-secondary font-medium">Статистика обновлена, опыт ученикам начислен.</p>
+              </div>
+            ) : (
+              <>
+                <div style={{ padding: '40px', backgroundColor: selectedClass.color || 'var(--color-primary)', color: 'white', position: 'relative' }}>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest inline-block mb-4">Детали занятия</div>
+                      <h3 className="h2 mb-2" style={{ color: 'white' }}>{selectedClass.groupName}</h3>
+                      <div className="flex items-center gap-4 text-sm font-medium opacity-90">
+                         <div className="flex items-center gap-2"><Calendar size={16} /> {selectedClass.time} ({selectedClass.duration || 60} мин)</div>
+                      </div>
+                    </div>
+                    <button onClick={() => setSelectedClass(null)} className="p-3 bg-white/20 hover:bg-white/30 rounded-2xl border-none text-white cursor-pointer transition-all"><AlertCircle size={20} className="rotate-45" /></button>
+                  </div>
+                </div>
+                <div style={{ padding: '40px' }}>
+                  <div className="flex justify-between items-center mb-8">
+                    <div>
+                       <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Чек-ин</p>
+                       <p className="text-sm font-bold text-slate-800">Кто присутствует?</p>
+                    </div>
+                    <button onClick={handleSelectAll} className="px-4 py-2 bg-indigo-50 text-primary text-xs font-bold rounded-xl hover:bg-indigo-100 transition-all border-none cursor-pointer">Выбрать всех</button>
+                  </div>
+                  <div style={{ maxHeight: '320px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px', paddingRight: '4px' }} className="custom-scrollbar">
+                    {members.map(member => (
+                      <div key={member.id} onClick={() => toggleMemberSelection(member.id)} className={`p-5 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between ${selectedMemberIds.includes(member.id) ? 'border-primary bg-indigo-50/50' : 'border-slate-100 hover:border-slate-200 bg-white'}`}>
+                        <div className="flex items-center gap-4">
+                          <div style={{ width: 44, height: 44, borderRadius: '14px', backgroundColor: selectedMemberIds.includes(member.id) ? 'var(--color-primary)' : 'var(--color-bg)', color: selectedMemberIds.includes(member.id) ? 'white' : 'var(--color-text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px' }}>
+                            {member.firstName.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm text-slate-900">{member.firstName} {member.lastName}</p>
+                            <p className="text-[10px] font-bold text-muted uppercase tracking-wider">{groups.find(g => g.id === member.groupId)?.name || 'Индивидуально'}</p>
+                          </div>
+                        </div>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selectedMemberIds.includes(member.id) ? 'bg-primary border-primary text-white' : 'border-slate-200'}`}>
+                           {selectedMemberIds.includes(member.id) && <CheckCircle size={14} />}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={handleMarkAttendance} disabled={selectedMemberIds.length === 0} className="w-full h-14 bg-primary text-white rounded-2xl font-bold disabled:opacity-50 transition-all hover:opacity-90 cursor-pointer border-none text-base">
+                    Отметить посещаемость
+                  </button>
+                </div>
+              </>
+            )}
+          </Card>
+        </div>
+      )}
 
       <style>{`
         @media (min-width: 640px) {
