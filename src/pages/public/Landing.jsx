@@ -395,7 +395,7 @@ export const Landing = () => {
               Начните с базы: ученики, расписание, оплаты и личные кабинеты. Дальше расширяйте клуб без потери контроля.
             </p>
             <Link to="/auth/register">
-              <Button variant="primary" size="lg" className="text-xl px-12">Открыть Palestra</Button>
+              <Button variant="primary" size="lg" className="text-xl px-14" style={{ fontWeight: 800 }}>Запустить Palestra</Button>
             </Link>
           </div>
         </section>

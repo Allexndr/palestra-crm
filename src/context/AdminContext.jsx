@@ -15,52 +15,11 @@ function createId() {
   );
 }
 
-const defaultMembers = [
-  { id: 'm1', firstName: 'Артем', lastName: 'Иванов', login: 'student', parentId: 'p1', groupId: 'g1', points: 450, level: 'Опытный', sport: 'Бокс', plan: 'Стандарт', strength: 75, speed: 80, technique: 65, endurance: 90, avatar: 'https://i.pravatar.cc/150?img=12' },
-  { id: 'm2', firstName: 'Кирилл', lastName: 'Петров', login: 'kirill', parentId: 'p1', groupId: 'g1', points: 120, level: 'Новичок', sport: 'Бокс', plan: 'Стандарт', strength: 40, speed: 55, technique: 30, endurance: 45, avatar: 'https://i.pravatar.cc/150?img=15' }
-];
-const defaultLeads = [
-  { id: 'l1', name: 'Марина Соколова', phone: '+7 707 123 4567', sport: 'MMA', status: 'new', createdAt: new Date().toISOString() }
-];
-const defaultSchedule = [
-  {
-    id: 's1',
-    groupName: 'Младшая группа (Бокс)',
-    time: '15:00',
-    day: 'Пн',
-    days: ['Пн', 'Ср', 'Пт'],
-    coach: 'Тренер',
-    coachName: 'Тренер',
-    type: 'Бокс',
-    color: '#4338ca',
-    locationId: '1',
-  }
-];
-
-const defaultAttendance = [
-  { id: 'att1', sessionId: 's1', memberIds: ['m1', 'm2'], date: new Date().toISOString() },
-  { id: 'att2', sessionId: 's1', memberIds: ['m1'], date: daysAgo(3) },
-  { id: 'att3', sessionId: 's1', memberIds: ['m2'], date: daysAgo(5) },
-];
-
-const defaultAchievements = [
-  {
-    id: 'ach1',
-    title: 'Железный кулак',
-    desc: '10 тренировок подряд',
-    color: '#E8ECFA',
-    iconColor: '#3146A6',
-    memberIds: ['m1'],
-  },
-  {
-    id: 'ach2',
-    title: 'Вечный двигатель',
-    desc: 'Лучшая выносливость месяца',
-    color: '#ECFDF5',
-    iconColor: '#159A74',
-    memberIds: ['m1', 'm2'],
-  },
-];
+const defaultMembers = [];
+const defaultLeads = [];
+const defaultSchedule = [];
+const defaultAttendance = [];
+const defaultAchievements = [];
 
 function normalizeFinances(v) {
   if (!v || typeof v !== 'object' || Array.isArray(v)) return { revenue: 0, transactions: [] };
@@ -108,51 +67,15 @@ function normalizeScheduleList(arr) {
   });
 }
 
-function ensureDemoMembers(arr) {
-  if (!Array.isArray(arr)) return defaultMembers;
-  const existingIds = new Set(arr.map((m) => m?.id).filter(Boolean));
-  const hasParentChild = arr.some((m) => m?.parentId === 'p1');
-  const next = [...arr];
-
-  defaultMembers.forEach((member) => {
-    if (!existingIds.has(member.id)) {
-      next.push(member);
-    }
-  });
-
-  if (!hasParentChild) {
-    return next.map((m) => (m.id === 'm1' || m.id === 'm2' ? { ...m, parentId: 'p1' } : m));
-  }
-
-  return next;
-}
-
-function ensureAttendanceFixtures(arr) {
-  if (!Array.isArray(arr)) return defaultAttendance;
-  const hasDemoAttendance = arr.some((a) => Array.isArray(a?.memberIds) && (a.memberIds.includes('m1') || a.memberIds.includes('m2')));
-  return hasDemoAttendance ? arr : defaultAttendance;
-}
-
-function ensureAchievementFixtures(arr) {
-  if (!Array.isArray(arr)) return defaultAchievements;
-  return arr.length > 0 ? arr : defaultAchievements;
-}
 
 export const AdminProvider = ({ children }) => {
   const [isStateReady, setIsStateReady] = useState(false);
-  const [members, setMembers] = useState(() => ensureDemoMembers(defaultMembers));
-  const [leads, setLeads] = useState(defaultLeads);
-  const [schedule, setSchedule] = useState(() => normalizeScheduleList(defaultSchedule));
-  const [locations, setLocations] = useState([
-    { id: '1', name: 'Центральный зал', address: 'ул. Абая, 10', isActive: true }
-  ]);
-  const [groups, setGroups] = useState([
-    { id: 'g1', name: 'Младшая группа (Бокс)', coachId: 'c1', sport: 'Бокс', locationId: '1' }
-  ]);
-  const [activities, setActivities] = useState([
-    { id: 'a1', text: 'Артем Иванов получил ачивку "Первая кровь"', type: 'success', date: new Date().toISOString() },
-    { id: 'a2', text: 'Новая оплата от Марина С.', type: 'info', date: new Date().toISOString() }
-  ]);
+  const [members, setMembers] = useState([]);
+  const [leads, setLeads] = useState([]);
+  const [schedule, setSchedule] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [sports] = useState([
     'Бокс', 'ММА', 'Бразильское джиу-джитсу', 'Каратэ', 'Дзюдо', 'Кикбоксинг', 'Грэпплинг', 'Тайский бокс'
   ]);
@@ -187,20 +110,20 @@ export const AdminProvider = ({ children }) => {
 
         if (cancelled) return;
 
-        setMembers(ensureDemoMembers(remote.members));
-        setLeads(Array.isArray(remote.leads) ? remote.leads : defaultLeads);
-        setSchedule(normalizeScheduleList(Array.isArray(remote.schedule) ? remote.schedule : defaultSchedule));
-        setLocations(Array.isArray(remote.locations) ? remote.locations : [{ id: '1', name: 'Центральный зал', address: 'ул. Абая, 10', isActive: true }]);
-        setGroups(Array.isArray(remote.groups) ? remote.groups : [{ id: 'g1', name: 'Младшая группа (Бокс)', coachId: 'c1', sport: 'Бокс', locationId: '1' }]);
+        setMembers(Array.isArray(remote.members) ? remote.members : []);
+        setLeads(Array.isArray(remote.leads) ? remote.leads : []);
+        setSchedule(normalizeScheduleList(Array.isArray(remote.schedule) ? remote.schedule : []));
+        setLocations(Array.isArray(remote.locations) ? remote.locations : []);
+        setGroups(Array.isArray(remote.groups) ? remote.groups : []);
         setActivities(Array.isArray(remote.activities) ? remote.activities : []);
         setLeagues(Array.isArray(remote.leagues) ? remote.leagues : []);
         setPlans(Array.isArray(remote.plans) ? remote.plans : []);
         setPosts(Array.isArray(remote.posts) ? remote.posts : []);
         setCoaches(Array.isArray(remote.coaches) ? remote.coaches : []);
         setEvents(Array.isArray(remote.events) ? remote.events : []);
-        setAttendance(ensureAttendanceFixtures(remote.attendance));
+        setAttendance(Array.isArray(remote.attendance) ? remote.attendance : []);
         setFinances(normalizeFinances(remote.finances));
-        setAchievements(ensureAchievementFixtures(remote.achievements));
+        setAchievements(Array.isArray(remote.achievements) ? remote.achievements : []);
         setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
         setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
         setClubInfo(normalizeClubInfo(remote.clubInfo));
@@ -296,10 +219,7 @@ export const AdminProvider = ({ children }) => {
     setLeagues(prev => prev.map(l => l.id === id ? { ...l, ...updatedData } : l));
   };
 
-  const login = async (credentialsOrRole) => {
-    const payload = typeof credentialsOrRole === 'string'
-      ? { role: credentialsOrRole, email: `${credentialsOrRole}@palestra.fit`, password: `${credentialsOrRole}123` }
-      : credentialsOrRole;
+    const payload = credentialsOrRole;
 
     const response = await fetch('/api/auth/login', {
       method: 'POST',
@@ -536,20 +456,20 @@ export const AdminProvider = ({ children }) => {
   };
 
   const resetData = async () => {
-    setMembers(ensureDemoMembers(defaultMembers));
-    setLeads(defaultLeads);
-    setSchedule(normalizeScheduleList(defaultSchedule));
-    setLocations([{ id: '1', name: 'Центральный зал', address: 'ул. Абая, 10', isActive: true }]);
-    setGroups([{ id: 'g1', name: 'Младшая группа (Бокс)', coachId: 'c1', sport: 'Бокс', locationId: '1' }]);
+    setMembers([]);
+    setLeads([]);
+    setSchedule([]);
+    setLocations([]);
+    setGroups([]);
     setActivities([]);
     setLeagues([]);
     setPlans([]);
     setPosts([]);
     setCoaches([]);
     setEvents([]);
-    setAttendance(ensureAttendanceFixtures(defaultAttendance));
+    setAttendance([]);
     setFinances({ revenue: 0, transactions: [] });
-    setAchievements(ensureAchievementFixtures(defaultAchievements));
+    setAchievements([]);
     setMonthlyAward({ title: '', description: '', daysLeft: 0 });
     setSelectedLocationId('all');
     setClubInfo(normalizeClubInfo({ name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' }));

@@ -48,22 +48,6 @@ export const Login = () => {
     }
   };
 
-  const fillDemo = (role) => {
-    if (role === 'admin') {
-      setEmail('admin@palestra.fit');
-      setPassword('admin123');
-    } else if (role === 'coach') {
-      setEmail('coach@palestra.fit');
-      setPassword('coach123');
-    } else if (role === 'parent') {
-      setEmail('parent@palestra.fit');
-      setPassword('parent123');
-    } else {
-      setEmail('student@palestra.fit');
-      setPassword('student123');
-    }
-  };
-
   return (
     <>
       <Navbar />
@@ -110,44 +94,6 @@ export const Login = () => {
                 {isLoading ? 'Загрузка...' : 'Войти в систему'}
               </Button>
             </form>
-
-            <div className="mt-16 pt-12 border-t" style={{ borderTop: '1px solid var(--color-border)' }}>
-              <p className="text-[10px] font-bold text-muted uppercase tracking-[0.25em] text-center mb-8">Быстрый доступ для тестов</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => fillDemo('admin')}
-                  style={{ fontSize: '0.75rem', gap: '8px', background: '#F8FAFC', border: '1px solid var(--color-border)' }}
-                >
-                  <Shield size={14} className="text-primary" /> Админ
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => fillDemo('coach')}
-                  style={{ fontSize: '0.75rem', gap: '8px', background: '#F8FAFC', border: '1px solid var(--color-border)' }}
-                >
-                  <Users size={14} className="text-success" /> Тренер
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => fillDemo('parent')}
-                  style={{ fontSize: '0.75rem', gap: '8px', background: '#F8FAFC', border: '1px solid var(--color-border)' }}
-                >
-                  <ShieldCheck size={14} className="text-indigo-600" /> Родитель
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => fillDemo('student')}
-                  style={{ fontSize: '0.75rem', gap: '8px', background: '#F8FAFC', border: '1px solid var(--color-border)' }}
-                >
-                  <User size={14} className="text-accent" /> Ученик
-                </Button>
-              </div>
-            </div>
           </Card>
 
           <div style={{ 

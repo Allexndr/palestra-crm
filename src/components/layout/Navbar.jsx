@@ -72,7 +72,9 @@ export const Navbar = () => {
                 <Button variant="ghost" className="font-display" style={{ fontWeight: 700 }}>Войти</Button>
               </Link>
               <Link to="/auth/register" style={{ textDecoration: 'none' }} onClick={closeMenu}>
-                <Button variant="primary" size="md" className="font-display">Запустить</Button>
+                <Button variant="primary" size="md" className="font-display" style={{ paddingLeft: 'var(--space-8)', paddingRight: 'var(--space-8)' }}>
+                  Запустить Palestra
+                </Button>
               </Link>
               <button
                 type="button"
