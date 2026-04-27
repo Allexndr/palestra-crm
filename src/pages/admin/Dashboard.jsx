@@ -31,7 +31,7 @@ export const Dashboard = () => {
   return (
     <div className="animate-fade-in pb-12">
       <div className="mb-12 flex flex-col gap-4 dashboard-hero">
-        <div>
+        <div className="page-title-block page-title-block--in-hero">
           <h1 className="h1 mb-2" style={{ fontFamily: 'var(--font-family-display)', fontSize: 'clamp(1.5rem, 2.5vw, 2.25rem)' }}>
             {isAdmin ? 'Дашборд клуба' : `Привет, ${user?.name || 'Тренер'}!`}
           </h1>

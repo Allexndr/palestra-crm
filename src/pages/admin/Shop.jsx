@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Plus, Search, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User, Phone, Tag } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
+import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Shop = () => {
   const { products, categories, orders, addProduct, updateProduct, removeProduct, updateOrderStatus, placeOrder } = useShop();
@@ -20,6 +21,7 @@ export const Shop = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -46,6 +48,22 @@ export const Shop = () => {
     setIsAdding(false);
     setEditingProduct(null);
     setFormData({ name: '', price: '', category: 'Защита', description: '', image: '', stock: 10 });
+  };
+
+  const handleProductImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    try {
+      const url = await uploadBlobFile(file, 'products');
+      setFormData((prev) => ({ ...prev, image: url }));
+    } catch (error) {
+      alert(error.message || 'Не удалось загрузить изображение');
+    } finally {
+      setIsUploadingImage(false);
+      event.target.value = '';
+    }
   };
 
   const startEdit = (product) => {
@@ -159,7 +177,12 @@ export const Shop = () => {
                    {categories.map(c => <option key={c}>{c}</option>)}
                  </select>
                </div>
-               <Input label="URL изображения" placeholder="https://..." value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
+               <div className="input-group">
+                 <label className="input-label">Изображение товара</label>
+                 <input className="input-field" type="file" accept="image/*" onChange={handleProductImageUpload} />
+                 {isUploadingImage && <p className="text-xs text-muted mt-2">Загрузка в Blob...</p>}
+                 {formData.image && <p className="text-xs text-primary mt-2">Изображение загружено</p>}
+               </div>
                <Input label="Остаток на складе" type="number" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
              </div>
              <div className="input-group">

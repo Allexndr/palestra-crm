@@ -3,12 +3,14 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAdmin } from '../../context/AdminContext';
 import { MessageSquare, Heart, Share2, Send, Plus, Image as ImageIcon, X, SendHorizonal, MoreHorizontal } from 'lucide-react';
+import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Feed = () => {
   const { posts, addPost, likePost, addComment, user } = useAdmin();
   const [newPostText, setNewPostText] = useState('');
   const [newPostImage, setNewPostImage] = useState('');
   const [isPosting, setIsPosting] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [activeComments, setActiveComments] = useState({}); // postId -> bool
   const [commentText, setCommentText] = useState({}); // postId -> text
 
@@ -26,6 +28,22 @@ export const Feed = () => {
     if (!text?.trim()) return;
     addComment(postId, text);
     setCommentText(prev => ({ ...prev, [postId]: '' }));
+  };
+
+  const handlePostImageUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    try {
+      const url = await uploadBlobFile(file, 'posts');
+      setNewPostImage(url);
+    } catch (error) {
+      alert(error.message || 'Не удалось загрузить фото');
+    } finally {
+      setIsUploadingImage(false);
+      event.target.value = '';
+    }
   };
 
   const shareToSocial = (platform, post) => {
@@ -78,13 +96,14 @@ export const Feed = () => {
                 <div className="flex items-center gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                    <ImageIcon size={20} className="text-slate-400" />
                    <input 
-                     type="text" 
-                     placeholder="Ссылка на фото (необязательно)" 
+                     type="file" 
+                     accept="image/*"
                      className="bg-transparent border-none outline-none flex-1 text-sm font-medium"
-                     value={newPostImage}
-                     onChange={(e) => setNewPostImage(e.target.value)}
+                     onChange={handlePostImageUpload}
                    />
                 </div>
+                {isUploadingImage && <p className="text-xs text-muted">Загрузка фото в Blob...</p>}
+                {newPostImage && <p className="text-xs text-primary">Фото загружено</p>}
               </div>
             </div>
             <div className="px-6 py-4 bg-slate-50 flex justify-end">

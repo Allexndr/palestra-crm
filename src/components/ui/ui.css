@@ -9,7 +9,13 @@
   font-weight: 600;
   letter-spacing: -0.01em;
   border-radius: var(--radius-md);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform var(--duration-base) var(--ease-emphasized),
+    box-shadow var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard),
+    filter var(--duration-base) var(--ease-standard);
   cursor: pointer;
   border: 1px solid transparent;
   text-align: center;
@@ -34,9 +40,9 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  box-shadow: 0 12px 24px rgba(30, 79, 134, 0.32);
+  box-shadow: var(--shadow-primary);
   transform: translateY(-1px);
-  filter: brightness(1.05);
+  filter: brightness(1.035);
 }
 
 .btn-secondary {
@@ -68,7 +74,11 @@
   border-radius: var(--radius-md);
   padding: var(--space-8);
   box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
+  transition:
+    transform var(--duration-base) var(--ease-emphasized),
+    box-shadow var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard);
   position: relative;
   overflow: hidden;
 }
@@ -101,7 +111,7 @@
   background: var(--color-ice-100);
   color: var(--color-text-primary);
   font-size: 0.9375rem;
-  transition: all 0.2s;
+  transition: background-color var(--duration-base) var(--ease-standard), border-color var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
   font-family: var(--font-family-sans);
 }
 
@@ -130,7 +140,7 @@
   border: 1px solid transparent;
   background: var(--color-ice-100);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform var(--duration-base) var(--ease-emphasized), box-shadow var(--duration-base) var(--ease-standard), background-color var(--duration-base) var(--ease-standard), border-color var(--duration-base) var(--ease-standard);
   width: 100%;
   text-align: left;
 }

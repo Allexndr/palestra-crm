@@ -221,7 +221,7 @@ export const MemberDetail = () => {
               </div>
               <div className="p-4 bg-slate-50 rounded-2xl">
                  <p className="text-[10px] font-bold text-muted uppercase mb-1">Пароль</p>
-                 <code className="text-sm font-bold text-primary">{member.password || '—'}</code>
+                 <code className="text-sm font-bold text-primary">Не хранится в CRM</code>
               </div>
             </div>
           </Card>

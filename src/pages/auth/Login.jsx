@@ -16,17 +16,13 @@ export const Login = () => {
   const location = useLocation();
   const from = location.state?.from;
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    let role = 'admin';
-    if (email.includes('coach')) role = 'coach';
-    if (email.includes('student')) role = 'student';
-    if (email.includes('parent')) role = 'parent';
 
-    setTimeout(() => {
-      login(role);
+    try {
+      const user = await login({ email, password });
+      const role = user.role;
       setIsLoading(false);
 
       const dest =
@@ -46,7 +42,10 @@ export const Login = () => {
       } else {
         navigate('/profile');
       }
-    }, 800);
+    } catch (error) {
+      setIsLoading(false);
+      alert(error.message || 'Не удалось войти');
+    }
   };
 
   const fillDemo = (role) => {
@@ -68,8 +67,8 @@ export const Login = () => {
   return (
     <>
       <Navbar />
-      <main id="main-content" tabIndex={-1} className="container flex justify-center items-center" style={{ minHeight: 'calc(100vh - 64px)', padding: 'var(--space-16) 0', outline: 'none' }}>
-        <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
+      <main id="main-content" tabIndex={-1} className="auth-page">
+        <div className="auth-page__inner">
           <Card style={{ padding: 'var(--space-12)', boxShadow: 'var(--shadow-lg)' }}>
             <div className="text-center mb-12">
               <div style={{ 

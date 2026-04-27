@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { ArrowLeft, Save } from 'lucide-react';
+import { uploadBlobFile } from '../../lib/blobClient';
 
 const translit = (str) => {
   const ru = {
@@ -14,6 +15,19 @@ const translit = (str) => {
     'ы': 'y', 'э': 'e', 'ю': 'u', 'я': 'ya'
   };
   return str.toLowerCase().split('').map(char => ru[char] || char).join('').replace(/[^a-z0-9]/g, '');
+};
+
+const randomSuffix = () => {
+  const bytes = new Uint32Array(1);
+  crypto.getRandomValues(bytes);
+  return String(bytes[0] % 1000).padStart(3, '0');
+};
+
+const randomPassword = () => {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+  const bytes = new Uint32Array(10);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (value) => alphabet[value % alphabet.length]).join('');
 };
 
 export const MemberForm = () => {
@@ -43,11 +57,13 @@ export const MemberForm = () => {
     hasParent: false,
     parentName: '',
     parentPhone: '',
-    parentNote: ''
+    parentNote: '',
+    avatar: '',
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [activeTab, setActiveTab] = useState('general');
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   useEffect(() => {
     if (isEditing && existingMember) {
@@ -98,13 +114,29 @@ export const MemberForm = () => {
 
   const generateCredentials = (first, last) => {
     if (!first && !last) return;
-    const login = translit(first + (last ? '_' + last : '')) + Math.floor(Math.random() * 100);
-    const password = Math.random().toString(36).slice(-8).toUpperCase() + '!';
+    const login = translit(first + (last ? '_' + last : '')) + randomSuffix();
+    const password = randomPassword();
     setFormData(prev => ({ 
       ...prev, 
       login: prev.login || login, 
       password: prev.password || password 
     }));
+  };
+
+  const handleAvatarUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingAvatar(true);
+    try {
+      const url = await uploadBlobFile(file, 'avatars');
+      setFormData((prev) => ({ ...prev, avatar: url }));
+    } catch (error) {
+      alert(error.message || 'Не удалось загрузить аватар');
+    } finally {
+      setIsUploadingAvatar(false);
+      event.target.value = '';
+    }
   };
 
   const handleNameChange = (field, val) => {
@@ -130,10 +162,13 @@ export const MemberForm = () => {
       }
     }
 
+    const safeMemberData = { ...formData };
+    delete safeMemberData.password;
+
     if (isEditing) {
-      updateMember(id, formData);
+      updateMember(id, safeMemberData);
     } else {
-      addMember(formData);
+      addMember(safeMemberData);
     }
     
     navigate('/admin/members');
@@ -192,6 +227,12 @@ export const MemberForm = () => {
                   <Input label="Фамилия" required minLength={2} value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
                   <Input label="Дата рождения" type="date" min="1900-01-01" max={new Date().toISOString().split('T')[0]} value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
                   <Input label="Телефон" placeholder="+7 (707) 000-00-00" value={formData.phone} onChange={handlePhoneChange} />
+                  <div className="input-group">
+                    <label className="input-label">Фото ученика</label>
+                    <input className="input-field" type="file" accept="image/*" onChange={handleAvatarUpload} />
+                    {isUploadingAvatar && <p className="text-xs text-muted mt-2">Загрузка в Blob...</p>}
+                    {formData.avatar && <p className="text-xs text-primary mt-2">Фото загружено</p>}
+                  </div>
                 </div>
               </div>
 

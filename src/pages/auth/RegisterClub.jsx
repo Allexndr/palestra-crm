@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
@@ -7,6 +7,7 @@ import { Navbar } from '../../components/layout/Navbar';
 import { Autocomplete } from '../../components/ui/Autocomplete';
 import { MartialArtsSelector } from '../../components/ui/MartialArtsSelector';
 import { simulateSendEmail } from '../../utils/sendpulse';
+import { useAdmin } from '../../context/AdminContext';
 
 const KAZAKHSTAN_CITIES = [
   'Алматы', 'Астана', 'Шымкент', 'Караганда', 'Актобе', 'Тараз', 
@@ -28,14 +29,20 @@ export const RegisterClub = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [successData, setSuccessData] = useState(null);
   const navigate = useNavigate();
-  const [pendingTariff, setPendingTariff] = useState(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('palestra_pending_tariff');
-    if (saved) {
-      setPendingTariff(JSON.parse(saved));
+  const { login: signIn } = useAdmin();
+  const [searchParams] = useSearchParams();
+  const pendingTariff = useMemo(() => {
+    const tariff = searchParams.get('tariff');
+    if (tariff) {
+      const totalPrice = Number(searchParams.get('total')) || 9000;
+      return {
+        selectedFeatures: (searchParams.get('features') || 'core').split(',').filter(Boolean),
+        totalPrice,
+        basePrice: Number(searchParams.get('base')) || totalPrice,
+      };
     }
-  }, []);
+    return null;
+  }, [searchParams]);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -137,13 +144,24 @@ export const RegisterClub = () => {
     setIsLoading(true);
     try {
       const tempPassword = generateTemporaryPassword();
-      const login = formData.email;
+      const accountLogin = formData.email;
 
-      const res = await simulateSendEmail(formData.email, formData.clubName, login);
+      const apiResponse = await fetch('/api/auth/register-club', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ formData, tariff: pendingTariff, password: tempPassword }),
+      });
+      const apiData = await apiResponse.json();
+      if (!apiResponse.ok) {
+        throw new Error(apiData.error || 'Ошибка создания клуба');
+      }
+
+      const res = await simulateSendEmail(formData.email, formData.clubName, accountLogin);
       
       if (res.success) {
-        localStorage.removeItem('palestra_pending_tariff');
-        setSuccessData({ login, password: tempPassword });
+        await signIn({ email: formData.email, password: tempPassword });
+        setSuccessData({ login: accountLogin, password: tempPassword });
         setIsSuccess(true);
       } else {
         throw new Error(res.error || "Ошибка отправки email");
@@ -158,8 +176,8 @@ export const RegisterClub = () => {
   return (
     <>
       <Navbar />
-      <main id="main-content" tabIndex={-1} className="container flex justify-center items-center" style={{ minHeight: 'calc(100vh - 64px)', padding: 'var(--space-8) 0', outline: 'none' }}>
-        <div style={{ display: 'flex', gap: 'var(--space-8)', maxWidth: '1000px', width: '100%', alignItems: 'flex-start' }}>
+      <main id="main-content" tabIndex={-1} className="auth-page auth-page--wide">
+        <div className="auth-page__inner" style={{ alignItems: 'flex-start' }}>
           
           <Card style={{ flex: 1, padding: 'var(--space-8)', position: 'relative' }}>
             

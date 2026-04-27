@@ -1,28 +1,21 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { readJson, isObject } from './safeJson';
+import { describe, it, expect } from 'vitest';
+import { parseJson, isObject } from './safeJson';
 
-describe('readJson', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  it('returns fallback on missing key', () => {
-    expect(readJson('missing', [1, 2], Array.isArray)).toEqual([1, 2]);
+describe('parseJson', () => {
+  it('returns fallback on empty input', () => {
+    expect(parseJson('', [1, 2], Array.isArray)).toEqual([1, 2]);
   });
 
   it('returns parsed value when valid', () => {
-    localStorage.setItem('t', JSON.stringify([3, 4]));
-    expect(readJson('t', [], Array.isArray)).toEqual([3, 4]);
+    expect(parseJson(JSON.stringify([3, 4]), [], Array.isArray)).toEqual([3, 4]);
   });
 
   it('returns fallback on invalid JSON', () => {
-    localStorage.setItem('bad', '{not json');
-    expect(readJson('bad', { ok: true }, isObject)).toEqual({ ok: true });
+    expect(parseJson('{not json', { ok: true }, isObject)).toEqual({ ok: true });
   });
 
   it('returns fallback when validator fails', () => {
-    localStorage.setItem('t', JSON.stringify({ a: 1 }));
-    expect(readJson('t', [], Array.isArray)).toEqual([]);
+    expect(parseJson(JSON.stringify({ a: 1 }), [], Array.isArray)).toEqual([]);
   });
 });
 

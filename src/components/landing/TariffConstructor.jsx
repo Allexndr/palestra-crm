@@ -27,14 +27,13 @@ export const TariffConstructor = () => {
   const selectedFeatures = ['core'];
 
   const handleConnect = () => {
-    const config = {
-      selectedFeatures,
-      totalPrice,
-      basePrice,
-      createdAt: new Date().toISOString(),
-    };
-    localStorage.setItem('palestra_pending_tariff', JSON.stringify(config));
-    navigate('/auth/register');
+    const params = new URLSearchParams({
+      tariff: 'base',
+      features: selectedFeatures.join(','),
+      total: String(totalPrice),
+      base: String(basePrice),
+    });
+    navigate(`/auth/register?${params.toString()}`);
   };
 
   return (
@@ -59,24 +58,26 @@ export const TariffConstructor = () => {
         </div>
       </div>
 
-      <div className="tariff-constructor__base">
-        <div className="tariff-constructor__base-badge" aria-hidden>
-          {CORE_FEATURE.icon}
+      <div className="tariff-constructor__included">
+        <div className="tariff-constructor__base">
+          <div className="tariff-constructor__base-badge" aria-hidden>
+            {CORE_FEATURE.icon}
+          </div>
+          <div>
+            <h3 className="tariff-constructor__base-name">{CORE_FEATURE.label}</h3>
+            <p className="tariff-constructor__base-desc">{CORE_FEATURE.desc}</p>
+          </div>
         </div>
-        <div>
-          <h3 className="tariff-constructor__base-name">{CORE_FEATURE.label}</h3>
-          <p className="tariff-constructor__base-desc">{CORE_FEATURE.desc}</p>
-        </div>
-      </div>
 
-      <ul className="tariff-constructor__list" aria-label="Что входит в тариф">
-        {INCLUDED_ITEMS.map((item) => (
-          <li key={item} className="tariff-constructor__item">
-            <CheckCircle2 size={18} strokeWidth={2.3} aria-hidden />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
+        <ul className="tariff-constructor__list" aria-label="Что входит в тариф">
+          {INCLUDED_ITEMS.map((item) => (
+            <li key={item} className="tariff-constructor__item">
+              <CheckCircle2 size={18} strokeWidth={2.3} aria-hidden />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <div className="tariff-constructor__footer">
         <button type="button" className="tariff-constructor__cta" onClick={handleConnect}>

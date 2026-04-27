@@ -1,9 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { readJson, isObject } from '../utils/safeJson';
 
 const AdminContext = createContext();
 
 export const useAdmin = () => useContext(AdminContext);
+
+const daysAgo = (days) => new Date(Date.parse(new Date().toISOString()) - 86400000 * days).toISOString();
+
+function createId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
+    (Number(c) ^ (Math.random() * 16 >> (Number(c) / 4))).toString(16)
+  );
+}
 
 const defaultMembers = [
   { id: 'm1', firstName: 'Артем', lastName: 'Иванов', login: 'student', parentId: 'p1', groupId: 'g1', points: 450, level: 'Опытный', sport: 'Бокс', plan: 'Стандарт', strength: 75, speed: 80, technique: 65, endurance: 90, avatar: 'https://i.pravatar.cc/150?img=12' },
@@ -29,8 +39,8 @@ const defaultSchedule = [
 
 const defaultAttendance = [
   { id: 'att1', sessionId: 's1', memberIds: ['m1', 'm2'], date: new Date().toISOString() },
-  { id: 'att2', sessionId: 's1', memberIds: ['m1'], date: new Date(Date.now() - 86400000 * 3).toISOString() },
-  { id: 'att3', sessionId: 's1', memberIds: ['m2'], date: new Date(Date.now() - 86400000 * 5).toISOString() },
+  { id: 'att2', sessionId: 's1', memberIds: ['m1'], date: daysAgo(3) },
+  { id: 'att3', sessionId: 's1', memberIds: ['m2'], date: daysAgo(5) },
 ];
 
 const defaultAchievements = [
@@ -38,8 +48,8 @@ const defaultAchievements = [
     id: 'ach1',
     title: 'Железный кулак',
     desc: '10 тренировок подряд',
-    color: '#EEF2FF',
-    iconColor: '#4338CA',
+    color: '#E8ECFA',
+    iconColor: '#3146A6',
     memberIds: ['m1'],
   },
   {
@@ -47,13 +57,13 @@ const defaultAchievements = [
     title: 'Вечный двигатель',
     desc: 'Лучшая выносливость месяца',
     color: '#ECFDF5',
-    iconColor: '#10B981',
+    iconColor: '#159A74',
     memberIds: ['m1', 'm2'],
   },
 ];
 
 function normalizeFinances(v) {
-  if (!isObject(v)) return { revenue: 0, transactions: [] };
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return { revenue: 0, transactions: [] };
   return {
     revenue: typeof v.revenue === 'number' ? v.revenue : 0,
     transactions: Array.isArray(v.transactions) ? v.transactions : [],
@@ -61,8 +71,8 @@ function normalizeFinances(v) {
 }
 
 function normalizeClubInfo(v) {
-  if (!isObject(v)) {
-    return { name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#4338ca' };
+  if (!v || typeof v !== 'object' || Array.isArray(v)) {
+    return { name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' };
   }
   const logo =
     typeof v.logo === 'string' && v.logo.trim() ? v.logo.trim() : '/palestra-logo-nav-full.png';
@@ -73,12 +83,12 @@ function normalizeClubInfo(v) {
   return {
     name: typeof v.name === 'string' && v.name.trim() ? v.name.trim() : 'Palestra Fight Club',
     logo: normalizedLogo,
-    primaryColor: typeof v.primaryColor === 'string' ? v.primaryColor : '#4338ca',
+    primaryColor: typeof v.primaryColor === 'string' ? v.primaryColor : '#3146A6',
   };
 }
 
 function normalizeMonthlyAward(v) {
-  if (!isObject(v)) return { title: '', description: '', daysLeft: 0 };
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return { title: '', description: '', daysLeft: 0 };
   return {
     title: v.title != null ? String(v.title) : '',
     description: v.description != null ? String(v.description) : '',
@@ -90,7 +100,7 @@ function normalizeMonthlyAward(v) {
 function normalizeScheduleList(arr) {
   if (!Array.isArray(arr)) return arr;
   return arr.map((row) => {
-    if (!isObject(row)) return row;
+    if (!row || typeof row !== 'object' || Array.isArray(row)) return row;
     if (!row.day && Array.isArray(row.days) && row.days[0]) {
       return { ...row, day: row.days[0] };
     }
@@ -129,68 +139,113 @@ function ensureAchievementFixtures(arr) {
 }
 
 export const AdminProvider = ({ children }) => {
-  const [members, setMembers] = useState(() => ensureDemoMembers(readJson('palestra_members', defaultMembers, (v) => Array.isArray(v))));
-  const [leads, setLeads] = useState(() => readJson('palestra_leads', defaultLeads, (v) => Array.isArray(v)));
-  const [schedule, setSchedule] = useState(() => {
-    const raw = readJson('palestra_schedule', defaultSchedule, (v) => Array.isArray(v));
-    return normalizeScheduleList(raw);
-  });
-  const [locations, setLocations] = useState(() => readJson('palestra_locations', [
+  const [isStateReady, setIsStateReady] = useState(false);
+  const [members, setMembers] = useState(() => ensureDemoMembers(defaultMembers));
+  const [leads, setLeads] = useState(defaultLeads);
+  const [schedule, setSchedule] = useState(() => normalizeScheduleList(defaultSchedule));
+  const [locations, setLocations] = useState([
     { id: '1', name: 'Центральный зал', address: 'ул. Абая, 10', isActive: true }
-  ], (v) => Array.isArray(v)));
-  const [groups, setGroups] = useState(() => readJson('palestra_groups', [
+  ]);
+  const [groups, setGroups] = useState([
     { id: 'g1', name: 'Младшая группа (Бокс)', coachId: 'c1', sport: 'Бокс', locationId: '1' }
-  ], (v) => Array.isArray(v)));
-  const [activities, setActivities] = useState(() => readJson('palestra_activities', [
+  ]);
+  const [activities, setActivities] = useState([
     { id: 'a1', text: 'Артем Иванов получил ачивку "Первая кровь"', type: 'success', date: new Date().toISOString() },
     { id: 'a2', text: 'Новая оплата от Марина С.', type: 'info', date: new Date().toISOString() }
-  ], (v) => Array.isArray(v)));
+  ]);
   const [sports] = useState([
     'Бокс', 'ММА', 'Бразильское джиу-джитсу', 'Каратэ', 'Дзюдо', 'Кикбоксинг', 'Грэпплинг', 'Тайский бокс'
   ]);
-  const [leagues, setLeagues] = useState(() => readJson('palestra_leagues', [], (v) => Array.isArray(v)));
-  const [plans, setPlans] = useState(() => readJson('palestra_plans', [], (v) => Array.isArray(v)));
-  const [posts, setPosts] = useState(() => readJson('palestra_posts', [], (v) => Array.isArray(v)));
-  const [coaches, setCoaches] = useState(() => readJson('palestra_coaches', [], (v) => Array.isArray(v)));
-  const [events, setEvents] = useState(() => readJson('palestra_events', [], (v) => Array.isArray(v)));
-  const [attendance, setAttendance] = useState(() => ensureAttendanceFixtures(readJson('palestra_attendance', defaultAttendance, (v) => Array.isArray(v))));
-  const [finances, setFinances] = useState(() => normalizeFinances(readJson('palestra_finances', { revenue: 0, transactions: [] }, (v) => isObject(v))));
+  const [leagues, setLeagues] = useState([]);
+  const [plans, setPlans] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [coaches, setCoaches] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [attendance, setAttendance] = useState(() => ensureAttendanceFixtures(defaultAttendance));
+  const [finances, setFinances] = useState(() => normalizeFinances({ revenue: 0, transactions: [] }));
 
-  const [achievements, setAchievements] = useState(() => ensureAchievementFixtures(readJson('palestra_achievements', defaultAchievements, (v) => Array.isArray(v))));
+  const [achievements, setAchievements] = useState(() => ensureAchievementFixtures(defaultAchievements));
 
-  const [monthlyAward, setMonthlyAward] = useState(() => normalizeMonthlyAward(readJson('palestra_monthly_award', { title: '', description: '', daysLeft: 0 }, (v) => isObject(v))));
+  const [monthlyAward, setMonthlyAward] = useState(() => normalizeMonthlyAward({ title: '', description: '', daysLeft: 0 }));
 
-  const [selectedLocationId, setSelectedLocationId] = useState(() => localStorage.getItem('palestra_selected_location') || 'all');
-  const [clubInfo, setClubInfo] = useState(() => normalizeClubInfo(readJson('palestra_club_info', { name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#4338ca' }, (v) => isObject(v))));
-  const [user, setUser] = useState(() => readJson('palestra_user', null, (v) => v === null || isObject(v)));
+  const [selectedLocationId, setSelectedLocationId] = useState('all');
+  const [clubInfo, setClubInfo] = useState(() => normalizeClubInfo({ name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#4338ca' }));
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem('palestra_members', JSON.stringify(members));
-    localStorage.setItem('palestra_leads', JSON.stringify(leads));
-    localStorage.setItem('palestra_schedule', JSON.stringify(schedule));
-    localStorage.setItem('palestra_locations', JSON.stringify(locations));
-    localStorage.setItem('palestra_groups', JSON.stringify(groups));
-    localStorage.setItem('palestra_leagues', JSON.stringify(leagues));
-    localStorage.setItem('palestra_plans', JSON.stringify(plans));
-    localStorage.setItem('palestra_posts', JSON.stringify(posts));
-    localStorage.setItem('palestra_coaches', JSON.stringify(coaches));
-    localStorage.setItem('palestra_events', JSON.stringify(events));
-    localStorage.setItem('palestra_attendance', JSON.stringify(attendance));
-    localStorage.setItem('palestra_finances', JSON.stringify(finances));
-    localStorage.setItem('palestra_achievements', JSON.stringify(achievements));
-    localStorage.setItem('palestra_monthly_award', JSON.stringify(monthlyAward));
-    localStorage.setItem('palestra_activities', JSON.stringify(activities));
-    localStorage.setItem('palestra_selected_location', selectedLocationId);
-    localStorage.setItem('palestra_club_info', JSON.stringify(clubInfo));
-    if (user) localStorage.setItem('palestra_user', JSON.stringify(user));
-    else localStorage.removeItem('palestra_user');
-  }, [members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, user, selectedLocationId, clubInfo, activities]);
+    let cancelled = false;
+
+    async function hydrate() {
+      try {
+        const [meResponse, stateResponse] = await Promise.all([
+          fetch('/api/auth/me', { credentials: 'include' }),
+          fetch('/api/app/state', { credentials: 'include' }),
+        ]);
+        const meData = meResponse.ok ? await meResponse.json() : {};
+        const stateData = stateResponse.ok ? await stateResponse.json() : {};
+        const remote = stateData.state || {};
+
+        if (cancelled) return;
+
+        setMembers(ensureDemoMembers(remote.members));
+        setLeads(Array.isArray(remote.leads) ? remote.leads : defaultLeads);
+        setSchedule(normalizeScheduleList(Array.isArray(remote.schedule) ? remote.schedule : defaultSchedule));
+        setLocations(Array.isArray(remote.locations) ? remote.locations : [{ id: '1', name: 'Центральный зал', address: 'ул. Абая, 10', isActive: true }]);
+        setGroups(Array.isArray(remote.groups) ? remote.groups : [{ id: 'g1', name: 'Младшая группа (Бокс)', coachId: 'c1', sport: 'Бокс', locationId: '1' }]);
+        setActivities(Array.isArray(remote.activities) ? remote.activities : []);
+        setLeagues(Array.isArray(remote.leagues) ? remote.leagues : []);
+        setPlans(Array.isArray(remote.plans) ? remote.plans : []);
+        setPosts(Array.isArray(remote.posts) ? remote.posts : []);
+        setCoaches(Array.isArray(remote.coaches) ? remote.coaches : []);
+        setEvents(Array.isArray(remote.events) ? remote.events : []);
+        setAttendance(ensureAttendanceFixtures(remote.attendance));
+        setFinances(normalizeFinances(remote.finances));
+        setAchievements(ensureAchievementFixtures(remote.achievements));
+        setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
+        setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
+        setClubInfo(normalizeClubInfo(remote.clubInfo));
+        setUser(meData.user || null);
+      } catch (error) {
+        console.error('Failed to hydrate Palestra state', error);
+      } finally {
+        if (!cancelled) setIsStateReady(true);
+      }
+    }
+
+    hydrate();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isStateReady) return;
+
+    const controller = new AbortController();
+    const state = {
+      members, leads, schedule, locations, groups, activities, leagues, plans, posts,
+      coaches, events, attendance, finances, achievements, monthlyAward,
+      selectedLocationId, clubInfo,
+    };
+
+    fetch('/api/app/state', {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ state }),
+      signal: controller.signal,
+    }).catch((error) => {
+      if (error.name !== 'AbortError') console.error('Failed to persist Palestra state', error);
+    });
+
+    return () => controller.abort();
+  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, selectedLocationId, clubInfo, activities, coaches]);
 
   // --- ACTIONS ---
 
   const logActivity = (text, type = 'info') => {
     const newActivity = {
-      id: Date.now().toString(),
+      id: createId(),
       text,
       type,
       date: new Date().toISOString()
@@ -199,7 +254,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   const addGroup = (group) => {
-    const newGroup = { ...group, id: Date.now().toString() };
+    const newGroup = { ...group, id: createId() };
     setGroups([...groups, newGroup]);
     logActivity(`Создана новая группа: ${group.name}`, 'info');
   };
@@ -218,7 +273,7 @@ export const AdminProvider = ({ children }) => {
   const addLeague = (leagueData) => {
     const newLeague = { 
       ...leagueData, 
-      id: Date.now().toString(), 
+      id: createId(), 
       status: 'active',
       participantIds: leagueData.participantIds || [],
       groupIds: leagueData.groupIds || []
@@ -241,31 +296,42 @@ export const AdminProvider = ({ children }) => {
     setLeagues(prev => prev.map(l => l.id === id ? { ...l, ...updatedData } : l));
   };
 
-  const login = (role) => {
-    const userData = {
-      role,
-      id: role === 'parent' ? 'p1' : role === 'student' ? 'm1' : role === 'coach' ? 'c1' : 'admin1',
-      login: role,
-      name: role === 'admin' ? 'Администратор' : role === 'coach' ? 'Тренер' : role === 'parent' ? 'Александр Иванов' : 'Артем Иванов',
-      email: `${role}@palestra.fit`
-    };
-    setUser(userData);
-    logActivity(`Вход в систему: ${userData.name}`, 'info');
-    return userData;
+  const login = async (credentialsOrRole) => {
+    const payload = typeof credentialsOrRole === 'string'
+      ? { role: credentialsOrRole, email: `${credentialsOrRole}@palestra.fit`, password: `${credentialsOrRole}123` }
+      : credentialsOrRole;
+
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Не удалось войти');
+    }
+
+    setUser(data.user);
+    logActivity(`Вход в систему: ${data.user.name}`, 'info');
+    return data.user;
   };
 
-  const logout = () => {
+  const logout = async () => {
     if (user) logActivity(`Выход из системы: ${user.name}`, 'info');
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
     setUser(null);
   };
 
   const addMember = (memberData) => {
     const newMember = { 
-      id: Date.now().toString(), 
+      id: createId(), 
       createdAt: new Date().toISOString(), 
       points: 0, 
       level: 'Новичок',
-      avatar: `https://i.pravatar.cc/150?u=${Date.now()}`,
+      parentId: memberData.hasParent ? createId() : memberData.parentId,
+      avatar: '',
       ...memberData 
     };
     setMembers(prev => [...prev, newMember]);
@@ -286,7 +352,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   const addLead = (leadData) => {
-    const newLead = { id: Date.now().toString(), status: 'new', createdAt: new Date().toISOString(), ...leadData };
+    const newLead = { id: createId(), status: 'new', createdAt: new Date().toISOString(), ...leadData };
     setLeads(prev => [...prev, newLead]);
     logActivity(`Новый лид с сайта: ${leadData.name}`, 'info');
   };
@@ -298,7 +364,7 @@ export const AdminProvider = ({ children }) => {
   const removeLead = (id) => setLeads(prev => prev.filter(l => l.id !== id));
 
   const addScheduleItem = (itemData) => {
-    const newItem = { id: Date.now().toString(), color: '#4338ca', ...itemData };
+    const newItem = { id: createId(), color: '#4338ca', ...itemData };
     setSchedule(prev => [...prev, newItem]);
     logActivity(`Добавлена тренировка в расписание: ${itemData.groupName}`, 'info');
   };
@@ -312,13 +378,13 @@ export const AdminProvider = ({ children }) => {
   };
 
   const addLocation = (locData) => {
-    const newLoc = { id: Date.now().toString(), isActive: true, ...locData };
+    const newLoc = { id: createId(), isActive: true, ...locData };
     setLocations(prev => [...prev, newLoc]);
     logActivity(`Добавлен новый филиал: ${locData.name}`, 'info');
   };
 
   const addPlan = (planData) => {
-    const newPlan = { id: Date.now().toString(), ...planData };
+    const newPlan = { id: createId(), ...planData };
     setPlans(prev => [...prev, newPlan]);
   };
 
@@ -328,7 +394,7 @@ export const AdminProvider = ({ children }) => {
 
   const addPost = (postData) => {
     const newPost = { 
-      id: Date.now().toString(), 
+      id: createId(), 
       date: new Date().toISOString(), 
       likes: 0, 
       likedBy: [],
@@ -360,7 +426,7 @@ export const AdminProvider = ({ children }) => {
   const addComment = (postId, text) => {
     if (!user) return;
     const comment = {
-      id: Date.now().toString(),
+      id: createId(),
       author: user.name,
       text,
       date: new Date().toISOString()
@@ -374,7 +440,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   const addCoach = (coachData) => {
-    const newCoach = { id: Date.now().toString(), createdAt: new Date().toISOString(), ...coachData };
+    const newCoach = { id: createId(), createdAt: new Date().toISOString(), ...coachData };
     setCoaches(prev => [...prev, newCoach]);
     logActivity(`Зарегистрирован тренер: ${coachData.name}`, 'success');
   };
@@ -386,7 +452,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   const addEvent = (eventData) => {
-    const newEvent = { id: Date.now().toString(), participantIds: [], status: 'open', ...eventData };
+    const newEvent = { id: createId(), participantIds: [], status: 'open', ...eventData };
     setEvents(prev => [...prev, newEvent]);
     logActivity(`Создано событие: ${eventData.title}`, 'info');
   };
@@ -401,7 +467,7 @@ export const AdminProvider = ({ children }) => {
 
   const markAttendance = (classId, memberIds) => {
     const record = {
-      id: Date.now().toString(),
+      id: createId(),
       classId,
       date: new Date().toISOString(),
       memberIds
@@ -421,7 +487,7 @@ export const AdminProvider = ({ children }) => {
   const addTransaction = (transactionData) => {
     setFinances((prev) => {
       const safe = normalizeFinances(prev);
-      const newTransaction = { id: Date.now().toString(), date: new Date().toISOString(), ...transactionData };
+      const newTransaction = { id: createId(), date: new Date().toISOString(), ...transactionData };
       const newRevenue = transactionData.type === 'income' ? safe.revenue + transactionData.amount : safe.revenue - transactionData.amount;
       return { revenue: newRevenue, transactions: [newTransaction, ...safe.transactions] };
     });
@@ -453,7 +519,7 @@ export const AdminProvider = ({ children }) => {
 
   const addAchievement = (achData) => {
     const newAch = { 
-      id: Date.now().toString(), 
+      id: createId(), 
       title: '', 
       desc: '', 
       icon: 'Trophy', 
@@ -469,11 +535,24 @@ export const AdminProvider = ({ children }) => {
     setAchievements(prev => prev.filter(a => a.id !== id));
   };
 
-  const resetData = () => {
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('palestra_')) localStorage.removeItem(key);
-    });
-    window.location.reload();
+  const resetData = async () => {
+    setMembers(ensureDemoMembers(defaultMembers));
+    setLeads(defaultLeads);
+    setSchedule(normalizeScheduleList(defaultSchedule));
+    setLocations([{ id: '1', name: 'Центральный зал', address: 'ул. Абая, 10', isActive: true }]);
+    setGroups([{ id: 'g1', name: 'Младшая группа (Бокс)', coachId: 'c1', sport: 'Бокс', locationId: '1' }]);
+    setActivities([]);
+    setLeagues([]);
+    setPlans([]);
+    setPosts([]);
+    setCoaches([]);
+    setEvents([]);
+    setAttendance(ensureAttendanceFixtures(defaultAttendance));
+    setFinances({ revenue: 0, transactions: [] });
+    setAchievements(ensureAchievementFixtures(defaultAchievements));
+    setMonthlyAward({ title: '', description: '', daysLeft: 0 });
+    setSelectedLocationId('all');
+    setClubInfo(normalizeClubInfo({ name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' }));
   };
 
   const value = {

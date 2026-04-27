@@ -5,11 +5,12 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2 } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
+import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Settings = () => {
   const { 
     locations, addLocation, plans, addPlan, removePlan, clubInfo, setClubInfo, 
-    achievements, setAchievements, monthlyAward, updateMonthlyAward, resetData 
+    achievements, addAchievement, removeAchievement, monthlyAward, updateMonthlyAward, resetData 
   } = useAdmin();
   const [activeTab, setActiveTab] = useState('club');
   
@@ -20,10 +21,27 @@ export const Settings = () => {
   const [newPlan, setNewPlan] = useState({ name: '', price: '', visits: '12', description: '' });
   const [planToDelete, setPlanToDelete] = useState(null);
   const [tempClubInfo, setTempClubInfo] = useState(clubInfo);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
   const handleUpdateClubInfo = (e) => {
     e.preventDefault();
     setClubInfo(tempClubInfo);
+  };
+
+  const handleLogoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingLogo(true);
+    try {
+      const url = await uploadBlobFile(file, 'club-logo');
+      setTempClubInfo((prev) => ({ ...prev, logo: url }));
+    } catch (error) {
+      alert(error.message || 'Не удалось загрузить логотип');
+    } finally {
+      setIsUploadingLogo(false);
+      event.target.value = '';
+    }
   };
 
   const handleAddLocation = (e) => {
@@ -92,7 +110,11 @@ export const Settings = () => {
               <div className="mb-12 flex items-center gap-8">
                 <div style={{ position: 'relative' }}>
                   <div style={{ width: 100, height: 100, borderRadius: '50%', backgroundColor: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--color-border)' }}>
-                    <span style={{ fontSize: '40px' }}>{tempClubInfo.logo || '🥊'}</span>
+                    {tempClubInfo.logo ? (
+                      <img src={tempClubInfo.logo} alt="" style={{ width: '80%', height: '80%', objectFit: 'contain' }} />
+                    ) : (
+                      <span style={{ fontSize: '40px' }}>🥊</span>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -109,11 +131,10 @@ export const Settings = () => {
                     onChange={e => setTempClubInfo({...tempClubInfo, name: e.target.value})} 
                   />
                   <div className="input-group">
-                    <label className="input-label">Эмодзи-логотип</label>
-                    <Input 
-                      value={tempClubInfo.logo} 
-                      onChange={e => setTempClubInfo({...tempClubInfo, logo: e.target.value})} 
-                    />
+                    <label className="input-label">Логотип клуба</label>
+                    <input className="input-field" type="file" accept="image/*" onChange={handleLogoUpload} />
+                    {isUploadingLogo && <p className="text-xs text-muted mt-2">Загрузка в Blob...</p>}
+                    {tempClubInfo.logo && <p className="text-xs text-primary mt-2">Логотип загружен</p>}
                   </div>
                 </div>
                 
@@ -243,7 +264,7 @@ export const Settings = () => {
                        const title = prompt('Название достижения:');
                        const desc = prompt('Описание достижения:');
                        if (title && desc) {
-                         setAchievements([...achievements, { id: Date.now().toString(), title, desc, icon: 'Trophy', color: 'var(--color-primary-soft)', iconColor: 'var(--color-primary)' }]);
+                         addAchievement({ title, desc, icon: 'Trophy', color: 'var(--color-primary-soft)', iconColor: 'var(--color-primary)' });
                        }
                     }}>+ Добавить</Button>
                   </h5>
@@ -262,7 +283,7 @@ export const Settings = () => {
                           </div>
                         </div>
                         <Button variant="ghost" size="sm" className="text-danger" onClick={() => {
-                          setAchievements(achievements.filter(a => a.id !== ach.id));
+                          removeAchievement(ach.id);
                         }}>Удалить</Button>
                       </div>
                     ))}

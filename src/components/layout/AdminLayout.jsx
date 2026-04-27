@@ -76,7 +76,7 @@ export const AdminLayout = () => {
         <main
           id="main-content"
           tabIndex={-1}
-          style={{ flex: 1, padding: 'var(--space-8) var(--space-8) 80px var(--space-8)', overflowY: 'auto', minWidth: 0, outline: 'none' }}
+          className="admin-main"
         >
           <div className="admin-container">
             <Outlet />

@@ -4,12 +4,14 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Plus, Users, Search, Trash2, Edit2, Camera, Phone, Mail, Award, MapPin } from 'lucide-react';
+import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Coaches = () => {
   const { coaches, addCoach, removeCoach, updateCoach, locations, sports } = useAdmin();
   const [isAdding, setIsAdding] = useState(false);
   const [editingCoachId, setEditingCoachId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   const initialFormState = {
     firstName: '',
@@ -45,6 +47,22 @@ export const Coaches = () => {
     setEditingCoachId(coach.id);
     setIsAdding(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAvatarUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingAvatar(true);
+    try {
+      const url = await uploadBlobFile(file, 'coach-avatars');
+      setFormData((prev) => ({ ...prev, avatar: url }));
+    } catch (error) {
+      alert(error.message || 'Не удалось загрузить фото тренера');
+    } finally {
+      setIsUploadingAvatar(false);
+      event.target.value = '';
+    }
   };
 
   const filteredCoaches = coaches.filter(c => 
@@ -112,6 +130,13 @@ export const Coaches = () => {
               />
             </div>
 
+            <div className="input-group">
+              <label className="input-label">Фото тренера</label>
+              <input className="input-field" type="file" accept="image/*" onChange={handleAvatarUpload} />
+              {isUploadingAvatar && <p className="text-xs text-muted mt-2">Загрузка в Blob...</p>}
+              {formData.avatar && <p className="text-xs text-primary mt-2">Фото загружено</p>}
+            </div>
+
             <div className="flex justify-end gap-4 border-t pt-8">
               <Button variant="ghost" type="button" onClick={() => { setIsAdding(false); setEditingCoachId(null); }}>Отмена</Button>
               <Button variant="primary" type="submit" style={{ minWidth: '180px' }}>
@@ -154,7 +179,11 @@ export const Coaches = () => {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '24px', fontWeight: 'bold'
                 }}>
-                  {coach.firstName[0]}
+                  {coach.avatar ? (
+                    <img src={coach.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 20 }} />
+                  ) : (
+                    coach.firstName[0]
+                  )}
                 </div>
                 <div>
                   <h4 className="font-bold text-lg">{coach.firstName} {coach.lastName}</h4>

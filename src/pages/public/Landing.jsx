@@ -47,10 +47,6 @@ const FEATURES = [
 
 const ROLE_CARDS = [
   {
-    title: 'Владелец',
-    text: 'Видит загрузку филиалов, деньги, долги, активность групп и динамику удержания.',
-  },
-  {
     title: 'Администратор',
     text: 'Ведёт лиды, учеников, абонементы, расписание и переносы без ручной сверки в чатах.',
   },
@@ -59,8 +55,12 @@ const ROLE_CARDS = [
     text: 'Понимает состав группы, посещаемость, прогресс учеников и ближайшие тренировки.',
   },
   {
-    title: 'Родители и ученики',
-    text: 'Получают расписание, прогресс, достижения и понятную связь с клубом.',
+    title: 'Родитель',
+    text: 'Видит расписание ребёнка, посещаемость, достижения и важные сообщения от клуба.',
+  },
+  {
+    title: 'Ученик',
+    text: 'Следит за тренировками, прогрессом, рейтингом и личными достижениями в клубе.',
   },
 ];
 
@@ -108,6 +108,17 @@ const FAQ_ITEMS = [
   },
 ];
 
+const FOOTER_LINKS = [
+  { label: 'Возможности', href: '#features' },
+  { label: 'Роли', href: '#roles' },
+  { label: 'Безопасность', href: '#security' },
+  { label: 'Запуск', href: '#implementation' },
+  { label: 'Тариф', href: '#pricing' },
+  { label: 'FAQ', href: '#faq' },
+];
+
+const FOOTER_PRODUCT_ITEMS = ['CRM клуба', 'Расписание', 'Оплаты', 'Личный кабинет', 'Лига и прогресс'];
+
 export const Landing = () => {
   const heroCardRef = useRef(null);
 
@@ -143,14 +154,14 @@ export const Landing = () => {
     <div style={{ backgroundColor: 'var(--color-bg)', minHeight: '100vh', overflowX: 'hidden' }}>
       <div style={{ 
         position: 'absolute', top: '-20%', right: '-10%', width: '70vw', height: '70vw', 
-        background: 'radial-gradient(circle, rgba(67, 56, 202, 0.08) 0%, rgba(244, 245, 247, 0) 60%)', 
+        background: 'radial-gradient(circle, rgba(49, 70, 166, 0.08) 0%, rgba(245, 243, 239, 0) 60%)', 
         zIndex: 0, borderRadius: '50%' 
       }}></div>
 
       <Navbar />
       
       <main id="main-content" tabIndex={-1} style={{ position: 'relative', zIndex: 1, outline: 'none' }}>
-        <section style={{ padding: 'var(--space-24) 0 var(--space-16)' }} aria-label="Первый экран">
+        <section className="landing-hero" aria-label="Первый экран">
           <div className="container landing-hero-grid">
             
             <div className="animate-up">
@@ -193,7 +204,7 @@ export const Landing = () => {
                   backgroundColor: 'var(--color-text-primary)',
                   borderRadius: '32px',
                   padding: 'var(--space-6)',
-                  boxShadow: '0 25px 50px -12px rgba(67, 56, 202, 0.32)',
+                  boxShadow: '0 25px 50px -12px rgba(49, 70, 166, 0.28)',
                   border: '1px solid rgba(255,255,255,0.12)'
               }}
               >
@@ -202,7 +213,7 @@ export const Landing = () => {
                     <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800 }}>Сегодня в клубе</p>
                     <h3 style={{ color: '#fff', fontFamily: 'var(--font-family-display)', fontSize: 28, lineHeight: 1.1, margin: 0 }}>Palestra Almaty</h3>
                   </div>
-                  <ShieldCheck size={30} color="#10B981" aria-hidden />
+                  <ShieldCheck size={30} color="var(--color-success)" aria-hidden />
                 </div>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
@@ -221,9 +232,9 @@ export const Landing = () => {
                       <p style={{ color: '#fff', fontWeight: 800, margin: 0 }}>MMA Junior</p>
                       <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, margin: 0 }}>Зал 2 · тренер А. Карелин</p>
                     </div>
-                    <span style={{ color: '#10B981', fontWeight: 900 }}>24/28</span>
+                    <span style={{ color: 'var(--color-success)', fontWeight: 900 }}>24/28</span>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr auto', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: 'rgba(67, 56, 202, 0.72)', borderRadius: 18 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr auto', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: 'rgba(49, 70, 166, 0.76)', borderRadius: 18 }}>
                     <span style={{ color: '#fff', fontWeight: 800 }}>19:30</span>
                     <div>
                       <p style={{ color: '#fff', fontWeight: 800, margin: 0 }}>Boxing Pro</p>
@@ -238,11 +249,7 @@ export const Landing = () => {
           </div>
         </section>
 
-        <section
-          className="border-t"
-          style={{ padding: 'var(--space-16) 0', backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)' }}
-          aria-label="Преимущества"
-        >
+        <section className="landing-stats-strip" aria-label="Преимущества">
           <div className="container">
             <div
               className="flex flex-wrap justify-center"
@@ -264,9 +271,9 @@ export const Landing = () => {
 
         <section id="features" className="landing-section" aria-labelledby="features-heading">
           <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: 'var(--space-16)' }}>
-              <h2 id="features-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>Операционный контур клуба</h2>
-              <p className="text-body-lg" style={{ maxWidth: '640px', margin: '0 auto' }}>Не набор красивых экранов, а рабочие сценарии владельца, администратора, тренера и семьи ученика.</p>
+            <div className="landing-section-head">
+              <h2 id="features-heading" className="h2" style={{ textTransform: 'uppercase' }}>Операционный контур клуба</h2>
+              <p className="text-body-lg">Не набор красивых экранов, а рабочие сценарии владельца, администратора, тренера и семьи ученика.</p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-6)' }}>
@@ -357,11 +364,7 @@ export const Landing = () => {
           </div>
         </section>
 
-        <section
-          id="pricing"
-          style={{ padding: 'var(--space-12) 0', backgroundColor: 'var(--color-bg)' }}
-          aria-label="Тариф"
-        >
+        <section id="pricing" className="landing-pricing" aria-label="Тариф">
           <div className="container">
             <TariffConstructor />
           </div>
@@ -369,9 +372,9 @@ export const Landing = () => {
 
         <section id="faq" className="landing-section landing-section--surface" aria-labelledby="faq-heading">
           <div className="container">
-            <div style={{ textAlign: 'center', marginBottom: 'var(--space-12)' }}>
-              <span className="landing-eyebrow">Вопросы перед стартом</span>
-              <h2 id="faq-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>Что важно понять до запуска</h2>
+            <div className="landing-section-head">
+              <span className="landing-eyebrow" style={{ display: 'block', marginBottom: 'var(--space-3)' }}>Вопросы перед стартом</span>
+              <h2 id="faq-heading" className="h2" style={{ textTransform: 'uppercase' }}>Что важно понять до запуска</h2>
             </div>
 
             <div className="landing-faq-grid">
@@ -385,10 +388,10 @@ export const Landing = () => {
           </div>
         </section>
 
-        <section style={{ padding: 'var(--space-24) 0', textAlign: 'center', backgroundColor: 'var(--color-bg-secondary)', borderTop: '1px solid var(--color-border)' }}>
+        <section className="landing-cta" aria-label="Регистрация">
           <div className="container">
-            <h2 className="h1 mb-8" style={{ textTransform: 'uppercase' }}>Соберите клуб в одну систему</h2>
-            <p className="text-body-lg mb-8" style={{ maxWidth: 620, marginLeft: 'auto', marginRight: 'auto' }}>
+            <h2 className="landing-cta__title">Соберите клуб в одну систему</h2>
+            <p className="landing-cta__lead">
               Начните с базы: ученики, расписание, оплаты и личные кабинеты. Дальше расширяйте клуб без потери контроля.
             </p>
             <Link to="/auth/register">
@@ -397,6 +400,48 @@ export const Landing = () => {
           </div>
         </section>
       </main>
+
+      <footer className="landing-footer">
+        <div className="container">
+          <div className="landing-footer__grid">
+            <section className="landing-footer__brand" aria-label="О продукте Palestra">
+              <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную">
+                <img src="/palestra-logo-nav-full.png" alt="" decoding="async" />
+              </Link>
+              <p>
+                CRM-платформа для клубов единоборств: ученики, группы, расписание, оплаты и прогресс в одной системе.
+              </p>
+            </section>
+
+            <nav className="landing-footer__nav" aria-label="Навигация в футере">
+              <h2>Разделы</h2>
+              {FOOTER_LINKS.map((link) => (
+                <a key={link.href} href={link.href}>{link.label}</a>
+              ))}
+            </nav>
+
+            <section className="landing-footer__nav" aria-label="Что входит в Palestra">
+              <h2>Продукт</h2>
+              {FOOTER_PRODUCT_ITEMS.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </section>
+
+            <section className="landing-footer__cta" aria-label="Начать работу">
+              <h2>Готовы собрать клуб в систему?</h2>
+              <p>Начните с базового тарифа и подключайте команду без долгого внедрения.</p>
+              <Link to="/auth/register">Запустить Palestra</Link>
+            </section>
+          </div>
+
+          <div className="landing-footer__bottom">
+            <span>© 2026 Palestra CRM</span>
+            <a href="http://murdasoft.vercel.app/" target="_blank" rel="noreferrer">
+              Made by MurdaSoft
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
