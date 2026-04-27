@@ -552,7 +552,15 @@ export const AdminProvider = ({ children }) => {
     activities, logActivity,
     subscription, updateSubscription, usage, getLimitStatus, canUseFeature, getUpgradeMessage, ensureCanCreate,
     user, login, logout,
-    resetData
+    resetData, fetchClubState: async () => {
+      try {
+        const stateResponse = await fetch('/api/app/state', { credentials: 'include' });
+        const stateData = stateResponse.ok ? await stateResponse.json() : {};
+        if (stateData.state && stateData.state.subscription) {
+          setSubscription(normalizeSubscription(stateData.state.subscription));
+        }
+      } catch(e) { console.error('Failed to fetch club state', e); }
+    }
   };
 
   return (

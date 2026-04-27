@@ -13,15 +13,36 @@ export const Billing = () => {
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({ amount: '', type: 'income', description: '' });
 
-  if (!canUseFeature('finance')) {
-    return (
-      <LockedFeature
-        title="Финансы доступны в расширенном тарифе"
-        description={getUpgradeMessage('feature', 'Финансовый модуль')}
-        onConfigure={() => navigate('/admin/settings')}
-      />
-    );
-  }
+  const handlePayTariff = async (tariffId, amount) => {
+    try {
+      const res = await fetch('/api/billing/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clubId: clubInfo?.id || 'demo_club_id',
+          tariffId,
+          amount
+        })
+      });
+      const data = await res.json();
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      } else {
+        console.error('No payment URL returned');
+        alert('Ошибка при создании сессии оплаты');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Ошибка при соединении с сервером');
+    }
+  };
+
+  // В реальном приложении статус подписки берется из базы
+  const currentSubscription = {
+    status: 'active',
+    tariff: 'base',
+    expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+  };
 
   // Simple stats
   const totalIncome = finances.transactions
@@ -63,7 +84,39 @@ export const Billing = () => {
         </div>
       </div>
 
-      {isAdding && (
+      <div className="mb-8">
+        <h2 className="text-sm font-bold uppercase text-slate-400 tracking-widest mb-4">Подписка Palestra CRM</h2>
+        <Card style={{ padding: '32px', borderLeft: '6px solid var(--color-primary)' }} className="shadow-sm">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h3 className="h3 m-0">Тариф «Базовый»</h3>
+                <span className="text-[10px] font-bold uppercase px-2 py-1 rounded bg-green-100 text-green-700">Активен</span>
+              </div>
+              <p className="text-sm text-muted">Оплачено до: <b>{new Date(currentSubscription.expiresAt).toLocaleDateString()}</b></p>
+            </div>
+            <div className="flex gap-4 w-full md:w-auto">
+              <Button variant="outline" onClick={() => handlePayTariff('pro', 15000)} style={{ flex: 1 }}>
+                Перейти на PRO
+              </Button>
+              <Button variant="primary" onClick={() => handlePayTariff('base', 9000)} style={{ flex: 1 }}>
+                Продлить (9000 ₸)
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <h2 className="text-sm font-bold uppercase text-slate-400 tracking-widest mb-4 mt-12">Финансы клуба</h2>
+      {!canUseFeature('finance') ? (
+        <LockedFeature
+          title="Финансы доступны в тарифе PRO"
+          description={getUpgradeMessage('feature', 'Финансовый модуль')}
+          onConfigure={() => handlePayTariff('pro', 15000)}
+        />
+      ) : (
+        <>
+          {isAdding && (
         <Card className="admin-section-card animate-up" style={{ border: '1px solid var(--color-primary)' }}>
           <h4 className="h4 mb-8">Добавить транзакцию</h4>
           <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-6 items-end">
@@ -204,6 +257,8 @@ export const Billing = () => {
           </div>
         </Card>
       </div>
+      </>
+      )}
 
       <style>{`
         @media (max-width: 1024px) {

@@ -28,6 +28,8 @@ const MemberDetail = lazy(() => import('./pages/admin/MemberDetail').then((m) =>
 const GroupForm = lazy(() => import('./pages/admin/GroupForm').then((m) => ({ default: m.GroupForm })));
 const GroupDetail = lazy(() => import('./pages/admin/GroupDetail').then((m) => ({ default: m.GroupDetail })));
 const Shop = lazy(() => import('./pages/admin/Shop').then((m) => ({ default: m.Shop })));
+const BillingSuccess = lazy(() => import('./pages/admin/BillingSuccess').then((m) => ({ default: m.BillingSuccess })));
+const BillingFailure = lazy(() => import('./pages/admin/BillingFailure').then((m) => ({ default: m.BillingFailure })));
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
               <Route path="/" element={<Landing />} />
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/register" element={<RegisterClub />} />
+              <Route path="/billing/success" element={<BillingSuccess />} />
+              <Route path="/billing/failure" element={<BillingFailure />} />
 
               <Route path="/admin" element={<AdminRoleGuard />}>
                 <Route element={<AdminLayout />}>
