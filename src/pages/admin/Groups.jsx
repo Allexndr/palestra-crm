@@ -14,9 +14,9 @@ export const Groups = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-12 flex justify-between items-center">
-        <div>
-          <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>Группы и секции</h1>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h2">Группы и секции</h1>
           <p className="text-secondary text-lg">Управление тренировочными группами и составом учеников</p>
         </div>
         <Link to="/admin/groups/new">
@@ -26,7 +26,7 @@ export const Groups = () => {
         </Link>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-8)' }}>
+      <div className="admin-card-grid">
         {groups.map(group => {
           const location = locations.find(l => l.id === group.locationId);
           const groupMembers = members.filter(m => m.groupId === group.id);

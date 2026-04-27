@@ -46,10 +46,7 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      <div
-        className="dashboard-stat-grid"
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}
-      >
+      <div className="dashboard-stat-grid admin-kpi-grid">
         <Card className="flex items-center gap-4 card-hover shadow-slate-100 border-none" style={{ padding: 'var(--space-4) var(--space-6)' }}>
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-indigo-50 text-primary" style={{ flexShrink: 0 }}>
             <Users size={24} />
@@ -162,7 +159,7 @@ export const Dashboard = () => {
             </div>
           </Card>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+          <div className="admin-card-grid">
              <EventCarousel isAdmin={isAdmin} />
 
              <Card className="card-hover border-none shadow-xl shadow-slate-100" style={{ minHeight: '200px' }}>

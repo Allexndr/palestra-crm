@@ -161,10 +161,10 @@ export const Schedule = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-      <div className="mb-12 flex flex-col lg:flex-row justify-between items-start gap-6">
-        <div style={{ flex: 1 }}>
+      <div className="admin-page-header">
+        <div className="page-title-block page-title-block--row" style={{ flex: 1 }}>
           <div className="flex items-center gap-4 mb-4">
-            <h1 className="h2 mb-0" style={{ fontFamily: 'var(--font-family-display)' }}>Расписание</h1>
+            <h1 className="h2 mb-0">Расписание</h1>
             <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl shadow-inner border border-slate-200">
               <button onClick={() => setWeekOffset(prev => prev - 1)} className="p-1.5 hover:bg-white rounded-xl transition-all border-none bg-transparent cursor-pointer shadow-sm"><ChevronLeft size={18}/></button>
               <span className="text-xs font-bold px-4">
@@ -190,7 +190,7 @@ export const Schedule = () => {
              </div>
           </div>
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="admin-page-actions">
           {isAdmin && (
             <Button variant="primary" onClick={() => { setIsAdding(!isAdding); setEditingId(null); }} style={{ gap: '10px', padding: '12px 24px', borderRadius: '16px' }}>
               <Plus size={20} /> Запланировать занятие
@@ -203,7 +203,7 @@ export const Schedule = () => {
         <Card className="mb-12 animate-up" style={{ border: '2px solid var(--color-primary)', boxShadow: 'var(--shadow-primary)' }}>
           <h4 className="h4 mb-8">{editingId ? 'Редактировать тренировку' : 'Запланировать новую тренировку'}</h4>
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+            <div className="admin-form-grid">
               <div className="input-group">
                 <label className="input-label">День недели</label>
                 <select className="input-field" value={formData.day} onChange={e => setFormData({...formData, day: e.target.value})}>

@@ -60,12 +60,14 @@ export const Settings = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-12">
-        <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>Настройки</h1>
-        <p className="text-secondary text-lg">Управление профилем клуба, персоналом и безопасностью</p>
+      <div className="admin-page-header">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h2">Настройки</h1>
+          <p className="text-secondary text-lg">Управление профилем клуба, персоналом и безопасностью</p>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: 'var(--space-8)' }}>
+      <div className="settings-layout">
         {/* Sidebar Tabs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
           {[
@@ -107,7 +109,7 @@ export const Settings = () => {
                 <Globe className="text-primary" /> Основная информация
               </h3>
               
-              <div className="mb-12 flex items-center gap-8">
+              <div className="settings-profile-head">
                 <div style={{ position: 'relative' }}>
                   <div style={{ width: 100, height: 100, borderRadius: '50%', backgroundColor: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--color-border)' }}>
                     {tempClubInfo.logo ? (
@@ -124,7 +126,7 @@ export const Settings = () => {
               </div>
 
               <form className="flex flex-col gap-6" onSubmit={handleUpdateClubInfo}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-6)' }}>
+                <div className="admin-form-grid">
                   <Input 
                     label="Название клуба" 
                     value={tempClubInfo.name} 
@@ -212,7 +214,7 @@ export const Settings = () => {
                 </Card>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-6)' }}>
+              <div className="admin-card-grid">
                 {plans.length === 0 ? (
                   <p className="text-center p-8 text-muted border-2 border-dashed rounded-xl" style={{ gridColumn: '1 / -1' }}>Абонементы не созданы</p>
                 ) : plans.map(plan => (

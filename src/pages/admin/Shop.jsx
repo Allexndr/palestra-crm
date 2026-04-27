@@ -102,13 +102,13 @@ export const Shop = () => {
 
   return (
     <div className="animate-fade-in pb-20">
-      <div className="flex flex-col lg:flex-row justify-between items-start gap-8 mb-12">
-        <div>
-          <h1 className="h1 mb-4" style={{ fontFamily: 'var(--font-family-display)' }}>Магазин клуба</h1>
+      <div className="admin-page-header">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h1">Магазин клуба</h1>
           <p className="text-secondary font-medium">Экипировка, защита и фирменный мерч Palestra</p>
         </div>
 
-        <div className="flex gap-4 items-center">
+        <div className="admin-page-actions">
           <div className="flex bg-slate-100 p-1.5 rounded-2xl shadow-inner border border-slate-200">
             {isAdmin && (
               <>
@@ -135,7 +135,7 @@ export const Shop = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 mb-12">
+      <div className="admin-toolbar">
         <div className="flex-1 relative">
            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
            <input 
@@ -168,7 +168,7 @@ export const Shop = () => {
              <button onClick={() => setIsAdding(false)} className="p-2 hover:bg-slate-100 rounded-full border-none bg-transparent cursor-pointer"><X size={20}/></button>
            </div>
            <form onSubmit={handleAddProduct} className="flex flex-col gap-8">
-             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
+             <div className="admin-form-grid">
                <Input label="Название" placeholder="Перчатки Boxing Pro" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                <Input label="Цена (₸)" type="number" required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
                <div className="input-group">
@@ -203,7 +203,7 @@ export const Shop = () => {
       )}
 
       {activeTab === 'products' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '32px' }}>
+        <div className="admin-card-grid">
           {filteredProducts.map(product => (
             <Card key={product.id} className="p-0 overflow-hidden card-hover group h-full flex flex-col">
                <div style={{ height: '240px', backgroundColor: 'var(--color-bg)', position: 'relative', overflow: 'hidden' }}>
@@ -245,7 +245,7 @@ export const Shop = () => {
       )}
 
       {activeTab === 'browse' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '32px' }}>
+        <div className="admin-card-grid">
           {filteredProducts.map(product => (
             <Card key={product.id} className="p-0 overflow-hidden card-hover h-full flex flex-col border-none shadow-xl shadow-slate-100">
                <div style={{ height: '280px', backgroundColor: 'var(--color-bg)', position: 'relative' }}>

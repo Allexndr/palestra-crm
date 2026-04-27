@@ -72,9 +72,9 @@ export const Coaches = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>Команда тренеров</h1>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h2">Команда тренеров</h1>
           <p className="text-secondary text-lg">Управление тренерским составом и их специализациями</p>
         </div>
         <Button variant="primary" onClick={() => {
@@ -91,11 +91,11 @@ export const Coaches = () => {
       </div>
 
       {isAdding && (
-        <Card className="mb-12 animate-up" style={{ border: '1px solid var(--color-primary)' }}>
+        <Card className="admin-section-card animate-up" style={{ border: '1px solid var(--color-primary)' }}>
           <h3 className="h4 mb-8">{editingCoachId ? 'Редактировать профиль тренера' : 'Новый тренер'}</h3>
           <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             {/* Basic Info */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+            <div className="admin-form-grid">
               <Input label="Имя" required value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} />
               <Input label="Фамилия" required value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} />
               <Input label="Телефон" placeholder="+7 (707) 000-00-00" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
@@ -103,7 +103,7 @@ export const Coaches = () => {
             </div>
 
             {/* Professional Info */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+            <div className="admin-form-grid">
               <div className="input-group">
                 <label className="input-label">Специализация</label>
                 <select className="input-field" value={formData.specialization} onChange={e => setFormData({...formData, specialization: e.target.value})}>
@@ -165,7 +165,7 @@ export const Coaches = () => {
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 'var(--space-6)' }}>
+        <div className="admin-card-grid">
           {filteredCoaches.length === 0 ? (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }} className="text-muted">
               Список тренеров пуст.

@@ -27,13 +27,13 @@ export const GroupDetail = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="admin-page-header admin-page-header--center">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/admin/groups')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors">
             <ArrowLeft size={20} />
           </button>
-          <div>
-            <h1 className="h2" style={{ fontFamily: 'var(--font-family-display)' }}>
+          <div className="page-title-block page-title-block--row">
+            <h1 className="h2">
               {group.name}
             </h1>
             <p className="text-secondary">{group.sport} • {studentCount} учеников</p>
@@ -44,7 +44,7 @@ export const GroupDetail = () => {
         </Link>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 'var(--space-8)' }}>
+      <div className="admin-detail-grid admin-detail-grid--sidebar-first">
         <div className="flex flex-col gap-6">
           <Card style={{ padding: 'var(--space-6)' }}>
             <h3 className="h5 mb-4 border-b pb-2">Информация</h3>

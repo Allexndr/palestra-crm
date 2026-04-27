@@ -40,21 +40,23 @@ export const GroupForm = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-      <div className="mb-8 flex items-center gap-4">
-        <button onClick={() => navigate('/admin/groups')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors">
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <h1 className="h2" style={{ fontFamily: 'var(--font-family-display)' }}>
-            {isEditing ? 'Редактировать группу' : 'Новая группа'}
-          </h1>
-          <p className="text-secondary">Управление тренировочной группой</p>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin/groups')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors">
+            <ArrowLeft size={20} />
+          </button>
+          <div className="page-title-block page-title-block--row">
+            <h1 className="h2">
+              {isEditing ? 'Редактировать группу' : 'Новая группа'}
+            </h1>
+            <p className="text-secondary">Управление тренировочной группой</p>
+          </div>
         </div>
       </div>
 
       <Card style={{ padding: 'var(--space-8)' }}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+          <div className="admin-form-grid">
             <Input label="Название группы" placeholder="ММА Старшая" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
             
             <div className="input-group">

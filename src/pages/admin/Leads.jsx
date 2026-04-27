@@ -74,9 +74,9 @@ export const Leads = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>Воронка лидов</h1>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h2">Воронка лидов</h1>
           <p className="text-secondary text-lg">Управление новыми заявками и конверсией в учеников</p>
         </div>
         <Button variant="primary" onClick={() => setIsAdding(!isAdding)} style={{ gap: '8px' }}>
@@ -85,7 +85,7 @@ export const Leads = () => {
       </div>
 
       {isAdding && (
-        <Card className="mb-12 animate-up" style={{ border: '1px solid var(--color-primary)' }}>
+        <Card className="admin-section-card animate-up" style={{ border: '1px solid var(--color-primary)' }}>
           <h4 className="h4 mb-8">Новый лид</h4>
           <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-6 items-end">
             <div style={{ flex: 2, width: '100%' }}>

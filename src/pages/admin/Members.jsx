@@ -23,7 +23,7 @@ export const Members = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-12 flex flex-col md-flex-row justify-between items-start md-items-center gap-6">
+      <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
           <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>
             {isAdmin ? 'База учеников' : 'Мои ученики'}

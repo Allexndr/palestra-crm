@@ -82,21 +82,21 @@ export const Events = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-12 flex justify-between items-center">
-        <div>
-          <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>События клуба</h1>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h2">События клуба</h1>
           <p className="text-secondary text-lg">Турниры, семинары и аттестации в одном календаре</p>
         </div>
-        <Button variant="primary" onClick={() => { setIsAdding(!isAdding); setEditingId(null); setFormData({ name: '', type: 'tournament', date: '', description: '', participantIds: [] }); }} style={{ gap: '8px' }}>
+        <Button variant="primary" onClick={() => { setIsAdding(!isAdding); setEditingEventId(null); setFormData({ name: '', type: 'tournament', date: '', description: '', participantIds: [] }); }} style={{ gap: '8px' }}>
           <Plus size={18} /> {isAdding ? 'Отмена' : 'Создать событие'}
         </Button>
       </div>
 
       {isAdding && (
-        <Card className="mb-12 animate-up" style={{ border: '1px solid var(--color-primary)' }}>
+        <Card className="admin-section-card animate-up" style={{ border: '1px solid var(--color-primary)' }}>
           <h4 className="h4 mb-8">{editingEventId ? 'Редактировать событие' : 'Новое событие'}</h4>
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'var(--space-6)' }}>
+            <div className="admin-form-grid">
               <Input 
                 label="Название события" 
                 placeholder="Palestra Cup Winter 2026" 
@@ -114,7 +114,7 @@ export const Events = () => {
               <Input label="Дата" type="date" required value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px' }}>
+            <div className="admin-two-column">
               <div className="input-group">
                 <label className="input-label">Описание</label>
                 <textarea 
@@ -165,7 +165,7 @@ export const Events = () => {
         </Card>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 'var(--space-8)' }}>
+      <div className="admin-card-grid admin-card-grid--wide">
         {events.length === 0 ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '100px 0' }}>
             <Calendar size={64} className="text-muted mb-6" style={{ margin: '0 auto', opacity: 0.2 }} />

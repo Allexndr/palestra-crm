@@ -36,13 +36,13 @@ export const MemberDetail = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="admin-page-header admin-page-header--center">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/admin/members')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors">
             <ArrowLeft size={20} />
           </button>
-          <div>
-            <h1 className="h2" style={{ fontFamily: 'var(--font-family-display)' }}>
+          <div className="page-title-block page-title-block--row">
+            <h1 className="h2">
               Профиль атлета
             </h1>
           </div>
@@ -54,7 +54,7 @@ export const MemberDetail = () => {
         </Link>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-8)' }}>
+      <div className="admin-detail-grid">
         <div className="flex flex-col gap-6">
           {/* Main Character Header */}
           <Card style={{ padding: '0', overflow: 'hidden', borderBottom: '6px solid var(--color-primary)' }}>
@@ -132,7 +132,7 @@ export const MemberDetail = () => {
 
               <Card style={{ padding: '30px' }}>
                 <h3 className="h5 mb-6 border-b pb-4">Контактная информация</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+                <div className="admin-form-grid">
                   <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-3">
                        <div className="p-2 bg-slate-100 rounded-lg text-slate-500"><Phone size={18} /></div>

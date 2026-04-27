@@ -35,12 +35,12 @@ export const Billing = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div>
-          <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>Финансы</h1>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h2">Финансы</h1>
           <p className="text-secondary text-lg">Управление транзакциями, прибылью и расходами клуба</p>
         </div>
-        <div className="flex gap-4">
+        <div className="admin-page-actions">
           <Button variant="ghost" style={{ border: '1px solid var(--color-border)', gap: '8px' }}>
             <Download size={18} /> Экспорт PDF
           </Button>
@@ -51,7 +51,7 @@ export const Billing = () => {
       </div>
 
       {isAdding && (
-        <Card className="mb-12 animate-up" style={{ border: '1px solid var(--color-primary)' }}>
+        <Card className="admin-section-card animate-up" style={{ border: '1px solid var(--color-primary)' }}>
           <h4 className="h4 mb-8">Добавить транзакцию</h4>
           <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-6 items-end">
             <div style={{ flex: 1, width: '100%' }}>
@@ -88,7 +88,7 @@ export const Billing = () => {
         </Card>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '48px' }}>
+      <div className="admin-stats-grid">
         <Card style={{ borderLeft: '6px solid var(--color-success)', padding: '32px' }} className="card-hover">
           <div className="flex justify-between items-start mb-6">
             <div style={{ padding: '12px', backgroundColor: '#dcfce7', color: 'var(--color-success)', borderRadius: '16px' }}>
@@ -122,7 +122,7 @@ export const Billing = () => {
         </Card>
       </div>
 
-      <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '32px' }}>
+      <div className="admin-two-column">
         <Card style={{ padding: '32px' }} className="card-hover">
           <h4 className="text-sm font-bold uppercase text-slate-400 tracking-widest mb-10">Динамика выручки</h4>
           {finances.transactions.length === 0 ? (

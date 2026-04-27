@@ -183,15 +183,17 @@ export const MemberForm = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-      <div className="mb-8 flex items-center gap-4">
-        <button onClick={() => navigate('/admin/members')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors">
-          <ArrowLeft size={20} />
-        </button>
-        <div>
-          <h1 className="h2" style={{ fontFamily: 'var(--font-family-display)' }}>
-            {isEditing ? 'Редактировать ученика' : 'Новый ученик'}
-          </h1>
-          <p className="text-secondary">Заполните анкету ученика</p>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin/members')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors">
+            <ArrowLeft size={20} />
+          </button>
+          <div className="page-title-block page-title-block--row">
+            <h1 className="h2">
+              {isEditing ? 'Редактировать ученика' : 'Новый ученик'}
+            </h1>
+            <p className="text-secondary">Заполните анкету ученика</p>
+          </div>
         </div>
       </div>
 
@@ -222,7 +224,7 @@ export const MemberForm = () => {
               {/* Personal Info */}
               <div>
                 <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-6 border-b pb-2">Личные данные</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+                <div className="admin-form-grid">
                   <Input label="Имя" required minLength={2} value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
                   <Input label="Фамилия" required minLength={2} value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
                   <Input label="Дата рождения" type="date" min="1900-01-01" max={new Date().toISOString().split('T')[0]} value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
@@ -239,7 +241,7 @@ export const MemberForm = () => {
               {/* Athletic Info */}
               <div>
                 <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-6 border-b pb-2">Спортивные показатели</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 'var(--space-6)' }}>
+                <div className="admin-form-grid admin-form-grid--compact">
                   <Input label="Вес (кг)" type="number" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
                   <Input label="Рост (см)" type="number" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
                   <div className="input-group">
@@ -268,7 +270,7 @@ export const MemberForm = () => {
               {/* Club Info */}
               <div>
                 <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-6 border-b pb-2">Клубные настройки</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+                <div className="admin-form-grid">
                   <div className="input-group">
                     <label className="input-label">Группа</label>
                     <select className="input-field" value={formData.groupId} onChange={e => setFormData({...formData, groupId: e.target.value})}>
@@ -291,7 +293,7 @@ export const MemberForm = () => {
 
               <Card style={{ backgroundColor: 'var(--color-bg)', padding: 'var(--space-6)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--color-primary)' }}>
                 <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-6">Доступы в личный кабинет</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+                <div className="admin-form-grid">
                   <Input label="Логин" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
                   <Input label="Пароль" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                 </div>
@@ -344,7 +346,7 @@ export const MemberForm = () => {
             <div className="flex flex-col gap-10 animate-fade-in">
               <div>
                 <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-6 border-b pb-2">Финансовые настройки</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-6)' }}>
+                <div className="admin-form-grid">
                   <div className="input-group">
                     <label className="input-label">Тариф (Шаблон)</label>
                     <select className="input-field" value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})}>
@@ -382,7 +384,7 @@ export const MemberForm = () => {
                 </label>
                 
                 {formData.hasParent ? (
-                  <div className="animate-up" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'var(--space-6)', padding: 'var(--space-8)', backgroundColor: 'var(--color-bg)', borderRadius: '24px', border: '1px solid var(--color-border)' }}>
+                  <div className="animate-up admin-form-grid admin-form-grid--wide" style={{ padding: 'var(--space-8)', backgroundColor: 'var(--color-bg)', borderRadius: '24px', border: '1px solid var(--color-border)' }}>
                     <Input label="ФИО Родителя" required={formData.hasParent} value={formData.parentName} onChange={e => setFormData({...formData, parentName: e.target.value})} />
                     <Input label="Телефон родителя" required={formData.hasParent} placeholder="+7 (707) 000-00-00" value={formData.parentPhone} onChange={handleParentPhoneChange} />
                     <Input label="Заметка (доп. контакты)" value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})} />

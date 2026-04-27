@@ -83,13 +83,13 @@ export const League = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-      <div className="mb-12 flex justify-between items-center">
-        <div>
-          <h1 className="h1 mb-2" style={{ fontFamily: 'var(--font-family-display)', fontSize: '2.5rem' }}>Лига</h1>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h1">Лига</h1>
           <p className="text-secondary font-medium uppercase tracking-widest text-[10px] opacity-60">Рейтинг и Геймификация</p>
         </div>
         {isAdmin && (
-          <div className="flex gap-3">
+          <div className="admin-page-actions">
             {selectedLeagueId !== 'all' && (
               <>
                 <button onClick={() => handleEditLeague(currentLeague)} className="p-3 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer">
@@ -112,12 +112,12 @@ export const League = () => {
       </div>
 
       {isAdding && isAdmin && (
-        <Card className="mb-12 animate-up shadow-2xl shadow-indigo-100 border-none overflow-hidden p-0">
+        <Card className="admin-section-card animate-up shadow-2xl shadow-indigo-100 border-none overflow-hidden p-0">
           <div className="p-8 border-b border-slate-50">
              <h4 className="h4">{isEditing ? 'Редактировать параметры лиги' : 'Параметры новой лиги'}</h4>
           </div>
           <form onSubmit={handleCreateLeague} className="p-8 flex flex-col gap-8">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px' }}>
+            <div className="admin-form-grid">
               <Input label="Название сезона" placeholder="Летний кубок 2026" required value={newLeague.name} onChange={e => setNewLeague({...newLeague, name: e.target.value})} />
               <div className="input-group">
                 <label className="input-label">Дисциплина</label>
@@ -130,7 +130,7 @@ export const League = () => {
               <Input label="Конец" type="date" required value={newLeague.endDate} onChange={e => setNewLeague({...newLeague, endDate: e.target.value})} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '32px' }}>
+            <div className="admin-two-column">
               <div>
                 <label className="text-[10px] font-black uppercase text-muted tracking-widest mb-4 block">Группы-участники</label>
                 <div className="flex flex-wrap gap-2">
@@ -218,7 +218,7 @@ export const League = () => {
 
       {activeTab === 'ranking' ? (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '32px', alignItems: 'end', marginBottom: '48px' }}>
+          <div className="admin-stats-grid" style={{ alignItems: 'end' }}>
             {top3[1] && (
               <Card className="card-hover border-none shadow-xl shadow-slate-100 p-8 text-center" style={{ borderBottom: '6px solid #94A3B8', borderRadius: '32px' }}>
                 <div className="relative w-24 h-24 mx-auto mb-6">
@@ -254,7 +254,7 @@ export const League = () => {
             )}
           </div>
 
-          <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: '2.5fr 1.5fr', gap: '32px' }}>
+          <div className="admin-split-metrics">
             <div>
               <Card style={{ padding: 0 }} className="card-hover border-none shadow-xl shadow-slate-100 overflow-hidden bg-white">
                 <div className="p-8 border-b border-slate-50 flex justify-between items-center">
