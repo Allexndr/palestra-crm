@@ -4,13 +4,13 @@ const getTransporterConfig = () => {
   const host = process.env.SMTP_HOST || 'smtp.gmail.com';
   const isGmail = host.includes('gmail.com');
 
+  const user = process.env.SMTP_USER?.trim();
+  const pass = process.env.SMTP_PASS?.trim();
+
   if (isGmail) {
     return {
       service: 'gmail',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
+      auth: { user, pass },
     };
   }
 
@@ -18,15 +18,15 @@ const getTransporterConfig = () => {
     host,
     port: parseInt(process.env.SMTP_PORT || '465'),
     secure: process.env.SMTP_PORT === '465',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+    auth: { user, pass },
   };
 };
 
 export async function sendEmail({ to, subject, html }) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+  const user = process.env.SMTP_USER?.trim();
+  const pass = process.env.SMTP_PASS?.trim();
+
+  if (!user || !pass) {
     console.warn('SMTP credentials not configured. Skipping email send.');
     return { success: false, error: 'Credentials missing' };
   }
