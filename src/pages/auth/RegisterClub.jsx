@@ -265,7 +265,7 @@ export const RegisterClub = () => {
                 )}
 
                 {step === 2 && (
-                  <div className="flex flex-col gap-5 animate-fade-in">
+                  <div className="flex flex-col gap-5 animate-fade-in" style={{ position: 'relative', zIndex: 20 }}>
                     <Input 
                       label="Название клуба" 
                       placeholder="Fight Club Almaty" 
@@ -323,7 +323,7 @@ export const RegisterClub = () => {
                   </div>
                 )}
 
-                <div className="flex justify-between mt-8 pt-4" style={{ borderTop: '1px solid var(--color-border)' }}>
+                <div className="flex justify-between mt-8 pt-4" style={{ borderTop: '1px solid var(--color-border)', position: 'relative', zIndex: 1 }}>
                   <Button variant="ghost" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1 || isLoading}>
                     Назад
                   </Button>
