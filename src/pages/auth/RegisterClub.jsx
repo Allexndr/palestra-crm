@@ -285,7 +285,7 @@ export const RegisterClub = () => {
 
                       <Input 
                         label="Адрес" 
-                        placeholder={formData.city ? "Например: Жетысу 4 дом 22" : "Сначала выберите город"} 
+                        placeholder={formData.city ? "Введите адрес клуба" : "Сначала выберите город"} 
                         value={formData.address} 
                         onChange={(e) => handleInputChange('address', e.target.value)} 
                         disabled={!formData.city}
