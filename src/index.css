@@ -1134,6 +1134,10 @@ body, #root {
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
 }
 
 .usage-limit-card strong {
@@ -1313,11 +1317,17 @@ body, #root {
   border: 1px solid var(--color-border);
   background: #fff;
   text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
 }
 
 .admin-tariff__resource input {
   width: 100%;
-  margin: var(--space-5) 0;
+  margin: var(--space-4) 0;
+  position: relative;
+  z-index: 2;
 }
 
 .admin-tariff__resource-bottom {

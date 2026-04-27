@@ -103,7 +103,7 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
   await supabase.from('app_state').upsert({
     club_id: club.id,
     state: {
-      ...createSeedState(),
+      ...createSeedState(true),
       clubInfo: { name: club.name, logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' },
       locations: [{ id: '1', name: 'Основной зал', address: formData.address, isActive: true }],
     },

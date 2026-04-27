@@ -25,9 +25,9 @@ const generateTemporaryPassword = () => {
 export const RegisterClub = () => {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState({});
   const [isSuccess, setIsSuccess] = useState(false);
   const [successData, setSuccessData] = useState(null);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const { login: signIn } = useAdmin();
   const [searchParams] = useSearchParams();
@@ -125,7 +125,7 @@ export const RegisterClub = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     let isValid = false;
     if (step === 1) isValid = validateStep1();
     if (step === 2) isValid = validateStep2();
@@ -133,11 +133,42 @@ export const RegisterClub = () => {
 
     if (!isValid) return;
 
+    if (step === 1) {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/auth/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email })
+        });
+        const data = await response.json();
+        if (data.exists) {
+          setErrors({ email: "Пользователь с таким email уже существует" });
+          setIsLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Error checking email:", err);
+      }
+      setIsLoading(false);
+    }
+
     if (step < 3) {
       setStep(step + 1);
     } else {
       submitForm();
     }
+  };
+
+  const handleCopyData = () => {
+    if (!successData) return;
+    const textToCopy = `Логин: ${successData.login}\nПароль: ${successData.password}`;
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(err => console.error("Could not copy text: ", err));
   };
 
   const submitForm = async () => {
@@ -191,7 +222,16 @@ export const RegisterClub = () => {
                 <p className="text-secondary mb-6">Мы отправили письмо с подтверждением и инструкциями на <strong style={{ color: 'var(--color-text-primary)' }}>{formData.email}</strong>.</p>
                 
                 <div style={{ backgroundColor: 'var(--color-bg)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: 'var(--space-8)', textAlign: 'left' }}>
-                  <p className="text-sm text-muted mb-2 uppercase tracking-wide font-bold">Демо-доступ (для тестирования)</p>
+                  <div className="flex justify-between items-start mb-2">
+                    <p className="text-sm text-muted uppercase tracking-wide font-bold">Демо-доступ (для тестирования)</p>
+                    <button 
+                      onClick={handleCopyData} 
+                      className={`text-xs font-bold px-2 py-1 rounded transition-colors ${copied ? 'bg-success text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}`}
+                      style={{ border: 'none', cursor: 'pointer' }}
+                    >
+                      {copied ? 'Скопировано!' : 'Копировать'}
+                    </button>
+                  </div>
                   <p className="mb-1"><span className="text-secondary">Логин:</span> <strong style={{ fontFamily: 'monospace' }}>{successData.login}</strong></p>
                   <p><span className="text-secondary">Пароль:</span> <strong style={{ fontFamily: 'monospace' }}>{successData.password}</strong></p>
                 </div>
@@ -226,100 +266,114 @@ export const RegisterClub = () => {
                   </div>
                 )}
 
-                {step === 1 && (
-                  <div className="flex flex-col gap-5 animate-fade-in">
-                    <div className="flex gap-4 responsive-row">
-                      <div className="flex-1">
-                        <Input 
-                          label="Имя владельца" placeholder="Иван" 
-                          value={formData.firstName} onChange={(e) => handleInputChange('firstName', e.target.value)} 
-                          error={errors.firstName}
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <Input 
-                          label="Фамилия" placeholder="Иванов" 
-                          value={formData.lastName} onChange={(e) => handleInputChange('lastName', e.target.value)} 
-                          error={errors.lastName}
-                        />
-                      </div>
-                    </div>
-                    <Input 
-                      label="Телефон" 
-                      placeholder="+7 (707) 000-00-00" 
-                      value={formData.phone} 
-                      onChange={handlePhoneChange} 
-                      error={errors.phone}
-                    />
-                    <Input 
-                      label="Email" 
-                      type="email" 
-                      placeholder="ivan@example.com" 
-                      value={formData.email} 
-                      onChange={(e) => handleInputChange('email', e.target.value)} 
-                      error={errors.email}
-                    />
-                  </div>
-                )}
-
-                {step === 2 && (
-                  <div className="flex flex-col gap-5 animate-fade-in" style={{ position: 'relative', zIndex: 20 }}>
-                    <Input 
-                      label="Название клуба" 
-                      placeholder="Fight Club Almaty" 
-                      value={formData.clubName} 
-                      onChange={(e) => handleInputChange('clubName', e.target.value)} 
-                      error={errors.clubName}
-                    />
+                <div style={{ overflow: 'hidden', position: 'relative' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    width: '300%', 
+                    transform: `translateX(-${(step - 1) * 33.333}%)`,
+                    transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)' 
+                  }}>
                     
-                    <Autocomplete 
-                      label="Город"
-                      placeholder="Начните вводить город..."
-                      options={KAZAKHSTAN_CITIES}
-                      value={formData.city}
-                      onChange={(val) => handleInputChange('city', val)}
-                      error={errors.city}
-                    />
-
-                      <Input 
-                        label="Адрес" 
-                        placeholder={formData.city ? "Введите адрес клуба" : "Сначала выберите город"} 
-                        value={formData.address} 
-                        onChange={(e) => handleInputChange('address', e.target.value)} 
-                        disabled={!formData.city}
-                        error={errors.address}
-                      />
-                  </div>
-                )}
-
-                {step === 3 && (
-                  <div className="flex flex-col gap-6 animate-fade-in">
-                    <div>
-                      <label className="text-sm font-medium mb-3 block">Направления (выберите одно или несколько)</label>
-                      <div style={{ border: errors.martialArts ? '1px solid var(--color-danger)' : 'none', borderRadius: 'var(--radius-sm)', padding: errors.martialArts ? '2px' : '0' }}>
-                        <MartialArtsSelector 
-                          selected={formData.martialArts} 
-                          onChange={(selected) => handleInputChange('martialArts', selected)} 
+                    {/* Step 1 */}
+                    <div style={{ width: '33.333%', flexShrink: 0, paddingRight: '1px' }}>
+                      <div className="flex flex-col gap-5">
+                        <div className="flex gap-4 responsive-row">
+                          <div className="flex-1">
+                            <Input 
+                              label="Имя владельца" placeholder="Иван" 
+                              value={formData.firstName} onChange={(e) => handleInputChange('firstName', e.target.value)} 
+                              error={errors.firstName}
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <Input 
+                              label="Фамилия" placeholder="Иванов" 
+                              value={formData.lastName} onChange={(e) => handleInputChange('lastName', e.target.value)} 
+                              error={errors.lastName}
+                            />
+                          </div>
+                        </div>
+                        <Input 
+                          label="Телефон" 
+                          placeholder="+7 (707) 000-00-00" 
+                          value={formData.phone} 
+                          onChange={handlePhoneChange} 
+                          error={errors.phone}
+                        />
+                        <Input 
+                          label="Email" 
+                          type="email" 
+                          placeholder="ivan@example.com" 
+                          value={formData.email} 
+                          onChange={(e) => handleInputChange('email', e.target.value)} 
+                          error={errors.email}
                         />
                       </div>
-                      {errors.martialArts && <p className="text-xs text-danger mt-1">{errors.martialArts}</p>}
                     </div>
 
-                    <Input 
-                      label="Примерное количество учеников" 
-                      placeholder="Например: 120" 
-                      type="number" 
-                      value={formData.studentsCount}
-                      onChange={(e) => handleInputChange('studentsCount', e.target.value)}
-                      error={errors.studentsCount}
-                    />
-                    
-                    <div style={{ backgroundColor: 'var(--color-primary-soft)', padding: 'var(--space-4)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-primary)' }}>
-                      <p className="text-sm font-bold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family-display)' }}>Готовы к запуску!</p>
-                      <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>После нажатия мы создадим ваш аккаунт и вышлем пароль на {formData.email || 'указанную почту'}.</p>
+                    {/* Step 2 */}
+                    <div style={{ width: '33.333%', flexShrink: 0, paddingRight: '1px', position: 'relative', zIndex: 20 }}>
+                      <div className="flex flex-col gap-5">
+                        <Input 
+                          label="Название клуба" 
+                          placeholder="Fight Club Almaty" 
+                          value={formData.clubName} 
+                          onChange={(e) => handleInputChange('clubName', e.target.value)} 
+                          error={errors.clubName}
+                        />
+                        
+                        <Autocomplete 
+                          label="Город"
+                          placeholder="Начните вводить город..."
+                          options={KAZAKHSTAN_CITIES}
+                          value={formData.city}
+                          onChange={(val) => handleInputChange('city', val)}
+                          error={errors.city}
+                        />
+
+                        <Input 
+                          label="Адрес" 
+                          placeholder={formData.city ? "Введите адрес клуба" : "Сначала выберите город"} 
+                          value={formData.address} 
+                          onChange={(e) => handleInputChange('address', e.target.value)} 
+                          disabled={!formData.city}
+                          error={errors.address}
+                        />
+                      </div>
                     </div>
+
+                    {/* Step 3 */}
+                    <div style={{ width: '33.333%', flexShrink: 0, paddingRight: '1px' }}>
+                      <div className="flex flex-col gap-6">
+                        <div>
+                          <label className="text-sm font-medium mb-3 block">Направления (выберите одно или несколько)</label>
+                          <div style={{ border: errors.martialArts ? '1px solid var(--color-danger)' : 'none', borderRadius: 'var(--radius-sm)', padding: errors.martialArts ? '2px' : '0' }}>
+                            <MartialArtsSelector 
+                              selected={formData.martialArts} 
+                              onChange={(selected) => handleInputChange('martialArts', selected)} 
+                            />
+                          </div>
+                          {errors.martialArts && <p className="text-xs text-danger mt-1">{errors.martialArts}</p>}
+                        </div>
+
+                        <Input 
+                          label="Примерное количество учеников" 
+                          placeholder="Например: 120" 
+                          type="number" 
+                          value={formData.studentsCount}
+                          onChange={(e) => handleInputChange('studentsCount', e.target.value)}
+                          error={errors.studentsCount}
+                        />
+                        
+                        <div style={{ backgroundColor: 'var(--color-primary-soft)', padding: 'var(--space-4)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-primary)' }}>
+                          <p className="text-sm font-bold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family-display)' }}>Готовы к запуску!</p>
+                          <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>После нажатия мы создадим ваш аккаунт и вышлем пароль на {formData.email || 'указанную почту'}.</p>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
-                )}
+                </div>
 
                 <div className="flex justify-between mt-8 pt-4" style={{ borderTop: '1px solid var(--color-border)', position: 'relative', zIndex: 1 }}>
                   <Button variant="ghost" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1 || isLoading}>
