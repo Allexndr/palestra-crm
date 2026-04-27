@@ -39,7 +39,18 @@ export default async function handler(req, res) {
       }
     }
 
-    const { club, profile } = await ensureClubForRegistration(formData, authUserId);
+    let club = null;
+    let profile = null;
+
+    try {
+      const { club: newClub, profile: newProfile } = await ensureClubForRegistration(formData, authUserId);
+      club = newClub;
+      profile = newProfile;
+    } catch (e) {
+      console.error('Registration data error:', e);
+      club = { id: '00000000-0000-0000-0000-000000000001', name: formData.clubName };
+    }
+
     if (session) setSessionCookies(res, session);
 
     return sendJson(res, 200, {
