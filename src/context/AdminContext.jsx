@@ -219,6 +219,7 @@ export const AdminProvider = ({ children }) => {
     setLeagues(prev => prev.map(l => l.id === id ? { ...l, ...updatedData } : l));
   };
 
+  const login = async (credentialsOrRole) => {
     const payload = credentialsOrRole;
 
     const response = await fetch('/api/auth/login', {
