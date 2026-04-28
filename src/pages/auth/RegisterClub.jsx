@@ -209,7 +209,7 @@ export const RegisterClub = () => {
                 {successData?.credentials?.tgCode && (
                   <div style={{ marginBottom: 'var(--space-8)' }}>
                     <a 
-                      href={`https://t.me/palestra_fit_bot?start=${successData.credentials.tgCode}`}
+                      href={`https://t.me/palestra_platform_bot?start=${successData.credentials.tgCode}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="button button--primary"
