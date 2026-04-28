@@ -238,14 +238,27 @@ export const RegisterClub = () => {
             
             {isSuccess ? (
               <div className="text-center animate-up">
+              <div style={{ textAlign: 'center', animation: 'fadeIn 0.5s ease-out' }}>
                 <div style={{ 
-                  width: '80px', height: '80px', borderRadius: '50%', 
-                  backgroundColor: 'var(--color-success)', color: 'white',
+                  width: '72px', height: '72px', borderRadius: '50%', 
+                  backgroundColor: 'rgba(34, 197, 94, 0.1)', color: 'var(--color-success)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  margin: '0 auto var(--space-6)', fontSize: '40px'
+                  margin: '0 auto var(--space-6)', fontSize: '32px',
+                  border: '2px solid var(--color-success)',
+                  boxShadow: '0 0 20px rgba(34, 197, 94, 0.2)'
                 }}>✓</div>
-                <h2 className="h2 mb-4" style={{ fontFamily: 'var(--font-family-display)' }}>Клуб успешно создан!</h2>
-                <p className="text-secondary mb-8">
+                
+                <h2 className="h2 mb-4" style={{ 
+                  fontFamily: 'var(--font-family-display)',
+                  background: 'linear-gradient(135deg, var(--color-primary) 0%, #4f46e5 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 800
+                }}>
+                  Клуб успешно создан!
+                </h2>
+                
+                <p className="text-secondary mb-8" style={{ fontSize: '16px', lineHeight: '1.6' }}>
                   Мы подготовили вашу панель управления. Логин и пароль отправлены вам в Telegram для безопасности.
                 </p>
 
@@ -255,30 +268,72 @@ export const RegisterClub = () => {
                       href={`https://t.me/palestra_platform_bot?start=${successData.credentials.tgCode}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="button button--primary"
+                      className="button"
                       style={{ 
                         width: '100%', 
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
                         gap: '12px',
-                        padding: 'var(--space-4)',
+                        padding: '18px',
                         backgroundColor: '#0088cc',
-                        border: 'none'
+                        color: '#ffffff',
+                        borderRadius: '16px',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 10px 20px rgba(0, 136, 204, 0.2)',
+                        border: 'none',
+                        cursor: 'pointer'
                       }}
+                      onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                      onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                      <Send size={22} color="white" />
                       Получить доступы в Telegram
                     </a>
-                    <p style={{ fontSize: '12px', marginTop: '12px', opacity: 0.6 }}>
-                      Нажмите кнопку, затем нажмите "Старт" в открывшемся боте.
-                    </p>
+                    <div style={{ 
+                      marginTop: '16px', 
+                      padding: '12px', 
+                      backgroundColor: 'rgba(0, 136, 204, 0.05)', 
+                      borderRadius: '12px',
+                      fontSize: '13px', 
+                      color: '#006699',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}>
+                      <span>ℹ️</span>
+                      Нажмите кнопку и выберите "Запустить" в боте
+                    </div>
                   </div>
                 )}
 
-                <Button variant="primary" onClick={() => navigate('/auth/login')} style={{ width: '100%' }}>
-                  Перейти к Входу
-                </Button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate('/auth/login')} 
+                    style={{ 
+                      width: '100%', 
+                      borderColor: 'var(--color-primary)', 
+                      color: 'var(--color-primary)',
+                      borderRadius: '16px'
+                    }}
+                  >
+                    Перейти к Входу
+                    <ArrowRight size={18} style={{ marginLeft: '8px' }} />
+                  </Button>
+                </div>
+
+                <style dangerouslySetInnerHTML={{ __html: `
+                  @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                  }
+                `}} />
+              </div>
               </div>
             ) : (
               <>
