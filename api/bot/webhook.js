@@ -10,6 +10,7 @@ export default async function handler(req, res) {
   }
 
   const { message, callback_query } = req.body;
+  console.log('BOT RECEIVED UPDATE:', JSON.stringify(req.body, null, 2));
   const chatId = message?.chat?.id || callback_query?.message?.chat?.id;
   const text = message?.text;
   const data = callback_query?.data;
