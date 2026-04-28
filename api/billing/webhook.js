@@ -1,5 +1,6 @@
 import { parseJsonBody, sendJson } from '../_lib/http.js';
 import { getServiceClient, hasSupabaseServiceEnv } from '../_lib/supabase.js';
+import { rateLimit } from '../_lib/rateLimit.js';
 import crypto from 'crypto';
 
 // Утилита для проверки подписи Freedom Pay (PayBox)
@@ -20,6 +21,9 @@ function verifyFreedomPaySignature(params, secretKey, expectedSignature) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'Method not allowed' });
+  if (!rateLimit(req, res, { key: 'billing-webhook', limit: 120, windowMs: 60_000 })) {
+    return sendJson(res, 429, { error: 'Too many webhook requests' });
+  }
 
   try {
     // Freedom Pay обычно шлет данные в x-www-form-urlencoded, но иногда в JSON.
@@ -29,6 +33,9 @@ export default async function handler(req, res) {
     
     // 1. Проверяем подпись (если заданы секреты)
     const secretKey = process.env.FREEDOM_PAY_SECRET_KEY;
+    if (secretKey && !payload.pg_sig) {
+      return sendJson(res, 400, { error: 'Missing signature' });
+    }
     if (secretKey && payload.pg_sig) {
       const isValid = verifyFreedomPaySignature(payload, secretKey, payload.pg_sig);
       if (!isValid) {

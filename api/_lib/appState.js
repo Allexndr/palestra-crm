@@ -100,15 +100,21 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
     profile = data;
   }
 
+  const tgCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+
   await supabase.from('app_state').upsert({
     club_id: club.id,
     state: {
       ...createSeedState(true),
       clubInfo: { name: club.name, logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' },
+      tg_reg_code: tgCode,
+      admin_email: formData.email,
+      admin_auth_id: ownerAuthUserId,
+      temp_password: formData.tempPassword,
       locations: [{ id: '1', name: 'Основной зал', address: formData.address, isActive: true }],
     },
     updated_at: new Date().toISOString(),
   });
 
-  return { club, profile };
+  return { club, profile, tgCode };
 }

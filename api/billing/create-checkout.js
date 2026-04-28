@@ -1,6 +1,13 @@
-import { parseJsonBody, sendJson, parseCookies } from '../_lib/http.js';
+import { parseJsonBody, sendJson } from '../_lib/http.js';
 import { getServiceClient, hasSupabaseServiceEnv } from '../_lib/supabase.js';
+import { rateLimit } from '../_lib/rateLimit.js';
+import { assertSameOrigin, requireUser, safeError } from '../_lib/security.js';
 import crypto from 'crypto';
+
+const TARIFF_PRICE = {
+  base: 9000,
+  pro: 15000,
+};
 
 // Утилита для генерации подписи Freedom Pay (PayBox)
 function generateFreedomPaySignature(params, secretKey) {
@@ -16,14 +23,25 @@ function generateFreedomPaySignature(params, secretKey) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'Method not allowed' });
+  if (!assertSameOrigin(req, res)) return;
+  if (!rateLimit(req, res, { key: 'billing-checkout', limit: 20, windowMs: 60_000 })) {
+    return sendJson(res, 429, { error: 'Too many checkout attempts' });
+  }
 
   try {
-    const { clubId, tariffId, amount } = await parseJsonBody(req);
-    
-    // В реальном приложении здесь нужна проверка авторизации (jwt/cookie)
-    // чтобы убедиться, что пользователь является админом этого клуба.
-    const cookies = parseCookies(req);
-    // Для MVP предполагаем, что вызов легитимен, если передан clubId
+    const requestUser = await requireUser(req, res, { allowDemo: false });
+    if (!requestUser) return;
+    if (requestUser.profile.role !== 'admin') {
+      return sendJson(res, 403, { error: 'Only club admin can create checkout' });
+    }
+
+    const payload = await parseJsonBody(req);
+    const tariffId = String(payload?.tariffId || '').trim().toLowerCase();
+    if (!Object.prototype.hasOwnProperty.call(TARIFF_PRICE, tariffId)) {
+      return sendJson(res, 400, { error: 'Unsupported tariff' });
+    }
+    const amount = TARIFF_PRICE[tariffId];
+    const clubId = requestUser.profile.club_id;
 
     if (!hasSupabaseServiceEnv()) {
       // Mock-ответ для демо-окружения
@@ -42,10 +60,10 @@ export default async function handler(req, res) {
       .insert({
         club_id: clubId,
         order_id: orderId,
-        amount: amount,
+        amount,
         currency: 'KZT',
         status: 'pending',
-        tariff_id: tariffId
+        tariff_id: tariffId,
       })
       .select('id, order_id')
       .single();
@@ -68,7 +86,7 @@ export default async function handler(req, res) {
     const paymentParams = {
       pg_merchant_id: merchantId,
       pg_order_id: payment.order_id,
-      pg_amount: amount.toString(),
+      pg_amount: String(amount),
       pg_currency: 'KZT',
       pg_description: `Оплата тарифа ${tariffId} (Palestra CRM)`,
       pg_salt: crypto.randomBytes(16).toString('hex'),
@@ -86,9 +104,7 @@ export default async function handler(req, res) {
     const paymentUrl = `https://api.paybox.money/payment.php?${queryString}`;
 
     return sendJson(res, 200, { paymentUrl });
-
   } catch (error) {
-    console.error('Create checkout error:', error);
-    return sendJson(res, 500, { error: 'Failed to create checkout session' });
+    return safeError(res, error, 'Failed to create checkout session');
   }
 }

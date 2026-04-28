@@ -6,7 +6,6 @@ import { Card } from '../../components/ui/Card';
 import { Navbar } from '../../components/layout/Navbar';
 import { Autocomplete } from '../../components/ui/Autocomplete';
 import { MartialArtsSelector } from '../../components/ui/MartialArtsSelector';
-import { simulateSendEmail } from '../../utils/sendpulse';
 import { useAdmin } from '../../context/AdminContext';
 
 const KAZAKHSTAN_CITIES = [
@@ -27,7 +26,7 @@ export const RegisterClub = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [successData, setSuccessData] = useState(null);
-  const [copied, setCopied] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const { login: signIn } = useAdmin();
   const [searchParams] = useSearchParams();
@@ -160,22 +159,10 @@ export const RegisterClub = () => {
     }
   };
 
-  const handleCopyData = () => {
-    if (!successData) return;
-    const textToCopy = `Логин: ${successData.login}\nПароль: ${successData.password}`;
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      })
-      .catch(err => console.error("Could not copy text: ", err));
-  };
-
   const submitForm = async () => {
     setIsLoading(true);
     try {
       const tempPassword = generateTemporaryPassword();
-      const accountLogin = formData.email;
 
       const apiResponse = await fetch('/api/auth/register-club', {
         method: 'POST',
@@ -188,13 +175,9 @@ export const RegisterClub = () => {
         throw new Error(apiData.error || 'Ошибка создания клуба');
       }
 
-      if (apiData.credentials) {
-        await signIn({ email: formData.email, password: tempPassword });
-        setSuccessData({ login: apiData.credentials.login, password: apiData.credentials.password });
-        setIsSuccess(true);
-      } else {
-        throw new Error("Не удалось получить данные для входа");
-      }
+      setSuccessData(apiData);
+      await signIn({ email: formData.email, password: tempPassword });
+      setIsSuccess(true);
     } catch (err) {
       setErrors({ form: "Произошла ошибка при создании клуба: " + err.message });
     } finally {
@@ -219,25 +202,39 @@ export const RegisterClub = () => {
                   margin: '0 auto var(--space-6)', fontSize: '40px'
                 }}>✓</div>
                 <h2 className="h2 mb-4" style={{ fontFamily: 'var(--font-family-display)' }}>Клуб успешно создан!</h2>
-                <p className="text-secondary mb-6">Мы отправили письмо с подтверждением и инструкциями на <strong style={{ color: 'var(--color-text-primary)' }}>{formData.email}</strong>.</p>
-                
-                <div style={{ backgroundColor: 'var(--color-bg)', padding: 'var(--space-4)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', marginBottom: 'var(--space-8)', textAlign: 'left' }}>
-                  <div className="flex justify-between items-start mb-2">
-                    <p className="text-sm text-muted uppercase tracking-wide font-bold">Демо-доступ (для тестирования)</p>
-                    <button 
-                      onClick={handleCopyData} 
-                      className={`text-xs font-bold px-2 py-1 rounded transition-colors ${copied ? 'bg-success text-white' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}`}
-                      style={{ border: 'none', cursor: 'pointer' }}
-                    >
-                      {copied ? 'Скопировано!' : 'Копировать'}
-                    </button>
-                  </div>
-                  <p className="mb-1"><span className="text-secondary">Логин:</span> <strong style={{ fontFamily: 'monospace' }}>{successData.login}</strong></p>
-                  <p><span className="text-secondary">Пароль:</span> <strong style={{ fontFamily: 'monospace' }}>{successData.password}</strong></p>
-                </div>
+                <p className="text-secondary mb-8">
+                  Мы подготовили вашу панель управления. Логин и пароль отправлены вам в Telegram для безопасности.
+                </p>
 
-                <Button variant="primary" onClick={() => navigate('/admin')} style={{ width: '100%' }}>
-                  Перейти в Панель Управления
+                {successData?.credentials?.tgCode && (
+                  <div style={{ marginBottom: 'var(--space-8)' }}>
+                    <a 
+                      href={`https://t.me/palestra_fit_bot?start=${successData.credentials.tgCode}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="button button--primary"
+                      style={{ 
+                        width: '100%', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        gap: '12px',
+                        padding: 'var(--space-4)',
+                        backgroundColor: '#0088cc',
+                        border: 'none'
+                      }}
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                      Получить доступы в Telegram
+                    </a>
+                    <p style={{ fontSize: '12px', marginTop: '12px', opacity: 0.6 }}>
+                      Нажмите кнопку, затем нажмите "Старт" в открывшемся боте.
+                    </p>
+                  </div>
+                )}
+
+                <Button variant="outline" onClick={() => navigate('/admin')} style={{ width: '100%' }}>
+                  Перейти в Дашборд
                 </Button>
               </div>
             ) : (

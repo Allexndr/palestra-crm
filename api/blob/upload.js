@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     const pathname = `clubs/${clubId}/${scope}/${objectId}-${prepared.fileName}`;
 
     const blob = await put(pathname, prepared.body, {
-      access: 'public',
+      access: 'private',
       addRandomSuffix: false,
       token: process.env.BLOB_READ_WRITE_TOKEN,
       contentType: prepared.contentType,

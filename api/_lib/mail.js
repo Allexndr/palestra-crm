@@ -51,16 +51,16 @@ export async function sendEmail({ to, subject, html }) {
   }
 }
 
-export function getWelcomeEmailHtml(clubName, login, password) {
+export function getWelcomeEmailHtml(clubName, login) {
   return `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
       <h2 style="color: #3146A6;">Добро пожаловать в Palestra!</h2>
       <p>Ваш клуб <strong>${clubName}</strong> успешно зарегистрирован в системе.</p>
       
       <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="margin-top: 0; font-size: 16px;">Данные для входа:</h3>
+        <h3 style="margin-top: 0; font-size: 16px;">Профиль клуба создан</h3>
         <p style="margin-bottom: 5px;"><strong>Логин:</strong> ${login}</p>
-        <p style="margin-top: 0;"><strong>Пароль:</strong> ${password}</p>
+        <p style="margin-top: 0;">Для безопасности пароль не отправляется по email.</p>
       </div>
 
       <p>Вы можете войти в панель управления по ссылке:</p>

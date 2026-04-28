@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAdmin } from '../../context/AdminContext';
-import { DollarSign, TrendingUp, TrendingDown, CreditCard, ArrowUpRight, ArrowDownRight, Download, Plus, Receipt } from 'lucide-react';
+import { TrendingUp, TrendingDown, CreditCard, ArrowUpRight, ArrowDownRight, Download, Plus, Receipt } from 'lucide-react';
 import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const Billing = () => {
   const { finances, addTransaction, canUseFeature, getUpgradeMessage } = useAdmin();
-  const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({ amount: '', type: 'income', description: '' });
 
@@ -19,9 +17,8 @@ export const Billing = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clubId: clubInfo?.id || 'demo_club_id',
           tariffId,
-          amount
+          amount,
         })
       });
       const data = await res.json();

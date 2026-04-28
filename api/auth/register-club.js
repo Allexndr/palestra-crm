@@ -17,6 +17,7 @@ export default async function handler(req, res) {
 
     let authUserId = null;
     let session = null;
+    let tgCode = null;
 
     if (hasSupabaseEnv() && hasSupabaseServiceEnv()) {
       const supabase = getServiceClient();
@@ -43,9 +44,10 @@ export default async function handler(req, res) {
     let profile = null;
 
     try {
-      const { club: newClub, profile: newProfile } = await ensureClubForRegistration(formData, authUserId);
+      const { club: newClub, profile: newProfile, tgCode: newTgCode } = await ensureClubForRegistration({ ...formData, tempPassword: password }, authUserId);
       club = newClub;
       profile = newProfile;
+      tgCode = newTgCode;
     } catch (e) {
       console.error('Registration data error:', e);
       club = { id: '00000000-0000-0000-0000-000000000001', name: formData.clubName };
@@ -60,7 +62,7 @@ export default async function handler(req, res) {
       const emailRes = await sendEmail({
         to: formData.email,
         subject: `Добро пожаловать в Palestra — ${formData.clubName}`,
-        html: getWelcomeEmailHtml(formData.clubName, formData.email, password)
+        html: getWelcomeEmailHtml(formData.clubName, formData.email)
       });
       console.log('Email send result:', emailRes);
     } else {
@@ -77,8 +79,7 @@ export default async function handler(req, res) {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         clubId: club.id,
       },
-      // Include credentials in response just in case email fails or for instant UI feedback
-      credentials: { login: formData.email, password }
+      credentials: { login: formData.email, password, tgCode }
     });
   } catch (error) {
     if (error.statusCode) return sendJson(res, error.statusCode, { error: error.message });
