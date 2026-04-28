@@ -180,7 +180,9 @@ export const RegisterClub = () => {
       });
       const apiData = await apiResponse.json();
       if (!apiResponse.ok) {
-        throw new Error(apiData.error || 'Ошибка создания клуба');
+        const error = new Error(apiData.error || 'Ошибка создания клуба');
+        error.details = apiData.details;
+        throw error;
       }
 
       setSuccessData(apiData);
@@ -193,7 +195,12 @@ export const RegisterClub = () => {
       }
     } catch (err) {
       console.error("Registration error:", err);
-      setErrors({ form: err.message });
+      let errorMsg = err.message;
+      if (err.details && err.details.fieldErrors) {
+        const fields = Object.keys(err.details.fieldErrors);
+        errorMsg = `Ошибка в полях: ${fields.join(', ')}. Проверьте правильность заполнения.`;
+      }
+      setErrors({ form: errorMsg });
     } finally {
       setIsLoading(false);
     }
