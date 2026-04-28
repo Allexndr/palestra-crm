@@ -704,7 +704,7 @@ body, #root {
 
 .landing-trust-panel {
   display: grid;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
 
 .landing-trust-item {
