@@ -68,6 +68,10 @@ export default async function handler(req, res) {
       credentials: { login: formData.email, password, tgCode }
     });
   } catch (error) {
+    if (error.statusCode === 400) {
+      console.error('Validation Error Details:', JSON.stringify(error.details, null, 2));
+      return sendJson(res, 400, { error: 'Invalid request data', details: error.details });
+    }
     if (error.statusCode) return sendJson(res, error.statusCode, { error: error.message });
     return safeError(res, error, 'Unable to register club');
   }
