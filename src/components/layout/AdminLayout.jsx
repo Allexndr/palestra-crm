@@ -40,10 +40,6 @@ export const AdminLayout = () => {
           </div>
           
           <div className="flex items-center gap-6 desktop-only">
-            <NavLink to="/" style={{ textDecoration: 'none' }}>
-              <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={48} />
-            </NavLink>
-            <div style={{ width: '1px', height: '30px', backgroundColor: 'var(--color-border)' }} />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted">
               {isAdmin ? 'Панель Администратора' : 'Кабинет Тренера'}
             </span>

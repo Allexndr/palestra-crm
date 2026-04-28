@@ -294,7 +294,8 @@ export const League = () => {
                         <p className="text-[9px] font-black text-muted uppercase tracking-widest">баллов XP</p>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </Card>
             </div>
