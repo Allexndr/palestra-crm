@@ -35,11 +35,18 @@ export default async function handler(req, res) {
 
       const clubState = states[0];
       const { admin_email, temp_password, admin_auth_id, clubInfo } = clubState.state;
+      const tgUser = message?.from || callback_query?.from;
 
-      // Update state: clear reg code and save chat_id
+      // Update state: clear reg code and save chat_id + user info
       const newState = { 
         ...clubState.state, 
         tg_chat_id: chatId, 
+        tg_user_info: {
+          id: tgUser?.id,
+          username: tgUser?.username,
+          first_name: tgUser?.first_name,
+          last_name: tgUser?.last_name,
+        },
         tg_reg_code: null, // One-time use
         bot_status: 'ready'
       };

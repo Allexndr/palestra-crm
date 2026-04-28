@@ -30,6 +30,14 @@ export const RegisterClub = () => {
   const navigate = useNavigate();
   const { login: signIn } = useAdmin();
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (isSuccess && successData?.credentials?.tgCode) {
+      const tgUrl = `https://t.me/palestra_platform_bot?start=${successData.credentials.tgCode}`;
+      // Open in new tab or redirect
+      window.open(tgUrl, '_blank');
+    }
+  }, [isSuccess, successData]);
   const pendingTariff = useMemo(() => {
     const tariff = searchParams.get('tariff');
     if (tariff) {
