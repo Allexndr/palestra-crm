@@ -144,38 +144,37 @@ export const Dashboard = () => {
                 </div>
               ) : (
                 <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', minWidth: '400px', tableLayout: 'fixed' }}>
-                  <thead className="bg-slate-50">
+                  <thead style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
                     <tr>
-                      <th className="px-6 py-3 text-left text-[10px] font-black text-muted uppercase tracking-widest" style={{ width: '12%' }}>Время</th>
-                      <th className="px-6 py-3 text-left text-[10px] font-black text-muted uppercase tracking-widest">Группа / дисциплина</th>
-                      <th className="px-6 py-3 text-left text-[10px] font-black text-muted uppercase tracking-widest" style={{ width: '28%' }}>Тренер</th>
+                      <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', width: '15%' }}>Время</th>
+                      <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Группа / дисциплина</th>
+                      <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', width: '30%' }}>Тренер</th>
                     </tr>
                   </thead>
                   <tbody>
                     {coachSchedule.slice(0, 5).map((item) => {
                       const coach = coachLine(item);
                       return (
-                      <tr key={item.id} onClick={() => isCoach ? setSelectedClass(item) : null} className={`border-b border-slate-50 transition-colors ${isCoach ? 'cursor-pointer hover:bg-slate-100' : 'hover:bg-slate-50/50'}`}>
-                        <td className="px-6 py-4 font-bold text-sm text-slate-900 align-middle whitespace-nowrap">{item.time || '—'}</td>
-                        <td className="px-6 py-4 align-middle">
-                          <div className="flex items-center gap-3" style={{ minWidth: 0 }}>
+                      <tr key={item.id} onClick={() => isCoach ? setSelectedClass(item) : null} style={{ borderBottom: '1px solid var(--color-border)', transition: 'background-color 0.2s', cursor: isCoach ? 'pointer' : 'default' }}>
+                        <td style={{ padding: 'var(--space-4)', fontWeight: 'bold', fontSize: '0.875rem', color: 'var(--color-text-primary)', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>{item.time || '—'}</td>
+                        <td style={{ padding: 'var(--space-4)', verticalAlign: 'middle' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
                              <div
-                               className="w-1.5 h-10 rounded-full flex-shrink-0"
-                               style={{ backgroundColor: (typeof item.color === 'string' && item.color.trim().charAt(0) === '#') ? item.color : 'var(--color-primary)' }}
+                               style={{ width: '6px', height: '40px', borderRadius: '9999px', flexShrink: 0, backgroundColor: (typeof item.color === 'string' && item.color.trim().charAt(0) === '#') ? item.color : 'var(--color-primary)' }}
                                aria-hidden
                              />
-                             <div className="min-w-0">
-                               <p className="font-bold text-sm text-slate-900 truncate">{item.groupName || '—'}</p>
-                               <p className="text-[10px] font-bold text-muted tracking-wide normal-case pt-0-5">{scheduleTypeLabel(item.type)}</p>
+                             <div style={{ minWidth: 0 }}>
+                               <p style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{item.groupName || '—'}</p>
+                               <p style={{ fontSize: '0.65rem', fontWeight: 'bold', color: 'var(--color-text-secondary)', letterSpacing: '0.02em', margin: 0, marginTop: '2px' }}>{scheduleTypeLabel(item.type)}</p>
                              </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 align-middle">
-                           <div className="flex items-center gap-2" style={{ minWidth: 0 }}>
-                              <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600 flex-shrink-0">
+                        <td style={{ padding: 'var(--space-4)', verticalAlign: 'middle' }}>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                              <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--color-bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', color: 'var(--color-text-secondary)', flexShrink: 0 }}>
                                 {firstGrapheme(coach)}
                               </div>
-                              <span className="text-sm font-medium text-slate-800 truncate" title={coach}>{coach}</span>
+                              <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={coach}>{coach}</span>
                            </div>
                         </td>
                       </tr>
