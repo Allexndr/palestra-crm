@@ -184,10 +184,16 @@ export const RegisterClub = () => {
       }
 
       setSuccessData(apiData);
-      await signIn({ email: formData.email, password: tempPassword });
-      setIsSuccess(true);
+      setIsSuccess(true); // Сначала показываем успех
+      
+      try {
+        await signIn({ email: formData.email, password: tempPassword });
+      } catch (authErr) {
+        console.warn("Auto-login failed, but registration was successful:", authErr);
+      }
     } catch (err) {
-      setErrors({ form: "Произошла ошибка при создании клуба: " + err.message });
+      console.error("Registration error:", err);
+      setErrors({ form: err.message });
     } finally {
       setIsLoading(false);
     }
@@ -394,6 +400,12 @@ export const RegisterClub = () => {
                     {isLoading ? 'Загрузка...' : (step === 3 ? 'Создать клуб' : 'Далее')}
                   </Button>
                 </div>
+                
+                {errors.form && (
+                  <div style={{ marginTop: 'var(--space-4)', padding: 'var(--space-3)', backgroundColor: 'rgba(194, 65, 75, 0.1)', color: 'var(--color-error)', borderRadius: 'var(--radius-sm)', fontSize: '13px', textAlign: 'center', border: '1px solid var(--color-error)' }}>
+                    {errors.form}
+                  </div>
+                )}
               </>
             )}
           </Card>
