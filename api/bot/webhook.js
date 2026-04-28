@@ -115,8 +115,11 @@ export default async function handler(req, res) {
          const authId = clubStates[0].state.bot_awaiting_pwd;
          const newPwd = text.trim();
          
-         if (newPwd.length < 12) {
-           return await sendMessage(chatId, "⚠️ Пароль слишком короткий. Минимум 12 символов.");
+         console.log(`PASSWORD ATTEMPT: Length=${newPwd.length}, OriginalLength=${text.length}`);
+         
+         if (newPwd.length < 10) { // Сделаем 10 для подстраховки
+           await sendMessage(chatId, "⚠️ Пароль слишком короткий. Минимум 12 символов.");
+           return sendJson(res, 200, { ok: true });
          }
 
          await sendMessage(chatId, "⏳ *Обновляю пароль...*");
@@ -125,13 +128,14 @@ export default async function handler(req, res) {
          const { error } = await supabase.auth.admin.updateUserById(authId, { password: newPwd });
 
          if (error) {
-           return await sendMessage(chatId, "❌ Ошибка при обновлении пароля: " + error.message);
+           await sendMessage(chatId, "❌ Ошибка при обновлении пароля: " + error.message);
+           return sendJson(res, 200, { ok: true });
          }
 
          // Clear state
          const newState = { ...clubStates[0].state };
          delete newState.bot_awaiting_pwd;
-         newState.temp_password = text; // Update stored temp password
+         newState.temp_password = newPwd; 
 
          await supabase
            .from('app_state')
@@ -139,6 +143,7 @@ export default async function handler(req, res) {
            .eq('club_id', clubStates[0].club_id);
 
          await sendMessage(chatId, "✅ *Пароль успешно обновлен!*\n\nТеперь вы можете войти в систему с новым паролем.");
+         return sendJson(res, 200, { ok: true });
        }
     }
 
