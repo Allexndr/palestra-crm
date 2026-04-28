@@ -710,7 +710,7 @@ body, #root {
 .landing-trust-item {
   display: grid;
   grid-template-columns: 68px minmax(0, 1fr);
-  gap: var(--space-5);
+  gap: var(--space-4);
   align-items: center;
   padding: clamp(1.25rem, 2.4vw, 1.75rem);
   border: 1px solid rgba(228, 222, 212, 0.9);
