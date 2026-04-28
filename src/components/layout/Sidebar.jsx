@@ -53,12 +53,6 @@ export const Sidebar = () => {
         >
           <div className="flex items-center gap-3 min-w-0 w-full" style={{ width: '100%' }}>
             <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={44} />
-            <span
-              className="font-bold text-slate-800"
-              style={{ fontSize: '0.9rem', lineHeight: 1.2, fontFamily: 'var(--font-family-display)' }}
-            >
-              {clubInfo?.name}
-            </span>
           </div>
         </NavLink>
         

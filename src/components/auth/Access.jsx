@@ -44,7 +44,6 @@ export function MemberLayout() {
       <aside className="member-desktop-sidebar desktop-only">
         <NavLink to="/" className="member-sidebar-brand" style={{ textDecoration: 'none' }}>
           <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={44} />
-          <span>{clubInfo?.name || 'Palestra Fight Club'}</span>
         </NavLink>
 
         <div className="member-user-card">
