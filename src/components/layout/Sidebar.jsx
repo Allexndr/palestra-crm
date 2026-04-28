@@ -43,7 +43,9 @@ export const Sidebar = () => {
       padding: 'var(--space-4)',
       display: 'flex',
       flexDirection: 'column',
-      zIndex: 10
+      zIndex: 10,
+      alignSelf: 'flex-start',
+      overflowY: 'auto'
     }}>
       <div className="mb-6">
         <NavLink
