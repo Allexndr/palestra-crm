@@ -49,17 +49,20 @@ export default async function handler(req, res) {
         .update({ state: newState })
         .eq('club_id', clubState.club_id);
 
+      const host = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://palestra.vercel.app';
+      const loginUrl = `${host}/auth/login`;
+
       const msg = `🎉 *Добро пожаловать в ${clubInfo?.name || 'Palestra'}!*\n\n` +
         `Ваш кабинет администратора готов. Вот ваши данные для входа:\n\n` +
         `📧 Логин: \`${admin_email}\`\n` +
         `🔑 Пароль: \`${temp_password || 'Указанный при регистрации'}\`\n\n` +
         `👆 _Нажмите на логин или пароль, чтобы скопировать их._\n\n` +
-        `🔗 Вход: [palestra.fit/auth/login](https://palestra.vercel.app/auth/login)`;
+        `🔗 Вход: [palestra.fit/auth/login](${loginUrl})`;
 
       const keyboard = {
         inline_keyboard: [
           [{ text: "✏️ Сменить пароль", callback_data: `action_change_pwd_${admin_auth_id}` }],
-          [{ text: "🚀 Войти в систему", url: "https://palestra.vercel.app/auth/login" }]
+          [{ text: "🚀 Войти в систему", url: loginUrl }]
         ]
       };
 
