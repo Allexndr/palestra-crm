@@ -10,30 +10,32 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email } = req.body || {};
+    const { email, phone, clubName } = req.body || {};
     
-    if (!email) {
-      return sendJson(res, 400, { error: 'Email is required' });
-    }
-
     if (!hasSupabaseServiceEnv()) {
-      // Allow if no DB environment (demo mode)
       return sendJson(res, 200, { exists: false });
     }
 
     const supabase = getServiceClient();
     
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', email.toLowerCase())
-      .maybeSingle();
-
-    if (error) {
-      throw error;
+    // Check Profiles (Email and Phone)
+    if (email) {
+      const { data } = await supabase.from('profiles').select('id').eq('email', email.toLowerCase()).maybeSingle();
+      if (data) return sendJson(res, 200, { exists: true, field: 'email' });
     }
 
-    return sendJson(res, 200, { exists: !!data });
+    if (phone) {
+      const { data } = await supabase.from('profiles').select('id').eq('phone', phone.trim()).maybeSingle();
+      if (data) return sendJson(res, 200, { exists: true, field: 'phone' });
+    }
+
+    // Check Clubs (Name)
+    if (clubName) {
+      const { data } = await supabase.from('clubs').select('id').ilike('name', clubName.trim()).maybeSingle();
+      if (data) return sendJson(res, 200, { exists: true, field: 'clubName' });
+    }
+
+    return sendJson(res, 200, { exists: false });
   } catch (error) {
     return safeError(res, error, 'Unable to check email');
   }

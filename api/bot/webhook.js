@@ -85,7 +85,16 @@ export default async function handler(req, res) {
 
     // 3. Handle incoming message (Password update)
     if (text && !text.startsWith('/')) {
-       const { data: clubStates } = await supabase.from('app_state').select('club_id, state').contains('state', { tg_chat_id: chatId });
+       console.log(`BOT: Processing message from ${chatId}: "${text}"`);
+       
+       // More reliable lookup using arrow operator for JSONB
+       const { data: clubStates, error: lookupError } = await supabase
+         .from('app_state')
+         .select('club_id, state')
+         .filter('state->>tg_chat_id', 'eq', chatId.toString());
+
+       if (lookupError) console.error('Lookup Error:', lookupError);
+       console.log(`BOT: Found ${clubStates?.length || 0} states for this chat`);
 
        if (clubStates?.length && clubStates[0].state.bot_awaiting_pwd) {
          const authId = clubStates[0].state.bot_awaiting_pwd;

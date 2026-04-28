@@ -147,16 +147,37 @@ export const RegisterClub = () => {
         const response = await fetch('/api/auth/check-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: formData.email })
+          body: JSON.stringify({ email: formData.email, phone: formData.phone })
         });
         const data = await response.json();
         if (data.exists) {
-          setErrors({ email: "Пользователь с таким email уже существует" });
+          const fieldMap = { email: 'Email', phone: 'Телефон' };
+          setErrors({ [data.field]: `Этот ${fieldMap[data.field] || data.field} уже зарегистрирован` });
           setIsLoading(false);
           return;
         }
       } catch (err) {
-        console.error("Error checking email:", err);
+        console.error("Error checking data:", err);
+      }
+      setIsLoading(false);
+    }
+
+    if (step === 2) {
+      setIsLoading(true);
+      try {
+        const response = await fetch('/api/auth/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clubName: formData.clubName })
+        });
+        const data = await response.json();
+        if (data.exists) {
+          setErrors({ clubName: "Клуб с таким названием уже существует" });
+          setIsLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Error checking club name:", err);
       }
       setIsLoading(false);
     }
