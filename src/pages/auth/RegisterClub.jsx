@@ -200,7 +200,13 @@ export const RegisterClub = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ formData, tariff: pendingTariff, password: tempPassword }),
       });
-      const apiData = await apiResponse.json();
+      
+      let apiData;
+      try {
+        apiData = await apiResponse.json();
+      } catch {
+        throw new Error('Сервер вернул некорректный ответ. Попробуйте позже.');
+      }
       if (!apiResponse.ok) {
         const error = new Error(apiData.error || 'Ошибка создания клуба');
         error.details = apiData.details;
@@ -361,16 +367,8 @@ export const RegisterClub = () => {
                   </div>
                 )}
 
-                <div style={{ overflow: 'hidden', position: 'relative' }}>
-                  <div style={{ 
-                    display: 'flex', 
-                    width: '300%', 
-                    transform: `translateX(-${(step - 1) * 33.333}%)`,
-                    transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)' 
-                  }}>
-                    
-                    {/* Step 1 */}
-                    <div style={{ width: '33.333%', flexShrink: 0, paddingRight: '1px' }}>
+                <div>
+                    {step === 1 && (
                       <div className="flex flex-col gap-5">
                         <div className="flex gap-4 responsive-row">
                           <div className="flex-1">
@@ -395,7 +393,7 @@ export const RegisterClub = () => {
                           onChange={handlePhoneChange} 
                           error={errors.phone}
                         />
-                        <p style={{ fontSize: '11px', color: 'var(--color-primary)', marginTop: '-12px', marginBottom: '4px', fontWeight: 500 }}>
+                        <p style={{ fontSize: '11px', color: 'var(--color-primary)', marginTop: '-12px', marginBottom: '0', fontWeight: 500 }}>
                           ☝️ Используйте номер с Telegram — туда придут доступы
                         </p>
                         <Input 
@@ -407,11 +405,10 @@ export const RegisterClub = () => {
                           error={errors.email}
                         />
                       </div>
-                    </div>
+                    )}
 
-                    {/* Step 2 */}
-                    <div style={{ width: '33.333%', flexShrink: 0, paddingRight: '1px', position: 'relative', zIndex: 20 }}>
-                      <div className="flex flex-col gap-5">
+                    {step === 2 && (
+                      <div className="flex flex-col gap-5" style={{ position: 'relative', zIndex: 20 }}>
                         <Input 
                           label="Название клуба" 
                           placeholder="Fight Club Almaty" 
@@ -438,10 +435,9 @@ export const RegisterClub = () => {
                           error={errors.address}
                         />
                       </div>
-                    </div>
+                    )}
 
-                    {/* Step 3 */}
-                    <div style={{ width: '33.333%', flexShrink: 0, paddingRight: '1px' }}>
+                    {step === 3 && (
                       <div className="flex flex-col gap-6">
                         <div>
                           <label className="text-sm font-medium mb-3 block">Направления (выберите одно или несколько)</label>
@@ -471,9 +467,7 @@ export const RegisterClub = () => {
                           </p>
                         </div>
                       </div>
-                    </div>
-
-                  </div>
+                    )}
                 </div>
 
                 <div className="flex justify-between mt-8 pt-4" style={{ borderTop: '1px solid var(--color-border)', position: 'relative', zIndex: 1 }}>
