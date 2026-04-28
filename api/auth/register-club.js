@@ -1,9 +1,17 @@
-import { parseJsonBody, sendJson, setSessionCookies } from '../_lib/http.js';
+import { getServiceClient, hasSupabaseEnv, hasSupabaseServiceEnv, getAnonClient } from '../_lib/supabase.js';
+import { sendJson, parseJsonBody } from '../_lib/http.js';
+import { assertSameOrigin, rateLimit, safeError } from '../_lib/security.js';
+import { registerClubSchema, parseOrThrow } from '../_lib/validation.js';
 import { ensureClubForRegistration } from '../_lib/appState.js';
-import { rateLimit } from '../_lib/rateLimit.js';
-import { assertSameOrigin, safeError } from '../_lib/security.js';
-import { getAnonClient, getServiceClient, hasSupabaseEnv, hasSupabaseServiceEnv, mapProfileToUser } from '../_lib/supabase.js';
-import { parseOrThrow, registerClubSchema } from '../_lib/validation.js';
+import { mapProfileToUser } from '../_lib/repositories.js';
+
+function setSessionCookies(res, session) {
+  const expires = new Date(Date.now() + (session.expires_in || 3600) * 1000);
+  res.setHeader('Set-Cookie', [
+    `sb-access-token=${session.access_token}; Path=/; HttpOnly; SameSite=Lax; Expires=${expires.toUTCString()}`,
+    `sb-refresh-token=${session.refresh_token}; Path=/; HttpOnly; SameSite=Lax; Expires=${expires.toUTCString()}`
+  ]);
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'Method not allowed' });
@@ -21,7 +29,26 @@ export default async function handler(req, res) {
 
     if (hasSupabaseEnv() && hasSupabaseServiceEnv()) {
       const supabase = getServiceClient();
-      const { data, error } = await supabase.auth.admin.createUser({
+      
+      // 1. Check for duplicates
+      const { data: existingP } = await supabase.from('profiles').select('id').or(`email.eq.${formData.email},phone.eq.${formData.phone}`).maybeSingle();
+      const { data: existingC } = await supabase.from('clubs').select('id').ilike('name', formData.clubName).maybeSingle();
+      
+      if (existingP || existingC) {
+        return sendJson(res, 400, { 
+          error: 'Club or User already registered',
+          details: { 
+            fieldErrors: {
+              email: existingP ? ['Уже зарегистрирован'] : undefined,
+              phone: existingP ? ['Уже зарегистрирован'] : undefined,
+              clubName: existingC ? ['Уже зарегистрировано'] : undefined
+            }
+          }
+        });
+      }
+
+      // 2. Create Auth User
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
         email: formData.email,
         password,
         email_confirm: true,
@@ -31,12 +58,24 @@ export default async function handler(req, res) {
         },
       });
 
-      if (error && !/already/i.test(error.message)) throw error;
-      authUserId = data?.user?.id || null;
+      if (createError) {
+        if (/already/i.test(createError.message)) {
+          const { data: list } = await supabase.auth.admin.listUsers();
+          authUserId = list.users.find(u => u.email.toLowerCase() === formData.email.toLowerCase())?.id;
+        } else {
+          throw createError;
+        }
+      } else {
+        authUserId = newUser?.user?.id;
+      }
 
       if (authUserId) {
-        const auth = await getAnonClient().auth.signInWithPassword({ email: formData.email, password });
-        session = auth.data?.session || null;
+        try {
+          const auth = await getAnonClient().auth.signInWithPassword({ email: formData.email, password });
+          session = auth.data?.session || null;
+        } catch (e) {
+          console.warn('Auto-login failed after registration:', e);
+        }
       }
     }
 
@@ -44,13 +83,13 @@ export default async function handler(req, res) {
     let profile = null;
 
     try {
-      const { club: newClub, profile: newProfile, tgCode: newTgCode } = await ensureClubForRegistration({ ...formData, tempPassword: password }, authUserId);
-      club = newClub;
-      profile = newProfile;
-      tgCode = newTgCode;
+      const result = await ensureClubForRegistration({ ...formData, tempPassword: password }, authUserId);
+      club = result.club;
+      profile = result.profile;
+      tgCode = result.tgCode;
     } catch (e) {
       console.error('Registration data error:', e);
-      club = { id: '00000000-0000-0000-0000-000000000001', name: formData.clubName };
+      throw e;
     }
 
     if (session) setSessionCookies(res, session);
@@ -58,21 +97,17 @@ export default async function handler(req, res) {
     return sendJson(res, 200, {
       club,
       user: mapProfileToUser(profile) || {
-        id: authUserId || 'admin1',
-        role: 'admin',
-        login: formData.email,
         email: formData.email,
         name: `${formData.firstName} ${formData.lastName}`.trim(),
-        clubId: club.id,
+        role: 'admin'
       },
       credentials: { login: formData.email, password, tgCode }
     });
   } catch (error) {
     if (error.statusCode === 400) {
       console.error('Validation Error Details:', JSON.stringify(error.details, null, 2));
-      return sendJson(res, 400, { error: 'Invalid request data', details: error.details });
+      return sendJson(res, 400, { error: error.message, details: error.details });
     }
-    if (error.statusCode) return sendJson(res, error.statusCode, { error: error.message });
     return safeError(res, error, 'Unable to register club');
   }
 }
