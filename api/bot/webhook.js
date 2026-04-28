@@ -54,12 +54,13 @@ export default async function handler(req, res) {
         `📧 Логин: \`${admin_email}\`\n` +
         `🔑 Пароль: \`${temp_password || 'Указанный при регистрации'}\`\n\n` +
         `👆 _Нажмите на логин или пароль, чтобы скопировать их._\n\n` +
-        `🔗 Вход: [palestra.fit/auth/login](https://palestra-blond.vercel.app/auth/login)`;
+        `🔗 Вход: [palestra.fit/auth/login](https://palestra.vercel.app/auth/login)`;
 
       const keyboard = {
-        inline_keyboard: [[
-          { text: "✏️ Сменить пароль", callback_data: `action_change_pwd_${admin_auth_id}` }
-        ]]
+        inline_keyboard: [
+          [{ text: "✏️ Сменить пароль", callback_data: `action_change_pwd_${admin_auth_id}` }],
+          [{ text: "🚀 Войти в систему", url: "https://palestra.vercel.app/auth/login" }]
+        ]
       };
 
       await sendMessage(chatId, msg, keyboard);

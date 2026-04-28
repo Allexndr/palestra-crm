@@ -188,7 +188,7 @@ export const RegisterClub = () => {
   return (
     <>
       <Navbar />
-      <main id="main-content" tabIndex={-1} className={`auth-page ${pendingTariff && !isSuccess ? 'auth-page--wide' : ''}`}>
+      <main id="main-content" tabIndex={-1} className="auth-page">
         <div className="auth-page__inner">
           
           <Card style={{ flex: 1, padding: 'var(--space-8)', position: 'relative' }}>
@@ -233,8 +233,8 @@ export const RegisterClub = () => {
                   </div>
                 )}
 
-                <Button variant="outline" onClick={() => navigate('/admin')} style={{ width: '100%' }}>
-                  Перейти в Дашборд
+                <Button variant="primary" onClick={() => navigate('/auth/login')} style={{ width: '100%' }}>
+                  Перейти к Входу
                 </Button>
               </div>
             ) : (
@@ -297,6 +297,9 @@ export const RegisterClub = () => {
                           onChange={handlePhoneChange} 
                           error={errors.phone}
                         />
+                        <p style={{ fontSize: '11px', color: 'var(--color-primary)', marginTop: '-12px', marginBottom: '4px', fontWeight: 500 }}>
+                          ☝️ Используйте номер с Telegram — туда придут доступы
+                        </p>
                         <Input 
                           label="Email" 
                           type="email" 
@@ -364,7 +367,10 @@ export const RegisterClub = () => {
                         
                         <div style={{ backgroundColor: 'var(--color-primary-soft)', padding: 'var(--space-4)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-primary)' }}>
                           <p className="text-sm font-bold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family-display)' }}>Готовы к запуску!</p>
-                          <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>После нажатия мы создадим ваш аккаунт и вышлем пароль на {formData.email || 'указанную почту'}.</p>
+                          <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)', fontWeight: 500 }}>
+                            Почти готово! После нажатия мы создадим клуб.<br/>
+                            <strong style={{ color: 'var(--color-primary)' }}>Доступы (логин и пароль) придут в ваш Telegram.</strong>
+                          </p>
                         </div>
                       </div>
                     </div>
