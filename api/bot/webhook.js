@@ -113,13 +113,16 @@ export default async function handler(req, res) {
 
        if (clubStates?.length && clubStates[0].state.bot_awaiting_pwd) {
          const authId = clubStates[0].state.bot_awaiting_pwd;
+         const newPwd = text.trim();
          
-         if (text.length < 12) {
+         if (newPwd.length < 12) {
            return await sendMessage(chatId, "⚠️ Пароль слишком короткий. Минимум 12 символов.");
          }
 
+         await sendMessage(chatId, "⏳ *Обновляю пароль...*");
+         
          // Update Auth Password
-         const { error } = await supabase.auth.admin.updateUserById(authId, { password: text });
+         const { error } = await supabase.auth.admin.updateUserById(authId, { password: newPwd });
 
          if (error) {
            return await sendMessage(chatId, "❌ Ошибка при обновлении пароля: " + error.message);
