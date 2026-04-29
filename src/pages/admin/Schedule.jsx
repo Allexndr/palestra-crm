@@ -4,7 +4,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, ChevronLeft, ChevronRight, Clock, User, X, CheckCircle2, Edit2, Trash2, Zap } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Clock, User, X, CheckCircle2, Edit2, Trash2, Zap, Search } from 'lucide-react';
 
 const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -29,16 +29,20 @@ export const Schedule = () => {
   // Filters state
   const [filterSport, setFilterSport] = useState('all');
   const [filterCoach, setFilterCoach] = useState('all');
+  const [calendarSearch, setCalendarSearch] = useState('');
 
   const filteredSchedule = schedule.filter(s => {
     const locMatch = selectedLocationId === 'all' || s.locationId === selectedLocationId;
     const sportMatch = filterSport === 'all' || s.type === filterSport;
     const coachMatch = filterCoach === 'all' || s.coach === filterCoach;
+    const searchMatch = !calendarSearch || 
+      s.groupName.toLowerCase().includes(calendarSearch.toLowerCase()) ||
+      (s.coach && s.coach.toLowerCase().includes(calendarSearch.toLowerCase()));
     
     if (isCoach) {
       // Coach only sees their own schedule (by coach name match or by group name match)
       const isMyClass = s.coach === user?.name || myGroupNames.includes(s.groupName);
-      return locMatch && sportMatch && coachMatch && isMyClass;
+      return locMatch && sportMatch && coachMatch && searchMatch && isMyClass;
     }
     
     if (memberView) {
@@ -57,7 +61,7 @@ export const Schedule = () => {
       }
     }
     
-    return locMatch && sportMatch && coachMatch;
+    return locMatch && sportMatch && coachMatch && searchMatch;
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -190,7 +194,7 @@ export const Schedule = () => {
     <div className="animate-fade-in pb-12">
       <div className="admin-page-header">
         <div className="page-title-block page-title-block--row" style={{ flex: 1 }}>
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex flex-wrap items-center gap-6 mb-4">
             <h1 className="h2 mb-0">Расписание</h1>
             <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl shadow-inner border border-slate-200">
               <button onClick={() => setWeekOffset(prev => prev - 1)} className="p-1.5 hover:bg-white rounded-xl transition-all border-none bg-transparent cursor-pointer shadow-sm"><ChevronLeft size={18}/></button>
@@ -199,20 +203,30 @@ export const Schedule = () => {
               </span>
               <button onClick={() => setWeekOffset(prev => prev + 1)} className="p-1.5 hover:bg-white rounded-xl transition-all border-none bg-transparent cursor-pointer shadow-sm"><ChevronRight size={18}/></button>
             </div>
+            <div className="relative group flex-1 max-w-md">
+              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
+              <input 
+                type="text" 
+                placeholder="Поиск по группе или тренеру..." 
+                value={calendarSearch}
+                onChange={(e) => setCalendarSearch(e.target.value)}
+                className="w-full bg-white border border-slate-200 pl-11 pr-4 py-2.5 rounded-2xl text-sm font-medium outline-none focus:border-primary focus:shadow-lg focus:shadow-primary/5 transition-all"
+              />
+            </div>
           </div>
           <div className="flex flex-wrap gap-6 items-center">
              <div className="flex items-center gap-3">
                 <span className="text-[10px] font-bold text-muted uppercase tracking-widest">Дисциплина</span>
                 <select className="bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-primary shadow-sm outline-none" value={filterSport} onChange={e => setFilterSport(e.target.value)}>
-                  <option value="all">Все дисциплины</option>
-                  {sports.map(s => <option key={s} value={s}>{s}</option>)}
+                   <option value="all">Все дисциплины</option>
+                   {sports.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
              </div>
              <div className="flex items-center gap-3">
                 <span className="text-[10px] font-bold text-muted uppercase tracking-widest">Тренер</span>
                 <select className="bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-primary shadow-sm outline-none" value={filterCoach} onChange={e => setFilterCoach(e.target.value)}>
-                  <option value="all">Все тренеры</option>
-                  {[...new Set(schedule.map(s => s.coach))].filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
+                   <option value="all">Все тренеры</option>
+                   {[...new Set(schedule.map(s => s.coach))].filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
              </div>
           </div>
@@ -227,10 +241,17 @@ export const Schedule = () => {
       </div>
 
       {isAdding && isAdmin && (
-        <Card className="mb-12 animate-up" style={{ border: '2px solid var(--color-primary)', boxShadow: 'var(--shadow-primary)' }}>
-          <h4 className="h4 mb-8">{editingId ? 'Редактировать тренировку' : 'Запланировать новую тренировку'}</h4>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-            <div className="admin-form-grid">
+        <Card className="mb-12 animate-up" style={{ border: '1px solid var(--color-primary-soft)', boxShadow: '0 20px 40px rgba(99, 102, 241, 0.05)', borderRadius: '32px', overflow: 'hidden', padding: 0 }}>
+          <div style={{ backgroundColor: 'var(--color-primary-soft)', padding: '24px 40px', borderBottom: '1px solid var(--color-primary-soft)' }}>
+             <h4 className="h4 mb-0 flex items-center gap-3">
+               <div style={{ padding: '8px', backgroundColor: 'white', borderRadius: '10px', color: 'var(--color-primary)' }}>
+                 <Plus size={20} />
+               </div>
+               {editingId ? 'Редактировать тренировку' : 'Новое занятие в расписании'}
+             </h4>
+          </div>
+          <form onSubmit={handleSubmit} style={{ padding: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '32px' }}>
               <div className="input-group">
                 <label className="input-label">День недели</label>
                 <select className="input-field" value={formData.day} onChange={e => setFormData({...formData, day: e.target.value})}>
@@ -239,36 +260,50 @@ export const Schedule = () => {
               </div>
               <Input label="Время начала" type="time" required value={formData.time} onChange={e => setFormData({...formData, time: e.target.value})} />
               <div className="input-group">
-                <label className="input-label">Длительность (мин)</label>
+                <label className="input-label">Длительность</label>
                 <select className="input-field" value={formData.duration} onChange={e => setFormData({...formData, duration: parseInt(e.target.value)})}>
-                  <option value={30}>30 мин</option>
-                  <option value={60}>60 мин</option>
-                  <option value={90}>90 мин</option>
-                  <option value={120}>120 мин</option>
+                  {[30, 45, 60, 75, 90, 120, 150, 180].map(m => <option key={m} value={m}>{m} минут</option>)}
                 </select>
               </div>
-              <Input label="Название группы" placeholder="Boxing PRO" required value={formData.groupName} onChange={e => setFormData({...formData, groupName: e.target.value})} />
-              <Input label="Тренер" placeholder="А. Карелин" value={formData.coach} onChange={e => setFormData({...formData, coach: e.target.value})} />
               <div className="input-group">
-                <label className="input-label">Цвет</label>
-                <div className="flex gap-2 p-1.5 bg-slate-50 rounded-xl border">
-                  {['#4338ca', '#ef4444', '#f59e0b', '#10b981', '#6366f1'].map(c => (
+                <label className="input-label">Филиал / Зал</label>
+                <select className="input-field" value={formData.locationId} onChange={e => setFormData({...formData, locationId: e.target.value})}>
+                  <option value="1">Главный зал</option>
+                  <option value="2">Малый зал</option>
+                  <option value="3">РИНГ</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+              <Input label="Название группы" placeholder="Напр: Boxing PRO (Вечер)" required value={formData.groupName} onChange={e => setFormData({...formData, groupName: e.target.value})} />
+              <Input label="Тренер" placeholder="А. Карелин" value={formData.coach} onChange={e => setFormData({...formData, coach: e.target.value})} />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'end' }}>
+              <div className="input-group">
+                <label className="input-label">Цветовая метка</label>
+                <div className="flex flex-wrap gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                  {['#4338ca', '#ef4444', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#06b6d4', '#8b5cf6'].map(c => (
                     <div 
                       key={c} 
                       onClick={() => setFormData({...formData, color: c})}
                       style={{ 
-                        width: 24, height: 24, borderRadius: '8px', backgroundColor: c, 
-                        cursor: 'pointer', border: formData.color === c ? '2px solid white' : 'none',
-                        boxShadow: formData.color === c ? '0 0 0 2px ' + c : 'none'
+                        width: 32, height: 32, borderRadius: '10px', backgroundColor: c, 
+                        cursor: 'pointer', border: formData.color === c ? '3px solid white' : 'none',
+                        boxShadow: formData.color === c ? '0 0 0 2px ' + c : 'none',
+                        transition: 'all 0.2s'
                       }} 
                     />
                   ))}
                 </div>
               </div>
-            </div>
-            <div className="flex justify-end gap-4 pt-6 border-t" style={{ borderTop: '1px solid var(--color-border)' }}>
-               <Button variant="ghost" type="button" onClick={() => { setIsAdding(false); setEditingId(null); }}>Отмена</Button>
-               <Button variant="primary" type="submit" style={{ padding: '12px 32px' }}>{editingId ? 'Сохранить изменения' : 'Добавить в расписание'}</Button>
+              <div className="flex justify-end gap-4">
+                 <Button variant="ghost" type="button" onClick={() => { setIsAdding(false); setEditingId(null); }} style={{ borderRadius: '16px' }}>Отмена</Button>
+                 <Button variant="primary" type="submit" style={{ padding: '16px 40px', borderRadius: '16px', fontSize: '1rem', boxShadow: 'var(--shadow-primary)' }}>
+                   {editingId ? 'Сохранить изменения' : 'Добавить в расписание'}
+                 </Button>
+              </div>
             </div>
           </form>
         </Card>
@@ -399,7 +434,7 @@ export const Schedule = () => {
                       >
                         <div className="flex items-center gap-4">
                           <div style={{ width: 44, height: 44, borderRadius: '14px', backgroundColor: selectedMemberIds.includes(member.id) ? 'var(--color-primary)' : 'var(--color-bg)', color: selectedMemberIds.includes(member.id) ? 'white' : 'var(--color-text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px', transition: 'all 0.3s' }}>
-                            {member.avatar ? <img src={member.avatar} style={{ width: '100%', height: '100%', borderRadius: '14px', objectFit: 'cover' }} alt=""/> : member.firstName.charAt(0)}
+                            {member.avatar ? <img src={member.avatar} style={{ width: '100%', height: '100%', borderRadius: '14px', objectFit: 'cover' }} alt=""/> : member.firstName?.charAt(0) || '?'}
                           </div>
                           <div>
                             <p className="font-bold text-sm text-slate-900">{member.firstName} {member.lastName}</p>

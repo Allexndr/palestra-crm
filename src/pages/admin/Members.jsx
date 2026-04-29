@@ -85,9 +85,9 @@ export const Members = () => {
                   <td className="py-5 px-6 rounded-l-2xl border-y border-l border-slate-50">
                     <div className="flex items-center gap-4">
                       <div style={{ width: 44, height: 44, borderRadius: '14px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '16px' }}>
-                        {member.firstName.charAt(0)}
+                        {member.firstName?.charAt(0) || '?'}
                       </div>
-                      <span className="font-bold text-slate-900 text-base">{member.firstName} {member.lastName}</span>
+                      <span className="font-bold text-slate-900 text-base">{member.firstName || ''} {member.lastName || ''}</span>
                     </div>
                   </td>
                   <td className="py-5 px-6 border-y border-slate-50 text-slate-600 font-bold">{member.phone || '—'}</td>
