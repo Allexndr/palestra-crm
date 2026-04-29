@@ -192,7 +192,6 @@ export const Schedule = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-    <div className="animate-fade-in pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
         <div className="flex-1">
           <div className="flex items-center gap-6 mb-8">
