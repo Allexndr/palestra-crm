@@ -12,7 +12,25 @@ const fmt = (n) => Number(n || 0).toLocaleString('ru-RU');
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : '—';
 const fmtTime = (d) => d ? new Date(d).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
 
-const UserManagement = ({ clubId }) => {
+const ModalAlert = ({ isOpen, onClose, title, message, isConfirm, onConfirm }) => {
+  if (!isOpen) return null;
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(4px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="animate-up" style={{ background: 'white', padding: 24, borderRadius: 20, width: 340, textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)' }}>
+        <h3 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 800, color: '#0f172a' }}>{title}</h3>
+        <p style={{ margin: '0 0 24px', fontSize: 14, color: '#64748b', lineHeight: 1.5 }}>{message}</p>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {isConfirm && <button onClick={onClose} style={{ flex: 1, padding: 12, background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>Отмена</button>}
+          <button onClick={() => { onConfirm ? onConfirm() : onClose(); }} style={{ flex: 1, padding: 12, background: '#3b82f6', color: 'white', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>
+            {isConfirm ? 'Подтвердить' : 'ОК, понятно'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const UserManagement = ({ clubId, setModalData }) => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingUser, setEditingUser] = useState(null);
@@ -34,40 +52,60 @@ const UserManagement = ({ clubId }) => {
   useEffect(() => { loadUsers(); }, [clubId]);
 
   const handleUpdateRole = async (user, newRole) => {
-    if (!window.confirm(`Изменить роль ${user.name} на ${newRole}?`)) return;
-    try {
-      const res = await fetch('/api/superadmin/club-users', {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, authUserId: user.auth_user_id, role: newRole })
-      });
-      if (res.ok) loadUsers();
-    } catch (err) { alert('Ошибка'); }
+    setModalData({
+      isOpen: true,
+      title: 'Смена роли',
+      message: `Вы действительно хотите изменить роль пользователя ${user.name} на ${newRole}?`,
+      isConfirm: true,
+      onConfirm: async () => {
+        setModalData({ isOpen: false });
+        try {
+          const res = await fetch('/api/superadmin/club-users', {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id, authUserId: user.auth_user_id, role: newRole })
+          });
+          if (res.ok) loadUsers();
+          else throw new Error('Ошибка обновления роли');
+        } catch (err) { setModalData({ isOpen: true, title: 'Ошибка', message: err.message }); }
+      }
+    });
   };
 
   const handleUpdatePassword = async () => {
-    if (newPassword.length < 6) return alert('Минимум 6 символов');
+    if (newPassword.length < 6) return setModalData({ isOpen: true, title: 'Внимание', message: 'Длина пароля должна быть минимум 6 символов' });
     try {
       const res = await fetch('/api/superadmin/club-users', {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: editingUser.id, authUserId: editingUser.auth_user_id, password: newPassword })
       });
       if (res.ok) {
-        alert('Пароль обновлен');
+        setModalData({ isOpen: true, title: 'Успех', message: 'Пароль успешно обновлен' });
         setEditingUser(null);
         setNewPassword('');
+      } else {
+        throw new Error('Ошибка обновления пароля');
       }
-    } catch (err) { alert('Ошибка'); }
+    } catch (err) { setModalData({ isOpen: true, title: 'Ошибка', message: err.message }); }
   };
 
   const handleDelete = async (user) => {
-    if (!window.confirm(`Удалить пользователя ${user.name}? Действие необратимо!`)) return;
-    try {
-      const res = await fetch('/api/superadmin/club-users', {
-        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, authUserId: user.auth_user_id })
-      });
-      if (res.ok) loadUsers();
-    } catch (err) { alert('Ошибка'); }
+    setModalData({
+      isOpen: true,
+      title: 'Удаление пользователя',
+      message: `Удалить пользователя ${user.name}? Действие необратимо!`,
+      isConfirm: true,
+      onConfirm: async () => {
+        setModalData({ isOpen: false });
+        try {
+          const res = await fetch('/api/superadmin/club-users', {
+            method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id, authUserId: user.auth_user_id })
+          });
+          if (res.ok) loadUsers();
+          else throw new Error('Ошибка удаления пользователя');
+        } catch (err) { setModalData({ isOpen: true, title: 'Ошибка', message: err.message }); }
+      }
+    });
   };
 
   if (isLoading) return <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8' }}>Загрузка пользователей...</div>;
@@ -161,26 +199,34 @@ const ClubSettingsModal = ({ isOpen, onClose, club, appState, onSaved, onDelete 
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clubId: club.id, ...formData })
       });
-      if (!res.ok) throw new Error('Ошибка сохранения');
+      if (!res.ok) throw new Error('Ошибка сохранения клуба');
       onSaved(formData);
       onClose();
-    } catch (err) { alert(err.message); }
+    } catch (err) { setModalData({ isOpen: true, title: 'Ошибка', message: err.message }); }
     finally { setIsSaving(false); }
   };
 
   const handleDelete = async () => {
-    if (deleteConfirmText !== 'УДАЛИТЬ') return alert('Введите УДАЛИТЬ для подтверждения');
-    if (!window.confirm('Вы абсолютно уверены? Это удалит клуб, всех его учеников, тренеров и историю навсегда!')) return;
+    if (deleteConfirmText !== 'УДАЛИТЬ') return setModalData({ isOpen: true, title: 'Ошибка', message: 'Введите УДАЛИТЬ для подтверждения удаления' });
     
-    try {
-      setIsSaving(true);
-      const res = await fetch('/api/superadmin/club', {
-        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clubId: club.id })
-      });
-      if (!res.ok) throw new Error('Ошибка удаления');
-      onDelete();
-    } catch (err) { alert(err.message); setIsSaving(false); }
+    setModalData({
+      isOpen: true,
+      title: 'Полное удаление клуба',
+      message: 'Вы абсолютно уверены? Это удалит клуб, всех его учеников, тренеров и историю навсегда! Это действие НЕОБРАТИМО!',
+      isConfirm: true,
+      onConfirm: async () => {
+        setModalData({ isOpen: false });
+        try {
+          setIsSaving(true);
+          const res = await fetch('/api/superadmin/club', {
+            method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ clubId: club.id })
+          });
+          if (!res.ok) throw new Error('Произошла ошибка при удалении');
+          onDelete();
+        } catch (err) { setModalData({ isOpen: true, title: 'Ошибка', message: err.message }); setIsSaving(false); }
+      }
+    });
   };
 
   return (
@@ -350,6 +396,7 @@ export const ClubDetail = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isTariffModalOpen, setIsTariffModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [modalData, setModalData] = useState({ isOpen: false });
 
   useEffect(() => {
     const load = async () => {
@@ -555,7 +602,7 @@ export const ClubDetail = () => {
         )}
 
         {/* USERS / HIERARCHY */}
-        {activeTab === 'users' && <UserManagement clubId={clubId} />}
+        {activeTab === 'users' && <UserManagement clubId={clubId} setModalData={setModalData} />}
 
         {/* MEMBERS */}
         {activeTab === 'members' && (
@@ -706,12 +753,18 @@ export const ClubDetail = () => {
         onClose={() => setIsSettingsModalOpen(false)}
         club={club}
         appState={appState}
+        setModalData={setModalData}
         onSaved={(updated) => setData({
           ...data,
           club: { ...data.club, name: updated.name, city: updated.city, address: updated.address, primary_color: updated.primary_color },
           appState: { ...data.appState, admin_email: updated.admin_email }
         })}
         onDelete={() => navigate('/superadmin')}
+      />
+
+      <ModalAlert 
+        {...modalData} 
+        onClose={() => setModalData({ isOpen: false })} 
       />
     </div>
   );

@@ -134,11 +134,11 @@ export const Landing = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0f172a', color: 'white', fontFamily: 'Outfit, sans-serif' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>
       <Navbar onPricingClick={scrollToTariff} />
 
       {/* 1. HERO SECTION */}
-      <header style={{ paddingTop: '140px', paddingBottom: '80px', position: 'relative', overflow: 'hidden' }}>
+      <header style={{ paddingTop: '140px', paddingBottom: '80px', position: 'relative', overflow: 'hidden', background: '#0f172a', color: 'white' }}>
         <div style={{ position: 'absolute', top: -200, right: -200, width: 600, height: 600, background: 'radial-gradient(circle, rgba(49, 70, 166, 0.4) 0%, rgba(15, 23, 42, 0) 70%)', borderRadius: '50%' }} />
         
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', zIndex: 1 }}>
@@ -202,14 +202,14 @@ export const Landing = () => {
       </header>
 
       {/* 2. TRUST STRIP */}
-      <section style={{ borderTop: '1px solid #1e293b', borderBottom: '1px solid #1e293b', padding: '32px 0', background: '#0f172a' }}>
+      <section style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', padding: '32px 0', background: '#ffffff' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <p style={{ textAlign: 'center', fontSize: 14, color: '#94a3b8', margin: '0 0 24px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <p style={{ textAlign: 'center', fontSize: 14, color: '#64748b', margin: '0 0 24px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Создано для клубов единоборств, а не для абстрактного фитнеса
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', alignItems: 'center' }}>
             {TRUST_STRIP.map(item => (
-              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#cbd5e1', fontWeight: 700, fontSize: 15 }}>
+              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#334155', fontWeight: 700, fontSize: 15 }}>
                 <CheckCircle2 size={16} color="#3b82f6" /> {item}
               </div>
             ))}
@@ -218,24 +218,24 @@ export const Landing = () => {
       </section>
 
       {/* 3. PAIN -> OUTCOME */}
-      <section style={{ padding: '100px 0', background: '#0a0f1d' }}>
+      <section style={{ padding: '100px 0', background: '#f8fafc' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px' }}>Когда клуб растёт, хаос тоже растёт</h2>
-          <p style={{ textAlign: 'center', fontSize: 18, color: '#94a3b8', margin: '0 auto 60px', maxWidth: 700 }}>
+          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px', color: '#0f172a' }}>Когда клуб растёт, хаос тоже растёт</h2>
+          <p style={{ textAlign: 'center', fontSize: 18, color: '#64748b', margin: '0 auto 60px', maxWidth: 700 }}>
             Palestra превращает разрозненные чаты, таблицы и устные договорённости в понятную систему, где у каждого есть свой рабочий экран.
           </p>
           
-          <div style={{ background: '#1e293b', borderRadius: 24, overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: '#334155', fontWeight: 800 }}>
-              <div style={{ padding: '20px 32px', color: '#94a3b8' }}>Сейчас в клубе</div>
-              <div style={{ padding: '20px 32px', color: '#fff', background: '#3b82f6' }}>С Palestra</div>
+          <div style={{ background: '#ffffff', borderRadius: 24, overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: '#f1f5f9', borderBottom: '1px solid #e2e8f0', fontWeight: 800 }}>
+              <div style={{ padding: '20px 32px', color: '#64748b' }}>Сейчас в клубе</div>
+              <div style={{ padding: '20px 32px', color: '#0f172a' }}>С Palestra</div>
             </div>
             {PAIN_COMPARISON.map((row, i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: i === PAIN_COMPARISON.length - 1 ? 'none' : '1px solid #334155' }}>
-                <div style={{ padding: '20px 32px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: i === PAIN_COMPARISON.length - 1 ? 'none' : '1px solid #e2e8f0' }}>
+                <div style={{ padding: '20px 32px', color: '#64748b', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444' }} /> {row.pain}
                 </div>
-                <div style={{ padding: '20px 32px', color: '#fff', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}>
+                <div style={{ padding: '20px 32px', color: '#0f172a', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}>
                   <CheckCircle2 size={18} color="#3b82f6" /> {row.outcome}
                 </div>
               </div>
@@ -245,17 +245,17 @@ export const Landing = () => {
       </section>
 
       {/* 4. CORE OUTCOMES */}
-      <section id="features" style={{ padding: '100px 0', background: '#0f172a' }}>
+      <section id="features" style={{ padding: '100px 0', background: '#ffffff' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px' }}>Что меняется после запуска</h2>
+          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px', color: '#0f172a' }}>Что меняется после запуска</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
             {CORE_OUTCOMES.map((feature, idx) => (
-              <div key={idx} style={{ background: '#1e293b', padding: 32, borderRadius: 24, border: '1px solid #334155' }}>
+              <div key={idx} style={{ background: '#f8fafc', padding: 32, borderRadius: 24, border: '1px solid #e2e8f0' }}>
                 <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
                   <feature.icon size={24} color="#3b82f6" />
                 </div>
-                <h3 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 12px' }}>{feature.title}</h3>
-                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#94a3b8', margin: 0 }}>{feature.text}</p>
+                <h3 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 12px', color: '#0f172a' }}>{feature.title}</h3>
+                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#64748b', margin: 0 }}>{feature.text}</p>
               </div>
             ))}
           </div>
@@ -263,15 +263,15 @@ export const Landing = () => {
       </section>
 
       {/* 5. DIFFERENTIATION */}
-      <section style={{ padding: '100px 0', background: '#0a0f1d' }}>
+      <section style={{ padding: '100px 0', background: '#f8fafc' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px' }}>Почему Palestra отличается от обычной CRM</h2>
+          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px', color: '#0f172a' }}>Почему Palestra отличается от обычной CRM</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 24 }}>
             {DIFFERENTIATION.map((diff, idx) => (
-              <div key={idx} style={{ padding: 24, borderLeft: '2px solid #3b82f6' }}>
+              <div key={idx} style={{ padding: 24, borderLeft: '2px solid #3b82f6', background: '#ffffff', borderRadius: '0 16px 16px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                 <diff.icon size={32} color="#3b82f6" style={{ marginBottom: 16 }} />
-                <h3 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 8px' }}>{diff.title}</h3>
-                <p style={{ fontSize: 14, lineHeight: 1.5, color: '#94a3b8', margin: 0 }}>{diff.text}</p>
+                <h3 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 8px', color: '#0f172a' }}>{diff.title}</h3>
+                <p style={{ fontSize: 14, lineHeight: 1.5, color: '#64748b', margin: 0 }}>{diff.text}</p>
               </div>
             ))}
           </div>
@@ -279,14 +279,14 @@ export const Landing = () => {
       </section>
 
       {/* 6. ROLES */}
-      <section id="roles" style={{ padding: '100px 0', background: '#0f172a' }}>
+      <section id="roles" style={{ padding: '100px 0', background: '#ffffff' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px' }}>Каждый видит свой рабочий контур</h2>
+          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px', color: '#0f172a' }}>Каждый видит свой рабочий контур</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
             {ROLE_CARDS.map((role, idx) => (
-              <div key={idx} style={{ background: '#1e293b', padding: 32, borderRadius: 24, border: '1px solid #334155' }}>
-                <h3 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 12px', color: '#fff' }}>{role.title}</h3>
-                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#94a3b8', margin: 0 }}>{role.text}</p>
+              <div key={idx} style={{ background: '#f8fafc', padding: 32, borderRadius: 24, border: '1px solid #e2e8f0' }}>
+                <h3 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 12px', color: '#0f172a' }}>{role.title}</h3>
+                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#64748b', margin: 0 }}>{role.text}</p>
               </div>
             ))}
           </div>
@@ -294,16 +294,16 @@ export const Landing = () => {
       </section>
 
       {/* 7. HOW IT WORKS */}
-      <section style={{ padding: '100px 0', background: '#0a0f1d' }}>
+      <section style={{ padding: '100px 0', background: '#f8fafc' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px' }}>Запуск без остановки клуба</h2>
-          <p style={{ textAlign: 'center', fontSize: 16, color: '#94a3b8', margin: '0 auto 60px' }}>Базовый запуск можно пройти быстро: сначала порядок, потом расширение.</p>
+          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px', color: '#0f172a' }}>Запуск без остановки клуба</h2>
+          <p style={{ textAlign: 'center', fontSize: 16, color: '#64748b', margin: '0 auto 60px' }}>Базовый запуск можно пройти быстро: сначала порядок, потом расширение.</p>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {LAUNCH_STEPS.map((step, idx) => (
-              <div key={idx} style={{ display: 'flex', gap: 24, alignItems: 'center', background: '#1e293b', padding: 24, borderRadius: 20 }}>
+              <div key={idx} style={{ display: 'flex', gap: 24, alignItems: 'center', background: '#ffffff', padding: 24, borderRadius: 20, border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
                 <div style={{ fontSize: 32, fontWeight: 900, color: '#3b82f6', opacity: 0.5 }}>{step.number}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#f8fafc' }}>{step.title}</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>{step.title}</div>
               </div>
             ))}
           </div>
@@ -311,10 +311,10 @@ export const Landing = () => {
       </section>
 
       {/* 9. PRICING */}
-      <section id="pricing" ref={tariffRef} style={{ padding: '100px 0', background: '#0f172a' }}>
+      <section id="pricing" ref={tariffRef} style={{ padding: '100px 0', background: '#ffffff' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px' }}>Простые тарифы</h2>
-          <p style={{ textAlign: 'center', fontSize: 18, color: '#94a3b8', margin: '0 auto 60px', maxWidth: 600 }}>
+          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px', color: '#0f172a' }}>Простые тарифы</h2>
+          <p style={{ textAlign: 'center', fontSize: 18, color: '#64748b', margin: '0 auto 60px', maxWidth: 600 }}>
             Начните бесплатно, а платите только когда клубу станет тесно.
           </p>
           <TariffConstructor />
@@ -322,19 +322,20 @@ export const Landing = () => {
       </section>
 
       {/* 10. FAQ */}
-      <section id="faq" style={{ padding: '100px 0', background: '#0a0f1d' }}>
+      <section id="faq" style={{ padding: '100px 0', background: '#f8fafc' }}>
         <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px' }}>Что важно понять до запуска</h2>
+          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px', color: '#0f172a' }}>Что важно понять до запуска</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {FAQ.map((item, idx) => (
-              <div key={idx} style={{ background: '#1e293b', padding: 32, borderRadius: 24 }}>
-                <h3 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 12px' }}>{item.q}</h3>
-                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#94a3b8', margin: 0 }}>{item.a}</p>
+              <div key={idx} style={{ background: '#ffffff', padding: 32, borderRadius: 24, border: '1px solid #e2e8f0' }}>
+                <h3 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 12px', color: '#0f172a' }}>{item.q}</h3>
+                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#64748b', margin: 0 }}>{item.a}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
+
 
       {/* 11. FINAL CTA */}
       <section style={{ padding: '120px 0', background: '#3b82f6', textAlign: 'center' }}>
