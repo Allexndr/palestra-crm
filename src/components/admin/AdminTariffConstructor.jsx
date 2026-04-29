@@ -74,10 +74,12 @@ export const AdminTariffConstructor = ({
 
       <section>
         <div className="admin-tariff__section-head">
-          <SlidersHorizontal size={20} />
+          <div style={{ backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', padding: '10px', borderRadius: '12px' }}>
+            <SlidersHorizontal size={22} />
+          </div>
           <div>
-            <h4>Ресурсы клуба</h4>
-            <p>Добавляйте ровно столько учеников, тренеров, филиалов и групп, сколько нужно клубу.</p>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 900 }}>Ресурсы клуба</h4>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Масштабируйте количество учеников и тренеров под ваш рост</p>
           </div>
         </div>
         <div className="admin-tariff__resources">
@@ -86,13 +88,18 @@ export const AdminTariffConstructor = ({
             const selected = Number(draft.limits?.[option.key] || option.included);
             return (
               <article key={option.key} className="admin-tariff__resource">
-                <div>
-                  <h5>{option.label}</h5>
-                  <p>
-                    Сейчас {usage[option.key] || 0} из {formatLimit(subscription.limits?.[option.key])}.
-                    Growth включает {formatLimit(option.paidIncluded)}.
-                  </p>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h5>{option.label}</h5>
+                    <p>
+                      {usage[option.key] || 0} из {formatLimit(subscription.limits?.[option.key])} занято
+                    </p>
+                  </div>
+                  <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--color-primary)', backgroundColor: 'var(--color-primary-soft)', padding: '4px 8px', borderRadius: '6px' }}>
+                    {status.percent}%
+                  </div>
                 </div>
+                
                 <input
                   type="range"
                   min={option.min}
@@ -101,9 +108,10 @@ export const AdminTariffConstructor = ({
                   value={selected}
                   onChange={(event) => updateLimit(option.key, event.target.value)}
                 />
+
                 <div className="admin-tariff__resource-bottom">
                   <strong>{selected.toLocaleString('ru-RU')}</strong>
-                  <span>{status.percent}% текущего лимита занято</span>
+                  <span>Лимит Growth</span>
                 </div>
               </article>
             );
@@ -113,10 +121,12 @@ export const AdminTariffConstructor = ({
 
       <section>
         <div className="admin-tariff__section-head">
-          <Zap size={20} />
+          <div style={{ backgroundColor: '#fef3c7', color: '#d97706', padding: '10px', borderRadius: '12px' }}>
+            <Zap size={22} />
+          </div>
           <div>
-            <h4>Модули роста</h4>
-            <p>Premium-функции видны сразу, но выключены в Starter. Клиент понимает ценность и сам подключает нужный модуль.</p>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 900 }}>Модули роста</h4>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Подключайте дополнительные инструменты по мере необходимости</p>
           </div>
         </div>
         <div className="admin-tariff__features">
@@ -129,7 +139,7 @@ export const AdminTariffConstructor = ({
                 className={`admin-tariff__feature ${enabled ? 'is-selected' : ''}`}
                 onClick={() => toggleFeature(feature.key)}
               >
-                <span>{enabled ? 'Подключено' : `+ ${feature.price.toLocaleString('ru-RU')} ₸`}</span>
+                <span>{enabled ? '✓ Подключено' : `+ ${feature.price.toLocaleString('ru-RU')} ₸`}</span>
                 <strong>{feature.label}</strong>
                 <small>{feature.desc}</small>
               </button>

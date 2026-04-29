@@ -1311,58 +1311,119 @@ body, #root {
 .admin-tariff__resources,
 .admin-tariff__features {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--space-6);
 }
 
 .admin-tariff__resource,
 .admin-tariff__feature {
-  padding: var(--space-5);
-  border-radius: 1.5rem;
+  padding: var(--space-6);
+  border-radius: 24px;
   border: 1px solid var(--color-border);
   background: #fff;
   text-align: left;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: var(--space-4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
   overflow: hidden;
 }
 
-.admin-tariff__resource input {
+.admin-tariff__resource:hover {
+  border-color: var(--color-primary-soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-tariff__resource h5 {
+  font-family: var(--font-family-display);
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.admin-tariff__resource p {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.admin-tariff__resource input[type="range"] {
   width: 100%;
-  margin: var(--space-4) 0;
-  position: relative;
-  z-index: 2;
+  margin: var(--space-2) 0;
+  accent-color: var(--color-primary);
+  height: 6px;
+  background: var(--color-bg);
+  border-radius: 3px;
+  cursor: pointer;
 }
 
 .admin-tariff__resource-bottom {
   display: flex;
   justify-content: space-between;
-  gap: var(--space-4);
-  align-items: baseline;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.admin-tariff__resource-bottom strong {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--color-primary);
+}
+
+.admin-tariff__resource-bottom span {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
 }
 
 .admin-tariff__feature {
   cursor: pointer;
-  transition: transform var(--duration-base) var(--ease-standard), border-color var(--duration-base) var(--ease-standard);
+  background: var(--color-bg-secondary);
+  border-color: transparent;
 }
 
-.admin-tariff__feature:hover,
+.admin-tariff__feature:hover {
+  transform: translateY(-4px);
+  background: white;
+  border-color: var(--color-primary-soft);
+  box-shadow: var(--shadow-md);
+}
+
 .admin-tariff__feature.is-selected {
-  transform: translateY(-2px);
+  background: white;
   border-color: var(--color-primary);
+  box-shadow: var(--shadow-primary);
 }
 
-.admin-tariff__feature span,
-.admin-tariff__feature small {
-  display: block;
-  color: var(--color-text-secondary);
+.admin-tariff__feature span {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  padding: 4px 10px;
+  border-radius: 8px;
+  width: fit-content;
+  margin-bottom: 12px;
 }
 
 .admin-tariff__feature strong {
-  display: block;
-  margin: var(--space-2) 0;
+  font-family: var(--font-family-display);
+  font-size: 1.1rem;
+  font-weight: 800;
   color: var(--color-text-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.admin-tariff__feature small {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
 }
 
 .admin-tariff__billing button {
