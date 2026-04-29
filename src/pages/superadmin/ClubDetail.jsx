@@ -141,6 +141,95 @@ const UserManagement = ({ clubId }) => {
   );
 };
 
+const ClubSettingsModal = ({ isOpen, onClose, club, appState, onSaved, onDelete }) => {
+  const [formData, setFormData] = useState({
+    name: club?.name || '',
+    city: club?.city || '',
+    address: club?.address || '',
+    primary_color: club?.primary_color || '#3146A6',
+    admin_email: appState?.admin_email || '',
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+
+  if (!isOpen) return null;
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/superadmin/club', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clubId: club.id, ...formData })
+      });
+      if (!res.ok) throw new Error('Ошибка сохранения');
+      onSaved(formData);
+      onClose();
+    } catch (err) { alert(err.message); }
+    finally { setIsSaving(false); }
+  };
+
+  const handleDelete = async () => {
+    if (deleteConfirmText !== 'УДАЛИТЬ') return alert('Введите УДАЛИТЬ для подтверждения');
+    if (!window.confirm('Вы абсолютно уверены? Это удалит клуб, всех его учеников, тренеров и историю навсегда!')) return;
+    
+    try {
+      setIsSaving(true);
+      const res = await fetch('/api/superadmin/club', {
+        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clubId: club.id })
+      });
+      if (!res.ok) throw new Error('Ошибка удаления');
+      onDelete();
+    } catch (err) { alert(err.message); setIsSaving(false); }
+  };
+
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 480, padding: 24, maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#0f172a' }}>Настройки клуба</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}><X size={20} /></button>
+        </div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>Название клуба</label>
+            <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: 10, boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>Email владельца</label>
+            <input type="text" value={formData.admin_email} onChange={e => setFormData({ ...formData, admin_email: e.target.value })} style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: 10, boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>Город</label>
+            <input type="text" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: 10, boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>Адрес</label>
+            <input type="text" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: 10, boxSizing: 'border-box' }} />
+          </div>
+        </div>
+
+        <button onClick={handleSave} disabled={isSaving} style={{
+          width: '100%', padding: 14, background: '#3146A6', color: 'white', border: 'none', borderRadius: 12,
+          fontWeight: 800, fontSize: 15, cursor: isSaving ? 'not-allowed' : 'pointer', opacity: isSaving ? 0.7 : 1, marginBottom: 32
+        }}>
+          {isSaving ? 'Сохранение...' : 'Сохранить изменения'}
+        </button>
+
+        <div style={{ borderTop: '1px solid #fee2e2', paddingTop: 20 }}>
+          <h3 style={{ margin: '0 0 8px', fontSize: 15, fontWeight: 800, color: '#dc2626' }}>Опасная зона</h3>
+          <p style={{ margin: '0 0 12px', fontSize: 12, color: '#991b1b' }}>Безвозвратное удаление клуба. Введите <b>УДАЛИТЬ</b> для подтверждения.</p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <input type="text" placeholder="УДАЛИТЬ" value={deleteConfirmText} onChange={e => setDeleteConfirmText(e.target.value)} style={{ flex: 1, padding: '10px 12px', border: '1px solid #fca5a5', borderRadius: 10, boxSizing: 'border-box' }} />
+            <button onClick={handleDelete} disabled={isSaving} style={{ padding: '0 20px', background: '#dc2626', color: 'white', border: 'none', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>Удалить клуб</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Section = ({ title, children }) => (
   <div style={{ background: 'white', borderRadius: 20, border: '1px solid #f0f0f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', overflow: 'hidden', marginBottom: 20 }}>
     <div style={{ padding: '18px 24px', borderBottom: '1px solid #f8fafc' }}>
@@ -260,6 +349,7 @@ export const ClubDetail = () => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [isTariffModalOpen, setIsTariffModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -337,6 +427,13 @@ export const ClubDetail = () => {
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={() => setIsSettingsModalOpen(true)} style={{
+            display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
+            background: 'white', border: '1px solid #e2e8f0', borderRadius: 8,
+            color: '#475569', fontWeight: 700, fontSize: 13, cursor: 'pointer',
+          }}>
+            <Settings size={13} /> Настройки клуба
+          </button>
           <button onClick={handleEnterClub} style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
             background: '#3146A6', border: 'none', borderRadius: 8,
@@ -603,6 +700,20 @@ export const ClubDetail = () => {
         currentSubscription={subscription} 
         onSaved={(newSub) => setData({ ...data, appState: { ...data.appState, subscription: newSub } })}
       />
+
+      <ClubSettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+        club={club}
+        appState={appState}
+        onSaved={(updated) => setData({
+          ...data,
+          club: { ...data.club, name: updated.name, city: updated.city, address: updated.address, primary_color: updated.primary_color },
+          appState: { ...data.appState, admin_email: updated.admin_email }
+        })}
+        onDelete={() => navigate('/superadmin')}
+      />
     </div>
   );
 };
+
