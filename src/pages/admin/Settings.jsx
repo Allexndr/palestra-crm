@@ -7,6 +7,7 @@ import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Troph
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
 import { AdminTariffConstructor } from '../../components/admin/AdminTariffConstructor';
+import { formatLimit } from '../../lib/tariff';
 
 export const Settings = () => {
   const { 
@@ -24,6 +25,11 @@ export const Settings = () => {
   const [planToDelete, setPlanToDelete] = useState(null);
   const [tempClubInfo, setTempClubInfo] = useState(clubInfo);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+
+  // Sync temp state with actual clubInfo once it loads/changes
+  React.useEffect(() => {
+    setTempClubInfo(clubInfo);
+  }, [clubInfo]);
 
   const handleUpdateClubInfo = (e) => {
     e.preventDefault();
