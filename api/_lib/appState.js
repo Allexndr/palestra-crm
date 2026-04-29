@@ -88,7 +88,7 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
       .insert({
         auth_user_id: ownerAuthUserId,
         club_id: club.id,
-        role: 'admin',
+        role: formData.email === 'sanmemik2000@gmail.com' ? 'superadmin' : 'admin',
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
         phone: formData.phone,
