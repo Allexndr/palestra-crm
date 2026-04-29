@@ -3,114 +3,96 @@ import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Navbar } from '../../components/layout/Navbar';
 import {
-  ArrowRight, CalendarDays, CheckCircle2, CreditCard,
-  LockKeyhole, Trophy, UserCheck, UsersRound, Swords, Activity, BookOpen, Clock, HeartHandshake, BoxSelect
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  CreditCard,
+  Database,
+  LockKeyhole,
+  ShieldCheck,
+  Trophy,
+  UserCheck,
+  UsersRound,
 } from 'lucide-react';
 import { TariffConstructor } from '../../components/landing/TariffConstructor';
 
-// --- DATA ---
-const TRUST_STRIP = ['Для MMA', 'Для бокса', 'Для борьбы', 'Для BJJ / grappling', 'Для детских групп', 'Для сетей филиалов'];
-
-const PAIN_COMPARISON = [
-  { pain: 'Ученики в Excel', outcome: 'Единая база клуба' },
-  { pain: 'Расписание в чатах', outcome: 'Группы и слоты в одной системе' },
-  { pain: 'Оплаты сверяют вручную', outcome: 'Видны выручка и долги' },
-  { pain: 'Родители пишут в WhatsApp', outcome: 'Есть семейный кабинет' },
-  { pain: 'Тренер не видит общую картину', outcome: 'У каждой роли свой рабочий контур' },
+const OPERATIONS = [
+  { label: 'Активных учеников', value: '128' },
+  { label: 'Групп сегодня', value: '14' },
+  { label: 'Оплаты за месяц', value: '3.2M ₸' },
 ];
 
-const CORE_OUTCOMES = [
+const FEATURES = [
+  {
+    icon: UsersRound,
+    title: 'Единая база клуба',
+    text: 'Ученики, родители, абонементы и история посещений без таблиц и дублей.',
+  },
   {
     icon: CalendarDays,
-    title: 'Порядок в расписании',
-    text: 'Тренеры, залы, группы и переносы больше не живут в разных местах.',
+    title: 'Расписание и группы',
+    text: 'Тренеры, филиалы, занятость залов и переносы тренировок в одном контуре.',
   },
   {
     icon: CreditCard,
-    title: 'Контроль оплат',
-    text: 'Владелец быстрее видит выручку, долги и загрузку по группам.',
-  },
-  {
-    icon: HeartHandshake,
-    title: 'Спокойствие для родителей',
-    text: 'Родители видят посещаемость, прогресс и важные события без лишних переписок.',
-  },
-  {
-    icon: UserCheck,
-    title: 'Удержание учеников',
-    text: 'Личный кабинет, достижения, рейтинги и прогресс помогают ученику оставаться в системе дольше.',
-  },
-];
-
-const DIFFERENTIATION = [
-  {
-    icon: UsersRound,
-    title: 'Семейный контур',
-    text: 'Родительский кабинет, уведомления, контроль посещаемости ребёнка.',
+    title: 'Оплаты и контроль',
+    text: 'Владелец видит выручку, долги и активность групп без ручной сверки.',
   },
   {
     icon: Trophy,
     title: 'Лига и прогресс',
-    text: 'Рейтинги, достижения, пояса, история роста ученика.',
-  },
-  {
-    icon: Swords,
-    title: 'Под клубы единоборств',
-    text: 'Группы, спарринги, возрастные категории, направления.',
-  },
-  {
-    icon: BoxSelect,
-    title: 'Мультиклубный сценарий',
-    text: 'Филиалы, роли, общая картина для владельца.',
+    text: 'Рейтинги, достижения и личные кабинеты помогают удерживать учеников.',
   },
 ];
 
 const ROLE_CARDS = [
   {
-    title: 'Владелец',
-    text: 'Видит филиалы, выручку, долги, загрузку групп и общую картину клуба.',
-  },
-  {
     title: 'Администратор',
-    text: 'Ведёт лиды, учеников, абонементы, расписание и переносы без ручной путаницы.',
+    text: 'Ведёт лиды, учеников, абонементы, расписание и переносы без ручной сверки в чатах.',
   },
   {
     title: 'Тренер',
-    text: 'Видит состав группы, посещаемость, прогресс и ближайшие тренировки.',
+    text: 'Понимает состав группы, посещаемость, прогресс учеников и ближайшие тренировки.',
   },
   {
     title: 'Родитель',
-    text: 'Следит за расписанием ребёнка, посещаемостью, событиями и достижениями.',
+    text: 'Видит расписание ребёнка, посещаемость, достижения и важные сообщения от клуба.',
   },
   {
     title: 'Ученик',
-    text: 'Смотрит тренировки, прогресс, рейтинг и личные достижения.',
+    text: 'Следит за тренировками, прогрессом, рейтингом и личными достижениями в клубе.',
   },
 ];
 
-const LAUNCH_STEPS = [
+const TRUST_ITEMS = [
   {
-    number: '01',
-    title: 'Создаёте структуру клуба, филиалы и направления',
+    icon: LockKeyhole,
+    title: 'Роли и доступы',
+    text: 'Владелец, администратор, тренер, родитель и ученик видят только свой рабочий контур.',
   },
   {
-    number: '02',
-    title: 'Переносите учеников, группы и тренеров',
+    icon: Database,
+    title: 'Данные клуба',
+    text: 'Клиентская база, посещения и финансовые события отделены от публичной части продукта.',
   },
   {
-    number: '03',
-    title: 'Публикуете расписание и открываете кабинеты',
-  },
-  {
-    number: '04',
-    title: 'Контролируете оплаты, посещаемость и прогресс',
+    icon: UserCheck,
+    title: 'Семейные сценарии',
+    text: 'Для несовершеннолетних акцент на родительский кабинет и контролируемую коммуникацию.',
   },
 ];
 
-const FAQ = [
+const IMPLEMENTATION_STEPS = [
+  'Заводите клуб, филиалы и направления',
+  'Переносите учеников, группы и тренеров',
+  'Публикуете расписание и открываете кабинеты',
+  'Контролируете оплаты, посещаемость и прогресс',
+];
+
+const FAQ_ITEMS = [
   {
     q: 'Palestra заменяет CRM или дополняет её?',
-    a: 'Для небольшого и среднего клуба Palestra закрывает базовую CRM: ученики, группы, расписание, оплаты и личные кабинеты. Вы можете полностью отказаться от таблиц.',
+    a: 'Для небольшого и среднего клуба Palestra закрывает базовую CRM: ученики, группы, расписание, оплаты и личные кабинеты.',
   },
   {
     q: 'Подходит ли для сети филиалов?',
@@ -118,249 +100,346 @@ const FAQ = [
   },
   {
     q: 'Что получает родитель?',
-    a: 'Родитель видит расписание, посещения, прогресс ребёнка и ключевые события клуба без лишних переписок в WhatsApp.',
+    a: 'Родитель видит расписание, посещения, прогресс ребёнка и ключевые события клуба без лишних переписок.',
   },
   {
     q: 'Можно начать без долгого внедрения?',
-    a: 'Да. Базовый сценарий рассчитан на быстрый запуск: структура клуба, база учеников, расписание и доступы. Базовый запуск можно пройти быстро: сначала порядок, потом расширение.',
+    a: 'Да. Базовый сценарий рассчитан на быстрый запуск: структура клуба, база учеников, расписание и доступы.',
   },
 ];
 
-// --- COMPONENTS ---
+const FOOTER_LINKS = [
+  { label: 'Возможности', href: '#features' },
+  { label: 'Роли', href: '#roles' },
+  { label: 'Безопасность', href: '#security' },
+  { label: 'Запуск', href: '#implementation' },
+  { label: 'Тариф', href: '#pricing' },
+  { label: 'FAQ', href: '#faq' },
+];
+
+const FOOTER_PRODUCT_ITEMS = ['CRM клуба', 'Расписание', 'Оплаты', 'Личный кабинет', 'Лига и прогресс'];
+
 export const Landing = () => {
-  const tariffRef = useRef(null);
-  const scrollToTariff = () => {
-    tariffRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const heroCardRef = useRef(null);
+
+  const handleHeroCardMove = (event) => {
+    const card = heroCardRef.current;
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+    card.style.setProperty('--hero-rotate-x', `${(-y * 11).toFixed(2)}deg`);
+    card.style.setProperty('--hero-rotate-y', `${(x * 14).toFixed(2)}deg`);
+    card.style.setProperty('--hero-shift-x', `${(x * 8).toFixed(2)}px`);
+    card.style.setProperty('--hero-shift-y', `${(y * 8).toFixed(2)}px`);
+    card.style.setProperty('--hero-glow-x', `${((x + 0.5) * 100).toFixed(1)}%`);
+    card.style.setProperty('--hero-glow-y', `${((y + 0.5) * 100).toFixed(1)}%`);
+  };
+
+  const resetHeroCard = () => {
+    const card = heroCardRef.current;
+    if (!card) return;
+
+    card.style.removeProperty('--hero-rotate-x');
+    card.style.removeProperty('--hero-rotate-y');
+    card.style.removeProperty('--hero-shift-x');
+    card.style.removeProperty('--hero-shift-y');
+    card.style.removeProperty('--hero-glow-x');
+    card.style.removeProperty('--hero-glow-y');
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>
-      <Navbar onPricingClick={scrollToTariff} />
+    <div style={{ backgroundColor: 'var(--color-bg)', minHeight: '100vh', overflowX: 'hidden' }}>
+      <div style={{ 
+        position: 'absolute', top: '-20%', right: '-10%', width: '70vw', height: '70vw', 
+        background: 'radial-gradient(circle, rgba(49, 70, 166, 0.08) 0%, rgba(245, 243, 239, 0) 60%)', 
+        zIndex: 0, borderRadius: '50%' 
+      }}></div>
 
-      {/* 1. HERO SECTION */}
-      <header style={{ paddingTop: '140px', paddingBottom: '80px', position: 'relative', overflow: 'hidden', background: '#0f172a', color: 'white' }}>
-        <div style={{ position: 'absolute', top: -200, right: -200, width: 600, height: 600, background: 'radial-gradient(circle, rgba(49, 70, 166, 0.4) 0%, rgba(15, 23, 42, 0) 70%)', borderRadius: '50%' }} />
-        
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontSize: 'min(56px, 12vw)', fontWeight: 900, lineHeight: 1.1, margin: '0 0 24px', letterSpacing: '-0.02em', maxWidth: 900 }}>
-            Соберите клуб единоборств <br />
-            <span style={{ color: '#3b82f6' }}>в одну систему</span>
-          </h1>
-          
-          <p style={{ fontSize: 'min(20px, 5vw)', lineHeight: 1.5, color: '#cbd5e1', margin: '0 0 40px', maxWidth: 700 }}>
-            Ученики, тренеры, расписание, оплаты, родители и прогресс — в одной CRM для MMA, бокса, борьбы и других клубов единоборств.
-          </p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center', marginBottom: 40, textAlign: 'left' }}>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center', color: '#94a3b8', fontSize: 14 }}>
-              <CheckCircle2 size={16} color="#3b82f6" /> Без Excel, WhatsApp и ручной сверки
-            </div>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center', color: '#94a3b8', fontSize: 14 }}>
-              <CheckCircle2 size={16} color="#3b82f6" /> Бесплатный старт для небольшого клуба
-            </div>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center', color: '#94a3b8', fontSize: 14 }}>
-              <CheckCircle2 size={16} color="#3b82f6" /> Родители, тренеры и администраторы видят свой контур
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Link to="/auth/register-club" style={{ textDecoration: 'none' }}>
-              <Button style={{ padding: '16px 32px', fontSize: 18 }}>Подключить бесплатно</Button>
-            </Link>
-            <Button variant="secondary" style={{ padding: '16px 32px', fontSize: 18, background: 'rgba(255,255,255,0.1)' }}>Посмотреть демо</Button>
-          </div>
-          <p style={{ marginTop: 16, fontSize: 13, color: '#64748b' }}>1 филиал, 15 учеников, 3 тренера — бесплатно. Без карты.</p>
-
-          {/* Product Visual Mockup */}
-          <div style={{ width: '100%', maxWidth: 1000, marginTop: 60, background: '#1e293b', borderRadius: 24, padding: 24, border: '1px solid #334155', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800 }}>Сегодня в клубе</h3>
-                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#94a3b8' }}>Palestra Almaty</p>
+      <Navbar />
+      
+      <main id="main-content" tabIndex={-1} style={{ position: 'relative', zIndex: 1, outline: 'none' }}>
+        <section className="landing-hero" aria-label="Первый экран">
+          <div className="container landing-hero-grid">
+            
+            <div className="animate-up">
+              <h1 className="h1 mb-6" style={{ textTransform: 'uppercase', lineHeight: '1.1' }}>
+                Соберите <br />
+                <span style={{ color: 'var(--color-primary)' }}>клуб в одну <br/>систему</span>
+              </h1>
+              
+              <p className="text-body-lg mb-8" style={{ maxWidth: '480px' }}>
+                Ученики, тренеры, расписание, оплаты, родители и прогресс — в одной CRM для MMA, бокса, борьбы и других клубов единоборств.
+              </p>
+              <div className="landing-hero-points" aria-label="Ключевые преимущества">
+                {['Без Excel и WhatsApp', 'Бесплатный старт', 'Контур для родителей', 'Лига и достижения'].map((item) => (
+                  <span key={item}>
+                    <CheckCircle2 size={16} aria-hidden />
+                    {item}
+                  </span>
+                ))}
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#ef4444' }} />
-                <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#eab308' }} />
-                <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#22c55e' }} />
+              
+              <div className="flex gap-4 responsive-row">
+                <Link to="/auth/register" style={{ width: '100%' }}>
+                  <Button variant="primary" size="lg" className="gap-2 text-lg w-full">
+                    Подключить бесплатно <ArrowRight size={24} />
+                  </Button>
+                </Link>
+                <a href="#features" style={{ textDecoration: 'none', width: '100%' }}>
+                  <Button variant="secondary" size="lg" className="text-lg w-full">Возможности</Button>
+                </a>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
+
+            <div className="animate-up delay-2" style={{ position: 'relative' }}>
+              <div
+                ref={heroCardRef}
+                className="landing-mock-3d"
+                onMouseMove={handleHeroCardMove}
+                onMouseLeave={resetHeroCard}
+                style={{ 
+                  backgroundColor: 'var(--color-text-primary)',
+                  borderRadius: '32px',
+                  padding: 'var(--space-6)',
+                  boxShadow: '0 25px 50px -12px rgba(49, 70, 166, 0.28)',
+                  border: '1px solid rgba(255,255,255,0.12)'
+              }}
+              >
+                <div className="flex justify-between items-start mb-8">
+                  <div>
+                    <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800 }}>Сегодня в клубе</p>
+                    <h3 style={{ color: '#fff', fontFamily: 'var(--font-family-display)', fontSize: 28, fontWeight: 900, lineHeight: 1.1, margin: 0 }}>Palestra Almaty</h3>
+                  </div>
+                  <ShieldCheck size={30} color="var(--color-success)" aria-hidden />
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
+                  {OPERATIONS.map((item) => (
+                    <div key={item.label} style={{ backgroundColor: 'rgba(255,255,255,0.07)', padding: 'var(--space-3)', borderRadius: 18 }}>
+                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.65rem', marginBottom: 6, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em' }}>{item.label}</p>
+                      <p style={{ color: 'white', fontSize: '1.25rem', fontFamily: 'var(--font-family-display)', fontWeight: 900, lineHeight: 1 }}>{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ display: 'grid', gap: 12 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 18 }}>
+                    <span style={{ color: '#fff', fontWeight: 800, fontSize: '0.875rem' }}>18:00</span>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ color: '#fff', fontWeight: 800, margin: 0, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>MMA Junior</p>
+                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Зал 2 · тренер А. Карелин</p>
+                    </div>
+                    <span style={{ color: 'var(--color-success)', fontWeight: 900, fontSize: '0.875rem' }}>24/28</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: 'rgba(49, 70, 166, 0.76)', borderRadius: 18 }}>
+                    <span style={{ color: '#fff', fontWeight: 800, fontSize: '0.875rem' }}>19:30</span>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ color: '#fff', fontWeight: 800, margin: 0, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Boxing Pro</p>
+                      <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Зал 1 · спарринги</p>
+                    </div>
+                    <span style={{ color: '#fff', fontWeight: 900, fontSize: '0.875rem' }}>16/20</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section className="landing-stats-strip" aria-label="Преимущества">
+          <div className="container">
+            <div
+              className="flex flex-wrap justify-center"
+              style={{ gap: 'var(--space-8)', textAlign: 'center' }}
+            >
               {[
-                { label: 'Групп сегодня', value: '14' },
-                { label: 'Ожидают оплаты', value: '6' },
-                { label: 'Давно не были', value: '3' },
-                { label: 'Выручка за месяц', value: '3.2M ₸' },
-              ].map(o => (
-                <div key={o.label} style={{ background: '#0f172a', padding: 16, borderRadius: 12, textAlign: 'left' }}>
-                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8 }}>{o.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 800 }}>{o.value}</div>
+                { k: 'Без хаоса', v: 'в чатах и таблицах' },
+                { k: 'Удержание', v: 'через лиги и кабинеты' },
+                { k: 'Семьи', v: 'удобство для родителей' },
+              ].map((item) => (
+                <div key={item.k} className="flex flex-col gap-1" style={{ minWidth: 'min(200px, 100%)' }}>
+                  <span className="text-caption text-primary font-bold" style={{ letterSpacing: '0.12em' }}>{item.k}</span>
+                  <span className="text-sm font-medium text-secondary">{item.v}</span>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-      </header>
+        </section>
 
-      {/* 2. TRUST STRIP */}
-      <section style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', padding: '32px 0', background: '#ffffff' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <p style={{ textAlign: 'center', fontSize: 14, color: '#64748b', margin: '0 0 24px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Создано для клубов единоборств, а не для абстрактного фитнеса
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', alignItems: 'center' }}>
-            {TRUST_STRIP.map(item => (
-              <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#334155', fontWeight: 700, fontSize: 15 }}>
-                <CheckCircle2 size={16} color="#3b82f6" /> {item}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 3. PAIN -> OUTCOME */}
-      <section style={{ padding: '100px 0', background: '#f8fafc' }}>
-        <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px', color: '#0f172a' }}>Когда клуб растёт, хаос тоже растёт</h2>
-          <p style={{ textAlign: 'center', fontSize: 18, color: '#64748b', margin: '0 auto 60px', maxWidth: 700 }}>
-            Palestra превращает разрозненные чаты, таблицы и устные договорённости в понятную систему, где у каждого есть свой рабочий экран.
-          </p>
-          
-          <div style={{ background: '#ffffff', borderRadius: 24, overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: '#f1f5f9', borderBottom: '1px solid #e2e8f0', fontWeight: 800 }}>
-              <div style={{ padding: '20px 32px', color: '#64748b' }}>Сейчас в клубе</div>
-              <div style={{ padding: '20px 32px', color: '#0f172a' }}>С Palestra</div>
+        <section id="features" className="landing-section" aria-labelledby="features-heading">
+          <div className="container">
+            <div className="landing-section-head">
+              <h2 id="features-heading" className="h2" style={{ textTransform: 'uppercase' }}>Операционный контур клуба</h2>
+              <p className="text-body-lg">Не набор красивых экранов, а рабочие сценарии владельца, администратора, тренера и семьи ученика.</p>
             </div>
-            {PAIN_COMPARISON.map((row, i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: i === PAIN_COMPARISON.length - 1 ? 'none' : '1px solid #e2e8f0' }}>
-                <div style={{ padding: '20px 32px', color: '#64748b', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444' }} /> {row.pain}
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-6)' }}>
+              {FEATURES.map(({ icon: Icon, title, text }) => (
+                <div key={title} className="card" style={{ minHeight: 220 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: 16, display: 'grid', placeItems: 'center', marginBottom: 'var(--space-6)', background: 'var(--color-primary-soft)', color: 'var(--color-primary)' }}>
+                    <Icon size={24} aria-hidden />
+                  </div>
+                  <h3 className="h4 mb-3">{title}</h3>
+                  <p className="text-body">{text}</p>
                 </div>
-                <div style={{ padding: '20px 32px', color: '#0f172a', display: 'flex', alignItems: 'center', gap: 12, fontWeight: 600 }}>
-                  <CheckCircle2 size={18} color="#3b82f6" /> {row.outcome}
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 4. CORE OUTCOMES */}
-      <section id="features" style={{ padding: '100px 0', background: '#ffffff' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px', color: '#0f172a' }}>Что меняется после запуска</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-            {CORE_OUTCOMES.map((feature, idx) => (
-              <div key={idx} style={{ background: '#f8fafc', padding: 32, borderRadius: 24, border: '1px solid #e2e8f0' }}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
-                  <feature.icon size={24} color="#3b82f6" />
-                </div>
-                <h3 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 12px', color: '#0f172a' }}>{feature.title}</h3>
-                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#64748b', margin: 0 }}>{feature.text}</p>
+        <section id="roles" className="landing-section landing-section--surface" aria-labelledby="roles-heading">
+          <div className="container">
+            <div className="landing-split">
+              <div>
+                <span className="landing-eyebrow">Для всей команды</span>
+                <h2 id="roles-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>Каждая роль понимает, что делать</h2>
+                <p className="text-body-lg">
+                  Каждый видит свой рабочий контур. Владелец управляет сетью, администратор ведёт базу, тренер видит расписание, а ученик — свой прогресс.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* 5. DIFFERENTIATION */}
-      <section style={{ padding: '100px 0', background: '#f8fafc' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px', color: '#0f172a' }}>Почему Palestra отличается от обычной CRM</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 24 }}>
-            {DIFFERENTIATION.map((diff, idx) => (
-              <div key={idx} style={{ padding: 24, borderLeft: '2px solid #3b82f6', background: '#ffffff', borderRadius: '0 16px 16px 0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <diff.icon size={32} color="#3b82f6" style={{ marginBottom: 16 }} />
-                <h3 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 8px', color: '#0f172a' }}>{diff.title}</h3>
-                <p style={{ fontSize: 14, lineHeight: 1.5, color: '#64748b', margin: 0 }}>{diff.text}</p>
+              <div className="landing-role-grid">
+                {ROLE_CARDS.map((role) => (
+                  <article key={role.title} className="landing-role-card">
+                    <h3>{role.title}</h3>
+                    <p>{role.text}</p>
+                  </article>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 6. ROLES */}
-      <section id="roles" style={{ padding: '100px 0', background: '#ffffff' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px', color: '#0f172a' }}>Каждый видит свой рабочий контур</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-            {ROLE_CARDS.map((role, idx) => (
-              <div key={idx} style={{ background: '#f8fafc', padding: 32, borderRadius: 24, border: '1px solid #e2e8f0' }}>
-                <h3 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 12px', color: '#0f172a' }}>{role.title}</h3>
-                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#64748b', margin: 0 }}>{role.text}</p>
+        <section id="security" className="landing-section" aria-labelledby="security-heading">
+          <div className="container">
+            <div className="landing-split landing-split--reverse">
+              <div className="landing-trust-panel">
+                {TRUST_ITEMS.map(({ icon: Icon, title, text }) => (
+                  <article key={title} className="landing-trust-item">
+                    <div aria-hidden>
+                      <Icon size={22} />
+                    </div>
+                    <section>
+                      <h3>{title}</h3>
+                      <p>{text}</p>
+                    </section>
+                  </article>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* 7. HOW IT WORKS */}
-      <section style={{ padding: '100px 0', background: '#f8fafc' }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px', color: '#0f172a' }}>Запуск без остановки клуба</h2>
-          <p style={{ textAlign: 'center', fontSize: 16, color: '#64748b', margin: '0 auto 60px' }}>Базовый запуск можно пройти быстро: сначала порядок, потом расширение.</p>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {LAUNCH_STEPS.map((step, idx) => (
-              <div key={idx} style={{ display: 'flex', gap: 24, alignItems: 'center', background: '#ffffff', padding: 24, borderRadius: 20, border: '1px solid #e2e8f0', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
-                <div style={{ fontSize: 32, fontWeight: 900, color: '#3b82f6', opacity: 0.5 }}>{step.number}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>{step.title}</div>
+              <div>
+                <span className="landing-eyebrow">Доверие</span>
+                <h2 id="security-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>Безопасность не отдельным чеклистом, а частью продукта</h2>
+                <p className="text-body-lg">
+                  Для CRM клуба важны не громкие обещания, а базовая дисциплина: роли, приватность семейных данных, аккуратная работа с доступами и понятная зона ответственности.
+                </p>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 9. PRICING */}
-      <section id="pricing" ref={tariffRef} style={{ padding: '100px 0', background: '#ffffff' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 16px', color: '#0f172a' }}>Простые тарифы</h2>
-          <p style={{ textAlign: 'center', fontSize: 18, color: '#64748b', margin: '0 auto 60px', maxWidth: 600 }}>
-            Начните бесплатно, а платите только когда клубу станет тесно.
-          </p>
-          <TariffConstructor />
-        </div>
-      </section>
-
-      {/* 10. FAQ */}
-      <section id="faq" style={{ padding: '100px 0', background: '#f8fafc' }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, textAlign: 'center', margin: '0 0 60px', color: '#0f172a' }}>Что важно понять до запуска</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {FAQ.map((item, idx) => (
-              <div key={idx} style={{ background: '#ffffff', padding: 32, borderRadius: 24, border: '1px solid #e2e8f0' }}>
-                <h3 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 12px', color: '#0f172a' }}>{item.q}</h3>
-                <p style={{ fontSize: 15, lineHeight: 1.6, color: '#64748b', margin: 0 }}>{item.a}</p>
+        <section id="implementation" className="landing-section landing-section--dark" aria-labelledby="implementation-heading">
+          <div className="container">
+            <div className="landing-split">
+              <div>
+                <span className="landing-eyebrow landing-eyebrow--dark">Запуск</span>
+                <h2 id="implementation-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>Переход без остановки клуба</h2>
+                <p className="text-body-lg">
+                  Базовый запуск можно пройти быстро: сначала порядок, потом расширение. Внедрение разбито на понятные шаги.
+                </p>
               </div>
-            ))}
+
+              <ol className="landing-steps">
+                {IMPLEMENTATION_STEPS.map((step, index) => (
+                  <li key={step}>
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <p>{step}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
+        <section id="pricing" className="landing-pricing" aria-label="Тариф">
+          <div className="container">
+            <TariffConstructor />
+          </div>
+        </section>
 
-      {/* 11. FINAL CTA */}
-      <section style={{ padding: '120px 0', background: '#3b82f6', textAlign: 'center' }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 32px' }}>
-          <h2 style={{ fontSize: 'min(40px, 8vw)', fontWeight: 900, margin: '0 0 24px', color: 'white' }}>
-            Соберите клуб в одну систему
-          </h2>
-          <p style={{ fontSize: 18, margin: '0 0 40px', color: 'rgba(255,255,255,0.9)', lineHeight: 1.5 }}>
-            Начните бесплатно: 1 филиал, 15 учеников и 3 тренера. Когда клуб вырастет — подключите Growth и нужные модули.
-          </p>
-          <Link to="/auth/register-club" style={{ textDecoration: 'none' }}>
-            <Button style={{ background: '#0f172a', color: 'white', padding: '16px 40px', fontSize: 18 }}>
-              Подключить бесплатно
-            </Button>
-          </Link>
-          <p style={{ marginTop: 16, fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>Без карты. Быстрый старт.</p>
-        </div>
-      </section>
+        <section id="faq" className="landing-section landing-section--surface" aria-labelledby="faq-heading">
+          <div className="container">
+            <div className="landing-section-head">
+              <span className="landing-eyebrow" style={{ display: 'block', marginBottom: 'var(--space-3)' }}>Вопросы перед стартом</span>
+              <h2 id="faq-heading" className="h2" style={{ textTransform: 'uppercase' }}>Что важно понять до запуска</h2>
+            </div>
 
-      {/* Footer */}
-      <footer style={{ padding: '40px 32px', background: '#0f172a', borderTop: '1px solid #1e293b', textAlign: 'center', color: '#64748b', fontSize: 14 }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
-          <div style={{ fontWeight: 800, color: 'white', fontSize: 18 }}>Palestra CRM</div>
-          <div>CRM-платформа для клубов единоборств</div>
-          <div>© 2026 Palestra CRM · Made by MurdaSoft</div>
+            <div className="landing-faq-grid">
+              {FAQ_ITEMS.map((item) => (
+                <article key={item.q} className="landing-faq-card">
+                  <h3>{item.q}</h3>
+                  <p>{item.a}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="landing-cta" aria-label="Регистрация">
+          <div className="container">
+            <h2 className="landing-cta__title">Соберите клуб в одну систему</h2>
+            <p className="landing-cta__lead">
+              Начните бесплатно: 1 филиал, 15 учеников и 3 тренера. Дальше подключайте Growth и платите только за масштаб клуба.
+            </p>
+            <Link to="/auth/register">
+              <Button variant="primary" size="lg" className="text-xl px-14" style={{ fontWeight: 800 }}>Подключить бесплатно</Button>
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      <footer className="landing-footer">
+        <div className="container">
+          <div className="landing-footer__grid">
+            <section className="landing-footer__brand" aria-label="О продукте Palestra">
+              <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную">
+                <img src="/palestra-logo-nav-full.png" alt="" decoding="async" />
+              </Link>
+              <p>
+                CRM-платформа для клубов единоборств: ученики, группы, расписание, оплаты и прогресс в одной системе.
+              </p>
+            </section>
+
+            <nav className="landing-footer__nav" aria-label="Навигация в футере">
+              <h2>Разделы</h2>
+              {FOOTER_LINKS.map((link) => (
+                <a key={link.href} href={link.href}>{link.label}</a>
+              ))}
+            </nav>
+
+            <section className="landing-footer__nav" aria-label="Что входит в Palestra">
+              <h2>Продукт</h2>
+              {FOOTER_PRODUCT_ITEMS.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </section>
+
+            <section className="landing-footer__cta" aria-label="Начать работу">
+              <h2>Готовы собрать клуб в систему?</h2>
+              <p>Подключите Starter бесплатно, а Growth включите, когда клубу станет тесно.</p>
+              <Link to="/auth/register">Подключить бесплатно</Link>
+            </section>
+          </div>
+
+          <div className="landing-footer__bottom">
+            <span>© 2026 Palestra CRM</span>
+            <a href="http://murdasoft.vercel.app/" target="_blank" rel="noreferrer">
+              Made by MurdaSoft
+            </a>
+          </div>
         </div>
       </footer>
     </div>
