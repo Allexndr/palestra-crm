@@ -124,24 +124,28 @@ export const Sidebar = () => {
               })}
               className={({ isActive }) => isActive ? 'sidebar-link-active group' : 'sidebar-link group'}
             >
-              <div 
-                style={{ 
-                  width: '32px', 
-                  height: '32px', 
-                  borderRadius: '10px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  backgroundColor: 'white',
-                  boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
-                  color: link.color,
-                  transition: 'transform 0.2s'
-                }}
-                className="group-hover:scale-110"
-              >
-                <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
-              </div>
-              {link.label}
+              {({ isActive }) => (
+                <>
+                  <div 
+                    style={{ 
+                      width: '32px', 
+                      height: '32px', 
+                      borderRadius: '10px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      backgroundColor: 'white',
+                      boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                      color: link.color,
+                      transition: 'transform 0.2s'
+                    }}
+                    className="group-hover:scale-110"
+                  >
+                    <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                  </div>
+                  {link.label}
+                </>
+              )}
             </NavLink>
           );
         })}
