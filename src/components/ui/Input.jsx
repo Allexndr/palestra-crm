@@ -2,30 +2,44 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Eye, EyeOff } from 'lucide-react';
 import './ui.css';
-import { formatPhone } from '../../utils/formatters';
+import { formatPhone, formatCurrency, stripCurrency } from '../../utils/formatters';
 
-export const Input = ({ label, helperText, error, className, type = 'text', onChange, value, ...props }) => {
+export const Input = ({ label, helperText, error, className, type = 'text', onChange, value, isCurrency, ...props }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
   const isPhone = type === 'tel';
-  const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+  const inputType = isPassword ? (showPassword ? 'text' : 'password') : (isCurrency ? 'text' : type);
 
   const handleInputChange = (e) => {
+    let rawValue = e.target.value;
+
+    // Prevent negative numbers for all numeric/currency inputs
+    if (type === 'number' || isCurrency) {
+      if (rawValue.includes('-')) {
+        rawValue = rawValue.replace(/-/g, '');
+      }
+    }
+
     if (isPhone && onChange) {
-      const formatted = formatPhone(e.target.value);
-      // Create a mock event to pass to original onChange
+      const formatted = formatPhone(rawValue);
       onChange({
         ...e,
-        target: {
-          ...e.target,
-          value: formatted,
-          name: props.name
-        }
+        target: { ...e.target, value: formatted, name: props.name }
+      });
+    } else if (isCurrency && onChange) {
+      const formatted = formatCurrency(rawValue);
+      const numericValue = stripCurrency(formatted);
+      onChange({
+        ...e,
+        target: { ...e.target, value: numericValue, name: props.name, formattedValue: formatted }
       });
     } else if (onChange) {
       onChange(e);
     }
   };
+
+  // If currency, show formatted value in the input field
+  const displayValue = isCurrency ? formatCurrency(value) : value;
 
   return (
     <div className={clsx('input-group', className)}>
@@ -35,8 +49,9 @@ export const Input = ({ label, helperText, error, className, type = 'text', onCh
           type={inputType}
           className={clsx('input-field', error && 'input-error')} 
           style={{ paddingRight: isPassword ? '40px' : undefined, width: '100%' }}
-          value={value}
+          value={displayValue}
           onChange={handleInputChange}
+          min={type === 'number' ? 0 : props.min}
           {...props} 
         />
         {isPassword && (

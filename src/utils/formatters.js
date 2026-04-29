@@ -49,3 +49,30 @@ export const stripPhone = (value) => {
   if (!value) return '';
   return value.replace(/\D/g, '');
 };
+
+/**
+ * Formats a number with thousands separators (e.g., 10 000)
+ * @param {string|number} value 
+ * @returns {string}
+ */
+export const formatCurrency = (value) => {
+  if (value == null || value === '') return '';
+  
+  // Strip all non-digits
+  const digits = String(value).replace(/\D/g, '');
+  if (!digits) return '';
+  
+  // Convert to number and format with spaces
+  return Number(digits).toLocaleString('ru-RU').replace(/,/g, ' ');
+};
+
+/**
+ * Converts formatted currency string back to number
+ * @param {string} value 
+ * @returns {number}
+ */
+export const stripCurrency = (value) => {
+  if (!value) return 0;
+  const digits = String(value).replace(/\D/g, '');
+  return digits ? parseInt(digits, 10) : 0;
+};

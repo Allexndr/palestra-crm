@@ -183,7 +183,7 @@ export const Shop = () => {
            <form onSubmit={handleAddProduct} className="flex flex-col gap-8">
              <div className="admin-form-grid">
                <Input label="Название" placeholder="Перчатки Boxing Pro" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-               <Input label="Цена (₸)" type="number" required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
+               <Input label="Цена (₸)" isCurrency required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
                <div className="input-group">
                  <label className="input-label">Категория</label>
                  <select className="input-field" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>

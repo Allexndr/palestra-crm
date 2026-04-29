@@ -264,7 +264,7 @@ export const Settings = () => {
                   <form onSubmit={handleAddPlan} className="flex flex-col gap-4">
                     <div className="flex gap-4">
                       <div className="flex-1"><Input label="Название" placeholder="Напр: 12 занятий" value={newPlan.name} onChange={e => setNewPlan({...newPlan, name: e.target.value})} required /></div>
-                      <div className="flex-1"><Input label="Цена (₸)" type="number" value={newPlan.price} onChange={e => setNewPlan({...newPlan, price: e.target.value})} required /></div>
+                      <div className="flex-1"><Input label="Цена (₸)" isCurrency value={newPlan.price} onChange={e => setNewPlan({...newPlan, price: e.target.value})} required /></div>
                     </div>
                     <Input label="Кол-во посещений" type="number" placeholder="Напр: 12" value={newPlan.visits} onChange={e => setNewPlan({...newPlan, visits: e.target.value})} required />
                     <Input label="Описание" placeholder="Краткое описание" value={newPlan.description} onChange={e => setNewPlan({...newPlan, description: e.target.value})} />

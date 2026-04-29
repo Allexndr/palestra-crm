@@ -116,11 +116,14 @@ export const AdminTariffConstructor = ({
                   </div>
                   <div style={{ position: 'relative' }}>
                     <input 
-                      type="number"
-                      value={selected}
-                      onChange={(e) => updateLimit(option.key, e.target.value)}
+                      type="text"
+                      value={selected.toLocaleString('ru-RU').replace(/,/g, ' ')}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        updateLimit(option.key, val ? parseInt(val, 10) : 0);
+                      }}
                       style={{
-                        width: '70px',
+                        width: '80px',
                         padding: '6px 10px',
                         borderRadius: '8px',
                         border: '1px solid var(--color-border)',
