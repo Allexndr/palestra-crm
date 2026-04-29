@@ -89,27 +89,8 @@ export const MemberForm = () => {
     }
   }, [formData.plan, isEditing, plans]);
 
-  const formatPhone = (val) => {
-    let digits = val.replace(/\D/g, '');
-    if (digits.startsWith('7') || digits.startsWith('8')) {
-      digits = digits.substring(1);
-    }
-    let formatted = '+7';
-    if (digits.length > 0) formatted += ' (' + digits.substring(0, 3);
-    if (digits.length >= 4) formatted += ') ' + digits.substring(3, 6);
-    if (digits.length >= 7) formatted += '-' + digits.substring(6, 8);
-    if (digits.length >= 9) formatted += '-' + digits.substring(8, 10);
-    return formatted;
-  };
-
-  const handlePhoneChange = (e) => {
-    const formatted = formatPhone(e.target.value);
-    setFormData(prev => ({ ...prev, phone: formatted }));
-  };
-
-  const handleParentPhoneChange = (e) => {
-    const formatted = formatPhone(e.target.value);
-    setFormData(prev => ({ ...prev, parentPhone: formatted }));
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const generateCredentials = (first, last) => {
@@ -229,7 +210,7 @@ export const MemberForm = () => {
                   <Input label="Имя" required minLength={2} value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
                   <Input label="Фамилия" required minLength={2} value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
                   <Input label="Дата рождения" type="date" min="1900-01-01" max={new Date().toISOString().split('T')[0]} value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
-                  <Input label="Телефон" placeholder="+7 (707) 000-00-00" value={formData.phone} onChange={handlePhoneChange} />
+                  <Input label="Телефон" type="tel" placeholder="7 777 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
                   <div className="input-group">
                     <label className="input-label">Фото ученика</label>
                     <input className="input-field" type="file" accept="image/*" onChange={handleAvatarUpload} />
@@ -387,7 +368,7 @@ export const MemberForm = () => {
                 {formData.hasParent ? (
                   <div className="animate-up admin-form-grid admin-form-grid--wide" style={{ padding: 'var(--space-8)', backgroundColor: 'var(--color-bg)', borderRadius: '24px', border: '1px solid var(--color-border)' }}>
                     <Input label="ФИО Родителя" required={formData.hasParent} value={formData.parentName} onChange={e => setFormData({...formData, parentName: e.target.value})} />
-                    <Input label="Телефон родителя" required={formData.hasParent} placeholder="+7 (707) 000-00-00" value={formData.parentPhone} onChange={handleParentPhoneChange} />
+                    <Input label="Телефон родителя" type="tel" required={formData.hasParent} placeholder="7 777 000 00 00" value={formData.parentPhone} onChange={e => handleInputChange('parentPhone', e.target.value)} />
                     <Input label="Заметка (доп. контакты)" value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})} />
                   </div>
                 ) : (

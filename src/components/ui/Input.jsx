@@ -2,11 +2,30 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Eye, EyeOff } from 'lucide-react';
 import './ui.css';
+import { formatPhone } from '../../utils/formatters';
 
-export const Input = ({ label, helperText, error, className, type = 'text', ...props }) => {
+export const Input = ({ label, helperText, error, className, type = 'text', onChange, value, ...props }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
+  const isPhone = type === 'tel';
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+
+  const handleInputChange = (e) => {
+    if (isPhone && onChange) {
+      const formatted = formatPhone(e.target.value);
+      // Create a mock event to pass to original onChange
+      onChange({
+        ...e,
+        target: {
+          ...e.target,
+          value: formatted,
+          name: props.name
+        }
+      });
+    } else if (onChange) {
+      onChange(e);
+    }
+  };
 
   return (
     <div className={clsx('input-group', className)}>
@@ -16,6 +35,8 @@ export const Input = ({ label, helperText, error, className, type = 'text', ...p
           type={inputType}
           className={clsx('input-field', error && 'input-error')} 
           style={{ paddingRight: isPassword ? '40px' : undefined, width: '100%' }}
+          value={value}
+          onChange={handleInputChange}
           {...props} 
         />
         {isPassword && (

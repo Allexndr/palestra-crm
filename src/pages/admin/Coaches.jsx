@@ -99,7 +99,7 @@ export const Coaches = () => {
             <div className="admin-form-grid">
               <Input label="Имя" required value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} />
               <Input label="Фамилия" required value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} />
-              <Input label="Телефон" placeholder="+7 (707) 000-00-00" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+              <Input label="Телефон" type="tel" placeholder="7 777 000 00 00" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
               <Input label="Email" type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
             </div>
 

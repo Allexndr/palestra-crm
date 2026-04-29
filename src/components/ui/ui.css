@@ -78,7 +78,7 @@
   background: white;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: var(--space-8);
+  padding: var(--space-12);
   box-shadow: var(--shadow-sm);
   transition:
     transform var(--duration-base) var(--ease-emphasized),
@@ -103,15 +103,15 @@
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3); /* Increased gap between label and input */
-  margin-bottom: var(--space-6); /* Increased margin between input groups */
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
   width: 100%;
 }
 
 .input-field {
   width: 100%;
-  padding: 14px 16px;
-  border-radius: 12px;
+  padding: 16px 20px;
+  border-radius: 16px;
   border: 1px solid var(--color-border);
   background: var(--color-bg-secondary);
   color: var(--color-text-primary);
@@ -128,11 +128,13 @@
 }
 
 .input-label {
-  font-size: 0.8125rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 800;
   color: var(--color-text-primary);
-  margin-bottom: 2px; /* Slight margin for precision */
+  margin-bottom: 4px;
   display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Action Items */

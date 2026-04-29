@@ -130,14 +130,25 @@ export const Settings = () => {
                 ].map(([key, label, count]) => {
                   const status = getLimitStatus(key);
                   return (
-                    <div key={key} className="usage-limit-card">
-                      <strong>{label}</strong>
-                      <span className="text-sm text-secondary">
-                        {count} из {status.limit}
-                        {status.isWarning ? ' · скоро нужен Growth' : ''}
-                      </span>
-                      <div className="usage-limit-card__bar">
-                        <span style={{ width: `${status.percent}%`, backgroundColor: status.isReached ? 'var(--color-danger)' : status.isWarning ? 'var(--color-warning)' : 'var(--color-primary)' }} />
+                    <div key={key} className="usage-limit-card p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                      <div className="flex justify-between items-end mb-4">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-1">{label}</p>
+                          <p className="text-xl font-black text-slate-800">
+                            {count} <span className="text-slate-300 font-medium">/</span> {status.limit}
+                          </p>
+                        </div>
+                        {status.isWarning && (
+                          <span className="text-[9px] font-black uppercase px-2 py-1 bg-amber-100 text-amber-600 rounded-md">Growth Needed</span>
+                        )}
+                      </div>
+                      <div className="usage-limit-card__bar h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <div style={{ 
+                          width: `${status.percent}%`, 
+                          height: '100%',
+                          transition: 'width 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                          backgroundColor: status.isReached ? 'var(--color-error)' : status.isWarning ? 'var(--color-warning)' : 'var(--color-primary)' 
+                        }} />
                       </div>
                     </div>
                   );
@@ -211,9 +222,9 @@ export const Settings = () => {
                   <form onSubmit={handleAddLocation} className="flex flex-col gap-4">
                     <Input label="Название" placeholder="Напр: Филиал на Абая" value={newLoc.name} onChange={e => setNewLoc({...newLoc, name: e.target.value})} required />
                     <Input label="Адрес" placeholder="ул. Примерная 10" value={newLoc.address} onChange={e => setNewLoc({...newLoc, address: e.target.value})} required />
-                    <Input label="Телефон" placeholder="+7 (___) ___ __ __" value={newLoc.phone} onChange={e => setNewLoc({...newLoc, phone: e.target.value})} />
-                    <div className="flex gap-4 mt-2">
-                      <Button type="submit" variant="primary">Сохранить</Button>
+                    <Input label="Телефон" type="tel" placeholder="7 777 000 00 00" value={newLoc.phone} onChange={e => setNewLoc({...newLoc, phone: e.target.value})} />
+                    <div className="flex gap-4 mt-6">
+                      <Button type="submit" variant="primary" className="px-8">Сохранить</Button>
                       <Button type="button" variant="ghost" onClick={() => setIsAddingLoc(false)}>Отмена</Button>
                     </div>
                   </form>

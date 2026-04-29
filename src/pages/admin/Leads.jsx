@@ -26,23 +26,9 @@ export const Leads = () => {
     locationId: (selectedLocationId && selectedLocationId !== 'all') ? selectedLocationId : ((locations && locations.length > 0) ? locations[0].id : '1')
   });
 
-  // Phone Masking (+7 (XXX) XXX-XX-XX)
-  const formatPhone = (val) => {
-    let digits = val.replace(/\D/g, '');
-    if (digits.startsWith('7') || digits.startsWith('8')) {
-      digits = digits.substring(1);
-    }
-    let formatted = '+7';
-    if (digits.length > 0) formatted += ' (' + digits.substring(0, 3);
-    if (digits.length >= 4) formatted += ') ' + digits.substring(3, 6);
-    if (digits.length >= 7) formatted += '-' + digits.substring(6, 8);
-    if (digits.length >= 9) formatted += '-' + digits.substring(8, 10);
-    return formatted;
-  };
-
-  const handlePhoneChange = (e) => {
-    const formatted = formatPhone(e.target.value);
-    setNewLead(prev => ({ ...prev, phone: formatted }));
+  // Phone formatting is handled by Input type="tel"
+  const handleInputChange = (field, value) => {
+    setNewLead(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = (e) => {
@@ -89,10 +75,10 @@ export const Leads = () => {
           <h4 className="h4 mb-8">Новый лид</h4>
           <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-6 items-end">
             <div style={{ flex: 2, width: '100%' }}>
-              <Input label="Имя клиента" placeholder="Иван Иванов" required value={newLead.name} onChange={e => setNewLead({...newLead, name: e.target.value})} />
+              <Input label="Имя клиента" placeholder="Иван Иванов" required value={newLead.name} onChange={e => handleInputChange('name', e.target.value)} />
             </div>
             <div style={{ flex: 1, width: '100%' }}>
-              <Input label="Телефон" placeholder="+7 (707) 000-00-00" required value={newLead.phone} onChange={handlePhoneChange} />
+              <Input label="Телефон" type="tel" placeholder="7 777 000 00 00" required value={newLead.phone} onChange={e => handleInputChange('phone', e.target.value)} />
             </div>
             <div style={{ flex: 1, width: '100%' }} className="input-group">
               <label className="input-label">Спорт</label>

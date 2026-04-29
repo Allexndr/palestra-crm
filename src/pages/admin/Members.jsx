@@ -47,9 +47,9 @@ export const Members = () => {
         </Link>
       </div>
 
-      <Card className="card-hover">
-        <div className="mb-8 relative">
-          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
+      <Card className="shadow-sm border-slate-100" style={{ padding: 'var(--space-8)' }}>
+        <div className="mb-10 relative group">
+          <Search size={22} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
           <input 
             type="text" 
             placeholder="Поиск по имени, фамилии или номеру телефона..."
@@ -57,59 +57,63 @@ export const Members = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ 
               width: '100%', 
-              padding: '16px 16px 16px 48px', 
-              borderRadius: '16px', 
-              border: '1px solid var(--color-border)',
-              backgroundColor: 'var(--color-ice-100)',
-              fontSize: '1rem'
+              padding: '20px 20px 20px 60px', 
+              borderRadius: '20px', 
+              border: '1.5px solid var(--color-border)',
+              backgroundColor: 'var(--color-bg)',
+              fontSize: '1rem',
+              fontWeight: '500',
+              transition: 'all 0.3s ease'
             }}
+            className="focus:border-primary focus:bg-white focus:shadow-lg focus:shadow-primary/5 outline-none"
           />
         </div>
 
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', minWidth: '800px' }}>
+          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'separate', borderSpacing: '0 8px', minWidth: '800px' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
-                <th className="pb-6 px-4 text-muted font-bold text-xs uppercase tracking-wider">Ученик</th>
-                <th className="pb-6 px-4 text-muted font-bold text-xs uppercase tracking-wider">Контакты</th>
-                <th className="pb-6 px-4 text-muted font-bold text-xs uppercase tracking-wider">Тариф</th>
-                <th className="pb-6 px-4 text-muted font-bold text-xs uppercase tracking-wider text-right">Действия</th>
+              <tr>
+                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Ученик</th>
+                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Контакты</th>
+                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Тариф</th>
+                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">Действия</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="before:block before:h-2">
               {filteredMembers.map(member => (
-                <tr key={member.id} style={{ borderBottom: '1px solid rgba(0,0,0,0.02)' }} className="hover:bg-slate-50 transition-colors">
-                  <td className="py-5 px-4">
-                    <div className="flex items-center gap-3">
-                      <div style={{ width: 40, height: 40, borderRadius: '12px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px' }}>
+                <tr key={member.id} className="bg-white hover:bg-slate-50 transition-all group shadow-sm">
+                  <td className="py-5 px-6 rounded-l-2xl border-y border-l border-slate-50">
+                    <div className="flex items-center gap-4">
+                      <div style={{ width: 44, height: 44, borderRadius: '14px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '16px' }}>
                         {member.firstName.charAt(0)}
                       </div>
-                      <span className="font-bold text-slate-800">{member.firstName} {member.lastName}</span>
+                      <span className="font-bold text-slate-900 text-base">{member.firstName} {member.lastName}</span>
                     </div>
                   </td>
-                  <td className="py-5 px-4 text-secondary font-medium">{member.phone || '—'}</td>
-                  <td className="py-5 px-4">
-                    <div className="flex flex-col gap-1">
-                      <span style={{ padding: '4px 10px', borderRadius: '6px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', fontSize: '10px', fontWeight: '800', width: 'fit-content' }}>
+                  <td className="py-5 px-6 border-y border-slate-50 text-slate-600 font-bold">{member.phone || '—'}</td>
+                  <td className="py-5 px-6 border-y border-slate-50">
+                    <div className="flex items-center gap-3">
+                      <span style={{ padding: '6px 12px', borderRadius: '10px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', fontSize: '11px', fontWeight: '800' }}>
                         {groups.find(g => g.id === member.groupId)?.name || 'Нет группы'}
                       </span>
-                      <span style={{ padding: '6px 12px', borderRadius: '8px', backgroundColor: 'white', border: '1px solid var(--color-border)', fontSize: '0.75rem', fontWeight: '700', color: 'var(--color-text-secondary)' }}>
+                      <span className="text-slate-400 font-medium">/</span>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--color-text-secondary)' }}>
                         {member.plan || 'Не выбран'}
                       </span>
                     </div>
                   </td>
-                  <td className="py-5 px-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button className="icon-btn text-primary hover:bg-indigo-50" title="Смотреть профиль" onClick={() => navigate(`/admin/members/${member.id}`)}>
+                  <td className="py-5 px-6 text-right rounded-r-2xl border-y border-r border-slate-50">
+                    <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="w-10 h-10 rounded-xl flex items-center justify-center text-primary hover:bg-indigo-50 transition-colors" title="Смотреть профиль" onClick={() => navigate(`/admin/members/${member.id}`)}>
                         <Eye size={18} />
                       </button>
                       {isAdmin && (
-                        <button className="icon-btn text-secondary hover:bg-slate-100" title="Редактировать" onClick={() => navigate(`/admin/members/${member.id}/edit`)}>
+                        <button className="w-10 h-10 rounded-xl flex items-center justify-center text-secondary hover:bg-slate-100 transition-colors" title="Редактировать" onClick={() => navigate(`/admin/members/${member.id}/edit`)}>
                           <Edit2 size={18} />
                         </button>
                       )}
                       {isAdmin && (
-                        <button className="icon-btn text-danger hover:bg-red-50" title="Удалить" onClick={() => setMemberToDelete(member)}>
+                        <button className="w-10 h-10 rounded-xl flex items-center justify-center text-danger hover:bg-red-50 transition-colors" title="Удалить" onClick={() => setMemberToDelete(member)}>
                           <Trash2 size={18} />
                         </button>
                       )}

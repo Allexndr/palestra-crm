@@ -72,20 +72,7 @@ export const RegisterClub = () => {
     }
   };
 
-  // Phone Masking (+7 (XXX) XXX-XX-XX)
-  const handlePhoneChange = (e) => {
-    let digits = e.target.value.replace(/\D/g, '');
-    if (digits.startsWith('7') || digits.startsWith('8')) {
-      digits = digits.substring(1);
-    }
-
-    let formatted = '+7';
-    if (digits.length > 0) formatted += ' (' + digits.substring(0, 3);
-    if (digits.length >= 4) formatted += ') ' + digits.substring(3, 6);
-    if (digits.length >= 7) formatted += '-' + digits.substring(6, 8);
-    if (digits.length >= 9) formatted += '-' + digits.substring(8, 10);
-    handleInputChange('phone', formatted);
-  };
+  // Phone formatting is now handled by Input type="tel"
 
   // Validation
   const validateStep1 = () => {
@@ -93,8 +80,8 @@ export const RegisterClub = () => {
     if (!formData.firstName) newErrors.firstName = "Укажите имя";
     if (!formData.lastName) newErrors.lastName = "Укажите фамилию";
     
-    if (!formData.phone || formData.phone.length < 18) {
-      newErrors.phone = "Введите полный номер: +7 (XXX) XXX-XX-XX";
+    if (!formData.phone || formData.phone.length < 15) {
+      newErrors.phone = "Введите полный номер: 7 777 000 00 00";
     }
 
     if (!formData.email) {
@@ -426,9 +413,10 @@ export const RegisterClub = () => {
                         </div>
                         <Input 
                           label="Телефон" 
-                          placeholder="+7 (707) 000-00-00" 
+                          type="tel"
+                          placeholder="7 777 000 00 00" 
                           value={formData.phone} 
-                          onChange={handlePhoneChange} 
+                          onChange={(e) => handleInputChange('phone', e.target.value)} 
                           error={errors.phone}
                         />
                         <p style={{ fontSize: '11px', color: 'var(--color-primary)', marginTop: '-12px', marginBottom: '0', fontWeight: 500 }}>
