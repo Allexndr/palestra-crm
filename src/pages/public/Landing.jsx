@@ -393,6 +393,7 @@ export const Landing = () => {
             <h2 className="landing-cta__title">Соберите клуб в одну систему</h2>
             <p className="landing-cta__lead">
               Начните бесплатно: 1 филиал, 15 учеников и 3 тренера. Дальше подключайте Growth и платите только за масштаб клуба.
+            </p>
             <Link to="/auth/register">
               <Button variant="primary" size="lg" className="text-xl" style={{ fontWeight: 800 }}>Подключить бесплатно</Button>
             </Link>
