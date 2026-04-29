@@ -211,7 +211,7 @@ export const Landing = () => {
                 <div className="flex justify-between items-start mb-8">
                   <div>
                     <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800 }}>Сегодня в клубе</p>
-                    <h3 style={{ color: '#fff', fontFamily: 'var(--font-family-display)', fontSize: 28, lineHeight: 1.1, margin: 0 }}>Palestra Almaty</h3>
+                    <h3 style={{ color: '#fff', fontFamily: 'var(--font-family-display)', fontSize: 28, fontWeight: 900, lineHeight: 1.1, margin: 0 }}>Palestra Almaty</h3>
                   </div>
                   <ShieldCheck size={30} color="var(--color-success)" aria-hidden />
                 </div>
@@ -220,7 +220,7 @@ export const Landing = () => {
                   {OPERATIONS.map((item) => (
                     <div key={item.label} style={{ backgroundColor: 'rgba(255,255,255,0.07)', padding: 'var(--space-3)', borderRadius: 18 }}>
                       <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.65rem', marginBottom: 6, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em' }}>{item.label}</p>
-                      <p style={{ color: 'white', fontSize: '1.25rem', fontFamily: 'var(--font-family-display)', fontWeight: 800, lineHeight: 1 }}>{item.value}</p>
+                      <p style={{ color: 'white', fontSize: '1.25rem', fontFamily: 'var(--font-family-display)', fontWeight: 900, lineHeight: 1 }}>{item.value}</p>
                     </div>
                   ))}
                 </div>

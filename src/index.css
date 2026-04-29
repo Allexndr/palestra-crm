@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,400&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   /* Fonts */
   --font-family-sans: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-family-display: 'Playfair Display', serif;
+  --font-family-display: 'Outfit', sans-serif;
 
   /* Palestra palette: warm neutral base + disciplined navy/indigo accents */
   --color-bg: #F5F3EF;
@@ -167,14 +167,14 @@ button,
 /* Bold Display Typo Scale */
 .h1, .h2, .h3, .h4 {
   font-family: var(--font-family-display);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.04em; /* Tight letter spacing for volume */
+  font-weight: 900; /* Extra bold for "volumetric" feel */
+  line-height: 1.1;
+  letter-spacing: -0.05em; /* Tight letter spacing for volume */
 }
 
-.h1 { font-size: clamp(2.5rem, 10vw, var(--text-6xl)); letter-spacing: -0.05em; text-wrap: balance; }
+.h1 { font-size: clamp(2.5rem, 10vw, var(--text-6xl)); text-wrap: balance; }
 .h2 { font-size: clamp(1.75rem, 5vw, var(--text-4xl)); }
-.h3 { font-size: clamp(1.5rem, 4vw, var(--text-3xl)); letter-spacing: -0.03em; }
+.h3 { font-size: clamp(1.5rem, 4vw, var(--text-3xl)); }
 .h4 { font-size: clamp(1.25rem, 3vw, var(--text-2xl)); }
 
 .font-sans { font-family: var(--font-family-sans); }

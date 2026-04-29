@@ -297,7 +297,7 @@ export const RegisterClub = () => {
                   background: 'linear-gradient(135deg, var(--color-primary) 0%, #4f46e5 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  fontWeight: 800
+                  fontWeight: 900
                 }}>
                   Клуб успешно создан!
                 </h2>
@@ -498,7 +498,7 @@ export const RegisterClub = () => {
                         />
                         
                         <div style={{ backgroundColor: 'var(--color-primary-soft)', padding: 'var(--space-4)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-primary)' }}>
-                          <p className="text-sm font-bold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family-display)' }}>Готовы к запуску!</p>
+                          <p className="text-sm" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family-display)', fontWeight: 900 }}>Готовы к запуску!</p>
                           <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)', fontWeight: 500 }}>
                             Почти готово! После нажатия мы создадим клуб.<br/>
                             <strong style={{ color: 'var(--color-primary)' }}>Доступы (логин и пароль) придут в ваш Telegram.</strong>

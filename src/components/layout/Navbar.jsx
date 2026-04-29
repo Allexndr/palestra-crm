@@ -52,7 +52,7 @@ export const Navbar = () => {
                 style={{ 
                   textDecoration: 'none',
                   fontSize: '0.78rem',
-                  fontWeight: 700,
+                  fontWeight: 900,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   color: 'var(--color-text-secondary)',
@@ -125,7 +125,7 @@ export const Navbar = () => {
               onClick={closeMenu}
               style={{
                 fontSize: '2.5rem',
-                fontWeight: 800,
+                fontWeight: 900,
                 fontFamily: 'var(--font-family-display)',
                 color: 'var(--color-text-primary)',
                 textDecoration: 'none',
