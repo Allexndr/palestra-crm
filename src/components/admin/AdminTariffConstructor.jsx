@@ -86,20 +86,12 @@ export const AdminTariffConstructor = ({
           {RESOURCE_OPTIONS.map((option) => {
             const status = getLimitStatus(option.key);
             const selected = Number(draft.limits?.[option.key] || option.included);
+            const isBillable = selected > option.paidIncluded;
+            const extraCount = Math.max(0, selected - option.paidIncluded);
+            const extraCost = extraCount * option.unitPrice;
+
             return (
               <article key={option.key} className="admin-tariff__resource">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h5>{option.label}</h5>
-                    <p>
-                      {usage[option.key] || 0} из {formatLimit(subscription.limits?.[option.key])} занято
-                    </p>
-                  </div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--color-primary)', backgroundColor: 'var(--color-primary-soft)', padding: '4px 8px', borderRadius: '6px' }}>
-                    {status.percent}%
-                  </div>
-                </div>
-                
                 <input
                   type="range"
                   min={option.min}
@@ -107,11 +99,50 @@ export const AdminTariffConstructor = ({
                   step={option.step}
                   value={selected}
                   onChange={(event) => updateLimit(option.key, event.target.value)}
+                  className="mb-4"
                 />
 
-                <div className="admin-tariff__resource-bottom">
-                  <strong>{selected.toLocaleString('ru-RU')}</strong>
-                  <span>Лимит Growth</span>
+                <div className="flex justify-between items-center mb-4">
+                  <div>
+                    <h5 className="flex items-center gap-2">
+                      {option.label}
+                      <span style={{ fontSize: '0.65rem', padding: '2px 6px', background: 'var(--color-bg)', borderRadius: '4px', color: 'var(--color-text-muted)' }}>
+                        {option.unitPrice} ₸/ед.
+                      </span>
+                    </h5>
+                    <p style={{ fontSize: '0.7rem' }}>
+                      {usage[option.key] || 0} занято из {formatLimit(subscription.limits?.[option.key])}
+                    </p>
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    <input 
+                      type="number"
+                      value={selected}
+                      onChange={(e) => updateLimit(option.key, e.target.value)}
+                      style={{
+                        width: '70px',
+                        padding: '6px 10px',
+                        borderRadius: '8px',
+                        border: '1px solid var(--color-border)',
+                        fontWeight: '800',
+                        textAlign: 'center',
+                        fontSize: '1rem',
+                        color: 'var(--color-primary)'
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="admin-tariff__resource-bottom" style={{ borderTop: '1px dashed var(--color-border)', paddingTop: '12px', marginTop: 'auto' }}>
+                  <div className="flex flex-col">
+                    <span style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)', textTransform: 'uppercase' }}>Составляющая цены</span>
+                    <strong style={{ fontSize: '1rem' }}>
+                      {isBillable ? `+ ${extraCost.toLocaleString('ru-RU')} ₸` : 'Включено в базу'}
+                    </strong>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)' }}>{status.percent}% занято</span>
+                  </div>
                 </div>
               </article>
             );

@@ -1317,14 +1317,13 @@ body, #root {
 
 .admin-tariff__resource,
 .admin-tariff__feature {
-  padding: var(--space-6);
-  border-radius: 24px;
+  padding: var(--space-5);
+  border-radius: 20px;
   border: 1px solid var(--color-border);
   background: #fff;
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
