@@ -1,6 +1,7 @@
 import { getServiceClient, hasSupabaseEnv, hasSupabaseServiceEnv, getAnonClient } from '../_lib/supabase.js';
 import { sendJson, parseJsonBody } from '../_lib/http.js';
-import { assertSameOrigin, rateLimit, safeError } from '../_lib/security.js';
+import { assertSameOrigin, safeError } from '../_lib/security.js';
+import { rateLimit } from '../_lib/rateLimit.js';
 import { registerClubSchema, parseOrThrow } from '../_lib/validation.js';
 import { ensureClubForRegistration } from '../_lib/appState.js';
 import { mapProfileToUser } from '../_lib/supabase.js';
