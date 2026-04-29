@@ -1,147 +1,282 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LogOut, Shield, MapPin, Users, Activity, Crown } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Crown, LogOut, Users, TrendingUp, Building2, Activity,
+  ChevronRight, Search, RefreshCw, DollarSign, UserCheck,
+  CalendarDays, Target, Circle, MapPin, Mail
+} from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+
+const fmt = (n) => Number(n || 0).toLocaleString('ru-RU');
+const fmtDate = (d) => d ? new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+
+const StatBox = ({ label, value, sub, color = '#3146A6' }) => (
+  <div style={{
+    background: 'white', borderRadius: 16, padding: '20px 24px',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.07)', border: '1px solid #f0f0f0',
+  }}>
+    <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{label}</p>
+    <p style={{ margin: '8px 0 0', fontSize: 28, fontWeight: 900, color: '#0f172a', fontFamily: 'Outfit, sans-serif' }}>{value}</p>
+    {sub && <p style={{ margin: '4px 0 0', fontSize: 12, color: '#64748b' }}>{sub}</p>}
+  </div>
+);
+
+const Badge = ({ active }) => (
+  <span style={{
+    display: 'inline-flex', alignItems: 'center', gap: 5,
+    padding: '3px 10px', borderRadius: 99,
+    fontSize: 11, fontWeight: 700,
+    background: active ? '#dcfce7' : '#f1f5f9',
+    color: active ? '#15803d' : '#64748b',
+  }}>
+    <Circle size={6} fill={active ? '#22c55e' : '#94a3b8'} color="transparent" />
+    {active ? 'Активен' : 'Не активен'}
+  </span>
+);
 
 export const SuperDashboard = () => {
   const [clubs, setClubs] = useState([]);
+  const [filtered, setFiltered] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
   const { logout } = useAdmin();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Clear any active impersonation on the dashboard
+  const load = async () => {
+    setIsLoading(true);
+    setError('');
     localStorage.removeItem('palestra-impersonate-club-id');
+    try {
+      const res = await fetch('/api/superadmin/clubs', { credentials: 'include' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Ошибка загрузки');
+      // filter out the HQ club
+      const real = (data.clubs || []).filter(c => c.name !== 'Palestra HQ');
+      setClubs(real);
+      setFiltered(real);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const fetchClubs = async () => {
-      try {
-        const res = await fetch('/api/superadmin/clubs', { credentials: 'include' });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to fetch clubs');
-        setClubs(data.clubs || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchClubs();
-  }, []);
+  useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    if (!search.trim()) { setFiltered(clubs); return; }
+    const q = search.toLowerCase();
+    setFiltered(clubs.filter(c =>
+      c.name?.toLowerCase().includes(q) ||
+      c.city?.toLowerCase().includes(q) ||
+      c.stats?.adminEmail?.toLowerCase().includes(q)
+    ));
+  }, [search, clubs]);
+
+  const totalStudents = clubs.reduce((s, c) => s + (c.stats?.studentsCount || 0), 0);
+  const totalRevenue = clubs.reduce((s, c) => s + (c.stats?.totalRevenue || 0), 0);
+  const activeClubs = clubs.filter(c => c.isActive).length;
 
   const handleEnterClub = (clubId) => {
     localStorage.setItem('palestra-impersonate-club-id', clubId);
-    window.location.href = '/admin'; // Force full reload to reset context states
+    window.location.href = '/admin';
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/auth/login');
-  };
-
-  if (isLoading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f8fafc' }}>
-        <p style={{ fontWeight: 'bold', color: '#64748b' }}>Загрузка системы...</p>
-      </div>
-    );
-  }
+  const handleLogout = async () => { await logout(); navigate('/auth/login'); };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '40px' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '48px', height: '48px', backgroundColor: '#4f46e5', borderRadius: '12px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}>
-            <Crown size={24} />
+    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'Outfit, sans-serif' }}>
+      {/* Header */}
+      <header style={{
+        background: '#0f172a', padding: '0 40px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        height: 64, position: 'sticky', top: 0, zIndex: 50,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: 'linear-gradient(135deg, #3146A6, #6366f1)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Crown size={18} color="white" />
           </div>
           <div>
-            <h1 style={{ fontSize: '24px', fontWeight: '800', margin: 0, color: '#1e293b' }}>Super Admin</h1>
-            <p style={{ margin: 0, color: '#64748b', fontSize: '14px', fontWeight: '500' }}>Глобальная панель управления платформой</p>
+            <p style={{ margin: 0, fontWeight: 900, color: 'white', fontSize: 15 }}>Palestra SuperAdmin</p>
+            <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>murdasoft@gmail.com</p>
           </div>
         </div>
-        <button 
-          onClick={handleLogout}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '8px', 
-            padding: '10px 16px', backgroundColor: 'white', border: '1px solid #e2e8f0', 
-            borderRadius: '8px', color: '#ef4444', fontWeight: '600', cursor: 'pointer' 
-          }}
-        >
-          <LogOut size={18} />
-          Выйти
+        <button onClick={handleLogout} style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
+          borderRadius: 8, padding: '7px 14px', color: '#f87171',
+          fontWeight: 700, fontSize: 13, cursor: 'pointer',
+        }}>
+          <LogOut size={15} /> Выйти
         </button>
       </header>
 
-      {error && (
-        <div style={{ padding: '16px', backgroundColor: '#fef2f2', color: '#b91c1c', borderRadius: '8px', marginBottom: '24px', border: '1px solid #fca5a5' }}>
-          {error}
+      <main style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 24px' }}>
+        {/* Page title */}
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: '#0f172a' }}>Обзор платформы</h1>
+          <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 14 }}>
+            Все клубы в реальном времени · {clubs.length} клубов зарегистрировано
+          </p>
         </div>
-      )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
-        {clubs.map((club) => (
-          <div key={club.id} style={{ 
-            backgroundColor: 'white', borderRadius: '16px', padding: '24px', 
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
-            border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-              <div style={{ 
-                width: '48px', height: '48px', borderRadius: '50%', backgroundColor: club.primary_color || '#e2e8f0',
-                display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'hidden'
-              }}>
-                {club.logo_blob_url ? (
-                  <img src={club.logo_blob_url} alt={club.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <Shield size={24} color="white" />
-                )}
-              </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>{club.name}</h3>
-                <p style={{ margin: 0, fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
-                  <MapPin size={12} /> {club.city || 'Не указан'}
-                </p>
-              </div>
-            </div>
+        {/* KPI Row */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 40 }}>
+          <StatBox label="Всего клубов" value={clubs.length} sub="зарегистрировано" />
+          <StatBox label="Активных (7д)" value={activeClubs} sub={`из ${clubs.length}`} color="#22c55e" />
+          <StatBox label="Учеников" value={fmt(totalStudents)} sub="по всем клубам" />
+          <StatBox label="Общая выручка" value={`${fmt(totalRevenue)} ₸`} sub="по всей платформе" />
+        </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
-              <div style={{ padding: '12px', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: '700' }}>Ученики</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                  <Users size={16} color="#4f46e5" />
-                  <span style={{ fontSize: '18px', fontWeight: '800', color: '#1e293b' }}>{club.stats?.studentsCount || 0}</span>
-                </div>
-              </div>
-              <div style={{ padding: '12px', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '11px', textTransform: 'uppercase', color: '#64748b', fontWeight: '700' }}>Тариф</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                  <Activity size={16} color="#10b981" />
-                  <span style={{ fontSize: '16px', fontWeight: '800', color: '#1e293b' }}>{club.stats?.tariff || 'Free'}</span>
-                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => handleEnterClub(club.id)}
+        {/* Search + Refresh */}
+        <div style={{ display: 'flex', gap: 12, marginBottom: 24, alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1, maxWidth: 360 }}>
+            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Поиск по клубу, городу, email..."
               style={{
-                marginTop: 'auto', width: '100%', padding: '14px', backgroundColor: '#0f172a', 
-                color: 'white', border: 'none', borderRadius: '10px', fontWeight: '600', 
-                fontSize: '15px', cursor: 'pointer', transition: 'background-color 0.2s'
+                width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e2e8f0',
+                borderRadius: 10, fontSize: 14, outline: 'none', background: 'white',
+                boxSizing: 'border-box',
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1e293b'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#0f172a'}
-            >
-              Войти в клуб
-            </button>
+            />
           </div>
-        ))}
+          <button onClick={load} style={{
+            display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px',
+            background: 'white', border: '1px solid #e2e8f0', borderRadius: 10,
+            fontWeight: 600, fontSize: 13, cursor: 'pointer', color: '#475569',
+          }}>
+            <RefreshCw size={14} /> Обновить
+          </button>
+        </div>
 
-        {clubs.length === 0 && !isLoading && (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: '#64748b' }}>
-            <p>Клубов пока нет.</p>
+        {error && (
+          <div style={{ padding: 16, background: '#fef2f2', color: '#b91c1c', borderRadius: 10, marginBottom: 24, border: '1px solid #fca5a5' }}>
+            {error}
           </div>
         )}
-      </div>
+
+        {isLoading ? (
+          <div style={{ textAlign: 'center', padding: 80, color: '#94a3b8', fontWeight: 600 }}>Загрузка клубов...</div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 80, color: '#94a3b8', fontWeight: 600 }}>
+            {clubs.length === 0 ? 'Нет зарегистрированных клубов.' : 'Ничего не найдено.'}
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 20 }}>
+            {filtered.map(club => (
+              <div key={club.id} style={{
+                background: 'white', borderRadius: 20, padding: 24,
+                border: '1px solid #f0f0f0',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+                display: 'flex', flexDirection: 'column', gap: 16,
+              }}>
+                {/* Club header */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                    <div style={{
+                      width: 44, height: 44, borderRadius: 12,
+                      background: club.primary_color || '#3146A6',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 20, fontWeight: 900, color: 'white',
+                      overflow: 'hidden',
+                    }}>
+                      {club.logo_blob_url && !club.logo_blob_url.includes('palestra-logo')
+                        ? <img src={club.logo_blob_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : (club.name?.[0] || '?')}
+                    </div>
+                    <div>
+                      <p style={{ margin: 0, fontWeight: 800, fontSize: 16, color: '#0f172a' }}>{club.name}</p>
+                      <p style={{ margin: 0, fontSize: 12, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                        <MapPin size={11} /> {club.city || 'Город не указан'}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge active={club.isActive} />
+                </div>
+
+                {/* Stats grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                  {[
+                    { icon: Users, label: 'Учеников', val: club.stats?.studentsCount || 0 },
+                    { icon: UserCheck, label: 'Тренеров', val: club.stats?.coachesCount || 0 },
+                    { icon: Building2, label: 'Групп', val: club.stats?.groupsCount || 0 },
+                    { icon: Target, label: 'Лидов', val: club.stats?.leadsCount || 0 },
+                    { icon: CalendarDays, label: 'Тренировок', val: club.stats?.sessionsCount || 0 },
+                    { icon: DollarSign, label: 'Выручка', val: `${fmt(club.stats?.totalRevenue)} ₸` },
+                  ].map(({ icon: Icon, label, val }) => (
+                    <div key={label} style={{ background: '#f8fafc', borderRadius: 10, padding: '10px 12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
+                        <Icon size={12} color="#94a3b8" />
+                        <span style={{ fontSize: 10, color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
+                      </div>
+                      <p style={{ margin: 0, fontWeight: 800, fontSize: 15, color: '#0f172a' }}>{val}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Tariff + email */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid #f1f5f9' }}>
+                  <div>
+                    <span style={{
+                      padding: '4px 12px', borderRadius: 99,
+                      background: club.stats?.tariff === 'Growth' ? '#eff6ff' : '#f0fdf4',
+                      color: club.stats?.tariff === 'Growth' ? '#1d4ed8' : '#15803d',
+                      fontWeight: 800, fontSize: 12,
+                    }}>
+                      {club.stats?.tariff || 'Starter'}
+                    </span>
+                  </div>
+                  {club.stats?.adminEmail && (
+                    <span style={{ fontSize: 11, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <Mail size={11} /> {club.stats.adminEmail}
+                    </span>
+                  )}
+                </div>
+
+                <p style={{ margin: 0, fontSize: 11, color: '#94a3b8' }}>
+                  Активность: {fmtDate(club.lastActivity)} · Создан: {fmtDate(club.created_at)}
+                </p>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Link
+                    to={`/superadmin/club/${club.id}`}
+                    style={{
+                      flex: 1, padding: '11px 0', textAlign: 'center',
+                      background: '#f8fafc', border: '1px solid #e2e8f0',
+                      borderRadius: 10, fontWeight: 700, fontSize: 13,
+                      color: '#0f172a', textDecoration: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    }}
+                  >
+                    Детали <ChevronRight size={14} />
+                  </Link>
+                  <button
+                    onClick={() => handleEnterClub(club.id)}
+                    style={{
+                      flex: 1, padding: '11px 0',
+                      background: '#0f172a', border: 'none',
+                      borderRadius: 10, fontWeight: 700, fontSize: 13,
+                      color: 'white', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    }}
+                  >
+                    <Activity size={14} /> Войти в клуб
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 };

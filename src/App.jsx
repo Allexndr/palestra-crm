@@ -15,6 +15,7 @@ import { LeagueEntry } from './routes/LeagueEntry';
 
 const AdminLayout = lazy(() => import('./components/layout/AdminLayout').then((m) => ({ default: m.AdminLayout })));
 const SuperDashboard = lazy(() => import('./pages/superadmin/SuperDashboard').then((m) => ({ default: m.SuperDashboard })));
+const ClubDetail = lazy(() => import('./pages/superadmin/ClubDetail').then((m) => ({ default: m.ClubDetail })));
 const Dashboard = lazy(() => import('./pages/admin/Dashboard').then((m) => ({ default: m.Dashboard })));
 const Members = lazy(() => import('./pages/admin/Members').then((m) => ({ default: m.Members })));
 const Leads = lazy(() => import('./pages/admin/Leads').then((m) => ({ default: m.Leads })));
@@ -70,6 +71,7 @@ function App() {
 
               <Route path="/superadmin" element={<SuperAdminRoleGuard />}>
                 <Route index element={<SuperDashboard />} />
+                <Route path="club/:clubId" element={<ClubDetail />} />
               </Route>
 
               <Route element={<RequireAuth />}>

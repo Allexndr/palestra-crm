@@ -10,44 +10,66 @@ export default async function handler(req, res) {
     if (!user) return; // requireUser already sent 401
     
     // Safety check - although the guard stops them on frontend, we must protect the API
-    if (user.profile.role !== 'superadmin') {
+    if (user.profile.role !== 'superadmin' && user.profile.email !== 'murdasoft@gmail.com') {
       return sendJson(res, 403, { error: 'Forbidden. Superadmin access required.' });
     }
 
     const supabase = getServiceClient();
 
-    // 1. Fetch all clubs
-    const { data: clubs, error: clubsError } = await supabase
-      .from('clubs')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const [{ data: clubs, error: clubsError }, { data: states, error: statesError }] = await Promise.all([
+      supabase.from('clubs').select('*').order('created_at', { ascending: false }),
+      supabase.from('app_state').select('club_id, state, updated_at'),
+    ]);
 
     if (clubsError) throw clubsError;
-
-    // 2. Fetch all app states to get stats (tariffs, members)
-    const { data: states, error: statesError } = await supabase
-      .from('app_state')
-      .select('club_id, state');
-
     if (statesError) throw statesError;
 
     // Combine data
     const clubsWithStats = clubs.map(club => {
       const clubStateRow = states.find(s => s.club_id === club.id);
       const appState = clubStateRow?.state || {};
-      
+      const lastUpdated = clubStateRow?.updated_at;
+
       const members = Array.isArray(appState.members) ? appState.members : [];
       const coaches = Array.isArray(appState.coaches) ? appState.coaches : [];
-      const tariff = appState.subscription?.plan || 'Starter';
-      const adminEmail = appState.admin_email || 'Нет данных';
+      const groups = Array.isArray(appState.groups) ? appState.groups : [];
+      const leads = Array.isArray(appState.leads) ? appState.leads : [];
+      const schedule = Array.isArray(appState.schedule) ? appState.schedule : [];
+      const finances = appState.finances || {};
+      const transactions = Array.isArray(finances.transactions) ? finances.transactions : [];
+      const subscription = appState.subscription || {};
+
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const monthlyRevenue = transactions
+        .filter(t => t.type === 'income' && t.date >= monthStart)
+        .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
+      const totalRevenue = transactions
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
+      const isActive = lastUpdated
+        ? (Date.now() - new Date(lastUpdated).getTime()) < 7 * 24 * 60 * 60 * 1000
+        : false;
 
       return {
         ...club,
+        lastActivity: lastUpdated,
+        isActive,
         stats: {
           studentsCount: members.length,
           coachesCount: coaches.length,
-          tariff: tariff,
-          adminEmail: adminEmail
+          groupsCount: groups.length,
+          leadsCount: leads.length,
+          sessionsCount: schedule.length,
+          monthlyRevenue,
+          totalRevenue,
+          tariff: subscription.plan || 'Starter',
+          tariffDetails: subscription,
+          adminEmail: appState.admin_email || '',
+          locations: Array.isArray(appState.locations) ? appState.locations : [],
+          recentTransactions: transactions.slice(0, 5),
         }
       };
     });

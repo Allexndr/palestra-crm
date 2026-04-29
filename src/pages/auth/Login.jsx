@@ -37,6 +37,8 @@ export const Login = () => {
         } else {
           navigate(dest, { replace: true });
         }
+      } else if (role === 'superadmin' || user.email === 'murdasoft@gmail.com') {
+        navigate('/superadmin');
       } else if (role === 'admin' || role === 'coach') {
         navigate('/admin');
       } else {
