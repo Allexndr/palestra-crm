@@ -53,13 +53,13 @@ export const Sidebar = () => {
       backgroundColor: 'var(--color-bg-secondary)',
       borderRight: '1px solid var(--color-border)',
       height: '100vh',
-      position: 'sticky',
+      position: 'fixed',
+      left: 0,
       top: 0,
       padding: 'var(--space-4)',
       display: 'flex',
       flexDirection: 'column',
-      zIndex: 10,
-      alignSelf: 'flex-start',
+      zIndex: 100,
       overflowY: 'auto'
     }}>
       <div className="mb-6">

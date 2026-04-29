@@ -26,7 +26,11 @@ export const AdminLayout = () => {
     <div className="admin-layout" style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', display: 'flex' }}>
       <Sidebar />
       
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column'
+      }} className="admin-layout-content">
         {isImpersonating && (
           <div style={{
             backgroundColor: 'var(--color-danger)', color: 'white', padding: '12px 24px',
@@ -115,6 +119,9 @@ export const AdminLayout = () => {
         .admin-layout {
           flex-direction: row;
         }
+        .admin-layout-content {
+          padding-left: 240px;
+        }
         .admin-container {
           max-width: 1200px;
           width: 100%;
@@ -123,6 +130,9 @@ export const AdminLayout = () => {
         @media (max-width: 1024px) {
           .admin-layout {
             flex-direction: column;
+          }
+          .admin-layout-content {
+            padding-left: 0;
           }
           .admin-container {
             margin: 0;
