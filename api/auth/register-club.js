@@ -3,7 +3,7 @@ import { sendJson, parseJsonBody } from '../_lib/http.js';
 import { assertSameOrigin, rateLimit, safeError } from '../_lib/security.js';
 import { registerClubSchema, parseOrThrow } from '../_lib/validation.js';
 import { ensureClubForRegistration } from '../_lib/appState.js';
-import { mapProfileToUser } from '../_lib/repositories.js';
+import { mapProfileToUser } from '../_lib/supabase.js';
 
 function setSessionCookies(res, session) {
   const expires = new Date(Date.now() + (session.expires_in || 3600) * 1000);
