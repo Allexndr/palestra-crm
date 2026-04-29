@@ -103,9 +103,12 @@ export const AdminProvider = ({ children }) => {
 
     async function hydrate() {
       try {
+        const impersonatedClubId = localStorage.getItem('palestra-impersonate-club-id');
+        const headers = impersonatedClubId ? { 'x-palestra-club-id': impersonatedClubId } : {};
+
         const [meResponse, stateResponse] = await Promise.all([
-          fetch('/api/auth/me', { credentials: 'include' }),
-          fetch('/api/app/state', { credentials: 'include' }),
+          fetch('/api/auth/me', { credentials: 'include', headers }),
+          fetch('/api/app/state', { credentials: 'include', headers }),
         ]);
         const meData = meResponse.ok ? await meResponse.json() : {};
         const stateData = stateResponse.ok ? await stateResponse.json() : {};
@@ -163,10 +166,16 @@ export const AdminProvider = ({ children }) => {
       selectedLocationId, clubInfo, subscription,
     };
 
+    const impersonatedClubId = localStorage.getItem('palestra-impersonate-club-id');
+    const headers = { 'Content-Type': 'application/json' };
+    if (impersonatedClubId) {
+      headers['x-palestra-club-id'] = impersonatedClubId;
+    }
+
     fetch('/api/app/state', {
       method: 'PUT',
       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ state }),
       signal: controller.signal,
     }).catch((error) => {

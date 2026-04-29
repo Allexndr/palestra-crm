@@ -126,8 +126,23 @@ export function AdminRoleGuard() {
   if (!user) {
     return <Navigate to="/auth/login" replace state={{ from: loc.pathname }} />;
   }
-  if (!['admin', 'coach'].includes(user.role)) {
+  if (!['admin', 'coach', 'superadmin'].includes(user.role)) {
     return <Navigate to="/profile" replace />;
+  }
+  return <Outlet />;
+}
+
+/**
+ * Только для Супер Админа (владельца платформы).
+ */
+export function SuperAdminRoleGuard() {
+  const { user } = useAdmin();
+  const loc = useLocation();
+  if (!user) {
+    return <Navigate to="/auth/login" replace state={{ from: loc.pathname }} />;
+  }
+  if (user.role !== 'superadmin') {
+    return <Navigate to="/" replace />;
   }
   return <Outlet />;
 }

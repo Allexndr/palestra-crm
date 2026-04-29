@@ -24,6 +24,11 @@ export function assertSameOrigin(req, res) {
 export async function requireUser(req, res, { allowDemo = false } = {}) {
   const requestUser = await getRequestUser(req);
   if (requestUser?.profile && (allowDemo || !requestUser.isDemo)) {
+    // SuperAdmin Impersonation: override club_id if header is present
+    const targetClubId = req.headers['x-palestra-club-id'];
+    if (requestUser.profile.role === 'superadmin' && targetClubId) {
+      requestUser.profile.club_id = targetClubId;
+    }
     return requestUser;
   }
 

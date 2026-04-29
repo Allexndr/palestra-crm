@@ -9,11 +9,12 @@ import { AdminProvider } from './context/AdminContext';
 import { ShopProvider } from './context/ShopContext';
 import { PageLoader } from './components/ui/PageLoader';
 import { SkipToMain } from './components/layout/SkipToMain';
-import { AdminRoleGuard, RequireAuth, MemberLayout } from './components/auth/Access';
+import { AdminRoleGuard, SuperAdminRoleGuard, RequireAuth, MemberLayout } from './components/auth/Access';
 import { ScheduleEntry } from './routes/ScheduleEntry';
 import { LeagueEntry } from './routes/LeagueEntry';
 
 const AdminLayout = lazy(() => import('./components/layout/AdminLayout').then((m) => ({ default: m.AdminLayout })));
+const SuperDashboard = lazy(() => import('./pages/superadmin/SuperDashboard').then((m) => ({ default: m.SuperDashboard })));
 const Dashboard = lazy(() => import('./pages/admin/Dashboard').then((m) => ({ default: m.Dashboard })));
 const Members = lazy(() => import('./pages/admin/Members').then((m) => ({ default: m.Members })));
 const Leads = lazy(() => import('./pages/admin/Leads').then((m) => ({ default: m.Leads })));
@@ -65,6 +66,10 @@ function App() {
                   <Route path="shop" element={<Shop />} />
                   <Route path="settings" element={<Settings />} />
                 </Route>
+              </Route>
+
+              <Route path="/superadmin" element={<SuperAdminRoleGuard />}>
+                <Route index element={<SuperDashboard />} />
               </Route>
 
               <Route element={<RequireAuth />}>

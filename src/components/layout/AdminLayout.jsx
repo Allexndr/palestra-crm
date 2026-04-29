@@ -10,9 +10,16 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
 
+  const isImpersonating = !!localStorage.getItem('palestra-impersonate-club-id');
+
   const handleLogout = () => {
     logout();
     navigate('/auth/login');
+  };
+
+  const handleExitImpersonation = () => {
+    localStorage.removeItem('palestra-impersonate-club-id');
+    window.location.href = '/superadmin';
   };
 
   return (
@@ -20,6 +27,24 @@ export const AdminLayout = () => {
       <Sidebar />
       
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        {isImpersonating && (
+          <div style={{
+            backgroundColor: 'var(--color-danger)', color: 'white', padding: '12px 24px',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 100
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' }}>
+              <Shield size={18} />
+              <span>Режим Супер Админа: вы просматриваете клуб {clubInfo?.name}</span>
+            </div>
+            <button onClick={handleExitImpersonation} style={{
+              backgroundColor: 'rgba(255,255,255,0.2)', color: 'white', border: 'none',
+              padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
+            }}>
+              Выйти в Дашборд
+            </button>
+          </div>
+        )}
+        
         {/* Header (Desktop/Mobile) */}
         <header style={{ 
           padding: '0 var(--space-8)', 
