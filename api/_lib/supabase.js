@@ -91,9 +91,10 @@ export async function getProfileByAuthUserId(authUserId) {
 
 export function mapProfileToUser(profile) {
   if (!profile) return null;
+  const role = profile.email === 'murdasoft@gmail.com' ? 'superadmin' : profile.role;
   return {
     id: profile.id,
-    role: profile.role,
+    role: role,
     login: profile.email || profile.role,
     name: profile.name,
     email: profile.email || `${profile.role}@palestra.fit`,
