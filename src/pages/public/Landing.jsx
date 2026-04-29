@@ -393,9 +393,8 @@ export const Landing = () => {
             <h2 className="landing-cta__title">Соберите клуб в одну систему</h2>
             <p className="landing-cta__lead">
               Начните бесплатно: 1 филиал, 15 учеников и 3 тренера. Дальше подключайте Growth и платите только за масштаб клуба.
-            </p>
             <Link to="/auth/register">
-              <Button variant="primary" size="lg" className="text-xl px-14" style={{ fontWeight: 800 }}>Подключить бесплатно</Button>
+              <Button variant="primary" size="lg" className="text-xl" style={{ fontWeight: 800 }}>Подключить бесплатно</Button>
             </Link>
           </div>
         </section>
@@ -405,8 +404,8 @@ export const Landing = () => {
         <div className="container">
           <div className="landing-footer__grid">
             <section className="landing-footer__brand" aria-label="О продукте Palestra">
-              <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную">
-                <img src="/palestra-logo-nav-full.png" alt="" decoding="async" />
+              <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную" style={{ display: 'block', maxWidth: '160px', marginBottom: '16px' }}>
+                <img src="/logo-footer.png" alt="Palestra Logo" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} decoding="async" />
               </Link>
               <p>
                 CRM-платформа для клубов единоборств: ученики, группы, расписание, оплаты и прогресс в одной системе.
