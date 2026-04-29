@@ -87,12 +87,12 @@ export const Groups = () => {
           );
         })}
         {groups.length === 0 && (
-          <div className="col-span-full py-12 text-center text-secondary border-2 border-dashed border-slate-200 rounded-2xl">
+          <div className="col-span-full py-16 text-center text-secondary bg-white border border-slate-200 shadow-sm rounded-2xl">
             <Users size={48} className="mx-auto mb-4 text-slate-300" />
-            <p className="text-lg font-bold text-slate-700">Нет созданных групп</p>
-            <p className="mb-4">Создайте первую тренировочную группу.</p>
+            <p className="text-xl font-bold text-slate-800 mb-2">Нет созданных групп</p>
+            <p className="mb-6 text-slate-500">Создайте первую тренировочную группу для вашего клуба.</p>
             <Link to="/admin/groups/new">
-              <Button variant="primary">Создать группу</Button>
+              <Button variant="primary" size="lg">Создать группу</Button>
             </Link>
           </div>
         )}
