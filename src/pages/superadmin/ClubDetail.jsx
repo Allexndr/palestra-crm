@@ -415,7 +415,7 @@ export const ClubDetail = () => {
   }, [clubId]);
 
   const handleEnterClub = () => {
-    localStorage.setItem('palestra-impersonate-club-id', clubId);
+    sessionStorage.setItem('palestra-impersonate-club-id', clubId);
     window.location.href = '/admin';
   };
 

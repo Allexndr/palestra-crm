@@ -87,21 +87,16 @@ export const Settings = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
+              className="flex items-center gap-4 px-6 py-4 rounded-2xl transition-all border-none cursor-pointer text-left"
               style={{
-                display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
-                padding: 'var(--space-3) var(--space-4)',
-                borderRadius: 'var(--radius-md)',
-                border: 'none',
-                backgroundColor: activeTab === tab.id ? 'var(--color-primary)' : 'transparent',
-                color: activeTab === tab.id ? 'white' : 'var(--color-text-secondary)',
-                fontWeight: 600,
-                textAlign: 'left',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
+                backgroundColor: activeTab === tab.id ? 'black' : 'transparent',
+                color: activeTab === tab.id ? 'white' : '#666',
+                fontWeight: activeTab === tab.id ? '900' : '600',
+                fontSize: '13px'
               }}
             >
               {tab.icon}
-              {tab.label}
+              <span className="uppercase tracking-widest text-[10px]">{tab.label}</span>
             </button>
           ))}
         </div>
@@ -122,7 +117,7 @@ export const Settings = () => {
                 </span>
               </div>
 
-              <div className="usage-limit-grid">
+              <div className="tariff-res-grid">
                 {[
                   ['members', 'Ученики', members.length],
                   ['coaches', 'Тренеры', coaches.length],
@@ -131,25 +126,31 @@ export const Settings = () => {
                 ].map(([key, label, count]) => {
                   const status = getLimitStatus(key);
                   return (
-                    <div key={key} className="usage-limit-card p-6 bg-slate-50 border border-slate-100 rounded-2xl">
-                      <div className="flex justify-between items-end mb-4">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400 mb-1">{label}</p>
-                          <p className="text-xl font-black text-slate-800">
-                            {count} <span className="text-slate-300 font-medium">/</span> {status.limit}
+                    <div key={key} className={`tariff-res-card ${status.isReached ? 'border-black' : ''}`}>
+                      <div className="tariff-res-card__head">
+                        <div className="tariff-res-card__info">
+                          <h5 className="tariff-res-card__label">{label}</h5>
+                          <p className="tariff-res-card__usage">
+                            {count} / {formatLimit(status.limit)} <span className="opacity-40">использовано</span>
                           </p>
                         </div>
-                        {status.isWarning && (
-                          <span className="text-[9px] font-black uppercase px-2 py-1 bg-amber-100 text-amber-600 rounded-md">Growth Needed</span>
+                        {status.isReached && (
+                          <span className="text-[9px] font-black uppercase px-2 py-1 bg-black text-white rounded-md">Limit</span>
                         )}
                       </div>
-                      <div className="usage-limit-card__bar h-2 bg-slate-200 rounded-full overflow-hidden">
+                      <div className="usage-limit-card__bar h-1 bg-slate-100 rounded-full overflow-hidden mt-4">
                         <div style={{ 
                           width: `${status.percent}%`, 
                           height: '100%',
                           transition: 'width 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                          backgroundColor: status.isReached ? 'var(--color-error)' : status.isWarning ? 'var(--color-warning)' : 'var(--color-primary)' 
+                          backgroundColor: status.isReached ? '#000' : status.isWarning ? '#333' : '#000' 
                         }} />
+                      </div>
+                      <div className="mt-4 flex justify-between items-center">
+                        <span className="text-[10px] font-black uppercase text-slate-300 tracking-wider">
+                          {status.isReached ? 'Лимит исчерпан' : `${status.remaining} доступно`}
+                        </span>
+                        <span className="text-[11px] font-black">{status.percent}%</span>
                       </div>
                     </div>
                   );

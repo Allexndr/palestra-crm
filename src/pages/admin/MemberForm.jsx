@@ -230,6 +230,15 @@ export const MemberForm = () => {
                     <Input label="Дата рождения" type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
                     <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
                     <div className="input-group">
+                      <label className="input-label">Филиал / Клуб</label>
+                      <select className="input-field" value={formData.locationId} onChange={e => handleInputChange('locationId', e.target.value)}>
+                        {locations.length === 0 && <option value="1">Основной зал</option>}
+                        {locations.map(loc => (
+                          <option key={loc.id} value={loc.id}>{loc.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="input-group">
                       <label className="input-label">Фото атлета</label>
                       <div className="flex items-center gap-4">
                         <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">

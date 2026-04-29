@@ -1,13 +1,88 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { CheckCircle2, SlidersHorizontal, Zap } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { FEATURE_OPTIONS, PAID_BASE_PRICE, RESOURCE_OPTIONS, calculateTariff, formatLimit } from '../../lib/tariff';
+import { FEATURE_OPTIONS, PAID_BASE_PRICE, RESOURCE_OPTIONS, DEFAULT_SUBSCRIPTION, calculateTariff, formatLimit } from '../../lib/tariff';
 
 const FEATURE_NAMES = {
   crm: 'CRM клуба',
   schedule: 'Расписание',
   parentCabinet: 'Кабинет родителей',
   feed: 'Лента клуба',
+};
+
+const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
+  const [localValue, setLocalValue] = useState(selected.toString());
+  const isBillable = selected > option.paidIncluded;
+  const extraCount = Math.max(0, selected - option.paidIncluded);
+  const extraCost = extraCount * option.unitPrice;
+
+  // Sync local value when selected changes externally (e.g. via slider)
+  useEffect(() => {
+    setLocalValue(selected.toString());
+  }, [selected]);
+
+  const handleTextChange = (val) => {
+    const numeric = val.replace(/\D/g, '');
+    setLocalValue(numeric);
+    if (numeric !== '') {
+      const num = parseInt(numeric, 10);
+      updateLimit(option.key, Math.min(num, option.max));
+    }
+  };
+
+  const handleBlur = () => {
+    if (localValue === '' || parseInt(localValue, 10) < option.min) {
+      updateLimit(option.key, option.min);
+      setLocalValue(option.min.toString());
+    }
+  };
+
+  return (
+    <article className={`tariff-res-card ${isBillable ? 'is-premium' : ''}`}>
+      <div className="tariff-res-card__head">
+        <div className="tariff-res-card__info">
+          <h5 className="tariff-res-card__label">{option.label}</h5>
+          <p className="tariff-res-card__usage">
+            {usage || 0} / {formatLimit(selected)} <span className="opacity-40">занято</span>
+          </p>
+        </div>
+        <div className="tariff-res-card__input-wrap">
+          <input 
+            type="text"
+            inputMode="numeric"
+            value={localValue}
+            onChange={(e) => handleTextChange(e.target.value)}
+            onBlur={handleBlur}
+            className="tariff-res-card__input"
+          />
+        </div>
+      </div>
+
+      <div className="tariff-res-card__slider-wrap">
+        <input
+          type="range"
+          min={option.min}
+          max={option.max}
+          step={option.step}
+          value={selected}
+          onChange={(e) => updateLimit(option.key, e.target.value)}
+          className="tariff-res-card__slider"
+        />
+      </div>
+
+      <div className="tariff-res-card__footer">
+        <div className="flex flex-col">
+          <span className="tariff-res-card__price-label">Составляющая цены</span>
+          <strong className={`tariff-res-card__price-val ${isBillable ? 'text-black' : 'text-slate-300'}`}>
+            {isBillable ? `+ ${extraCost.toLocaleString('ru-RU')} ₸` : 'Включено в базу'}
+          </strong>
+        </div>
+        <div className="tariff-res-card__badge">
+          {status.percent}%
+        </div>
+      </div>
+    </article>
+  );
 };
 
 export const AdminTariffConstructor = ({
@@ -18,6 +93,12 @@ export const AdminTariffConstructor = ({
 }) => {
   const [draft, setDraft] = useState(subscription);
   const calculated = useMemo(() => calculateTariff(draft), [draft]);
+  
+  // Sync draft if subscription changes externally
+  useEffect(() => {
+    setDraft(subscription);
+  }, [subscription]);
+
   const yearlySaving = calculated.billingPeriod === 'yearly'
     ? Math.round((calculated.price / 0.85) - calculated.price)
     : 0;
@@ -66,129 +147,77 @@ export const AdminTariffConstructor = ({
     setDraft((prev) => ({ ...prev, billingPeriod }));
   };
 
+  const resetToStarter = () => {
+    if (window.confirm('Сбросить конфигурацию до базового Starter? Все дополнительные ресурсы будут отключены, а цена станет 0 ₸.')) {
+      setDraft(DEFAULT_SUBSCRIPTION);
+      updateSubscription(DEFAULT_SUBSCRIPTION);
+    }
+  };
+
   return (
-    <div className="admin-tariff">
+    <div className="admin-tariff animate-fade-in">
       {subscription.plan === 'starter' && (
         <section className="admin-tariff__hero">
-          <div>
-            <span className="admin-tariff__eyebrow">Бесплатный старт</span>
-            <h3>Starter собирает базу бесплатно</h3>
-            <p>
-              Вам доступен базовый функционал для начала работы: 1 филиал, до 15 учеников и 3 тренера. 
-              Все основные модули CRM (расписание, кабинет родителей, лента) уже включены и работают.
+          <div className="flex-1">
+            <span className="admin-tariff__eyebrow">Ваш текущий тариф</span>
+            <h2 className="text-4xl font-black mb-4">Starter</h2>
+            <p className="text-white/60 text-lg leading-relaxed max-w-xl">
+              Базовый функционал для запуска клуба: 1 филиал, 15 учеников и 3 тренера. 
+              Все CRM-модули уже включены бесплатно навсегда.
             </p>
             <div className="admin-tariff__included">
               {Object.entries(FEATURE_NAMES).map(([key, label]) => (
-                <span key={key}><CheckCircle2 size={16} /> {label}</span>
+                <span key={key} className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-wider">
+                  <CheckCircle2 size={14} className="text-white" /> {label}
+                </span>
               ))}
             </div>
           </div>
-          <div className="admin-tariff__price-card" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <span className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Ваш статус</span>
-            <strong style={{ fontSize: '1.5rem' }}>Starter</strong>
-            <p style={{ color: 'var(--color-success)', fontWeight: '800' }}>Всегда бесплатно</p>
+          <div className="admin-tariff__price-card bg-white/5 border border-white/10 backdrop-blur-xl">
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3">Статус</span>
+            <div className="flex items-baseline gap-2 mb-2">
+              <strong className="text-5xl font-black">0</strong>
+              <span className="text-xl font-black opacity-40">₸/мес</span>
+            </div>
+            <p className="text-white/40 font-bold text-xs uppercase tracking-widest">Бесплатно навсегда</p>
           </div>
         </section>
       )}
 
-      <section className="admin-tariff__growth-note">
-        <strong>Growth от {PAID_BASE_PRICE.toLocaleString('ru-RU')} ₸/мес</strong>
-        <p>
-          В базовый Growth включены расширенные лимиты и все CRM-функции. 
-          Дополнительные ученики (+500 ₸) и тренеры (+1 000 ₸) засчитываются автоматически при создании.
-        </p>
-      </section>
-
-      <section>
-        <div className="admin-tariff__section-head">
-          <div style={{ backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', padding: '10px', borderRadius: '12px' }}>
-            <SlidersHorizontal size={22} />
-          </div>
-          <div>
-            <h4 style={{ fontSize: '1.25rem', fontWeight: 900 }}>Ресурсы клуба</h4>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Масштабируйте количество учеников и тренеров под ваш рост</p>
+      <div className="flex justify-between items-end mb-12">
+        <div className="flex-1">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center">
+              <SlidersHorizontal size={20} />
+            </div>
+            <div>
+              <h3 className="text-2xl font-black m-0">Масштабирование Growth</h3>
+              <p className="text-muted text-sm font-medium mt-1">Добавляйте ресурсы по мере роста вашего бизнеса</p>
+            </div>
           </div>
         </div>
-        <div className="admin-tariff__resources">
-          {RESOURCE_OPTIONS.map((option) => {
-            const status = getLimitStatus(option.key);
-            const selected = Number(draft.limits?.[option.key] || option.included);
-            const isBillable = selected > option.paidIncluded;
-            const extraCount = Math.max(0, selected - option.paidIncluded);
-            const extraCost = extraCount * option.unitPrice;
+        {calculated.plan !== 'starter' && (
+          <button 
+            onClick={resetToStarter}
+            className="px-6 py-3 border border-slate-200 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
+          >
+            Сбросить до Starter
+          </button>
+        )}
+      </div>
 
-            return (
-              <article key={option.key} className="admin-tariff__resource">
-                <input
-                  type="range"
-                  min={option.min}
-                  max={option.max}
-                  step={option.step}
-                  value={selected}
-                  onChange={(event) => updateLimit(option.key, event.target.value)}
-                  className="mb-4"
-                />
-
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                      <h5 className="flex items-center gap-2 m-0">
-                        {option.label}
-                        <span className="text-[10px] font-black px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md">
-                          {option.unitPrice} ₸/ед.
-                        </span>
-                      </h5>
-                    <p style={{ fontSize: '0.7rem' }}>
-                      {usage[option.key] || 0} занято из {formatLimit(draft.limits?.[option.key])}
-                    </p>
-                  </div>
-                  <div style={{ position: 'relative' }}>
-                    <input 
-                      type="text"
-                      inputMode="numeric"
-                      value={selected === 0 ? '' : selected.toLocaleString('ru-RU').replace(/\s/g, '')}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '');
-                        if (val === '') {
-                          updateLimit(option.key, 0);
-                        } else {
-                          const num = parseInt(val, 10);
-                          updateLimit(option.key, Math.min(num, option.max));
-                        }
-                      }}
-                      onBlur={() => {
-                        if (selected < option.min) {
-                          updateLimit(option.key, option.min);
-                        }
-                      }}
-                      style={{
-                        width: '80px',
-                        padding: '6px 10px',
-                        borderRadius: '12px',
-                        border: '2px solid var(--color-primary)',
-                        fontWeight: '800',
-                        textAlign: 'center',
-                        fontSize: '1rem',
-                        color: 'var(--color-primary)',
-                        backgroundColor: 'white'
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div className="admin-tariff__resource-bottom" style={{ borderTop: '1px dashed var(--color-border)', paddingTop: '12px', marginTop: 'auto' }}>
-                  <div className="flex flex-col">
-                    <span className="text-[9px] font-black uppercase tracking-wider text-slate-400">Составляющая цены</span>
-                    <strong className={isBillable ? 'text-primary' : 'text-slate-400'}>
-                      {isBillable ? `+ ${extraCost.toLocaleString('ru-RU')} ₸` : 'Включено в базу'}
-                    </strong>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <span style={{ fontSize: '0.6rem', color: 'var(--color-text-muted)' }}>{status.percent}% занято</span>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
+      <section>
+        <div className="tariff-res-grid">
+          {RESOURCE_OPTIONS.map((option) => (
+            <ResourceCard
+              key={option.key}
+              option={option}
+              status={getLimitStatus(option.key)}
+              selected={Number(draft.limits?.[option.key] || option.included)}
+              usage={usage[option.key]}
+              updateLimit={updateLimit}
+            />
+          ))}
         </div>
       </section>
 

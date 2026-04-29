@@ -46,7 +46,7 @@ export const SuperDashboard = () => {
   const load = async () => {
     setIsLoading(true);
     setError('');
-    localStorage.removeItem('palestra-impersonate-club-id');
+    sessionStorage.removeItem('palestra-impersonate-club-id');
     try {
       const res = await fetch('/api/superadmin/clubs', { credentials: 'include' });
       const data = await res.json();
@@ -79,7 +79,7 @@ export const SuperDashboard = () => {
   const activeClubs = clubs.filter(c => c.isActive).length;
 
   const handleEnterClub = (clubId) => {
-    localStorage.setItem('palestra-impersonate-club-id', clubId);
+    sessionStorage.setItem('palestra-impersonate-club-id', clubId);
     window.location.href = '/admin';
   };
 

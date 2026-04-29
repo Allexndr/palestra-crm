@@ -5,25 +5,25 @@
   --font-family-sans: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   --font-family-display: 'Outfit', sans-serif;
 
-  /* Palestra palette: warm neutral base + disciplined navy/indigo accents */
-  --color-bg: #F5F3EF;
-  --color-bg-secondary: #FFFCF7;
-  --color-surface: rgba(255, 252, 247, 0.88);
+  /* Palestra palette: Pure minimalism with premium accents */
+  --color-bg: #FAFAFA;
+  --color-bg-secondary: #FFFFFF;
+  --color-surface: rgba(255, 255, 255, 0.95);
   
-  --color-text-primary: #111827;
-  --color-text-secondary: #4B5563;
-  --color-text-muted: #8A94A6;
+  --color-text-primary: #000000;
+  --color-text-secondary: #666666;
+  --color-text-muted: #999999;
   
-  --color-primary: #3146A6;
-  --color-primary-hover: #27377F;
-  --color-primary-soft: #E8ECFA;
+  --color-primary: #000000; /* Black for premium minimalist feel */
+  --color-primary-hover: #333333;
+  --color-primary-soft: #f0f0f0;
   
-  --color-accent: #B86F3A;
-  --color-border: #E4DED4;
+  --color-accent: #000000;
+  --color-border: #EEEEEE;
   
-  --color-success: #159A74;
-  --color-warning: #C98918;
-  --color-error: #C2414B;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
 
   /* Typography - Fluid Typo Scale */
   --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
@@ -62,10 +62,10 @@
   --radius-lg: 32px;
   --radius-full: 9999px;
 
-  --shadow-primary: 0 14px 30px -10px rgba(49, 70, 166, 0.34), 0 8px 16px -12px rgba(17, 24, 39, 0.24);
-  --shadow-sm: 0 4px 14px rgba(17, 24, 39, 0.05);
-  --shadow-md: 0 16px 36px -18px rgba(17, 24, 39, 0.24);
-  --shadow-lg: 0 28px 70px -30px rgba(17, 24, 39, 0.38);
+  --shadow-primary: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
   
   /* Inner shadow for "pressed" or volumetric feel */
   --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
@@ -423,35 +423,142 @@ button,
   .tablet-hidden { display: none !important; }
 }
 
-/* Dashboard & Action Items */
-.action-item {
+/* Admin Layout Styles */
+.admin-page-header {
   display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--space-12);
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.admin-page-header--center {
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4);
-  background-color: #F8FAFC;
-  border: 1px solid var(--color-border);
+}
+
+.page-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.page-title-block--row {
+  flex-direction: column;
+}
+
+.admin-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-8);
+}
+
+.admin-form-grid--compact {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+@media (max-width: 640px) {
+  .admin-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sidebar Specific */
+.sidebar-link {
+  position: relative;
+}
+
+.sidebar-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 0;
+  background-color: var(--color-primary);
+  border-radius: 0 4px 4px 0;
+  transition: height 0.2s;
+}
+
+.sidebar-link-active::after {
+  height: 24px;
+}
+
+/* Group Card Specific Polishing */
+.group-card-icon-container {
+  width: 52px;
+  height: 52px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   border-radius: 16px;
-  width: 100%;
-  transition: transform var(--duration-base) var(--ease-emphasized), box-shadow var(--duration-base) var(--ease-standard), background-color var(--duration-base) var(--ease-standard), border-color var(--duration-base) var(--ease-standard);
-  cursor: pointer;
-  text-align: left;
-}
-
-.action-item:hover {
-  background-color: white;
-  border-color: var(--color-primary);
-  transform: translateX(4px);
-  box-shadow: var(--shadow-sm);
-}
-
-.action-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);
+}
+
+.group-card-tag {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+/* Action Button Container on Cards */
+.card-actions-float {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .card-actions-float {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.action-btn-pill {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-secondary);
+  transition: all 0.2s;
+}
+
+.action-btn-pill:hover {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: scale(1.05);
+}
+
+.action-btn-pill--danger:hover {
+  background: #fef2f2;
+  color: var(--color-error);
+  border-color: #fecaca;
 }
 
 /* Form Styling - Premium */
@@ -2623,3 +2730,313 @@ a:focus:not(:focus-visible) {
   }
 }
 
+/* --- Admin Tariff Constructor & Resource Cards --- */
+.tariff-res-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-12);
+}
+
+.tariff-res-card {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.tariff-res-card:hover {
+  border-color: #000;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.tariff-res-card.is-premium {
+  background: #FAFAFA;
+}
+
+.tariff-res-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-6);
+}
+
+.tariff-res-card__label {
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 4px 0;
+}
+
+.tariff-res-card__usage {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.tariff-res-card__input-wrap {
+  position: relative;
+}
+
+.tariff-res-card__input {
+  width: 64px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: black;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.tariff-res-card__input:focus {
+  border-color: black;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.05);
+}
+
+.tariff-res-card__slider-wrap {
+  margin-bottom: var(--space-6);
+}
+
+.tariff-res-card__slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #EEE;
+  border-radius: 2px;
+  outline: none;
+}
+
+.tariff-res-card__slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  background: black;
+  border: 4px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tariff-res-card__slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.tariff-res-card__footer {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px dashed var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.tariff-res-card__price-label {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
+.tariff-res-card__price-val {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.tariff-res-card__badge {
+  font-size: 11px;
+  font-weight: 900;
+  background: #EEE;
+  padding: 2px 8px;
+  border-radius: 6px;
+  color: #666;
+}
+
+.admin-tariff__summary {
+  background: #000;
+  border-radius: 32px;
+  padding: var(--space-10);
+  color: white;
+  display: flex;
+  gap: var(--space-10);
+  align-items: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  margin-top: var(--space-12);
+}
+
+@media (max-width: 1024px) {
+  .admin-tariff__summary {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-8);
+  }
+}
+
+.admin-tariff__billing {
+  display: flex;
+  background: rgba(255,255,255,0.05);
+  padding: 4px;
+  border-radius: 14px;
+  width: fit-content;
+}
+
+.admin-tariff__billing button {
+  padding: 8px 24px;
+  border-radius: 11px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-tariff__billing button.is-active {
+  background: white;
+  color: black;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.admin-tariff__total strong {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.admin-tariff__features {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+
+.admin-tariff__feature {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: var(--space-6);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-tariff__feature:hover {
+  border-color: #000;
+  background: #FAFAFA;
+}
+
+.admin-tariff__feature.is-selected {
+  border-color: #000;
+  background: #F0F0F0;
+  box-shadow: inset 0 0 0 1px #000;
+}
+
+.admin-tariff__feature span {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.admin-tariff__feature.is-selected span {
+  color: #000;
+}
+
+.admin-tariff__feature strong {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.admin-tariff__feature small {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.admin-tariff__hero {
+  background: #000;
+  border-radius: 32px;
+  padding: var(--space-12);
+  color: white;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-12);
+  align-items: center;
+  margin-bottom: var(--space-12);
+}
+
+.admin-tariff__eyebrow {
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color-text-muted);
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.admin-tariff__included {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+}
+
+.admin-tariff__included span {
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.6);
+}
+
+.admin-tariff__price-card {
+  padding: var(--space-8);
+  border-radius: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-tariff__growth-note {
+  border: 1px solid var(--color-border);
+  padding: var(--space-8);
+  border-radius: 24px;
+  margin-bottom: var(--space-12);
+}
+
+.admin-tariff__growth-note strong {
+  font-size: 18px;
+  font-weight: 900;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.admin-tariff__section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}

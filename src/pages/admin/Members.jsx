@@ -104,16 +104,16 @@ export const Members = () => {
                   </td>
                   <td className="py-5 px-6 text-right rounded-r-2xl border-y border-r border-slate-50">
                     <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="w-10 h-10 rounded-xl flex items-center justify-center text-primary hover:bg-indigo-50 transition-colors" title="Смотреть профиль" onClick={() => navigate(`/admin/members/${member.id}`)}>
+                      <button className="action-btn-pill" title="Смотреть профиль" onClick={() => navigate(`/admin/members/${member.id}`)}>
                         <Eye size={18} />
                       </button>
                       {isAdmin && (
-                        <button className="w-10 h-10 rounded-xl flex items-center justify-center text-secondary hover:bg-slate-100 transition-colors" title="Редактировать" onClick={() => navigate(`/admin/members/${member.id}/edit`)}>
+                        <button className="action-btn-pill" title="Редактировать" onClick={() => navigate(`/admin/members/${member.id}/edit`)}>
                           <Edit2 size={18} />
                         </button>
                       )}
                       {isAdmin && (
-                        <button className="w-10 h-10 rounded-xl flex items-center justify-center text-danger hover:bg-red-50 transition-colors" title="Удалить" onClick={() => setMemberToDelete(member)}>
+                        <button className="action-btn-pill action-btn-pill--danger" title="Удалить" onClick={() => setMemberToDelete(member)}>
                           <Trash2 size={18} />
                         </button>
                       )}

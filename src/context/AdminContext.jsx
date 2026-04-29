@@ -116,7 +116,7 @@ export const AdminProvider = ({ children }) => {
 
     async function hydrate() {
       try {
-        const impersonatedClubId = localStorage.getItem('palestra-impersonate-club-id');
+        const impersonatedClubId = sessionStorage.getItem('palestra-impersonate-club-id');
         const headers = impersonatedClubId ? { 'x-palestra-club-id': impersonatedClubId } : {};
 
         const [meResponse, stateResponse] = await Promise.all([
@@ -179,7 +179,7 @@ export const AdminProvider = ({ children }) => {
       selectedLocationId, clubInfo, subscription,
     };
 
-    const impersonatedClubId = localStorage.getItem('palestra-impersonate-club-id');
+    const impersonatedClubId = sessionStorage.getItem('palestra-impersonate-club-id');
     const headers = { 'Content-Type': 'application/json' };
     if (impersonatedClubId) {
       headers['x-palestra-club-id'] = impersonatedClubId;
@@ -391,6 +391,17 @@ export const AdminProvider = ({ children }) => {
     return true;
   };
 
+  const updateLocation = (id, updatedData) => {
+    setLocations(prev => prev.map(loc => loc.id === id ? { ...loc, ...updatedData } : loc));
+    logActivity(`Обновлен филиал: ${updatedData.name}`, 'info');
+  };
+
+  const removeLocation = (id) => {
+    const loc = locations.find(l => l.id === id);
+    setLocations(prev => prev.filter(l => l.id !== id));
+    if (loc) logActivity(`Удален филиал: ${loc.name}`, 'warning');
+  };
+
   const addPlan = (planData) => {
     const newPlan = { id: createId(), ...planData };
     setPlans(prev => [...prev, newPlan]);
@@ -570,7 +581,7 @@ export const AdminProvider = ({ children }) => {
     members, addMember, removeMember, updateMember,
     leads, addLead, updateLeadStatus, removeLead, convertLeadToMember,
     schedule, addScheduleItem, updateScheduleItem, removeScheduleItem,
-    locations, addLocation,
+    locations, addLocation, updateLocation, removeLocation,
     groups, addGroup, updateGroup, removeGroup,
     sports,
     leagues, addLeague, removeLeague, updateLeague, updateLeagueParticipants,

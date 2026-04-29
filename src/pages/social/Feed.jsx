@@ -58,22 +58,18 @@ export const Feed = () => {
   const canPost = ['admin', 'coach'].includes(user?.role);
 
   return (
-    <main id="main-content" tabIndex={-1} style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', outline: 'none' }}>
-      <div className="container member-content" style={{ margin: '0 auto', paddingTop: 'var(--space-8)' }}>
-        <div className="mb-10 flex justify-between items-center px-4 md:px-0">
-          <div>
-            <h1 className="h1 mb-2" style={{ fontFamily: 'var(--font-family-display)', fontSize: '2.5rem' }}>Лента</h1>
-            <p className="text-secondary text-sm font-bold uppercase tracking-widest opacity-60">Новости и достижения</p>
-          </div>
-          {canPost && (
-            <button 
-              onClick={() => setIsPosting(true)} 
-              className="w-12 h-12 bg-primary hover:bg-indigo-600 text-white rounded-2xl flex items-center justify-center transition-all shadow-lg shadow-indigo-200 border-none cursor-pointer"
-            >
-              <Plus size={24} />
-            </button>
-          )}
-        </div>
+    <div className="animate-fade-in max-w-[680px] mx-auto">
+      <div className="flex justify-between items-center mb-12">
+        <h1 className="h2 m-0">Лента</h1>
+        {canPost && (
+          <button 
+            onClick={() => setIsPosting(true)} 
+            className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center hover:scale-105 transition-transform"
+          >
+            <Plus size={20} />
+          </button>
+        )}
+      </div>
 
         <div className="member-feed-layout">
           <section className="member-feed-main">
@@ -235,26 +231,6 @@ export const Feed = () => {
             </div>
           )}
         </div>
-          </section>
-
-          <aside className="member-feed-aside desktop-only">
-            <Card>
-              <h3 className="member-card-title">Клубная лента</h3>
-              <div className="member-feed-stat">
-                <span>Публикации</span>
-                <strong>{posts.length}</strong>
-              </div>
-              <div className="member-feed-stat">
-                <span>Роль</span>
-                <strong>{user?.role === 'parent' ? 'Родитель' : user?.role === 'student' ? 'Ученик' : 'Клуб'}</strong>
-              </div>
-              <p className="text-sm text-secondary" style={{ marginTop: 'var(--space-4)' }}>
-                Здесь видны новости клуба, достижения учеников и объявления тренеров.
-              </p>
-            </Card>
-          </aside>
-        </div>
-      </div>
-    </main>
+    </div>
   );
 };

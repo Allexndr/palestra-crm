@@ -25,6 +25,8 @@ const Groups = lazy(() => import('./pages/admin/Groups').then((m) => ({ default:
 const Billing = lazy(() => import('./pages/admin/Billing').then((m) => ({ default: m.Billing })));
 const Settings = lazy(() => import('./pages/admin/Settings').then((m) => ({ default: m.Settings })));
 const Coaches = lazy(() => import('./pages/admin/Coaches').then((m) => ({ default: m.Coaches })));
+const Locations = lazy(() => import('./pages/admin/Locations').then((m) => ({ default: m.Locations })));
+const LocationForm = lazy(() => import('./pages/admin/LocationForm').then((m) => ({ default: m.LocationForm })));
 const MemberForm = lazy(() => import('./pages/admin/MemberForm').then((m) => ({ default: m.MemberForm })));
 const MemberDetail = lazy(() => import('./pages/admin/MemberDetail').then((m) => ({ default: m.MemberDetail })));
 const GroupForm = lazy(() => import('./pages/admin/GroupForm').then((m) => ({ default: m.GroupForm })));
@@ -59,6 +61,9 @@ function App() {
                   <Route path="groups/:id" element={<GroupDetail />} />
                   <Route path="groups/:id/edit" element={<GroupForm />} />
                   <Route path="coaches" element={<Coaches />} />
+                  <Route path="locations" element={<Locations />} />
+                  <Route path="locations/new" element={<LocationForm />} />
+                  <Route path="locations/:id/edit" element={<LocationForm />} />
                   <Route path="leads" element={<Leads />} />
                   <Route path="schedule" element={<SchedulePage />} />
                   <Route path="events" element={<Events />} />
@@ -66,6 +71,7 @@ function App() {
                   <Route path="billing" element={<Billing />} />
                   <Route path="shop" element={<Shop />} />
                   <Route path="settings" element={<Settings />} />
+                  <Route path="feed" element={<Feed />} />
                 </Route>
               </Route>
 

@@ -7,39 +7,11 @@ import { TrendingUp, TrendingDown, CreditCard, ArrowUpRight, ArrowDownRight, Dow
 import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const Billing = () => {
-  const { finances, addTransaction, canUseFeature, getUpgradeMessage } = useAdmin();
+  const { finances, addTransaction, canUseFeature, getUpgradeMessage, subscription } = useAdmin();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({ amount: '', type: 'income', description: '' });
 
-  const handlePayTariff = async (tariffId, amount) => {
-    try {
-      const res = await fetch('/api/billing/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tariffId,
-          amount,
-        })
-      });
-      const data = await res.json();
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl;
-      } else {
-        console.error('No payment URL returned');
-        alert('Ошибка при создании сессии оплаты');
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Ошибка при соединении с сервером');
-    }
-  };
-
-  // В реальном приложении статус подписки берется из базы
-  const currentSubscription = {
-    status: 'active',
-    tariff: 'base',
-    expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
-  };
+  const isStarter = subscription.plan === 'starter';
 
   // Simple stats
   const totalIncome = finances.transactions
@@ -81,24 +53,41 @@ export const Billing = () => {
         </div>
       </div>
 
-      <div className="mb-8">
-        <h2 className="text-sm font-bold uppercase text-slate-400 tracking-widest mb-4">Подписка Palestra CRM</h2>
-        <Card style={{ padding: '32px', borderLeft: '6px solid var(--color-primary)' }} className="shadow-sm">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="mb-12">
+        <h2 className="text-[10px] font-black uppercase text-primary tracking-[0.3em] mb-6 flex items-center gap-3">
+          <span className="w-8 h-[2px] bg-primary"></span> Подписка Palestra CRM
+        </h2>
+        <Card style={{ padding: '40px', border: 'none' }} className="shadow-2xl bg-white overflow-hidden relative">
+          <div className="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="h3 m-0">Тариф «Базовый»</h3>
-                <span className="text-[10px] font-bold uppercase px-2 py-1 rounded bg-green-100 text-green-700">Активен</span>
+              <div className="flex items-center gap-4 mb-3">
+                <h3 className="h3 m-0">Тариф «{isStarter ? 'Базовый' : 'Growth / PRO'}»</h3>
+                <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                  Активен
+                </span>
               </div>
-              <p className="text-sm text-muted">Оплачено до: <b>{new Date(currentSubscription.expiresAt).toLocaleDateString()}</b></p>
+              <p className="text-sm text-secondary font-medium">
+                {isStarter 
+                  ? 'Бесплатная версия для малого бизнеса. Без ограничений по времени.' 
+                  : `Действует до: ${new Date().toLocaleDateString()}`}
+              </p>
             </div>
             <div className="flex gap-4 w-full md:w-auto">
-              <Button variant="outline" onClick={() => handlePayTariff('pro', 15000)} style={{ flex: 1 }}>
-                Перейти на PRO
-              </Button>
-              <Button variant="primary" onClick={() => handlePayTariff('base', 9000)} style={{ flex: 1 }}>
-                Продлить (9000 ₸)
-              </Button>
+              {isStarter ? (
+                <Button variant="primary" className="shadow-lg shadow-primary/20 px-10 h-14" onClick={() => navigate('/admin/settings/billing')}>
+                  Улучшить тариф
+                </Button>
+              ) : (
+                <>
+                  <Button variant="ghost" className="h-14 font-bold border" onClick={() => navigate('/admin/settings/billing')}>
+                    Настройки
+                  </Button>
+                  <Button variant="primary" className="shadow-lg shadow-primary/20 px-10 h-14">
+                    Продлить подписку
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </Card>

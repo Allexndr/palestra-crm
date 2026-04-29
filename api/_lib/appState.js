@@ -108,10 +108,14 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
 
   const tgCode = Math.random().toString(36).substring(2, 10).toUpperCase();
 
-  const firstLocationId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  // Actually, let's use a real UUID-like string or just a random one that is long enough to pass isUuid check if needed, 
-  // but wait, isUuid check in repositories.js is strict.
-  const locationUuid = '00000000-0000-4000-8000-' + Math.random().toString(16).substring(2, 14).padStart(12, '0');
+  const createUuid = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
+  const locationUuid = createUuid();
 
   await supabase.from('app_state').upsert({
     club_id: club.id,

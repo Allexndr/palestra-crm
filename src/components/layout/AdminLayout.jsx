@@ -10,7 +10,7 @@ export const AdminLayout = () => {
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
 
-  const isImpersonating = !!localStorage.getItem('palestra-impersonate-club-id');
+  const isImpersonating = !!sessionStorage.getItem('palestra-impersonate-club-id');
 
   const handleLogout = () => {
     logout();
@@ -18,7 +18,7 @@ export const AdminLayout = () => {
   };
 
   const handleExitImpersonation = () => {
-    localStorage.removeItem('palestra-impersonate-club-id');
+    sessionStorage.removeItem('palestra-impersonate-club-id');
     window.location.href = '/superadmin';
   };
 
@@ -49,52 +49,34 @@ export const AdminLayout = () => {
           </div>
         )}
         
-        {/* Header (Desktop/Mobile) */}
+        {/* Header - Transparent & Subtle */}
         <header style={{ 
-          padding: '0 var(--space-6)', 
-          backgroundColor: 'white', 
-          borderBottom: '1px solid var(--color-border)', 
+          padding: '0 var(--space-12)', 
+          backgroundColor: 'rgba(250, 250, 250, 0.5)', 
+          backdropFilter: 'blur(10px)',
           display: 'flex', 
-          justifyContent: 'space-between', 
+          justifyContent: 'flex-end', 
           alignItems: 'center', 
           position: 'sticky', 
           top: 0, 
           zIndex: 50,
-          height: 'clamp(64px, 10vw, 80px)'
+          height: '64px',
+          border: 'none'
         }}>
-          <div className="mobile-only">
-             <NavLink to="/" style={{ textDecoration: 'none' }}>
-               <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={36} />
-             </NavLink>
-          </div>
-          
-          <div className="flex items-center gap-6 desktop-only">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted">
-              {isAdmin ? 'Панель Администратора' : 'Кабинет Тренера'}
-            </span>
-          </div>
-          
-          <div className="flex items-center gap-4 ml-auto">
-            <div className="flex items-center gap-3 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-100 shadow-sm hover:bg-slate-100 transition-colors cursor-pointer">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-4 py-2 hover:bg-white rounded-full transition-all cursor-pointer">
               <div style={{ 
-                width: 24, height: 24, borderRadius: '50%', 
-                backgroundColor: isAdmin ? 'var(--color-primary)' : 'var(--color-success)', 
+                width: 32, height: 32, borderRadius: '12px', 
+                backgroundColor: '#000', 
                 color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                fontSize: '10px', fontWeight: 'bold' 
+                fontSize: '12px', fontWeight: '900' 
               }}>
                 {user?.name?.charAt(0) || 'A'}
               </div>
-              <div className="desktop-only" style={{ lineHeight: '1.2' }}>
-                <p className="text-[12px] font-bold text-slate-800">{user?.name || (isAdmin ? 'Администратор' : 'Тренер')}</p>
-                <p className="text-[10px] text-muted font-bold uppercase tracking-wider">{user?.role || 'role'}</p>
+              <div className="desktop-only">
+                <p className="text-[12px] font-black text-black leading-none">{user?.name || (isAdmin ? 'Admin' : 'Coach')}</p>
               </div>
             </div>
-            <button 
-              onClick={handleLogout}
-              className="touch-target text-muted hover:text-danger transition-colors mobile-only"
-            >
-              <LogOut size={20} />
-            </button>
           </div>
         </header>
 
@@ -120,12 +102,13 @@ export const AdminLayout = () => {
           flex-direction: row;
         }
         .admin-layout-content {
-          padding-left: 240px;
+          padding-left: 100px;
         }
         .admin-container {
-          max-width: 1200px;
+          max-width: 1000px;
           width: 100%;
           margin: 0 auto;
+          padding: 0 40px;
         }
         @media (max-width: 1024px) {
           .admin-layout {

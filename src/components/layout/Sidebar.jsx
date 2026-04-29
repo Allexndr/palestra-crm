@@ -14,7 +14,8 @@ import {
   ShoppingBag, 
   LayoutList, 
   Settings, 
-  LogOut 
+  LogOut,
+  MapPin
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { ClubLogo } from '../ui/ClubLogo';
@@ -38,6 +39,7 @@ export const Sidebar = () => {
     { to: '/admin/schedule', icon: Calendar, label: 'Расписание', roles: ['admin', 'coach'], color: '#10b981' },
     { to: '/admin/events', icon: Clock, label: 'События', roles: ['admin', 'coach'], color: '#06b6d4' },
     { to: '/admin/league', icon: Trophy, label: 'Лига', roles: ['admin', 'coach'], color: '#f43f5e' },
+    { to: '/admin/locations', icon: MapPin, label: 'Филиалы', roles: ['admin'], color: '#8b5cf6' },
     { to: '/admin/billing', icon: Wallet, label: 'Финансы', roles: ['admin'], color: '#14b8a6' },
     { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'], color: '#8b5cf6' },
     { to: '/feed', icon: LayoutList, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'], color: '#64748b' },
@@ -48,59 +50,32 @@ export const Sidebar = () => {
 
   return (
     <aside className="desktop-only" style={{
-      width: '240px',
+      width: '100px',
       flexShrink: 0,
-      backgroundColor: 'var(--color-bg-secondary)',
-      borderRight: '1px solid var(--color-border)',
+      backgroundColor: '#fff',
+      borderRight: '1px solid #f0f0f0',
       height: '100vh',
       position: 'fixed',
       left: 0,
       top: 0,
-      padding: 'var(--space-4)',
+      padding: 'var(--space-6) var(--space-2)',
       display: 'flex',
       flexDirection: 'column',
+      alignItems: 'center',
       zIndex: 100,
       overflowY: 'auto'
     }}>
-      <div className="mb-6">
+      <div className="mb-12">
         <NavLink
           to="/"
-          className="flex items-center justify-start mb-6 w-full"
+          className="flex items-center justify-center"
           style={{ textDecoration: 'none' }}
         >
-          <div className="flex items-center gap-3 min-w-0 w-full" style={{ width: '100%' }}>
-            <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={44} />
-          </div>
+          <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={36} />
         </NavLink>
-        
-        {/* Location Switcher */}
-        {user?.role === 'admin' && (
-          <div className="mt-4 p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
-            <p className="text-[9px] font-bold text-muted uppercase tracking-widest mb-2">Филиал</p>
-            <select 
-              value={selectedLocationId}
-              onChange={(e) => setSelectedLocationId(e.target.value)}
-              style={{
-                width: '100%',
-                border: 'none',
-                background: 'transparent',
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                color: 'var(--color-text-primary)',
-                cursor: 'pointer',
-                outline: 'none'
-              }}
-            >
-              <option value="all">Все локации</option>
-              {locations.map(loc => (
-                <option key={loc.id} value={loc.id}>{loc.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
       </div>
 
-      <nav className="flex flex-col gap-1 flex-1">
+      <nav className="flex flex-col gap-6 flex-1 items-center">
         {filteredLinks.map((link) => {
           const Icon = link.icon;
           return (
@@ -108,74 +83,47 @@ export const Sidebar = () => {
               key={link.to} 
               to={link.to}
               end={link.end}
+              title={link.label}
               style={({ isActive }) => ({
                 display: 'flex',
                 alignItems: 'center',
-                gap: 'var(--space-3)',
-                padding: '10px 12px',
-                borderRadius: '14px',
-                backgroundColor: isActive ? 'var(--color-primary-soft)' : 'transparent',
-                color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                fontWeight: isActive ? '700' : '500',
+                justifyContent: 'center',
+                width: '48px',
+                height: '48px',
+                borderRadius: '16px',
+                backgroundColor: isActive ? '#000' : 'transparent',
+                color: isActive ? '#fff' : '#888',
                 transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                 textDecoration: 'none',
-                fontSize: '0.9rem',
-                margin: '0 4px'
+                position: 'relative'
               })}
-              className={({ isActive }) => isActive ? 'sidebar-link-active group' : 'sidebar-link group'}
+              className="group"
             >
-              {({ isActive }) => (
-                <>
-                  <div 
-                    style={{ 
-                      width: '32px', 
-                      height: '32px', 
-                      borderRadius: '10px', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      backgroundColor: 'white',
-                      boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
-                      color: link.color,
-                      transition: 'transform 0.2s'
-                    }}
-                    className="group-hover:scale-110"
-                  >
-                    <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
-                  </div>
-                  {link.label}
-                </>
-              )}
+              <Icon size={22} strokeWidth={2} />
+              <div className="absolute left-full ml-4 px-3 py-1.5 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-[200]">
+                {link.label}
+              </div>
             </NavLink>
           );
         })}
       </nav>
 
-      <div
-        className="pt-4 mt-4 w-full"
-        style={{ borderTop: '1px solid var(--color-border)', width: '100%', flexShrink: 0, alignSelf: 'stretch' }}
-      >
+      <div className="pt-8 mt-auto flex flex-col items-center gap-6">
+        {user?.role === 'admin' && (
+           <button 
+             onClick={() => navigate('/admin/locations')}
+             className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-black transition-colors"
+             title="Филиалы"
+           >
+             <MapPin size={22} />
+           </button>
+        )}
         <button 
           onClick={handleLogout}
-          style={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-3)',
-            padding: 'var(--space-3)',
-            borderRadius: 'var(--radius-md)',
-            backgroundColor: 'transparent',
-            color: 'var(--color-error)',
-            fontWeight: '600',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-            transition: 'opacity 0.2s'
-          }}
-          className="hover:bg-red-50"
+          className="w-12 h-12 flex items-center justify-center text-slate-300 hover:text-danger transition-colors"
+          title="Выйти"
         >
-          <LogOut size={18} />
-          Выйти
+          <LogOut size={22} />
         </button>
       </div>
     </aside>

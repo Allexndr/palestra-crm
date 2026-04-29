@@ -192,50 +192,55 @@ export const Schedule = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-      <div className="admin-page-header">
-        <div className="page-title-block page-title-block--row" style={{ flex: 1 }}>
-          <div className="flex flex-wrap items-center gap-6 mb-4">
-            <h1 className="h2 mb-0">Расписание</h1>
-            <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl shadow-inner border border-slate-200">
-              <button onClick={() => setWeekOffset(prev => prev - 1)} className="p-1.5 hover:bg-white rounded-xl transition-all border-none bg-transparent cursor-pointer shadow-sm"><ChevronLeft size={18}/></button>
-              <span className="text-xs font-bold px-4">
-                {weekDates[0].toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} - {weekDates[6].toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
+    <div className="animate-fade-in pb-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+        <div className="flex-1">
+          <div className="flex items-center gap-6 mb-8">
+            <h1 className="h1 m-0">Расписание</h1>
+            <div className="flex items-center gap-1 bg-white p-1 rounded-full border border-slate-100 shadow-sm">
+              <button onClick={() => setWeekOffset(prev => prev - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-slate-50 rounded-full transition-all border-none bg-transparent cursor-pointer"><ChevronLeft size={16}/></button>
+              <span className="text-[11px] font-black uppercase tracking-widest px-3">
+                {weekDates[0].toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })} — {weekDates[6].toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
               </span>
-              <button onClick={() => setWeekOffset(prev => prev + 1)} className="p-1.5 hover:bg-white rounded-xl transition-all border-none bg-transparent cursor-pointer shadow-sm"><ChevronRight size={18}/></button>
-            </div>
-            <div className="relative group flex-1 max-w-md">
-              <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Поиск по группе или тренеру..." 
-                value={calendarSearch}
-                onChange={(e) => setCalendarSearch(e.target.value)}
-                className="w-full bg-white border border-slate-200 pl-11 pr-4 py-2.5 rounded-2xl text-sm font-medium outline-none focus:border-primary focus:shadow-lg focus:shadow-primary/5 transition-all"
-              />
+              <button onClick={() => setWeekOffset(prev => prev + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-slate-50 rounded-full transition-all border-none bg-transparent cursor-pointer"><ChevronRight size={16}/></button>
             </div>
           </div>
-          <div className="flex flex-wrap gap-6 items-center">
-             <div className="flex items-center gap-3">
-                <span className="text-[10px] font-bold text-muted uppercase tracking-widest">Дисциплина</span>
-                <select className="bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-primary shadow-sm outline-none" value={filterSport} onChange={e => setFilterSport(e.target.value)}>
-                   <option value="all">Все дисциплины</option>
+          
+          <div className="flex flex-wrap gap-8 items-center">
+             <div className="flex items-center gap-4">
+                <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">Дисциплина</span>
+                <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-black cursor-pointer outline-none" value={filterSport} onChange={e => setFilterSport(e.target.value)}>
+                   <option value="all">Все</option>
                    {sports.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
              </div>
-             <div className="flex items-center gap-3">
-                <span className="text-[10px] font-bold text-muted uppercase tracking-widest">Тренер</span>
-                <select className="bg-white border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-primary shadow-sm outline-none" value={filterCoach} onChange={e => setFilterCoach(e.target.value)}>
-                   <option value="all">Все тренеры</option>
+             <div className="flex items-center gap-4">
+                <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">Тренер</span>
+                <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-black cursor-pointer outline-none" value={filterCoach} onChange={e => setFilterCoach(e.target.value)}>
+                   <option value="all">Все</option>
                    {[...new Set(schedule.map(s => s.coach))].filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
              </div>
+             <div className="relative group min-w-[200px]">
+               <Search size={14} className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400" />
+               <input 
+                 type="text" 
+                 placeholder="ПОИСК..." 
+                 value={calendarSearch}
+                 onChange={(e) => setCalendarSearch(e.target.value)}
+                 className="w-full bg-transparent border-none pl-6 pr-4 py-2 text-[11px] font-black uppercase tracking-widest outline-none"
+               />
+             </div>
           </div>
         </div>
-        <div className="admin-page-actions">
+        <div className="flex items-center gap-4">
           {isAdmin && (
-            <Button variant="primary" onClick={() => { setIsAdding(!isAdding); setEditingId(null); }} style={{ gap: '10px', padding: '12px 24px', borderRadius: '16px' }}>
-              <Plus size={20} /> Запланировать занятие
-            </Button>
+            <button 
+              onClick={() => { setIsAdding(!isAdding); setEditingId(null); }} 
+              className="px-8 h-12 bg-black text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform"
+            >
+              Запланировать
+            </button>
           )}
         </div>
       </div>

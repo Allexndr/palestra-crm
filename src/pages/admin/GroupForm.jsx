@@ -17,7 +17,7 @@ export const GroupForm = () => {
   const [formData, setFormData] = useState({
     name: '', 
     sport: sports[0] || '', 
-    locationId: locations[0]?.id || '1',
+    locationId: locations[0]?.id || (selectedLocationId !== 'all' ? selectedLocationId : '1'),
     coachId: coaches[0]?.id || '',
     maxCapacity: '20'
   });
