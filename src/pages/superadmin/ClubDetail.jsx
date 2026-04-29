@@ -4,13 +4,142 @@ import {
   ArrowLeft, Users, UserCheck, Building2, CalendarDays,
   DollarSign, Target, Activity, Crown, MapPin, Mail,
   Phone, TrendingUp, TrendingDown, Circle, ChevronRight,
-  Clock, Package, Trophy, ExternalLink
+  Clock, Package, Trophy, ExternalLink, X, Settings
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 
 const fmt = (n) => Number(n || 0).toLocaleString('ru-RU');
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : '—';
 const fmtTime = (d) => d ? new Date(d).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+
+const UserManagement = ({ clubId }) => {
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  
+  const loadUsers = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/superadmin/club-users?clubId=${clubId}`);
+      const data = await res.json();
+      if (res.ok) setUsers(data.users || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => { loadUsers(); }, [clubId]);
+
+  const handleUpdateRole = async (user, newRole) => {
+    if (!window.confirm(`Изменить роль ${user.name} на ${newRole}?`)) return;
+    try {
+      const res = await fetch('/api/superadmin/club-users', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, authUserId: user.auth_user_id, role: newRole })
+      });
+      if (res.ok) loadUsers();
+    } catch (err) { alert('Ошибка'); }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (newPassword.length < 6) return alert('Минимум 6 символов');
+    try {
+      const res = await fetch('/api/superadmin/club-users', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: editingUser.id, authUserId: editingUser.auth_user_id, password: newPassword })
+      });
+      if (res.ok) {
+        alert('Пароль обновлен');
+        setEditingUser(null);
+        setNewPassword('');
+      }
+    } catch (err) { alert('Ошибка'); }
+  };
+
+  const handleDelete = async (user) => {
+    if (!window.confirm(`Удалить пользователя ${user.name}? Действие необратимо!`)) return;
+    try {
+      const res = await fetch('/api/superadmin/club-users', {
+        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, authUserId: user.auth_user_id })
+      });
+      if (res.ok) loadUsers();
+    } catch (err) { alert('Ошибка'); }
+  };
+
+  if (isLoading) return <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8' }}>Загрузка пользователей...</div>;
+
+  return (
+    <div style={{ background: 'white', borderRadius: 20, border: '1px solid #f0f0f0', overflow: 'hidden' }}>
+      <div style={{ padding: '18px 24px', borderBottom: '1px solid #f8fafc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h3 style={{ margin: 0, fontWeight: 800, fontSize: 15, color: '#0f172a' }}>Иерархия пользователей ({users.length})</h3>
+      </div>
+      
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+          <thead>
+            <tr style={{ background: '#f8fafc' }}>
+              {['Имя / Email', 'Роль', 'Дата регистрации', 'Действия'].map(h => (
+                <th key={h} style={{ padding: '12px 24px', textAlign: 'left', fontWeight: 700, color: '#64748b', fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((u, i) => (
+              <tr key={u.id} style={{ borderTop: '1px solid #f1f5f9' }}>
+                <td style={{ padding: '16px 24px' }}>
+                  <div style={{ fontWeight: 700, color: '#0f172a' }}>{u.name}</div>
+                  <div style={{ color: '#94a3b8', fontSize: 12 }}>{u.email || u.phone || 'Нет контактов'}</div>
+                </td>
+                <td style={{ padding: '16px 24px' }}>
+                  <select 
+                    value={u.role} 
+                    onChange={e => handleUpdateRole(u, e.target.value)}
+                    style={{ 
+                      padding: '4px 8px', borderRadius: 6, border: '1px solid #e2e8f0', 
+                      background: u.role === 'admin' ? '#eff6ff' : '#f8fafc',
+                      color: u.role === 'admin' ? '#1d4ed8' : '#475569',
+                      fontWeight: 700, fontSize: 12, outline: 'none', cursor: 'pointer'
+                    }}
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="coach">Coach</option>
+                    <option value="student">Student</option>
+                    <option value="parent">Parent</option>
+                  </select>
+                </td>
+                <td style={{ padding: '16px 24px', color: '#94a3b8', fontSize: 12 }}>{fmtDate(u.created_at)}</td>
+                <td style={{ padding: '16px 24px' }}>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => setEditingUser(u)} style={{ padding: '6px 12px', background: '#f1f5f9', border: 'none', borderRadius: 6, color: '#475569', fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>Пароль</button>
+                    <button onClick={() => handleDelete(u)} style={{ padding: '6px 12px', background: '#fef2f2', border: 'none', borderRadius: 6, color: '#dc2626', fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>Удалить</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {editingUser && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'white', padding: 24, borderRadius: 16, width: 320 }}>
+            <h3 style={{ margin: '0 0 16px', fontSize: 16 }}>Сброс пароля</h3>
+            <p style={{ margin: '0 0 12px', fontSize: 13, color: '#64748b' }}>Пользователь: <b>{editingUser.name}</b></p>
+            <input type="text" placeholder="Новый пароль" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={{ width: '100%', padding: 10, border: '1px solid #e2e8f0', borderRadius: 8, marginBottom: 16, boxSizing: 'border-box' }} />
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => setEditingUser(null)} style={{ flex: 1, padding: 10, background: '#f1f5f9', border: 'none', borderRadius: 8, fontWeight: 600 }}>Отмена</button>
+              <button onClick={handleUpdatePassword} style={{ flex: 1, padding: 10, background: '#3146A6', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600 }}>Сохранить</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Section = ({ title, children }) => (
   <div style={{ background: 'white', borderRadius: 20, border: '1px solid #f0f0f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', overflow: 'hidden', marginBottom: 20 }}>
@@ -40,6 +169,88 @@ const Row = ({ label, value }) => (
   </div>
 );
 
+const TariffModal = ({ isOpen, onClose, clubId, currentSubscription, onSaved }) => {
+  const [plan, setPlan] = useState(currentSubscription?.plan || 'Starter');
+  const [limits, setLimits] = useState(currentSubscription?.limits || { members: 15, coaches: 3, locations: 1 });
+  const [isSaving, setIsSaving] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/superadmin/club-tariff', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clubId,
+          subscription: { plan, limits }
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to update tariff');
+      onSaved(data.subscription);
+      onClose();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const setPreset = (p) => {
+    setPlan(p);
+    if (p === 'Starter') setLimits({ members: 15, coaches: 3, locations: 1 });
+    if (p === 'Growth') setLimits({ members: 100, coaches: 10, locations: 5 });
+    if (p === 'Enterprise' || p === 'Custom') setLimits({ members: 999999, coaches: 999999, locations: 999999 });
+    if (p === 'Blocked') setLimits({ members: 0, coaches: 0, locations: 0 });
+  };
+
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ background: 'white', borderRadius: 20, width: '100%', maxWidth: 480, padding: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: '#0f172a' }}>Управление тарифом</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}><X size={20} /></button>
+        </div>
+        
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+          {['Starter', 'Growth', 'Enterprise', 'Custom', 'Blocked'].map(p => (
+            <button key={p} onClick={() => setPreset(p)} style={{
+              padding: '6px 12px', borderRadius: 99, border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13,
+              background: plan === p ? '#3146A6' : '#f1f5f9', color: plan === p ? 'white' : '#64748b'
+            }}>
+              {p}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>Лимит учеников (999999 = безлимит)</label>
+            <input type="number" value={limits.members} onChange={e => setLimits({ ...limits, members: Number(e.target.value) })} style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: 10, boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>Лимит тренеров</label>
+            <input type="number" value={limits.coaches} onChange={e => setLimits({ ...limits, coaches: Number(e.target.value) })} style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: 10, boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 4 }}>Лимит филиалов</label>
+            <input type="number" value={limits.locations} onChange={e => setLimits({ ...limits, locations: Number(e.target.value) })} style={{ width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0', borderRadius: 10, boxSizing: 'border-box' }} />
+          </div>
+        </div>
+
+        <button onClick={handleSave} disabled={isSaving} style={{
+          width: '100%', padding: 14, background: '#3146A6', color: 'white', border: 'none', borderRadius: 12,
+          fontWeight: 800, fontSize: 15, cursor: isSaving ? 'not-allowed' : 'pointer', opacity: isSaving ? 0.7 : 1
+        }}>
+          {isSaving ? 'Сохранение...' : 'Применить тариф'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export const ClubDetail = () => {
   const { clubId } = useParams();
   const navigate = useNavigate();
@@ -48,6 +259,7 @@ export const ClubDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
+  const [isTariffModalOpen, setIsTariffModalOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -101,8 +313,8 @@ export const ClubDetail = () => {
   const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + (Number(t.amount) || 0), 0);
   const expenses = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + (Number(t.amount) || 0), 0);
 
-  const tabs = ['overview', 'members', 'finances', 'schedule', 'leads'];
-  const tabLabels = { overview: 'Обзор', members: 'Ученики', finances: 'Финансы', schedule: 'Расписание', leads: 'Лиды' };
+  const tabs = ['overview', 'users', 'members', 'finances', 'schedule', 'leads'];
+  const tabLabels = { overview: 'Обзор', users: 'Доступы', members: 'Студенты', finances: 'Финансы', schedule: 'Расписание', leads: 'Лиды' };
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'Outfit, sans-serif' }}>
@@ -155,14 +367,14 @@ export const ClubDetail = () => {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-              <span style={{
-                padding: '6px 16px', borderRadius: 99,
-                background: subscription.plan === 'Growth' ? '#eff6ff' : '#f0fdf4',
-                color: subscription.plan === 'Growth' ? '#1d4ed8' : '#15803d',
-                fontWeight: 800, fontSize: 13,
+              <button onClick={() => setIsTariffModalOpen(true)} style={{
+                padding: '6px 16px', borderRadius: 99, border: 'none', cursor: 'pointer',
+                background: subscription.plan === 'Growth' ? '#eff6ff' : subscription.plan === 'Enterprise' || subscription.plan === 'Custom' ? '#f5f3ff' : '#f0fdf4',
+                color: subscription.plan === 'Growth' ? '#1d4ed8' : subscription.plan === 'Enterprise' || subscription.plan === 'Custom' ? '#6d28d9' : '#15803d',
+                fontWeight: 800, fontSize: 13, display: 'flex', alignItems: 'center', gap: 6
               }}>
-                {subscription.plan || 'Starter'}
-              </span>
+                <Settings size={13} /> {subscription.plan || 'Starter'}
+              </button>
               <span style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 14px', borderRadius: 99, background: '#f1f5f9', fontSize: 12, fontWeight: 700, color: '#475569' }}>
                 <Circle size={6} fill="#22c55e" color="transparent" /> Активен
               </span>
@@ -244,6 +456,9 @@ export const ClubDetail = () => {
             </div>
           </>
         )}
+
+        {/* USERS / HIERARCHY */}
+        {activeTab === 'users' && <UserManagement clubId={clubId} />}
 
         {/* MEMBERS */}
         {activeTab === 'members' && (
@@ -381,6 +596,13 @@ export const ClubDetail = () => {
           </Section>
         )}
       </div>
+      <TariffModal 
+        isOpen={isTariffModalOpen} 
+        onClose={() => setIsTariffModalOpen(false)} 
+        clubId={clubId} 
+        currentSubscription={subscription} 
+        onSaved={(newSub) => setData({ ...data, appState: { ...data.appState, subscription: newSub } })}
+      />
     </div>
   );
 };
