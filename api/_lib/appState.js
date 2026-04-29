@@ -54,7 +54,13 @@ export async function saveAppState(user, state) {
     .upsert({ club_id: clubId, state: mergedState, updated_at: new Date().toISOString() }, { onConflict: 'club_id' });
 
   if (error) throw error;
-  await syncNormalizedState(user, mergedState);
+  
+  try {
+    await syncNormalizedState(user, mergedState);
+  } catch (syncError) {
+    console.error('Failed to sync normalized state, but app_state was saved:', syncError);
+  }
+  
   return mergedState;
 }
 
