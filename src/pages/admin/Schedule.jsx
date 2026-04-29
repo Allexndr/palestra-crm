@@ -280,30 +280,56 @@ export const Schedule = () => {
               <Input label="Тренер" placeholder="А. Карелин" value={formData.coach} onChange={e => setFormData({...formData, coach: e.target.value})} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'end' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px', marginBottom: '32px' }}>
               <div className="input-group">
                 <label className="input-label">Цветовая метка</label>
-                <div className="flex flex-wrap gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100">
-                  {['#4338ca', '#ef4444', '#f59e0b', '#10b981', '#6366f1', '#ec4899', '#06b6d4', '#8b5cf6'].map(c => (
+                <div className="flex flex-wrap gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-100 w-fit">
+                  {['#4338ca', '#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#ec4899', '#8b5cf6'].map(c => (
                     <div 
                       key={c} 
                       onClick={() => setFormData({...formData, color: c})}
                       style={{ 
-                        width: 32, height: 32, borderRadius: '10px', backgroundColor: c, 
+                        width: 36, height: 36, borderRadius: '12px', backgroundColor: c, 
                         cursor: 'pointer', border: formData.color === c ? '3px solid white' : 'none',
                         boxShadow: formData.color === c ? '0 0 0 2px ' + c : 'none',
-                        transition: 'all 0.2s'
+                        transition: 'all 0.2s',
+                        transform: formData.color === c ? 'scale(1.1)' : 'scale(1)'
                       }} 
                     />
                   ))}
+                  
+                  {/* Custom Color Picker */}
+                  <div style={{ position: 'relative', width: 36, height: 36 }}>
+                    <div 
+                      style={{ 
+                        width: '100%', height: '100%', borderRadius: '12px', 
+                        background: 'linear-gradient(45deg, #f06, #f90, #0f9, #09f, #60f)',
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        border: !['#4338ca', '#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#ec4899', '#8b5cf6'].includes(formData.color) ? '3px solid white' : 'none',
+                        boxShadow: !['#4338ca', '#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#ec4899', '#8b5cf6'].includes(formData.color) ? '0 0 0 2px var(--color-primary)' : 'none',
+                      }}
+                    >
+                      <Zap size={16} color="white" />
+                    </div>
+                    <input 
+                      type="color" 
+                      value={formData.color}
+                      onChange={(e) => setFormData({...formData, color: e.target.value})}
+                      style={{ 
+                        position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' 
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-end gap-4">
-                 <Button variant="ghost" type="button" onClick={() => { setIsAdding(false); setEditingId(null); }} style={{ borderRadius: '16px' }}>Отмена</Button>
-                 <Button variant="primary" type="submit" style={{ padding: '16px 40px', borderRadius: '16px', fontSize: '1rem', boxShadow: 'var(--shadow-primary)' }}>
-                   {editingId ? 'Сохранить изменения' : 'Добавить в расписание'}
-                 </Button>
-              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 pt-4">
+               <Button variant="ghost" type="button" onClick={() => { setIsAdding(false); setEditingId(null); }} style={{ borderRadius: '16px' }}>Отмена</Button>
+               <Button variant="primary" type="submit" style={{ padding: '16px 40px', borderRadius: '16px', fontSize: '1rem', boxShadow: 'var(--shadow-primary)' }}>
+                 {editingId ? 'Сохранить изменения' : 'Добавить в расписание'}
+               </Button>
             </div>
           </form>
         </Card>
