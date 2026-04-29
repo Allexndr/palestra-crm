@@ -47,7 +47,7 @@ export const AdminLayout = () => {
         
         {/* Header (Desktop/Mobile) */}
         <header style={{ 
-          padding: '0 var(--space-8)', 
+          padding: '0 var(--space-6)', 
           backgroundColor: 'white', 
           borderBottom: '1px solid var(--color-border)', 
           display: 'flex', 
@@ -56,11 +56,11 @@ export const AdminLayout = () => {
           position: 'sticky', 
           top: 0, 
           zIndex: 50,
-          height: '80px'
+          height: 'clamp(64px, 10vw, 80px)'
         }}>
           <div className="mobile-only">
              <NavLink to="/" style={{ textDecoration: 'none' }}>
-               <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={44} />
+               <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={36} />
              </NavLink>
           </div>
           
@@ -71,12 +71,12 @@ export const AdminLayout = () => {
           </div>
           
           <div className="flex items-center gap-4 ml-auto">
-            <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-full border border-slate-100 shadow-sm hover:bg-slate-100 transition-colors cursor-pointer">
+            <div className="flex items-center gap-3 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-100 shadow-sm hover:bg-slate-100 transition-colors cursor-pointer">
               <div style={{ 
-                width: 28, height: 28, borderRadius: '50%', 
+                width: 24, height: 24, borderRadius: '50%', 
                 backgroundColor: isAdmin ? 'var(--color-primary)' : 'var(--color-success)', 
                 color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                fontSize: '12px', fontWeight: 'bold' 
+                fontSize: '10px', fontWeight: 'bold' 
               }}>
                 {user?.name?.charAt(0) || 'A'}
               </div>
@@ -87,7 +87,7 @@ export const AdminLayout = () => {
             </div>
             <button 
               onClick={handleLogout}
-              className="p-2 text-muted hover:text-danger transition-colors mobile-only"
+              className="touch-target text-muted hover:text-danger transition-colors mobile-only"
             >
               <LogOut size={20} />
             </button>
@@ -98,6 +98,7 @@ export const AdminLayout = () => {
           id="main-content"
           tabIndex={-1}
           className="admin-main"
+          style={{ paddingBottom: 'calc(5.5rem + var(--safe-area-inset-bottom))' }}
         >
           <div className="admin-container">
             <Outlet />
@@ -119,7 +120,7 @@ export const AdminLayout = () => {
           width: 100%;
           margin: 0 auto;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
           .admin-layout {
             flex-direction: column;
           }
@@ -155,7 +156,7 @@ const BottomNavAdmin = () => {
       backgroundColor: 'white',
       borderTop: '1px solid var(--color-border)',
       display: 'flex', justifyContent: 'space-around',
-      padding: 'var(--space-2) 0', zIndex: 100,
+      padding: 'var(--space-2) 0 calc(var(--space-2) + var(--safe-area-inset-bottom))', zIndex: 100,
       boxShadow: '0 -4px 12px rgba(0,0,0,0.08)'
     }}>
       {filteredLinks.map((link) => {
@@ -168,7 +169,8 @@ const BottomNavAdmin = () => {
             style={({ isActive }) => ({
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
               color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
-              fontSize: '10px', textDecoration: 'none', fontWeight: isActive ? '600' : '400'
+              fontSize: '10px', textDecoration: 'none', fontWeight: isActive ? '700' : '500',
+              flex: 1, minHeight: '48px', justifyContent: 'center'
             })}
           >
             <Icon size={20} />

@@ -165,7 +165,7 @@ export const Landing = () => {
           <div className="container landing-hero-grid">
             
             <div className="animate-up">
-              <h1 className="h1 mb-6" style={{ textTransform: 'uppercase', lineHeight: '0.95' }}>
+              <h1 className="h1 mb-6" style={{ textTransform: 'uppercase', lineHeight: '1.1' }}>
                 Управляйте <br />
                 <span style={{ color: 'var(--color-primary)' }}>бойцовским <br/>клубом</span>
               </h1>
@@ -182,14 +182,14 @@ export const Landing = () => {
                 ))}
               </div>
               
-              <div className="flex gap-4">
-                <Link to="/auth/register">
-                  <Button variant="primary" size="lg" className="gap-2 text-lg">
+              <div className="flex gap-4 responsive-row">
+                <Link to="/auth/register" style={{ width: '100%' }}>
+                  <Button variant="primary" size="lg" className="gap-2 text-lg w-full">
                     Подключить бесплатно <ArrowRight size={24} />
                   </Button>
                 </Link>
-                <a href="#features" style={{ textDecoration: 'none' }}>
-                  <Button variant="secondary" size="lg" className="text-lg">Возможности</Button>
+                <a href="#features" style={{ textDecoration: 'none', width: '100%' }}>
+                  <Button variant="secondary" size="lg" className="text-lg w-full">Возможности</Button>
                 </a>
               </div>
             </div>
@@ -216,31 +216,31 @@ export const Landing = () => {
                   <ShieldCheck size={30} color="var(--color-success)" aria-hidden />
                 </div>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: 'var(--space-3)', marginBottom: 'var(--space-6)' }}>
                   {OPERATIONS.map((item) => (
-                    <div key={item.label} style={{ backgroundColor: 'rgba(255,255,255,0.07)', padding: 'var(--space-4)', borderRadius: 18 }}>
-                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 11, marginBottom: 8, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em' }}>{item.label}</p>
-                      <p style={{ color: 'white', fontSize: 24, fontFamily: 'var(--font-family-display)', fontWeight: 800, lineHeight: 1 }}>{item.value}</p>
+                    <div key={item.label} style={{ backgroundColor: 'rgba(255,255,255,0.07)', padding: 'var(--space-3)', borderRadius: 18 }}>
+                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.65rem', marginBottom: 6, textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em' }}>{item.label}</p>
+                      <p style={{ color: 'white', fontSize: '1.25rem', fontFamily: 'var(--font-family-display)', fontWeight: 800, lineHeight: 1 }}>{item.value}</p>
                     </div>
                   ))}
                 </div>
 
                 <div style={{ display: 'grid', gap: 12 }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr auto', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 18 }}>
-                    <span style={{ color: '#fff', fontWeight: 800 }}>18:00</span>
-                    <div>
-                      <p style={{ color: '#fff', fontWeight: 800, margin: 0 }}>MMA Junior</p>
-                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, margin: 0 }}>Зал 2 · тренер А. Карелин</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 18 }}>
+                    <span style={{ color: '#fff', fontWeight: 800, fontSize: '0.875rem' }}>18:00</span>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ color: '#fff', fontWeight: 800, margin: 0, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>MMA Junior</p>
+                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Зал 2 · тренер А. Карелин</p>
                     </div>
-                    <span style={{ color: 'var(--color-success)', fontWeight: 900 }}>24/28</span>
+                    <span style={{ color: 'var(--color-success)', fontWeight: 900, fontSize: '0.875rem' }}>24/28</span>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr auto', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: 'rgba(49, 70, 166, 0.76)', borderRadius: 18 }}>
-                    <span style={{ color: '#fff', fontWeight: 800 }}>19:30</span>
-                    <div>
-                      <p style={{ color: '#fff', fontWeight: 800, margin: 0 }}>Boxing Pro</p>
-                      <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, margin: 0 }}>Зал 1 · спарринги</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: 14, padding: '14px 16px', backgroundColor: 'rgba(49, 70, 166, 0.76)', borderRadius: 18 }}>
+                    <span style={{ color: '#fff', fontWeight: 800, fontSize: '0.875rem' }}>19:30</span>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ color: '#fff', fontWeight: 800, margin: 0, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Boxing Pro</p>
+                      <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Зал 1 · спарринги</p>
                     </div>
-                    <span style={{ color: '#fff', fontWeight: 900 }}>16/20</span>
+                    <span style={{ color: '#fff', fontWeight: 900, fontSize: '0.875rem' }}>16/20</span>
                   </div>
                 </div>
               </div>

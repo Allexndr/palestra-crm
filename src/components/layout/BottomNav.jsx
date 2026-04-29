@@ -17,6 +17,10 @@ export const BottomNav = () => {
     <nav
       aria-label="Основная навигация"
       className="bottom-nav"
+      style={{
+        paddingBottom: 'calc(var(--space-2) + var(--safe-area-inset-bottom))',
+        minHeight: 'calc(64px + var(--safe-area-inset-bottom))'
+      }}
     >
       {links.map((link) => {
         const Icon = link.icon;
@@ -29,14 +33,18 @@ export const BottomNav = () => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '4px',
               color: active ? 'var(--color-primary)' : 'var(--color-text-muted)',
               fontSize: '10px',
-              fontWeight: active ? '500' : '400'
+              fontWeight: active ? '700' : '500',
+              textDecoration: 'none',
+              flex: 1,
+              minHeight: '48px'
             }}
           >
-            <Icon size={24} color={active ? 'var(--color-primary)' : 'var(--color-text-muted)'} />
-            {link.label}
+            <Icon size={22} strokeWidth={active ? 2.5 : 2} />
+            <span>{link.label}</span>
           </Link>
         );
       })}

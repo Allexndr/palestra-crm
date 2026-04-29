@@ -139,7 +139,10 @@ export const RegisterClub = () => {
     if (step === 2) isValid = validateStep2();
     if (step === 3) isValid = validateStep3();
 
-    if (!isValid) return;
+    if (!isValid) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
     if (step === 1) {
       setIsLoading(true);
@@ -191,6 +194,7 @@ export const RegisterClub = () => {
 
   const submitForm = async () => {
     setIsLoading(true);
+    setErrors({});
     try {
       const tempPassword = generateTemporaryPassword();
 
@@ -207,14 +211,51 @@ export const RegisterClub = () => {
       } catch {
         throw new Error('Сервер вернул некорректный ответ. Попробуйте позже.');
       }
+
       if (!apiResponse.ok) {
+        if (apiResponse.status === 400 && apiData.details?.fieldErrors) {
+          const fieldStepMap = {
+            firstName: 1, lastName: 1, phone: 1, email: 1,
+            clubName: 2, city: 2, address: 2,
+            martialArts: 3, studentsCount: 3
+          };
+          
+          const newErrors = {};
+          let targetStep = step;
+          let firstErrorField = null;
+
+          Object.keys(apiData.details.fieldErrors).forEach(path => {
+            // Convert dot notation (formData.email) to simple field name (email)
+            const field = path.startsWith('formData.') ? path.split('.')[1] : path;
+            const message = apiData.details.fieldErrors[path][0];
+            
+            newErrors[field] = message;
+            
+            if (fieldStepMap[field]) {
+              if (!firstErrorField) {
+                firstErrorField = field;
+                targetStep = fieldStepMap[field];
+              } else {
+                targetStep = Math.min(targetStep, fieldStepMap[field]);
+              }
+            }
+          });
+
+          if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            setStep(targetStep);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+        }
+        
         const error = new Error(apiData.error || 'Ошибка создания клуба');
         error.details = apiData.details;
         throw error;
       }
 
       setSuccessData(apiData);
-      setIsSuccess(true); // Сначала показываем успех
+      setIsSuccess(true);
       
       try {
         await signIn({ email: formData.email, password: tempPassword });
@@ -224,11 +265,8 @@ export const RegisterClub = () => {
     } catch (err) {
       console.error("Registration error:", err);
       let errorMsg = err.message;
-      if (err.details && err.details.fieldErrors) {
-        const fields = Object.keys(err.details.fieldErrors);
-        errorMsg = `Ошибка в полях: ${fields.join(', ')}. Проверьте правильность заполнения.`;
-      }
-      setErrors({ form: errorMsg });
+      setErrors(prev => ({ ...prev, form: errorMsg }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setIsLoading(false);
     }
@@ -239,15 +277,6 @@ export const RegisterClub = () => {
       <Navbar />
       <main id="main-content" tabIndex={-1} className="auth-page">
         <div className="auth-page__inner">
-          <div style={{ marginBottom: 'var(--space-8)', width: '100%', maxWidth: '480px' }} className="mobile-hidden">
-            <h2 className="h4 mb-4" style={{ fontFamily: 'var(--font-family-display)', color: 'var(--color-primary)' }}>
-              Palestra — профессиональная CRM для школ единоборств
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--color-text-secondary)' }}>
-              <p>✅ <strong>Starter:</strong> 1 филиал, 15 учеников — <strong>Бесплатно</strong></p>
-              <p>🚀 <strong>Growth:</strong> Подключите позже, когда клуб вырастет</p>
-            </div>
-          </div>
           
           <Card style={{ flex: 1, padding: 'var(--space-8)', position: 'relative' }}>
             

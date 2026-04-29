@@ -311,45 +311,45 @@ export const Dashboard = () => {
               </div>
             ) : (
               <>
-                <div style={{ padding: '40px', backgroundColor: selectedClass.color || 'var(--color-primary)', color: 'white', position: 'relative' }}>
+                <div style={{ padding: 'clamp(20px, 5vw, 40px)', backgroundColor: selectedClass.color || 'var(--color-primary)', color: 'white', position: 'relative' }}>
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest inline-block mb-4">Детали занятия</div>
-                      <h3 className="h2 mb-2" style={{ color: 'white' }}>{selectedClass.groupName}</h3>
+                      <h3 className="h3 mb-2" style={{ color: 'white' }}>{selectedClass.groupName}</h3>
                       <div className="flex items-center gap-4 text-sm font-medium opacity-90">
                          <div className="flex items-center gap-2"><Calendar size={16} /> {selectedClass.time} ({selectedClass.duration || 60} мин)</div>
                       </div>
                     </div>
-                    <button onClick={() => setSelectedClass(null)} className="p-3 bg-white/20 hover:bg-white/30 rounded-2xl border-none text-white cursor-pointer transition-all"><AlertCircle size={20} className="rotate-45" /></button>
+                    <button onClick={() => setSelectedClass(null)} className="touch-target bg-white/20 hover:bg-white/30 rounded-2xl border-none text-white cursor-pointer transition-all"><AlertCircle size={20} className="rotate-45" /></button>
                   </div>
                 </div>
-                <div style={{ padding: '40px' }}>
-                  <div className="flex justify-between items-center mb-8">
+                <div style={{ padding: 'clamp(20px, 5vw, 40px)' }}>
+                  <div className="flex justify-between items-center mb-8 gap-4">
                     <div>
                        <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Чек-ин</p>
                        <p className="text-sm font-bold text-slate-800">Кто присутствует?</p>
                     </div>
-                    <button onClick={handleSelectAll} className="px-4 py-2 bg-indigo-50 text-primary text-xs font-bold rounded-xl hover:bg-indigo-100 transition-all border-none cursor-pointer">Выбрать всех</button>
+                    <button onClick={handleSelectAll} className="px-4 py-2 bg-indigo-50 text-primary text-xs font-bold rounded-xl hover:bg-indigo-100 transition-all border-none cursor-pointer flex-shrink-0">Выбрать всех</button>
                   </div>
-                  <div style={{ maxHeight: '320px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px', paddingRight: '4px' }} className="custom-scrollbar">
+                  <div style={{ maxHeight: 'min(400px, 50vh)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px', paddingRight: '4px' }} className="custom-scrollbar scrollbar-hide">
                     {members.map(member => (
-                      <div key={member.id} onClick={() => toggleMemberSelection(member.id)} className={`p-5 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between ${selectedMemberIds.includes(member.id) ? 'border-primary bg-indigo-50/50' : 'border-slate-100 hover:border-slate-200 bg-white'}`}>
-                        <div className="flex items-center gap-4">
-                          <div style={{ width: 44, height: 44, borderRadius: '14px', backgroundColor: selectedMemberIds.includes(member.id) ? 'var(--color-primary)' : 'var(--color-bg)', color: selectedMemberIds.includes(member.id) ? 'white' : 'var(--color-text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px' }}>
+                      <div key={member.id} onClick={() => toggleMemberSelection(member.id)} className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between ${selectedMemberIds.includes(member.id) ? 'border-primary bg-indigo-50/50' : 'border-slate-100 hover:border-slate-200 bg-white'}`}>
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div style={{ width: 40, height: 40, borderRadius: '12px', backgroundColor: selectedMemberIds.includes(member.id) ? 'var(--color-primary)' : 'var(--color-bg)', color: selectedMemberIds.includes(member.id) ? 'white' : 'var(--color-text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px', flexShrink: 0 }}>
                             {member.firstName.charAt(0)}
                           </div>
-                          <div>
-                            <p className="font-bold text-sm text-slate-900">{member.firstName} {member.lastName}</p>
-                            <p className="text-[10px] font-bold text-muted uppercase tracking-wider">{groups.find(g => g.id === member.groupId)?.name || 'Индивидуально'}</p>
+                          <div className="min-w-0">
+                            <p className="font-bold text-sm text-slate-900 truncate">{member.firstName} {member.lastName}</p>
+                            <p className="text-[10px] font-bold text-muted uppercase tracking-wider truncate">{groups.find(g => g.id === member.groupId)?.name || 'Индивидуально'}</p>
                           </div>
                         </div>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selectedMemberIds.includes(member.id) ? 'bg-primary border-primary text-white' : 'border-slate-200'}`}>
+                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${selectedMemberIds.includes(member.id) ? 'bg-primary border-primary text-white' : 'border-slate-200'}`}>
                            {selectedMemberIds.includes(member.id) && <CheckCircle size={14} />}
                         </div>
                       </div>
                     ))}
                   </div>
-                  <button onClick={handleMarkAttendance} disabled={selectedMemberIds.length === 0} className="w-full h-14 bg-primary text-white rounded-2xl font-bold disabled:opacity-50 transition-all hover:opacity-90 cursor-pointer border-none text-base">
+                  <button onClick={handleMarkAttendance} disabled={selectedMemberIds.length === 0} className="w-full h-14 bg-primary text-white rounded-2xl font-bold disabled:opacity-50 transition-all hover:opacity-90 cursor-pointer border-none text-base shadow-lg shadow-primary/20">
                     Отметить посещаемость
                   </button>
                 </div>

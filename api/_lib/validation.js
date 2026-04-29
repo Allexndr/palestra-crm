@@ -51,6 +51,17 @@ export function parseOrThrow(schema, payload) {
 
   const error = new Error('Invalid request data');
   error.statusCode = 400;
-  error.details = result.error.flatten();
+  
+  // Provide deep field errors with dot notation paths (e.g. "formData.email")
+  const fieldErrors = {};
+  result.error.errors.forEach((err) => {
+    const path = err.path.join('.');
+    if (!fieldErrors[path]) {
+      fieldErrors[path] = [];
+    }
+    fieldErrors[path].push(err.message);
+  });
+
+  error.details = { fieldErrors };
   throw error;
 }
