@@ -1,6 +1,21 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, Users, Calendar, Trophy, Settings, Target, CreditCard, LogOut, ShoppingBag, MessageSquare } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  Users, 
+  UserCircle, 
+  Network, 
+  ShieldCheck, 
+  Target, 
+  Calendar, 
+  Clock, 
+  Trophy, 
+  Wallet, 
+  ShoppingBag, 
+  LayoutList, 
+  Settings, 
+  LogOut 
+} from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { ClubLogo } from '../ui/ClubLogo';
 
@@ -15,18 +30,18 @@ export const Sidebar = () => {
 
   // Filter links based on role
   const allLinks = [
-    { to: '/admin', icon: Home, label: 'Дашборд', end: true, roles: ['admin', 'coach'] },
-    { to: '/admin/members', icon: Users, label: 'Ученики', roles: ['admin', 'coach'] },
-    { to: '/admin/groups', icon: Users, label: 'Группы', roles: ['admin', 'coach'] },
-    { to: '/admin/coaches', icon: Users, label: 'Тренеры', roles: ['admin'] },
-    { to: '/admin/leads', icon: Target, label: 'Лиды', roles: ['admin'] },
-    { to: '/admin/schedule', icon: Calendar, label: 'Расписание', roles: ['admin', 'coach'] },
-    { to: '/admin/events', icon: Calendar, label: 'События', roles: ['admin', 'coach'] },
-    { to: '/admin/league', icon: Trophy, label: 'Лига', roles: ['admin', 'coach'] },
-    { to: '/admin/billing', icon: CreditCard, label: 'Финансы', roles: ['admin'] },
-    { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'] },
-    { to: '/feed', icon: MessageSquare, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'] },
-    { to: '/admin/settings', icon: Settings, label: 'Настройки', roles: ['admin'] },
+    { to: '/admin', icon: LayoutDashboard, label: 'Дашборд', end: true, roles: ['admin', 'coach'], color: '#6366f1' },
+    { to: '/admin/members', icon: UserCircle, label: 'Ученики', roles: ['admin', 'coach'], color: '#3b82f6' },
+    { to: '/admin/groups', icon: Network, label: 'Группы', roles: ['admin', 'coach'], color: '#8b5cf6' },
+    { to: '/admin/coaches', icon: ShieldCheck, label: 'Тренеры', roles: ['admin'], color: '#ec4899' },
+    { to: '/admin/leads', icon: Target, label: 'Лиды', roles: ['admin'], color: '#f59e0b' },
+    { to: '/admin/schedule', icon: Calendar, label: 'Расписание', roles: ['admin', 'coach'], color: '#10b981' },
+    { to: '/admin/events', icon: Clock, label: 'События', roles: ['admin', 'coach'], color: '#06b6d4' },
+    { to: '/admin/league', icon: Trophy, label: 'Лига', roles: ['admin', 'coach'], color: '#f43f5e' },
+    { to: '/admin/billing', icon: Wallet, label: 'Финансы', roles: ['admin'], color: '#14b8a6' },
+    { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'], color: '#8b5cf6' },
+    { to: '/feed', icon: LayoutList, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'], color: '#64748b' },
+    { to: '/admin/settings', icon: Settings, label: 'Настройки', roles: ['admin'], color: '#475569' },
   ];
 
   const filteredLinks = allLinks.filter(link => link.roles.includes(user?.role || 'admin'));
@@ -97,18 +112,35 @@ export const Sidebar = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 'var(--space-3)',
-                padding: 'var(--space-3)',
-                borderRadius: 'var(--radius-md)',
+                padding: '10px 12px',
+                borderRadius: '14px',
                 backgroundColor: isActive ? 'var(--color-primary-soft)' : 'transparent',
                 color: isActive ? 'var(--color-primary)' : 'var(--color-text-secondary)',
-                fontWeight: isActive ? '600' : '500',
-                transition: 'all 0.2s',
+                fontWeight: isActive ? '700' : '500',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                 textDecoration: 'none',
-                fontSize: '0.875rem'
+                fontSize: '0.9rem',
+                margin: '0 4px'
               })}
-              className={({ isActive }) => isActive ? 'sidebar-link-active' : 'sidebar-link'}
+              className={({ isActive }) => isActive ? 'sidebar-link-active group' : 'sidebar-link group'}
             >
-              <Icon size={18} />
+              <div 
+                style={{ 
+                  width: '32px', 
+                  height: '32px', 
+                  borderRadius: '10px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  backgroundColor: 'white',
+                  boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                  color: link.color,
+                  transition: 'transform 0.2s'
+                }}
+                className="group-hover:scale-110"
+              >
+                <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+              </div>
               {link.label}
             </NavLink>
           );
