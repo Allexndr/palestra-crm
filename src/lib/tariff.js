@@ -31,7 +31,7 @@ export const DEFAULT_SUBSCRIPTION = {
 
 export const RESOURCE_OPTIONS = [
   { key: 'members', label: 'Ученики', min: 15, max: 2000, step: 1, included: 15, paidIncluded: 30, unitPrice: 500 },
-  { key: 'coaches', label: 'Тренеры', min: 3, max: 100, step: 1, included: 3, paidIncluded: 5, unitPrice: 500 },
+  { key: 'coaches', label: 'Тренеры', min: 3, max: 100, step: 1, included: 3, paidIncluded: 5, unitPrice: 1000 },
   { key: 'locations', label: 'Филиалы / клубы', min: 1, max: 50, step: 1, included: 1, paidIncluded: 1, unitPrice: 2000 },
   { key: 'groups', label: 'Группы', min: 3, max: 300, step: 1, included: 3, paidIncluded: 5, unitPrice: 500 },
 ];

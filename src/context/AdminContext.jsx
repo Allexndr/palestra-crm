@@ -48,11 +48,24 @@ function normalizeClubInfo(v) {
 }
 
 function normalizeMonthlyAward(v) {
-  if (!v || typeof v !== 'object' || Array.isArray(v)) return { title: '', description: '', daysLeft: 0 };
+  if (!v || typeof v !== 'object' || Array.isArray(v)) {
+    const now = new Date();
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const remaining = lastDay - now.getDate();
+    return { title: '', description: '', daysLeft: remaining };
+  }
+  
+  let daysLeft = typeof v.daysLeft === 'number' ? v.daysLeft : 0;
+  if (daysLeft === 0) {
+    const now = new Date();
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    daysLeft = lastDay - now.getDate();
+  }
+
   return {
     title: v.title != null ? String(v.title) : '',
     description: v.description != null ? String(v.description) : '',
-    daysLeft: typeof v.daysLeft === 'number' ? v.daysLeft : 0,
+    daysLeft: daysLeft,
   };
 }
 
@@ -195,6 +208,10 @@ export const AdminProvider = ({ children }) => {
       date: new Date().toISOString()
     };
     setActivities(prev => [newActivity, ...prev].slice(0, 50));
+  };
+
+  const removeActivity = (id) => {
+    setActivities(prev => prev.filter(act => act.id !== id));
   };
 
   const usage = {
@@ -567,7 +584,7 @@ export const AdminProvider = ({ children }) => {
     finances, addTransaction,
     achievements, setAchievements, addAchievement, removeAchievement,
     monthlyAward, updateMonthlyAward,
-    activities, logActivity,
+    activities, logActivity, removeActivity,
     subscription, updateSubscription, usage, getLimitStatus, canUseFeature, getUpgradeMessage, ensureCanCreate,
     user, login, logout,
     activeChildId, setActiveChildId,

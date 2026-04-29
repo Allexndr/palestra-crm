@@ -150,11 +150,22 @@ export const MemberDetail = () => {
                     </div>
                   </div>
                   {member.hasParent && (
-                    <div className="p-5 bg-indigo-50/50 rounded-2xl border border-indigo-100">
-                      <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-3 flex items-center gap-2"><Shield size={14} /> Родитель / Представитель</p>
+                    <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100">
+                      <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-3 flex items-center gap-2"><Shield size={14} /> Родитель / Представитель</p>
                       <p className="text-sm font-bold mb-1">{member.parentName}</p>
-                      <p className="text-sm text-secondary mb-2">{member.parentPhone}</p>
-                      {member.parentNote && <p className="text-[11px] text-muted italic">"{member.parentNote}"</p>}
+                      <p className="text-sm text-secondary mb-3">{member.parentPhone}</p>
+                      
+                      {member.parentLogin && (
+                        <div className="pt-3 border-t border-emerald-100 flex flex-col gap-2">
+                          <p className="text-[10px] font-bold text-emerald-600 uppercase">Доступ родителя</p>
+                          <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-emerald-100">
+                            <span className="text-xs font-mono text-emerald-700">{member.parentLogin}</span>
+                            <span className="text-[10px] font-bold text-emerald-400 uppercase">Логин</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {member.parentNote && <p className="text-[11px] text-muted italic mt-3">"{member.parentNote}"</p>}
                     </div>
                   )}
                 </div>
@@ -164,7 +175,12 @@ export const MemberDetail = () => {
 
           {activeTab === 'stats' && (
             <Card style={{ padding: '40px' }} className="animate-fade-in">
-              <h3 className="h5 mb-10 border-b pb-4">Анализ характеристик</h3>
+              <div className="flex justify-between items-center mb-10 border-b pb-4">
+                <h3 className="h5">Анализ характеристик</h3>
+                <div className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest">
+                  Уровень: {Math.floor((member.points || 0) / 100) + 1}
+                </div>
+              </div>
               <div className="flex flex-col gap-8">
                 {stats.map(stat => (
                   <div key={stat.id}>
@@ -190,7 +206,7 @@ export const MemberDetail = () => {
             <div className="flex flex-col gap-4 animate-fade-in">
                <Card style={{ padding: '60px', textAlign: 'center' }} className="bg-slate-50 border-2 border-dashed border-slate-200">
                  <Trophy size={48} className="mx-auto mb-4 text-slate-300" />
-                 <p className="text-secondary">Здесь будут отображаться личные награды и кубки ученика.</p>
+                 <p className="text-secondary font-medium">Здесь будут отображаться личные награды и кубки ученика.</p>
                </Card>
             </div>
           )}
@@ -206,22 +222,22 @@ export const MemberDetail = () => {
                  <div className="flex items-center gap-2 text-success font-bold text-sm">
                    < Zap size={14} fill="var(--color-success)" /> Оплачено
                  </div>
-                 <div className="font-bold text-slate-800">{member.paidAmount ? `${parseInt(member.paidAmount).toLocaleString()} ₸` : '0 ₸'}</div>
+                 <div className="font-bold text-slate-800">{member.paidAmount ? `${parseInt(member.paidAmount).toLocaleString('ru-RU').replace(/,/g, ' ')} ₸` : '0 ₸'}</div>
                </div>
             </div>
-            <Button variant="ghost" className="w-full text-xs" style={{ border: '1px solid var(--color-border)' }}>История платежей</Button>
+            <Button variant="ghost" className="w-full text-xs font-bold" style={{ border: '1px solid var(--color-border)' }}>История платежей</Button>
           </Card>
 
           <Card style={{ padding: '24px' }}>
             <h3 className="h5 mb-6">Доступы</h3>
             <div className="flex flex-col gap-4">
               <div className="p-4 bg-slate-50 rounded-2xl">
-                 <p className="text-[10px] font-bold text-muted uppercase mb-1">Логин</p>
+                 <p className="text-[10px] font-bold text-muted uppercase mb-1">Логин ученика</p>
                  <code className="text-sm font-bold text-primary">{member.login || '—'}</code>
               </div>
               <div className="p-4 bg-slate-50 rounded-2xl">
                  <p className="text-[10px] font-bold text-muted uppercase mb-1">Пароль</p>
-                 <code className="text-sm font-bold text-primary">Не хранится в CRM</code>
+                 <code className="text-xs font-bold text-primary opacity-60 italic">Хранится в зашифрованном виде</code>
               </div>
             </div>
           </Card>

@@ -80,8 +80,8 @@ export const RegisterClub = () => {
     if (!formData.firstName) newErrors.firstName = "Укажите имя";
     if (!formData.lastName) newErrors.lastName = "Укажите фамилию";
     
-    if (!formData.phone || formData.phone.length < 15) {
-      newErrors.phone = "Введите полный номер: 7 777 000 00 00";
+    if (!formData.phone || formData.phone.length < 18) {
+      newErrors.phone = "Введите полный номер: +7 (777) 000 00 00";
     }
 
     if (!formData.email) {
@@ -414,7 +414,7 @@ export const RegisterClub = () => {
                         <Input 
                           label="Телефон" 
                           type="tel"
-                          placeholder="7 777 000 00 00" 
+                          placeholder="+7 (777) 000 00 00" 
                           value={formData.phone} 
                           onChange={(e) => handleInputChange('phone', e.target.value)} 
                           error={errors.phone}

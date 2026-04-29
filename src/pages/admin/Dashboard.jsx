@@ -9,7 +9,7 @@ import { formatKzt } from '../../utils/money';
 import { scheduleTypeLabel, coachLine, firstGrapheme } from '../../utils/displayStrings';
 
 export const Dashboard = () => {
-  const { members, leads, schedule, finances, user, events, selectedLocationId, achievements, monthlyAward, activities, markAttendance, groups } = useAdmin();
+  const { members, leads, schedule, finances, user, events, selectedLocationId, achievements, monthlyAward, activities, markAttendance, groups, removeActivity } = useAdmin();
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
   const navigate = useNavigate();
@@ -228,8 +228,8 @@ export const Dashboard = () => {
                     <MessageSquare size={48} className="mx-auto mb-4 text-slate-100" />
                     <p className="text-slate-400 text-sm font-medium">Событий пока нет</p>
                  </div>
-               ) : activities.map((act) => (
-                 <div key={act.id} className="flex items-start gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all border-b border-slate-50 last:border-0">
+               ) : activities.slice(0, 4).map((act) => (
+                 <div key={act.id} className="flex items-start gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all border-b border-slate-50 last:border-0 group relative">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                       act.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 
                       act.type === 'warning' ? 'bg-rose-50 text-rose-600' : 'bg-indigo-50 text-primary'
@@ -237,12 +237,19 @@ export const Dashboard = () => {
                        {act.type === 'success' ? <CheckCircle size={18} /> : 
                         act.type === 'warning' ? <AlertCircle size={18} /> : <Info size={18} />}
                     </div>
-                    <div>
+                    <div className="flex-1">
                       <p className="text-sm font-bold text-slate-800 leading-snug">{act.text}</p>
                       <p className="text-[10px] font-medium text-slate-400 mt-1">
                         {new Date(act.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })} • Сегодня
                       </p>
                     </div>
+                    <button 
+                      onClick={() => removeActivity(act.id)}
+                      className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-white rounded-lg transition-all border-none bg-transparent cursor-pointer text-slate-400 hover:text-rose-500 shadow-sm"
+                      title="Удалить из ленты"
+                    >
+                      <X size={14} />
+                    </button>
                  </div>
                ))}
             </div>
