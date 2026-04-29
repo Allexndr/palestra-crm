@@ -26,10 +26,19 @@ function uniqueById(rows) {
 }
 
 async function replaceRows(supabase, table, clubId, rows) {
-  await supabase.from(table).delete().eq('club_id', clubId);
-  if (!rows.length) return;
-  const { error } = await supabase.from(table).insert(rows);
-  if (error) throw error;
+  try {
+    await supabase.from(table).delete().eq('club_id', clubId);
+    if (!rows.length) return;
+    const { error } = await supabase.from(table).insert(rows);
+    if (error) {
+      // Silently skip tables missing from schema cache (e.g. if migration not yet applied)
+      if (/relation .* does not exist|schema cache/i.test(error.message)) return;
+      throw error;
+    }
+  } catch (err) {
+    if (/relation .* does not exist|schema cache/i.test(err.message)) return;
+    throw err;
+  }
 }
 
 function mapLocation(row, clubId) {

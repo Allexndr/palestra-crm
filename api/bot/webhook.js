@@ -100,31 +100,27 @@ export default async function handler(req, res) {
          const authId = clubStates[0].state.bot_awaiting_pwd;
          const newPwd = text.trim();
          
-         if (newPwd.length < 10) {
+         if (newPwd.length < 12) {
            await sendMessage(chatId, "⚠️ Пароль слишком короткий. Минимум 12 символов.");
            return sendJson(res, 200, { ok: true });
          }
 
          await sendMessage(chatId, "⏳ *Обновляю пароль...*");
-         res.status(200).json({ ok: true }); // Мгновенный ответ Телеграму
 
-         try {
-           const { error } = await supabase.auth.admin.updateUserById(authId, { password: newPwd });
-           if (error) {
-             await sendMessage(chatId, "❌ Ошибка: " + error.message);
-             return;
-           }
-
-           const newState = { ...clubStates[0].state };
-           delete newState.bot_awaiting_pwd;
-           newState.temp_password = newPwd; 
-
-           await supabase.from('app_state').update({ state: newState }).eq('club_id', clubStates[0].club_id);
-           await sendMessage(chatId, "✅ *Пароль успешно обновлен!*");
-         } catch (e) {
-           console.error('BG ERROR:', e);
+         // Do ALL async work BEFORE returning — Vercel terminates function after res is sent
+         const { error: pwdError } = await supabase.auth.admin.updateUserById(authId, { password: newPwd });
+         if (pwdError) {
+           await sendMessage(chatId, "❌ Ошибка: " + pwdError.message);
+           return sendJson(res, 200, { ok: true });
          }
-         return;
+
+         const newState = { ...clubStates[0].state };
+         delete newState.bot_awaiting_pwd;
+         newState.temp_password = newPwd;
+         await supabase.from('app_state').update({ state: newState }).eq('club_id', clubStates[0].club_id);
+
+         await sendMessage(chatId, "✅ *Пароль успешно обновлён!*\n\nТеперь войдите с новым паролем.");
+         return sendJson(res, 200, { ok: true });
        }
     }
 
