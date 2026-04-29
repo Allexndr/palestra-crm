@@ -73,7 +73,7 @@ const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
       <div className="tariff-res-card__footer">
         <div className="flex flex-col">
           <span className="tariff-res-card__price-label">Составляющая цены</span>
-          <strong className={`tariff-res-card__price-val ${isBillable ? 'text-black' : 'text-slate-300'}`}>
+          <strong className={`tariff-res-card__price-val ${isBillable ? 'text-primary' : 'text-slate-300'}`}>
             {isBillable ? `+ ${extraCost.toLocaleString('ru-RU')} ₸` : 'Включено в базу'}
           </strong>
         </div>
@@ -187,7 +187,7 @@ export const AdminTariffConstructor = ({
       <div className="flex justify-between items-end mb-12">
         <div className="flex-1">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 text-white rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--color-primary)' }}>
               <SlidersHorizontal size={20} />
             </div>
             <div>

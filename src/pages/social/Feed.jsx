@@ -64,7 +64,7 @@ export const Feed = () => {
         {canPost && (
           <button 
             onClick={() => setIsPosting(true)} 
-            className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center hover:scale-105 transition-transform"
+            className="w-10 h-10 text-white rounded-full flex items-center justify-center hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--color-primary)' }}
           >
             <Plus size={20} />
           </button>

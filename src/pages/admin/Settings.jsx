@@ -95,7 +95,7 @@ export const Settings = () => {
               onClick={() => setActiveTab(tab.id)}
               className="flex items-center gap-4 px-6 py-4 rounded-2xl transition-all border-none cursor-pointer text-left"
               style={{
-                backgroundColor: activeTab === tab.id ? 'black' : 'transparent',
+                backgroundColor: activeTab === tab.id ? 'var(--color-primary)' : 'transparent',
                 color: activeTab === tab.id ? 'white' : '#666',
                 fontWeight: activeTab === tab.id ? '900' : '600',
                 fontSize: '13px'
@@ -132,7 +132,7 @@ export const Settings = () => {
                 ].map(([key, label, count]) => {
                   const status = getLimitStatus(key);
                   return (
-                    <div key={key} className={`tariff-res-card ${status.isReached ? 'border-black' : ''}`}>
+                    <div key={key} className={`tariff-res-card ${status.isReached ? 'border-primary' : ''}`}>
                       <div className="tariff-res-card__head">
                         <div className="tariff-res-card__info">
                           <h5 className="tariff-res-card__label">{label}</h5>
@@ -141,7 +141,7 @@ export const Settings = () => {
                           </p>
                         </div>
                         {status.isReached && (
-                          <span className="text-[9px] font-black uppercase px-2 py-1 bg-black text-white rounded-md">Limit</span>
+                          <span className="text-[9px] font-black uppercase px-2 py-1 text-white rounded-md" style={{ backgroundColor: 'var(--color-primary)' }}>Limit</span>
                         )}
                       </div>
                       <div className="usage-limit-card__bar h-1 bg-slate-100 rounded-full overflow-hidden mt-4">
@@ -149,7 +149,7 @@ export const Settings = () => {
                           width: `${status.percent}%`, 
                           height: '100%',
                           transition: 'width 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                          backgroundColor: status.isReached ? '#000' : status.isWarning ? '#333' : '#000' 
+                          backgroundColor: status.isReached ? 'var(--color-primary)' : status.isWarning ? 'var(--color-primary)' : 'var(--color-primary)' 
                         }} />
                       </div>
                       <div className="mt-4 flex justify-between items-center">

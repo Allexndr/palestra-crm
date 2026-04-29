@@ -5,21 +5,21 @@
   --font-family-sans: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   --font-family-display: 'Outfit', sans-serif;
 
-  /* Palestra palette: Pure minimalism with premium accents */
-  --color-bg: #FAFAFA;
+  /* Palestra palette: Refined blue & soft whites */
+  --color-bg: #F8FAFC; /* Softer, slightly blue-ish white as requested */
   --color-bg-secondary: #FFFFFF;
   --color-surface: rgba(255, 255, 255, 0.95);
   
-  --color-text-primary: #000000;
-  --color-text-secondary: #666666;
-  --color-text-muted: #999999;
+  --color-text-primary: #0F172A; /* Slate 900 for better readability with blue */
+  --color-text-secondary: #475569; /* Slate 600 */
+  --color-text-muted: #94A3B8; /* Slate 400 */
   
-  --color-primary: #000000; /* Black for premium minimalist feel */
-  --color-primary-hover: #333333;
-  --color-primary-soft: #f0f0f0;
+  --color-primary: #3146A6; /* Restore original brand blue */
+  --color-primary-hover: #1E2E7A;
+  --color-primary-soft: #EEF2FF; /* Indigo-50 */
   
-  --color-accent: #000000;
-  --color-border: #EEEEEE;
+  --color-accent: #6366F1; /* Indigo-500 */
+  --color-border: #E2E8F0; /* Slate 200 */
   
   --color-success: #10B981;
   --color-warning: #F59E0B;
@@ -299,6 +299,10 @@ button,
 .hover\:border-primary:hover { border-color: var(--color-primary); }
 .hover\:bg-white:hover { background-color: #FFFFFF; }
 .hover\:bg-slate-50:hover { background-color: #F8FAFC; }
+.hover\:bg-primary:hover { background-color: var(--color-primary); }
+.hover\:text-primary:hover { color: var(--color-primary); }
+.border-primary { border-color: var(--color-primary); }
+.bg-primary { background-color: var(--color-primary); }
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;

@@ -91,7 +91,7 @@ export const Sidebar = () => {
                 width: '48px',
                 height: '48px',
                 borderRadius: '16px',
-                backgroundColor: isActive ? '#000' : 'transparent',
+                backgroundColor: isActive ? 'var(--color-primary)' : 'transparent',
                 color: isActive ? '#fff' : '#888',
                 transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                 textDecoration: 'none',
@@ -100,7 +100,7 @@ export const Sidebar = () => {
               className="group"
             >
               <Icon size={22} strokeWidth={2} />
-              <div className="absolute left-full ml-4 px-3 py-1.5 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-[200]">
+              <div className="absolute left-full ml-4 px-3 py-1.5 text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-[200]" style={{ backgroundColor: 'var(--color-primary)' }}>
                 {link.label}
               </div>
             </NavLink>
@@ -112,7 +112,7 @@ export const Sidebar = () => {
         {user?.role === 'admin' && (
            <button 
              onClick={() => navigate('/admin/locations')}
-             className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-black transition-colors"
+             className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-primary transition-colors"
              title="Филиалы"
            >
              <MapPin size={22} />

@@ -20,7 +20,7 @@ export const Groups = () => {
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted mt-3">Управление секциями и составом</p>
         </div>
         <Link to="/admin/groups/new">
-          <button className="px-8 h-12 bg-black text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform">
+          <button className="px-8 h-12 text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--color-primary)' }}>
             Создать группу
           </button>
         </Link>
@@ -52,7 +52,7 @@ export const Groups = () => {
               )}
 
               <div className="flex justify-between items-start mb-8">
-                <span className="text-[10px] font-black uppercase tracking-widest text-black bg-slate-100 px-3 py-1.5 rounded-lg">{group.sport}</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-slate-100 px-3 py-1.5 rounded-lg">{group.sport}</span>
               </div>
               
               <h3 className="text-lg font-black mb-6">{group.name}</h3>
@@ -72,13 +72,13 @@ export const Groups = () => {
                   <span>{studentCount} / {group.maxCapacity || 20}</span>
                 </div>
                 <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                  <div style={{ width: `${(studentCount / (group.maxCapacity || 20)) * 100}%` }} className="h-full bg-black" />
+                  <div style={{ width: `${(studentCount / (group.maxCapacity || 20)) * 100}%`, backgroundColor: 'var(--color-primary)' }} className="h-full" />
                 </div>
               </div>
 
               <button 
                 onClick={() => navigate(`/admin/groups/${group.id}`)}
-                className="w-full h-12 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-black hover:bg-slate-50 transition-colors border border-slate-100 rounded-xl"
+                className="w-full h-12 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest text-primary hover:bg-slate-50 transition-colors border border-slate-100 rounded-xl"
               >
                 Состав и настройки <ArrowRight size={14} />
               </button>

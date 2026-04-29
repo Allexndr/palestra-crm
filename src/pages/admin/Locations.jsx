@@ -30,15 +30,15 @@ export const Locations = () => {
 
       <div className="tariff-res-grid">
         {locations.map(location => (
-          <article key={location.id} className="tariff-res-card hover:border-black transition-all">
+          <article key={location.id} className="tariff-res-card hover:border-primary transition-all">
             <div className="tariff-res-card__head">
-              <div className="w-12 h-12 bg-black text-white rounded-xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 text-white rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--color-primary)' }}>
                 <MapPin size={24} />
               </div>
               {isAdmin && (
                 <div className="flex gap-1">
                   <button 
-                    className="p-2 text-slate-400 hover:text-black transition-colors rounded-lg"
+                    className="p-2 text-slate-400 hover:text-primary transition-colors rounded-lg"
                     onClick={() => navigate(`/admin/locations/${location.id}/edit`)}
                   >
                     <Edit2 size={16} />
@@ -77,7 +77,7 @@ export const Locations = () => {
               </div>
               <button 
                 onClick={() => navigate(`/admin/locations/${location.id}/edit`)}
-                className="p-2 bg-slate-50 rounded-lg hover:bg-black hover:text-white transition-all"
+                className="p-2 bg-slate-50 rounded-lg hover:bg-primary hover:text-white transition-all"
               >
                 <ArrowRight size={14} />
               </button>

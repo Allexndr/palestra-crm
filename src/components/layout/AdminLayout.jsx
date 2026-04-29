@@ -67,14 +67,14 @@ export const AdminLayout = () => {
             <div className="flex items-center gap-3 px-4 py-2 hover:bg-white rounded-full transition-all cursor-pointer">
               <div style={{ 
                 width: 32, height: 32, borderRadius: '12px', 
-                backgroundColor: '#000', 
+                backgroundColor: 'var(--color-primary)', 
                 color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', 
                 fontSize: '12px', fontWeight: '900' 
               }}>
                 {user?.name?.charAt(0) || 'A'}
               </div>
               <div className="desktop-only">
-                <p className="text-[12px] font-black text-black leading-none">{user?.name || (isAdmin ? 'Admin' : 'Coach')}</p>
+                <p className="text-[12px] font-black leading-none" style={{ color: 'var(--color-text-primary)' }}>{user?.name || (isAdmin ? 'Admin' : 'Coach')}</p>
               </div>
             </div>
           </div>

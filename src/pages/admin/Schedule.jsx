@@ -208,14 +208,14 @@ export const Schedule = () => {
           <div className="flex flex-wrap gap-8 items-center">
              <div className="flex items-center gap-4">
                 <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">Дисциплина</span>
-                <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-black cursor-pointer outline-none" value={filterSport} onChange={e => setFilterSport(e.target.value)}>
+                <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-primary cursor-pointer outline-none" value={filterSport} onChange={e => setFilterSport(e.target.value)}>
                    <option value="all">Все</option>
                    {sports.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
              </div>
              <div className="flex items-center gap-4">
                 <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">Тренер</span>
-                <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-black cursor-pointer outline-none" value={filterCoach} onChange={e => setFilterCoach(e.target.value)}>
+                <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-primary cursor-pointer outline-none" value={filterCoach} onChange={e => setFilterCoach(e.target.value)}>
                    <option value="all">Все</option>
                    {[...new Set(schedule.map(s => s.coach))].filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -236,7 +236,7 @@ export const Schedule = () => {
           {isAdmin && (
             <button 
               onClick={() => { setIsAdding(!isAdding); setEditingId(null); }} 
-              className="px-8 h-12 bg-black text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform"
+              className="px-8 h-12 text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--color-primary)' }}
             >
               Запланировать
             </button>
