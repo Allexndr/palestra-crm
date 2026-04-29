@@ -571,6 +571,7 @@ export const AdminProvider = ({ children }) => {
     subscription, updateSubscription, usage, getLimitStatus, canUseFeature, getUpgradeMessage, ensureCanCreate,
     user, login, logout,
     activeChildId, setActiveChildId,
+    isStateReady,
     resetData, fetchClubState: async () => {
       try {
         const stateResponse = await fetch('/api/app/state', { credentials: 'include' });

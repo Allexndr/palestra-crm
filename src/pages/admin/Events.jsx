@@ -159,9 +159,9 @@ export const Events = () => {
                         </button>
                       ))}
                     </div>
-                    {members.filter(m => `${m.firstName} ${m.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())).map(m => (
+                    {members.filter(m => `${m.firstName || ''} ${m.lastName || ''}`.toLowerCase().includes(searchTerm.toLowerCase())).map(m => (
                       <div key={m.id} onClick={() => toggleParticipant(m.id)} className="flex items-center justify-between p-2 hover:bg-white rounded-lg cursor-pointer transition-all border border-transparent hover:border-slate-100">
-                        <span className="text-xs font-medium">{m.firstName} {m.lastName}</span>
+                        <span className="text-xs font-medium">{m.firstName || 'Ученик'} {m.lastName || ''}</span>
                         {formData.participantIds.includes(m.id) ? <CheckCircle size={14} className="text-primary" /> : <Plus size={14} className="text-muted" />}
                       </div>
                     ))}

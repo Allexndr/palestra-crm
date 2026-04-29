@@ -6,8 +6,11 @@ import { ClubLogo } from '../ui/ClubLogo';
 
 /** Только авторизованные пользователи (любая роль). */
 export function RequireAuth() {
-  const { user } = useAdmin();
+  const { user, isStateReady } = useAdmin();
   const loc = useLocation();
+
+  if (!isStateReady) return null;
+
   if (!user) {
     return <Navigate to="/auth/login" replace state={{ from: loc.pathname }} />;
   }
@@ -121,8 +124,11 @@ export function MemberLayout() {
  * Используется как обёртка над AdminLayout (см. App.jsx).
  */
 export function AdminRoleGuard() {
-  const { user } = useAdmin();
+  const { user, isStateReady } = useAdmin();
   const loc = useLocation();
+
+  if (!isStateReady) return null;
+
   if (!user) {
     return <Navigate to="/auth/login" replace state={{ from: loc.pathname }} />;
   }
@@ -136,8 +142,11 @@ export function AdminRoleGuard() {
  * Только для Супер Админа (владельца платформы).
  */
 export function SuperAdminRoleGuard() {
-  const { user } = useAdmin();
+  const { user, isStateReady } = useAdmin();
   const loc = useLocation();
+
+  if (!isStateReady) return null;
+
   if (!user) {
     return <Navigate to="/auth/login" replace state={{ from: loc.pathname }} />;
   }
