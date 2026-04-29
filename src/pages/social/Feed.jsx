@@ -231,6 +231,8 @@ export const Feed = () => {
             </div>
           )}
         </div>
+      </section>
     </div>
-  );
+  </div>
+);
 };
