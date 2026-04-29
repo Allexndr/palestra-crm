@@ -113,11 +113,16 @@ export const Login = () => {
               <h4 className="text-sm font-bold text-slate-800">У вас еще нет клуба?</h4>
             </div>
             
-            <p className="text-xs text-secondary leading-loose">
-              Palestra — это профессиональная CRM для школ единоборств. 
-              <Link to="/auth/register" className="text-primary font-bold hover:underline mx-1">Зарегистрируйте свой клуб</Link> 
-              за 2 минуты бесплатно: Starter включает 1 филиал, 15 учеников и 3 тренера. Growth подключите позже, когда клуб вырастет.
-            </p>
+            <div className="text-xs text-secondary leading-relaxed">
+              <p className="font-bold text-slate-800 mb-2">Palestra — CRM для школ единоборств</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px 0', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <li>✅ <strong>Starter:</strong> 1 филиал, 15 учеников — <strong>Бесплатно</strong></li>
+                <li>🚀 <strong>Growth:</strong> Подключите, когда клуб вырастет</li>
+              </ul>
+              <Link to="/auth/register" className="text-primary font-bold hover:underline">
+                Зарегистрировать клуб за 2 минуты →
+              </Link>
+            </div>
 
             <div style={{ 
               marginTop: '8px', paddingTop: '20px', borderTop: '1px solid var(--color-primary-soft)',

@@ -239,6 +239,15 @@ export const RegisterClub = () => {
       <Navbar />
       <main id="main-content" tabIndex={-1} className="auth-page">
         <div className="auth-page__inner">
+          <div style={{ marginBottom: 'var(--space-8)', width: '100%', maxWidth: '480px' }} className="mobile-hidden">
+            <h2 className="h4 mb-4" style={{ fontFamily: 'var(--font-family-display)', color: 'var(--color-primary)' }}>
+              Palestra — профессиональная CRM для школ единоборств
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--color-text-secondary)' }}>
+              <p>✅ <strong>Starter:</strong> 1 филиал, 15 учеников — <strong>Бесплатно</strong></p>
+              <p>🚀 <strong>Growth:</strong> Подключите позже, когда клуб вырастет</p>
+            </div>
+          </div>
           
           <Card style={{ flex: 1, padding: 'var(--space-8)', position: 'relative' }}>
             
