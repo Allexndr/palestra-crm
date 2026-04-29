@@ -88,7 +88,7 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
       .insert({
         auth_user_id: ownerAuthUserId,
         club_id: club.id,
-        role: formData.email === 'sanmemik2000@gmail.com' ? 'superadmin' : 'admin',
+        role: 'admin', // Use admin role to avoid DB constraint violation. Superadmin status is handled via email check in app logic.
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
         phone: formData.phone,
