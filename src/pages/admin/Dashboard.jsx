@@ -138,9 +138,9 @@ export const Dashboard = () => {
             </div>
             <div className="p-0 overflow-x-auto">
               {coachSchedule.length === 0 ? (
-                <div className="text-center py-20 text-slate-300">
-                   <Calendar size={48} className="mx-auto mb-4 opacity-20" />
-                   <p className="font-bold">Нет запланированных тренировок</p>
+                <div className="text-center py-24 px-4 text-slate-400 flex flex-col items-center justify-center min-h-[250px]">
+                   <Calendar size={56} className="mx-auto mb-6 text-slate-300" />
+                   <p className="font-bold text-lg text-slate-500">Нет запланированных тренировок</p>
                 </div>
               ) : (
                 <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', minWidth: '400px', tableLayout: 'fixed' }}>
