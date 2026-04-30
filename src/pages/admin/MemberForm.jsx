@@ -320,16 +320,20 @@ export const MemberForm = () => {
                 </div>
               </Card>
 
-              <div className="p-12 bg-white/40 backdrop-blur-xl rounded-[40px] border border-white shadow-xl shadow-indigo-100/20">
-                <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
-                  <Shield size={18} /> Доступы в приложение
-                </h3>
-                <div className="admin-form-grid">
-                  <Input label="Логин" placeholder="Создается автоматически" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
-                  <Input label="Пароль" type="text" placeholder="Создается автоматически" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+              <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
+                <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
+                  <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
+                    <Shield size={18} className="text-primary" /> Доступы в приложение
+                  </h3>
                 </div>
-                <p className="text-[10px] text-slate-400 font-bold mt-8 uppercase tracking-widest">Ученик сможет войти в Palestra App по этим данным сразу после сохранения</p>
-              </div>
+                <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
+                  <div className="admin-form-grid">
+                    <Input label="Логин" placeholder="Создается автоматически" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
+                    <Input label="Пароль" type="text" placeholder="Создается автоматически" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-bold mt-12 uppercase tracking-widest border-t border-slate-100 pt-8">Ученик сможет войти в Palestra App по этим данным сразу после сохранения</p>
+                </div>
+              </Card>
             </div>
           )}
 
@@ -496,7 +500,7 @@ export const MemberForm = () => {
           )}
         </div>
 
-        <div className="mt-16 flex flex-col sm:flex-row justify-between items-center gap-8 bg-white/80 backdrop-blur-md p-8 rounded-[40px] border border-white shadow-2xl">
+        <Card className="mt-16 flex flex-col sm:flex-row justify-between items-center gap-8 border-none shadow-2xl shadow-slate-200/50 p-8" style={{ borderRadius: '40px' }}>
           <button 
             type="button" 
             onClick={() => navigate('/admin/members')} 
@@ -507,7 +511,7 @@ export const MemberForm = () => {
           <Button variant="primary" type="submit" className="gap-4 px-16 h-16 text-lg shadow-2xl shadow-primary/30 rounded-[24px] w-full sm:w-auto">
             <Save size={24} /> {isEditing ? 'Сохранить изменения' : 'Зачислить ученика в клуб'}
           </Button>
-        </div>
+        </Card>
       </form>
 
       <style>{`
