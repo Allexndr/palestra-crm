@@ -249,7 +249,7 @@ export const AdminTariffConstructor = ({
         </div>
       </section>
 
-      <section className="admin-tariff__summary">
+      <section className="admin-tariff__summary" style={{ minHeight: '400px', padding: '60px', alignItems: 'flex-start' }}>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h4 className="m-0 text-white">{calculated.plan === 'starter' ? 'Тариф: Starter (0 ₸)' : 'Тариф: Масштабирование'}</h4>
@@ -268,14 +268,16 @@ export const AdminTariffConstructor = ({
           </div>
           
           {breakdown.length > 0 && (
-            <div className="mt-8 pt-6 border-t border-white/10">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 mb-4">Состав вашего плана:</p>
-              <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <div className="mt-10 pt-8 border-t border-white/10">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-6">Состав вашего плана:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
                 {breakdown.map((item, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <div className="w-1 h-1 rounded-full bg-primary-soft"></div>
-                    <span className="text-xs font-bold text-white/70">{item.label}</span>
-                    <span className="text-[10px] font-black text-white/30">{item.price.toLocaleString('ru-RU')} ₸</span>
+                  <div key={i} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--color-primary-rgb),0.5)]"></div>
+                      <span className="text-sm font-black text-white/90 group-hover:text-white transition-colors">{item.label}</span>
+                    </div>
+                    <span className="text-xs font-black text-white/40 tabular-nums">{item.price.toLocaleString('ru-RU')} ₸</span>
                   </div>
                 ))}
               </div>
