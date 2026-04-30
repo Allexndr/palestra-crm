@@ -468,7 +468,15 @@ export const MemberForm = () => {
                   <div className="admin-form-grid">
                     <Input label="ФИО Родителя" value={formData.parentName} onChange={e => handleParentNameChange(e.target.value)} placeholder="Иванов Иван Иванович" />
                     <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.parentPhone} onChange={e => handleInputChange('parentPhone', e.target.value)} />
-                    <Input label="Заметка" value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})} placeholder="Мама / Папа / Опекун" />
+                    <div className="input-group">
+                      <label className="input-label">Кем приходится</label>
+                      <select className="input-field" style={{ height: '58px' }} value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})}>
+                        <option value="">Выберите статус</option>
+                        <option value="Мама">Мама</option>
+                        <option value="Папа">Папа</option>
+                        <option value="Опекун">Опекун</option>
+                      </select>
+                    </div>
                   </div>
 
                   {(formData.hasParent || formData.parentLogin) && (
