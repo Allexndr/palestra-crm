@@ -11,6 +11,12 @@ export const AdminLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLocOpen, setIsLocOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const currentLink = ADMIN_NAV_LINKS.find(link => 
+    link.to === location.pathname || (location.pathname.startsWith(link.to) && link.to !== '/admin')
+  );
+  const pageTitle = currentLink ? currentLink.label : 'Панель';
 
   const isImpersonating = !!sessionStorage.getItem('palestra-impersonate-club-id');
 
@@ -34,7 +40,7 @@ export const AdminLayout = () => {
       <div className={`mobile-menu-overlay ${isMenuOpen ? 'is-open' : ''}`} onClick={() => setIsMenuOpen(false)}>
         <aside className="mobile-menu-sidebar" onClick={e => e.stopPropagation()}>
           <div className="mobile-menu-header">
-            <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={40} />
+            <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={50} />
             <button className="mobile-menu-close" onClick={() => setIsMenuOpen(false)}>
               <X size={24} />
             </button>
@@ -165,14 +171,19 @@ export const AdminLayout = () => {
         )}
         
         <header className="member-desktop-header">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button className="mobile-only burger-btn" onClick={() => setIsMenuOpen(true)}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, minWidth: 0 }}>
+            <button className="mobile-only burger-btn" onClick={() => setIsMenuOpen(true)} style={{ flexShrink: 0, padding: 0, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
               <Menu size={24} />
             </button>
-            <div>
-              <p className="member-kicker">Управление клубом</p>
+            
+            <Link to="/admin" className="mobile-only" style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+               <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={42} />
+            </Link>
+
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p className="member-kicker">{clubInfo?.name || 'Palestra'}</p>
               <h1 className="desktop-only">{clubInfo?.name || 'Palestra'}</h1>
-              <h1 className="mobile-only" style={{ fontSize: '1.2rem' }}>{clubInfo?.name || 'Palestra'}</h1>
+              <h1 className="mobile-only" style={{ fontSize: '1.1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 800 }}>{pageTitle}</h1>
             </div>
           </div>
           <div className="member-header-pill desktop-only">
