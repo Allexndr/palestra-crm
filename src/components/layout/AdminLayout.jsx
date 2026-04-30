@@ -1,12 +1,15 @@
-import React from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { useAdmin } from '../../context/AdminContext';
-import { Home, Users, Calendar, Target, ShoppingBag, MessageSquare, Shield } from 'lucide-react';
+import { Menu, X, LogOut, Shield } from 'lucide-react';
+import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
+import { ClubLogo } from '../ui/ClubLogo';
 
 export const AdminLayout = () => {
-  const { user, clubInfo } = useAdmin();
-  const isAdmin = user?.role === 'admin';
+  const { user, clubInfo, logout } = useAdmin();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const isImpersonating = !!sessionStorage.getItem('palestra-impersonate-club-id');
 
@@ -15,10 +18,54 @@ export const AdminLayout = () => {
     window.location.href = '/superadmin';
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/auth/login');
+  };
+
+  const filteredLinks = ADMIN_NAV_LINKS.filter(link => link.roles.includes(user?.role || 'admin'));
+
   return (
-    <div className="member-app-shell" style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
+    <div className="member-app-shell">
       <Sidebar />
       
+      {/* Mobile Burger Menu Overlay */}
+      <div className={`mobile-menu-overlay ${isMenuOpen ? 'is-open' : ''}`} onClick={() => setIsMenuOpen(false)}>
+        <aside className="mobile-menu-sidebar" onClick={e => e.stopPropagation()}>
+          <div className="mobile-menu-header">
+            <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={40} />
+            <button className="mobile-menu-close" onClick={() => setIsMenuOpen(false)}>
+              <X size={24} />
+            </button>
+          </div>
+
+          <nav className="mobile-menu-nav">
+            {filteredLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <NavLink 
+                  key={link.to} 
+                  to={link.to}
+                  end={link.end}
+                  className={({ isActive }) =>
+                    isActive ? 'mobile-menu-link is-active' : 'mobile-menu-link'
+                  }
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Icon size={20} />
+                  <span>{link.label}</span>
+                </NavLink>
+              );
+            })}
+          </nav>
+
+          <button type="button" className="mobile-menu-logout" onClick={handleLogout}>
+            <LogOut size={20} />
+            Выйти
+          </button>
+        </aside>
+      </div>
+
       <section className="member-main-region">
         {isImpersonating && (
           <div style={{
@@ -39,9 +86,15 @@ export const AdminLayout = () => {
         )}
         
         <header className="member-desktop-header">
-          <div>
-            <p className="member-kicker">Управление клубом</p>
-            <h1 className="desktop-only">{clubInfo?.name || 'Palestra'}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button className="mobile-only burger-btn" onClick={() => setIsMenuOpen(true)}>
+              <Menu size={24} />
+            </button>
+            <div>
+              <p className="member-kicker">Управление клубом</p>
+              <h1 className="desktop-only">{clubInfo?.name || 'Palestra'}</h1>
+              <h1 className="mobile-only" style={{ fontSize: '1.2rem' }}>{clubInfo?.name || 'Palestra'}</h1>
+            </div>
           </div>
           <div className="member-header-pill desktop-only">
             <span>{user?.email || `${user?.role || 'admin'}@palestra.fit`}</span>
@@ -52,74 +105,14 @@ export const AdminLayout = () => {
           id="main-content"
           tabIndex={-1}
           className="member-page-frame"
-          style={{ paddingBottom: 'calc(5.5rem + var(--safe-area-inset-bottom))' }}
         >
-          <div className="admin-container" style={{ maxWidth: '1200px', width: '100%', margin: '0', padding: '0 var(--space-8)' }}>
+          <div className="admin-container" style={{ maxWidth: '1280px', width: '100%', margin: '0 auto', padding: '0 var(--space-8)' }}>
             <Outlet />
           </div>
         </main>
       </section>
-
-      <div className="mobile-only">
-        <BottomNavAdmin />
-      </div>
     </div>
   );
 };
 
-const BottomNavAdmin = () => {
-  const { user } = useAdmin();
-  const location = useLocation();
-  
-  const links = [
-    { to: '/admin', icon: Home, label: 'Главная', end: true, roles: ['admin', 'coach'] },
-    { to: '/admin/members', icon: Users, label: 'Ученики', roles: ['admin', 'coach'] },
-    { to: '/admin/leads', icon: Target, label: 'Лиды', roles: ['admin'] },
-    { to: '/admin/schedule', icon: Calendar, label: 'Расписание', roles: ['admin', 'coach'] },
-    { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'] },
-    { to: (user?.role === 'admin' || user?.role === 'coach') ? '/admin/feed' : '/feed', icon: MessageSquare, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'] },
-  ];
 
-  const filteredLinks = links.filter(l => l.roles.includes(user?.role || 'admin'));
-
-  return (
-    <div className="member-bottom-nav-outer" role="presentation">
-      <nav
-        aria-label="Основная навигация"
-        className="bottom-nav"
-        style={{
-          paddingBottom: 'calc(var(--space-2) + var(--safe-area-inset-bottom))',
-          minHeight: 'calc(64px + var(--safe-area-inset-bottom))'
-        }}
-      >
-        {filteredLinks.map((link) => {
-          const Icon = link.icon;
-          const active = location.pathname.startsWith(link.to) && (!link.end || location.pathname === link.to);
-          return (
-            <NavLink 
-              key={link.to} 
-              to={link.to} 
-              end={link.end}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '4px',
-                color: active ? 'var(--color-primary)' : 'var(--color-text-muted)',
-                fontSize: '10px',
-                fontWeight: active ? '700' : '500',
-                textDecoration: 'none',
-                flex: 1,
-                minHeight: '48px'
-              }}
-            >
-              <Icon size={22} strokeWidth={active ? 2.5 : 2} />
-              <span>{link.label}</span>
-            </NavLink>
-          );
-        })}
-      </nav>
-    </div>
-  );
-};

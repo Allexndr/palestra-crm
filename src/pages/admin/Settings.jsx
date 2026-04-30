@@ -14,7 +14,9 @@ export const Settings = () => {
   const { 
     members, coaches, groups, subscription, usage, getLimitStatus, updateSubscription,
     achievements, addAchievement, removeAchievement, monthlyAward, updateMonthlyAward, resetData,
-    dashboardLayout, toggleWidget, moveWidget
+    dashboardLayout, toggleWidget, moveWidget, clubInfo, setClubInfo,
+    addLocation, removeLocation, updateLocation, locations,
+    addPlan, removePlan, plans
   } = useAdmin();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('palestra-tariff');

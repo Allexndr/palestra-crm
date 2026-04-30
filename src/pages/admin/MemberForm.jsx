@@ -185,108 +185,127 @@ export const MemberForm = () => {
   const avgStats = Math.round((formData.strength + formData.speed + formData.reaction + formData.endurance + formData.technique) / 5);
 
   return (
-    <div className="animate-fade-in pb-12">
-      <div className="admin-page-header">
-        <div className="flex items-center gap-6">
-          <button onClick={() => navigate('/admin/members')} className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl border shadow-sm hover:bg-slate-50 transition-all">
-            <ArrowLeft size={20} />
+    <div className="animate-fade-in pb-20">
+      <div className="admin-page-header" style={{ marginBottom: 'var(--space-12)' }}>
+        <div className="flex items-center gap-8">
+          <button 
+            onClick={() => navigate('/admin/members')} 
+            className="w-14 h-14 flex items-center justify-center bg-white rounded-[20px] border border-slate-200 shadow-sm hover:shadow-md hover:bg-slate-50 transition-all cursor-pointer"
+          >
+            <ArrowLeft size={22} className="text-slate-600" />
           </button>
           <div>
-            <h1 className="h2 mb-1">
-              {isEditing ? 'Профиль ученика' : 'Новый атлет'}
-            </h1>
-            <p className="text-secondary font-medium">Система управления талантами Palestra</p>
+            <div className="flex items-center gap-3 mb-1">
+              <span className="px-3 py-1 bg-primary-soft text-primary text-[10px] font-black uppercase tracking-widest rounded-lg">База атлетов</span>
+              <h1 className="h2" style={{ margin: 0 }}>
+                {isEditing ? 'Профиль ученика' : 'Регистрация нового атлета'}
+              </h1>
+            </div>
+            <p className="text-secondary font-medium opacity-70">Заполните данные для зачисления в Palestra Academy</p>
           </div>
         </div>
       </div>
 
-      <div className="flex gap-2 mb-10 bg-slate-100/50 p-1.5 rounded-[22px] w-fit border border-slate-200/50">
+      <div className="flex gap-3 mb-12 bg-white/60 backdrop-blur-md p-2 rounded-[24px] w-fit border border-white shadow-sm overflow-x-auto max-w-full scrollbar-hide">
         {tabs.map(tab => (
           <button
             key={tab.id}
+            type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-5 py-2.5 rounded-[18px] text-[13px] font-black whitespace-nowrap transition-all border-none cursor-pointer flex items-center gap-2 ${
+            className={`px-8 py-3.5 rounded-[18px] text-[13px] font-black whitespace-nowrap transition-all border-none cursor-pointer flex items-center gap-3 ${
               activeTab === tab.id
-                ? 'bg-white text-primary shadow-sm ring-1 ring-slate-200'
-                : 'text-slate-500 hover:text-slate-800'
+                ? 'bg-primary text-white shadow-xl shadow-indigo-100 scale-[1.02]'
+                : 'text-slate-500 hover:text-slate-800 hover:bg-white/80'
             }`}
           >
-            <span className="text-lg leading-none">{tab.icon}</span>
-            <span className="uppercase tracking-wider">{tab.label}</span>
+            <span className="text-xl leading-none">{tab.icon}</span>
+            <span className="uppercase tracking-widest">{tab.label}</span>
           </button>
         ))}
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card style={{ padding: '0', overflow: 'hidden', border: 'none', boxShadow: 'var(--shadow-lg)' }}>
-          <div className="p-10">
-            {activeTab === 'general' && (
-              <div className="flex flex-col gap-12 animate-fade-in">
-                {/* Personal Info */}
-                <div>
-                  <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-3">
-                    <span className="w-8 h-[2px] bg-primary"></span> Личные данные
+        <div className="flex flex-col gap-10">
+          {activeTab === 'general' && (
+            <div className="flex flex-col gap-8 animate-fade-in">
+              <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
+                <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
+                  <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
+                    <div className="w-10 h-[3px] bg-primary rounded-full"></div> Личные данные и филиал
                   </h3>
-                  <div className="admin-form-grid">
-                    <Input label="Имя" required minLength={2} value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
-                    <Input label="Фамилия" required minLength={2} value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
+                </div>
+                <div className="p-12">
+                  <div className="admin-form-grid" style={{ gap: 'var(--space-10)' }}>
+                    <Input label="Имя" required minLength={2} placeholder="Имя атлета" value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
+                    <Input label="Фамилия" required minLength={2} placeholder="Фамилия атлета" value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
                     <Input label="Дата рождения" type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
                     <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
+                    
                     <div className="input-group">
                       <label className="input-label">Филиал / Клуб</label>
-                      <select className="input-field" value={formData.locationId} onChange={e => handleInputChange('locationId', e.target.value)}>
+                      <select className="input-field" style={{ height: '58px' }} value={formData.locationId} onChange={e => handleInputChange('locationId', e.target.value)}>
                         {locations.length === 0 && <option value="1">Основной зал</option>}
                         {locations.map(loc => (
                           <option key={loc.id} value={loc.id}>{loc.name}</option>
                         ))}
                       </select>
                     </div>
+
                     <div className="input-group">
-                      <label className="input-label">Фото атлета</label>
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
-                           {formData.avatar ? <img src={formData.avatar} className="w-full h-full object-cover" /> : <Camera size={20} className="text-slate-400" />}
+                      <label className="input-label">Фото профиля</label>
+                      <div className="flex items-center gap-6 p-2 pr-6 bg-slate-50 rounded-[22px] border border-slate-100">
+                        <div className="w-14 h-14 rounded-[18px] bg-white flex items-center justify-center overflow-hidden border border-slate-200 shadow-sm shrink-0">
+                           {formData.avatar ? <img src={formData.avatar} className="w-full h-full object-cover" /> : <Camera size={22} className="text-slate-300" />}
                         </div>
-                        <input className="hidden" id="avatar-input" type="file" accept="image/*" onChange={handleAvatarUpload} />
-                        <label htmlFor="avatar-input" className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl cursor-pointer transition-all">
-                          {isUploadingAvatar ? 'Загрузка...' : 'Выбрать файл'}
-                        </label>
+                        <div className="flex-1">
+                          <input className="hidden" id="avatar-input" type="file" accept="image/*" onChange={handleAvatarUpload} />
+                          <label htmlFor="avatar-input" className="text-xs font-black text-primary hover:underline cursor-pointer">
+                            {isUploadingAvatar ? 'Загрузка...' : 'Загрузить новое фото'}
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="mt-8">
+                  
+                  <div className="mt-12">
                     <div className="input-group">
                       <label className="input-label text-rose-600 font-black">Медицинские особенности / Аллергии</label>
                       <textarea 
-                        className="input-field min-h-[80px] border-rose-100 focus:border-rose-300" 
+                        className="input-field min-h-[100px] border-rose-100 focus:border-rose-300 bg-rose-50/10" 
+                        style={{ padding: '20px' }}
                         value={formData.medicalNotes} 
                         onChange={e => setFormData({...formData, medicalNotes: e.target.value})}
-                        placeholder="Например: аллергия на цитрусовые, проблемы с коленями, астма..."
+                        placeholder="Например: аллергия на цитрусовые, проблемы с коленями, астма... Если особенностей нет, оставьте поле пустым."
                       />
                     </div>
                   </div>
                 </div>
+              </Card>
 
-                {/* Athletic Info */}
-                <div>
-                  <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-3">
-                    <span className="w-8 h-[2px] bg-primary"></span> Спортивный профиль
+              <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
+                <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
+                  <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
+                    <div className="w-10 h-[3px] bg-primary rounded-full"></div> Спортивный профиль
                   </h3>
-                  <div className="admin-form-grid admin-form-grid--compact">
-                    <Input label="Вес (кг)" type="number" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
-                    <Input label="Рост (см)" type="number" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
+                </div>
+                <div className="p-12">
+                  <div className="admin-form-grid admin-form-grid--compact" style={{ gap: 'var(--space-10)' }}>
+                    <Input label="Вес (кг)" type="number" placeholder="0" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
+                    <Input label="Рост (см)" type="number" placeholder="0" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
+                    
                     <div className="input-group">
-                      <label className="input-label">Уровень</label>
-                      <select className="input-field" value={formData.skillLevel} onChange={e => setFormData({...formData, skillLevel: e.target.value})}>
+                      <label className="input-label">Уровень мастерства</label>
+                      <select className="input-field" style={{ height: '58px' }} value={formData.skillLevel} onChange={e => setFormData({...formData, skillLevel: e.target.value})}>
                         <option>Начинающий</option>
                         <option>Средний</option>
                         <option>Продвинутый</option>
-                        <option>Профи</option>
+                        <option>Профессионал</option>
                       </select>
                     </div>
+
                     <div className="input-group">
                       <label className="input-label">Пояс / Ранг</label>
-                      <select className="input-field" value={formData.beltColor} onChange={e => setFormData({...formData, beltColor: e.target.value})}>
+                      <select className="input-field" style={{ height: '58px' }} value={formData.beltColor} onChange={e => setFormData({...formData, beltColor: e.target.value})}>
                         <option value="Отсутствует">Отсутствует</option>
                         <option>Белый</option>
                         <option>Синий</option>
@@ -297,191 +316,194 @@ export const MemberForm = () => {
                     </div>
                   </div>
                 </div>
+              </Card>
 
-                {/* Credentials */}
-                <div className="p-8 bg-indigo-50/50 rounded-3xl border border-indigo-100 shadow-inner">
-                  <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                    <Shield size={14} /> Доступы ученика
-                  </h3>
-                  <div className="admin-form-grid">
-                    <Input label="Логин" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
-                    <Input label="Пароль" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
-                  </div>
+              <div className="p-12 bg-white/40 backdrop-blur-xl rounded-[40px] border border-white shadow-xl shadow-indigo-100/20">
+                <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
+                  <Shield size={18} /> Доступы в приложение
+                </h3>
+                <div className="admin-form-grid">
+                  <Input label="Логин" placeholder="Создается автоматически" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
+                  <Input label="Пароль" type="text" placeholder="Создается автоматически" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                 </div>
+                <p className="text-[10px] text-slate-400 font-bold mt-8 uppercase tracking-widest">Ученик сможет войти в Palestra App по этим данным сразу после сохранения</p>
               </div>
-            )}
+            </div>
+          )}
 
-            {activeTab === 'physical' && (
-              <div className="animate-fade-in">
-                 <div className="flex flex-col lg:flex-row gap-12">
-                    <div className="flex-1">
-                      <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
-                        <span className="w-8 h-[2px] bg-primary"></span> Характеристики атлета
-                      </h3>
-                      <div className="flex flex-col gap-10">
-                        {[
-                          { id: 'strength', label: 'Сила', icon: '💪' },
-                          { id: 'speed', label: 'Скорость', icon: '⚡' },
-                          { id: 'reaction', label: 'Реакция', icon: '👁️' },
-                          { id: 'endurance', label: 'Выносливость', icon: '🫁' },
-                          { id: 'technique', label: 'Техника', icon: '🥋' }
-                        ].map(stat => (
-                          <div key={stat.id} className="flex flex-col gap-4">
-                            <div className="flex justify-between items-center">
-                              <label className="text-sm font-black flex items-center gap-3 uppercase tracking-wider text-slate-700">
-                                <span className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-xl shadow-sm">{stat.icon}</span> 
-                                {stat.label}
-                              </label>
-                              <div className="flex items-center gap-3">
-                                <input 
-                                  type="number" 
-                                  className="w-16 h-10 text-center font-black bg-white border border-slate-200 rounded-xl outline-none focus:border-primary focus:ring-4 focus:ring-primary-soft transition-all"
-                                  value={formData[stat.id]} 
-                                  onChange={e => setFormData({...formData, [stat.id]: Math.min(100, Math.max(1, parseInt(e.target.value) || 1))})}
-                                />
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">/ 100</span>
-                              </div>
+          {activeTab === 'physical' && (
+            <div className="animate-fade-in flex flex-col lg:flex-row gap-10">
+              <Card className="flex-1 border-none shadow-2xl shadow-slate-200/50 p-12" style={{ borderRadius: '40px' }}>
+                <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-14 flex items-center gap-4">
+                  <div className="w-10 h-[3px] bg-primary rounded-full"></div> RPG Характеристики (1-100)
+                </h3>
+                <div className="flex flex-col gap-12">
+                  {[
+                    { id: 'strength', label: 'Сила', icon: '💪', color: '#F87171' },
+                    { id: 'speed', label: 'Скорость', icon: '⚡', color: '#FBBF24' },
+                    { id: 'reaction', label: 'Реакция', icon: '👁️', color: '#34D399' },
+                    { id: 'endurance', label: 'Выносливость', icon: '🫁', color: '#60A5FA' },
+                    { id: 'technique', label: 'Техника', icon: '🥋', color: '#818CF8' }
+                  ].map(stat => (
+                    <div key={stat.id} className="flex flex-col gap-5">
+                      <div className="flex justify-between items-center">
+                        <label className="text-sm font-black flex items-center gap-4 uppercase tracking-wider text-slate-700">
+                          <span className="w-12 h-12 bg-slate-50 rounded-[18px] flex items-center justify-center text-2xl shadow-sm border border-slate-100">{stat.icon}</span> 
+                          {stat.label}
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <input 
+                            type="number" 
+                            className="w-20 h-12 text-center font-black bg-white border border-slate-200 rounded-[18px] outline-none focus:border-primary focus:ring-4 focus:ring-primary-soft transition-all text-lg shadow-sm"
+                            value={formData[stat.id]} 
+                            onChange={e => setFormData({...formData, [stat.id]: Math.min(100, Math.max(1, parseInt(e.target.value) || 1))})}
+                          />
+                        </div>
+                      </div>
+                      <input 
+                        type="range" 
+                        min="1" max="100" 
+                        value={formData[stat.id]} 
+                        onChange={e => setFormData({...formData, [stat.id]: parseInt(e.target.value)})}
+                        style={{ accentColor: stat.color }}
+                        className="w-full h-2.5 bg-slate-100 rounded-full appearance-none cursor-pointer"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+              
+              <div className="lg:w-96 flex flex-col gap-8">
+                 <div className="p-10 bg-slate-950 rounded-[44px] text-white shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-[-40px] right-[-40px] opacity-10 group-hover:scale-110 transition-transform duration-700"><Zap size={200} fill="white" /></div>
+                    <div className="relative z-10">
+                      <p className="text-[10px] font-black uppercase tracking-[0.4em] mb-4 opacity-50">Global Power Score</p>
+                      <div className="text-7xl font-black mb-8 tracking-tighter flex items-end gap-2">
+                        {avgStats} <span className="text-2xl opacity-40 mb-3">%</span>
+                      </div>
+                      
+                      <div className="flex flex-col gap-6">
+                         <div>
+                            <div className="flex justify-between items-center text-xs mb-3">
+                               <span className="opacity-60 uppercase tracking-widest font-bold">Physical Base</span>
+                               <span className="font-black text-amber-400">{Math.round((formData.strength + formData.speed + formData.endurance) / 3)}%</span>
                             </div>
-                            <input 
-                              type="range" 
-                              min="1" max="100" 
-                              value={formData[stat.id]} 
-                              onChange={e => setFormData({...formData, [stat.id]: parseInt(e.target.value)})}
-                              className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-primary"
-                            />
-                          </div>
-                        ))}
+                            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                               <div className="h-full bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.5)] transition-all duration-500" style={{ width: `${(formData.strength + formData.speed + formData.endurance) / 3}%` }}></div>
+                            </div>
+                         </div>
+                         <div>
+                            <div className="flex justify-between items-center text-xs mb-3">
+                               <span className="opacity-60 uppercase tracking-widest font-bold">Mental & Technical</span>
+                               <span className="font-black text-indigo-400">{Math.round((formData.reaction + formData.technique) / 2)}%</span>
+                            </div>
+                            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                               <div className="h-full bg-indigo-400 shadow-[0_0_12px_rgba(129,140,248,0.5)] transition-all duration-500" style={{ width: `${(formData.reaction + formData.technique) / 2}%` }}></div>
+                            </div>
+                         </div>
                       </div>
                     </div>
-                    
-                    <div className="lg:w-80 flex flex-col gap-6">
-                       <div className="p-8 bg-slate-900 rounded-[32px] text-white shadow-xl relative overflow-hidden">
-                          <div className="absolute top-[-20px] right-[-20px] opacity-10"><Zap size={120} fill="white" /></div>
-                          <p className="text-[10px] font-black uppercase tracking-[0.3em] mb-2 opacity-60">Общий уровень</p>
-                          <div className="text-5xl font-black mb-6 tracking-tighter">{avgStats}%</div>
-                          
-                          <div className="flex flex-col gap-3">
-                             <div className="flex justify-between items-center text-xs">
-                                <span className="opacity-60">Физика</span>
-                                <span className="font-bold">{Math.round((formData.strength + formData.speed + formData.endurance) / 3)}%</span>
-                             </div>
-                             <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                                <div className="h-full bg-primary-soft" style={{ width: `${(formData.strength + formData.speed + formData.endurance) / 3}%` }}></div>
-                             </div>
-                             <div className="flex justify-between items-center text-xs mt-2">
-                                <span className="opacity-60">Техника и IQ</span>
-                                <span className="font-bold">{Math.round((formData.reaction + formData.technique) / 2)}%</span>
-                             </div>
-                             <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                                <div className="h-full bg-emerald-400" style={{ width: `${(formData.reaction + formData.technique) / 2}%` }}></div>
-                             </div>
-                          </div>
-                       </div>
-                       
-                       <div className="p-6 bg-amber-50 rounded-3xl border border-amber-100">
-                          <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-3 flex items-center gap-2">
-                            <Star size={14} fill="currentColor" /> Совет тренера
-                          </p>
-                          <p className="text-xs text-amber-800 font-medium leading-relaxed">
-                            {avgStats < 40 ? 'Ученик только начинает путь. Сосредоточьтесь на базовой выносливости и технике.' : 
-                             avgStats < 70 ? 'Хороший средний уровень. Время добавлять интенсивность и спарринги.' : 
-                             'Элитный уровень. Подготовка к соревнованиям и работа над нюансами.'}
-                          </p>
-                       </div>
-                    </div>
+                 </div>
+                 
+                 <div className="p-8 bg-white border border-slate-200 rounded-[40px] shadow-sm">
+                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 flex items-center gap-3">
+                      <Star size={16} fill="var(--color-primary)" fillOpacity={0.1} /> Анализ потенциала
+                    </p>
+                    <p className="text-sm text-slate-600 font-bold leading-relaxed">
+                      {avgStats < 40 ? 'Ученик на стадии «Белого листа». Требуется интенсивная база ОФП и дисциплина.' : 
+                       avgStats < 70 ? 'Стабильный атлет. Рекомендуется участие в турнирах для повышения стрессоустойчивости.' : 
+                       'Потенциальный чемпион. Индивидуальный план подготовки к профессиональным лигам.'}
+                    </p>
                  </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {activeTab === 'finances' && (
-              <div className="flex flex-col gap-10 animate-fade-in">
-                <div>
-                  <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-10 flex items-center gap-3">
-                    <span className="w-8 h-[2px] bg-primary"></span> Настройки абонемента
-                  </h3>
-                  <div className="admin-form-grid">
-                    <div className="input-group">
-                      <label className="input-label">Тарифный план</label>
-                      <select className="input-field" value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})}>
-                        <option value="">Не выбран</option>
-                        {plans.map(p => (
-                          <option key={p.id} value={p.name}>{p.name} ({p.price.toLocaleString()} ₸)</option>
-                        ))}
-                      </select>
-                    </div>
-                      <Input 
-                        label="Стоимость к оплате (₸)" isCurrency
-                        value={formData.paidAmount} onChange={e => setFormData({...formData, paidAmount: e.target.value})} 
-                      />
-
-                    <Input 
-                      label="Депозитный баланс (₸)" isCurrency
-                      value={formData.balance} onChange={e => setFormData({...formData, balance: e.target.value})} 
-                    />
-                    <Input 
-                      label="Действует до" type="date"
-                      value={formData.subscriptionEndDate} onChange={e => setFormData({...formData, subscriptionEndDate: e.target.value})} 
-                    />
-                  </div>
-                  <div className="mt-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
-                    <p className="text-xs text-slate-500 font-medium">
-                      Система автоматически подставит цену из шаблона тарифа. Вы можете изменить её вручную, если предоставляете персональную скидку ученику.
-                    </p>
-                  </div>
+          {activeTab === 'finances' && (
+            <Card className="animate-fade-in border-none shadow-2xl shadow-slate-200/50 p-12" style={{ borderRadius: '40px' }}>
+              <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-12 flex items-center gap-4">
+                <div className="w-10 h-[3px] bg-primary rounded-full"></div> Финансовые настройки
+              </h3>
+              <div className="admin-form-grid" style={{ gap: 'var(--space-10)' }}>
+                <div className="input-group">
+                  <label className="input-label">Выбор тарифа</label>
+                  <select className="input-field" style={{ height: '58px' }} value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})}>
+                    <option value="">Не выбран</option>
+                    {plans.map(p => (
+                      <option key={p.id} value={p.name}>{p.name} ({p.price.toLocaleString()} ₸)</option>
+                    ))}
+                  </select>
                 </div>
+                <Input label="К оплате сейчас (₸)" isCurrency value={formData.paidAmount} onChange={e => setFormData({...formData, paidAmount: e.target.value})} />
+                <Input label="Баланс депозита (₸)" isCurrency value={formData.balance} onChange={e => setFormData({...formData, balance: e.target.value})} />
+                <Input label="Абонемент до" type="date" value={formData.subscriptionEndDate} onChange={e => setFormData({...formData, subscriptionEndDate: e.target.value})} />
               </div>
-            )}
+              <div className="mt-12 p-8 bg-slate-50 rounded-[28px] border border-slate-100 flex gap-5 items-start">
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0">💳</div>
+                <p className="text-xs text-slate-500 font-bold leading-relaxed">
+                  При выборе тарифа сумма подставится автоматически. Депозит можно использовать для покупки товаров в магазине клуба или оплаты доп. тренировок.
+                </p>
+              </div>
+            </Card>
+          )}
 
-            {activeTab === 'parent' && (
-              <div className="flex flex-col gap-10 animate-fade-in">
-                <div>
-                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10 border-b pb-8">
-                     <div>
-                       <h3 className="h4 mb-1">Представитель ученика</h3>
-                       <p className="text-sm text-secondary font-medium">Данные родителя для связи и доступа в личный кабинет</p>
-                     </div>
-                     {!formData.parentLogin && (
-                       <Button type="button" variant="secondary" className="gap-2" onClick={handleCreateParent}>
-                         <Plus size={18} /> Создать кабинет родителя
-                       </Button>
-                     )}
+          {activeTab === 'parent' && (
+            <div className="flex flex-col gap-10 animate-fade-in">
+              <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
+                 <div className="p-10 border-b border-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                   <div>
+                     <h3 className="h4 mb-1">Представитель (Родитель)</h3>
+                     <p className="text-xs text-secondary font-black uppercase tracking-widest opacity-60">Для атлетов до 18 лет</p>
                    </div>
-                  
-                  <div className="admin-form-grid">
+                   {!formData.parentLogin && (
+                     <Button type="button" variant="secondary" className="gap-3 h-12 px-8 rounded-2xl shadow-sm border-slate-200" onClick={handleCreateParent}>
+                       <Plus size={20} /> Создать доступ родителю
+                     </Button>
+                   )}
+                 </div>
+                
+                <div className="p-12">
+                  <div className="admin-form-grid" style={{ gap: 'var(--space-10)' }}>
                     <Input label="ФИО Родителя" value={formData.parentName} onChange={e => handleParentNameChange(e.target.value)} placeholder="Иванов Иван Иванович" />
-                    <Input label="Телефон родителя" type="tel" placeholder="+7 (777) 000 00 00" value={formData.parentPhone} onChange={e => handleInputChange('parentPhone', e.target.value)} />
-                    <Input label="Дополнительные контакты / Заметка" value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})} placeholder="Мама / Бабушка" />
+                    <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.parentPhone} onChange={e => handleInputChange('parentPhone', e.target.value)} />
+                    <Input label="Заметка" value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})} placeholder="Мама / Папа / Опекун" />
                   </div>
 
                   {(formData.hasParent || formData.parentLogin) && (
-                    <div className="mt-12 p-8 bg-emerald-50 rounded-[32px] border border-emerald-100 animate-up">
-                      <h4 className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
-                        <Shield size={16} /> Кабинет родителя активен
+                    <div className="mt-12 p-10 bg-emerald-50/50 rounded-[36px] border border-emerald-100 animate-up">
+                      <h4 className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.4em] mb-10 flex items-center gap-3">
+                        <Shield size={18} /> Кабинет родителя активирован
                       </h4>
                       <div className="admin-form-grid">
-                        <Input label="Логин родителя" value={formData.parentLogin} onChange={e => setFormData({...formData, parentLogin: e.target.value})} />
-                        <Input label="Пароль родителя" value={formData.parentPassword} onChange={e => setFormData({...formData, parentPassword: e.target.value})} />
+                        <Input label="Логин (Email)" value={formData.parentLogin} onChange={e => setFormData({...formData, parentLogin: e.target.value})} />
+                        <Input label="Пароль" value={formData.parentPassword} onChange={e => setFormData({...formData, parentPassword: e.target.value})} />
                       </div>
-                      <p className="text-[10px] text-emerald-600 font-bold mt-6 uppercase tracking-wider">Родитель сможет войти в приложение и видеть успехи своего ребенка</p>
                     </div>
                   )}
                 </div>
-              </div>
-            )}
-          </div>
+              </Card>
+            </div>
+          )}
+        </div>
 
-          <div className="px-10 py-8 bg-slate-50 border-t flex justify-between items-center">
-            <button type="button" onClick={() => navigate('/admin/members')} className="text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors border-none bg-transparent cursor-pointer">
-              Отмена
-            </button>
-            <Button variant="primary" type="submit" className="gap-3 px-12 h-14 shadow-lg shadow-primary/20">
-              <Save size={20} /> {isEditing ? 'Обновить анкету' : 'Зачислить в клуб'}
-            </Button>
-          </div>
-        </Card>
+        <div className="mt-16 flex flex-col sm:flex-row justify-between items-center gap-8 bg-white/80 backdrop-blur-md p-8 rounded-[40px] border border-white shadow-2xl">
+          <button 
+            type="button" 
+            onClick={() => navigate('/admin/members')} 
+            className="text-sm font-black text-slate-400 hover:text-rose-600 transition-colors border-none bg-transparent cursor-pointer uppercase tracking-widest px-6"
+          >
+            Отменить и выйти
+          </button>
+          <Button variant="primary" type="submit" className="gap-4 px-16 h-16 text-lg shadow-2xl shadow-primary/30 rounded-[24px] w-full sm:w-auto">
+            <Save size={24} /> {isEditing ? 'Сохранить изменения' : 'Зачислить атлета в клуб'}
+          </Button>
+        </div>
       </form>
 
       <style>{`
+        .admin-container {
+          padding-top: var(--space-8);
+        }
         input[type=range] {
           -webkit-appearance: none;
           background: #f1f5f9;
@@ -498,7 +520,15 @@ export const MemberForm = () => {
           border: 4px solid white;
           box-shadow: 0 4px 12px rgba(49, 70, 166, 0.25);
         }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       `}</style>
     </div>
   );
+};
 };

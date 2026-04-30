@@ -42,11 +42,11 @@ export const League = () => {
     );
   }
 
-  const currentLeague = leagues.find(l => l.id === selectedLeagueId);
+  const currentLeague = leagues.find(l => l.id === selectedLeagueId) || null;
   
   const handleCreateLeague = (e) => {
     e.preventDefault();
-    if (isEditing) {
+    if (isEditing && selectedLeagueId !== 'all') {
       updateLeague(selectedLeagueId, newLeague);
       setIsEditing(false);
     } else {
@@ -57,7 +57,15 @@ export const League = () => {
   };
 
   const handleEditLeague = (league) => {
-    setNewLeague(league);
+    if (!league) return;
+    setNewLeague({
+      name: league.name || '',
+      sport: league.sport || sports[0],
+      startDate: league.startDate || '',
+      endDate: league.endDate || '',
+      participantIds: league.participantIds || [],
+      groupIds: league.groupIds || []
+    });
     setIsEditing(true);
     setIsAdding(true);
   };

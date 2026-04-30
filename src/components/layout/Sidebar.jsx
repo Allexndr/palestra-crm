@@ -23,6 +23,8 @@ import {
 import { useAdmin } from '../../context/AdminContext';
 import { ClubLogo } from '../ui/ClubLogo';
 
+import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
+
 export const Sidebar = () => {
   const { user, logout, clubInfo } = useAdmin();
   const navigate = useNavigate();
@@ -32,27 +34,7 @@ export const Sidebar = () => {
     navigate('/auth/login');
   };
 
-  // Filter links based on role
-  const allLinks = [
-    { to: '/admin', icon: LayoutDashboard, label: 'Дашборд', end: true, roles: ['admin', 'coach'] },
-    { to: '/admin/members', icon: UserCircle, label: 'Ученики', roles: ['admin', 'coach'] },
-    { to: '/admin/groups', icon: Network, label: 'Группы', roles: ['admin', 'coach'] },
-    { to: '/admin/quests', icon: Zap, label: 'Квесты', roles: ['admin', 'coach'] },
-    { to: '/admin/coaches', icon: ShieldCheck, label: 'Тренеры', roles: ['admin'] },
-    { to: '/admin/leads', icon: Target, label: 'Лиды', roles: ['admin'] },
-    { to: '/admin/schedule', icon: Calendar, label: 'Расписание', roles: ['admin', 'coach'] },
-    { to: '/admin/events', icon: Clock, label: 'События', roles: ['admin', 'coach'] },
-    { to: '/admin/league', icon: Trophy, label: 'Лига', roles: ['admin', 'coach'] },
-    { to: '/admin/locations', icon: MapPin, label: 'Филиалы', roles: ['admin'] },
-    { to: '/admin/billing', icon: Wallet, label: 'Финансы', roles: ['admin'] },
-    { to: '/admin/payroll', icon: CreditCard, label: 'Зарплаты', roles: ['admin'] },
-    { to: '/admin/chats', icon: MessageSquare, label: 'Чаты', roles: ['admin', 'coach'] },
-    { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'] },
-    { to: (user?.role === 'admin' || user?.role === 'coach') ? '/admin/feed' : '/feed', icon: LayoutList, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'] },
-    { to: '/admin/settings', icon: Settings, label: 'Настройки', roles: ['admin'] },
-  ];
-
-  const filteredLinks = allLinks.filter(link => link.roles.includes(user?.role || 'admin'));
+  const filteredLinks = ADMIN_NAV_LINKS.filter(link => link.roles.includes(user?.role || 'admin'));
   const roleLabel = user?.role === 'admin' ? 'Администратор' : 'Тренер';
 
   return (
