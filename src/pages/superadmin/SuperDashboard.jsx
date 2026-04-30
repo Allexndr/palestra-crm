@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Crown, LogOut, Users, TrendingUp, Building2, Activity,
-  ChevronRight, Search, RefreshCw, DollarSign, UserCheck,
-  CalendarDays, Target, Circle, MapPin, Mail
+  ChevronRight, RefreshCw, DollarSign, UserCheck,
+  CalendarDays, Target, Circle, MapPin, Mail, Plus, Trash2, Edit2, ExternalLink
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 
@@ -39,8 +39,10 @@ export const SuperDashboard = () => {
   const [filtered, setFiltered] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [search, setSearch] = useState('');
-  const { logout } = useAdmin();
+  const [view, setView] = useState('clubs');
+  const [showAddPartner, setShowAddPartner] = useState(false);
+  const [editingPartner, setEditingPartner] = useState(null);
+  const { logout, partners, addPartner, updatePartner, removePartner } = useAdmin();
   const navigate = useNavigate();
 
   const load = async () => {
@@ -125,6 +127,34 @@ export const SuperDashboard = () => {
           </p>
         </div>
 
+        {/* Tab Switcher */}
+        <div style={{ display: 'flex', gap: 24, marginBottom: 32, borderBottom: '1px solid #e2e8f0' }}>
+          <button 
+            onClick={() => setView('clubs')}
+            style={{ 
+              padding: '12px 4px', fontSize: 14, fontWeight: 700, 
+              color: view === 'clubs' ? '#3146A6' : '#94a3b8',
+              borderBottom: `2px solid ${view === 'clubs' ? '#3146A6' : 'transparent'}`,
+              background: 'none', border: 'none', cursor: 'pointer', outline: 'none'
+            }}
+          >
+            Клубы
+          </button>
+          <button 
+            onClick={() => setView('partners')}
+            style={{ 
+              padding: '12px 4px', fontSize: 14, fontWeight: 700, 
+              color: view === 'partners' ? '#3146A6' : '#94a3b8',
+              borderBottom: `2px solid ${view === 'partners' ? '#3146A6' : 'transparent'}`,
+              background: 'none', border: 'none', cursor: 'pointer', outline: 'none'
+            }}
+          >
+            С нами работают (Лендинг)
+          </button>
+        </div>
+
+        {view === 'clubs' ? (
+          <>
         {/* KPI Row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 40 }}>
           <StatBox label="Всего клубов" value={clubs.length} sub="зарегистрировано" />
@@ -136,13 +166,12 @@ export const SuperDashboard = () => {
         {/* Search + Refresh */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 24, alignItems: 'center' }}>
           <div style={{ position: 'relative', flex: 1, maxWidth: 360 }}>
-            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Поиск по клубу, городу, email..."
               style={{
-                width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e2e8f0',
+                width: '100%', padding: '10px 12px', border: '1px solid #e2e8f0',
                 borderRadius: 10, fontSize: 14, outline: 'none', background: 'white',
                 boxSizing: 'border-box',
               }}
@@ -178,7 +207,6 @@ export const SuperDashboard = () => {
                 boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
                 display: 'flex', flexDirection: 'column', gap: 16,
               }}>
-                {/* Club header */}
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                     <div style={{
@@ -202,7 +230,6 @@ export const SuperDashboard = () => {
                   <Badge active={club.isActive} />
                 </div>
 
-                {/* Stats grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
                   {[
                     { icon: Users, label: 'Учеников', val: club.stats?.studentsCount || 0 },
@@ -222,7 +249,6 @@ export const SuperDashboard = () => {
                   ))}
                 </div>
 
-                {/* Tariff + email */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid #f1f5f9' }}>
                   <div>
                     <span style={{
@@ -245,7 +271,6 @@ export const SuperDashboard = () => {
                   Активность: {fmtDate(club.lastActivity)} · Создан: {fmtDate(club.created_at)}
                 </p>
 
-                {/* Actions */}
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Link
                     to={`/superadmin/club/${club.id}`}
@@ -276,7 +301,102 @@ export const SuperDashboard = () => {
             ))}
           </div>
         )}
+        </>
+        ) : (
+          <div className="animate-fade-in">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>Управление партнерами</h2>
+              <button 
+                onClick={() => setShowAddPartner(true)}
+                style={{ 
+                  display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
+                  background: '#3146A6', color: 'white', border: 'none', borderRadius: 10,
+                  fontWeight: 700, cursor: 'pointer'
+                }}
+              >
+                <Plus size={18} /> Добавить логотип
+              </button>
+            </div>
+
+            {(showAddPartner || editingPartner) && (
+              <PartnerForm 
+                initialData={editingPartner}
+                onCancel={() => { setShowAddPartner(false); setEditingPartner(null); }}
+                onSubmit={(data) => {
+                  if (editingPartner) {
+                    updatePartner(editingPartner.id, data);
+                  } else {
+                    addPartner(data);
+                  }
+                  setShowAddPartner(false);
+                  setEditingPartner(null);
+                }}
+              />
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+              {partners.map(p => (
+                <div key={p.id} style={{ background: 'white', padding: 20, borderRadius: 16, border: '1px solid #f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 48, height: 48, background: '#f8fafc', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                      {p.logoUrl ? <img src={p.logoUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <Building2 size={24} color="#94a3b8" />}
+                    </div>
+                    <div>
+                      <p style={{ margin: 0, fontWeight: 800, fontSize: 14 }}>{p.name}</p>
+                      <a href={p.link} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: '#3146A6', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        {p.link?.replace(/^https?:\/\//, '')?.substring(0, 20)}... <ExternalLink size={10} />
+                      </a>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => setEditingPartner(p)} style={{ padding: 8, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, color: '#475569', cursor: 'pointer' }}><Edit2 size={14} /></button>
+                    <button onClick={() => removePartner(p.id)} style={{ padding: 8, background: '#fef2f2', border: '1px solid #fee2e2', borderRadius: 8, color: '#ef4444', cursor: 'pointer' }}><Trash2 size={14} /></button>
+                  </div>
+                </div>
+              ))}
+              {partners.length === 0 && (
+                <div style={{ gridColumn: '1/-1', padding: '60px', textAlign: 'center', color: '#94a3b8', background: 'white', borderRadius: 16, border: '2px dashed #e2e8f0' }}>
+                  <Building2 size={40} style={{ margin: '0 auto 12px', display: 'block' }} />
+                  <p style={{ fontWeight: 600 }}>Список партнеров пуст</p>
+                  <p style={{ fontSize: 13 }}>Добавьте первый клуб для отображения на лендинге</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </main>
+    </div>
+  );
+};
+
+const PartnerForm = ({ onSubmit, onCancel, initialData }) => {
+  const [name, setName] = useState(initialData?.name || '');
+  const [logoUrl, setLogoUrl] = useState(initialData?.logoUrl || '');
+  const [link, setLink] = useState(initialData?.link || '');
+
+  return (
+    <div style={{ background: 'white', padding: 24, borderRadius: 16, border: '1px solid #e2e8f0', marginBottom: 32, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+      <h3 style={{ margin: '0 0 20px', fontSize: 18, fontWeight: 900 }}>{initialData ? 'Редактировать партнера' : 'Добавить партнера'}</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
+        <div>
+          <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 6, letterSpacing: '0.05em' }}>Название клуба</label>
+          <input value={name} onChange={e => setName(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid #e2e8f0', outline: 'none' }} placeholder="Fight Club X" />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 6, letterSpacing: '0.05em' }}>URL Логотипа</label>
+          <input value={logoUrl} onChange={e => setLogoUrl(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid #e2e8f0', outline: 'none' }} placeholder="https://image-hosting.com/logo.png" />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: 11, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', marginBottom: 6, letterSpacing: '0.05em' }}>Ссылка на сайт/инсту</label>
+          <input value={link} onChange={e => setLink(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1px solid #e2e8f0', outline: 'none' }} placeholder="https://instagram.com/..." />
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+        <button onClick={() => onSubmit({ name, logoUrl, link })} style={{ padding: '12px 24px', background: '#3146A6', color: 'white', border: 'none', borderRadius: 10, fontWeight: 800, cursor: 'pointer' }}>
+          {initialData ? 'Обновить данные' : 'Опубликовать'}
+        </button>
+        <button onClick={onCancel} style={{ padding: '12px 24px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, fontWeight: 800, cursor: 'pointer' }}>Отмена</button>
+      </div>
     </div>
   );
 };

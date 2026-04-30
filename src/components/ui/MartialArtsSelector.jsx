@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
+import {  } from 'lucide-react';
 import { Input } from './Input';
 
 const MARTIAL_ARTS = [
@@ -98,13 +98,12 @@ export const MartialArtsSelector = ({ selected = [], onChange }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{ 
             width: '100%', 
-            padding: 'var(--space-2) var(--space-3) var(--space-2) 36px', 
+            padding: 'var(--space-2) var(--space-3)', 
             borderRadius: 'var(--radius-md)', 
             border: '1px solid var(--color-border)',
             fontSize: '0.9rem'
           }}
         />
-        <Search size={16} className="text-muted" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)', maxHeight: '250px', overflowY: 'auto', paddingRight: '4px' }}>

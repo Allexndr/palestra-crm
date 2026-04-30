@@ -5,7 +5,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, Search, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User, Phone, Tag, Zap } from 'lucide-react';
+import { Plus, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User, Phone, Tag, Zap } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
 import { LockedFeature } from '../../components/admin/LockedFeature';
@@ -169,11 +169,10 @@ export const Shop = () => {
 
       <div className="admin-toolbar">
         <div className="flex-1 relative">
-           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
            <input 
              type="text" 
              placeholder="Поиск по названию..." 
-             className="w-full bg-white border-2 border-slate-100 focus:border-primary pl-12 pr-4 py-4 rounded-3xl outline-none transition-all font-medium text-slate-700 shadow-sm"
+             className="w-full bg-white border-2 border-slate-100 focus:border-primary px-6 py-4 rounded-3xl outline-none transition-all font-medium text-slate-700 shadow-sm"
              value={searchQuery}
              onChange={(e) => setSearchQuery(e.target.value)}
            />

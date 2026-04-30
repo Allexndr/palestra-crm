@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import clsx from 'clsx';
-import { Search } from 'lucide-react';
+import {  } from 'lucide-react';
 import './ui.css';
 
 export const Autocomplete = ({ 
@@ -63,12 +63,6 @@ export const Autocomplete = ({
           value={searchTerm}
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
-          style={{ paddingRight: 'var(--space-8)' }}
-        />
-        <Search 
-          size={16} 
-          className="text-muted" 
-          style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }}
         />
         
         {isOpen && (

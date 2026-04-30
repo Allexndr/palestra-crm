@@ -15,6 +15,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { TariffConstructor } from '../../components/landing/TariffConstructor';
+import { useAdmin } from '../../context/AdminContext';
 
 const OPERATIONS = [
   { label: 'Активных учеников', value: '128' },
@@ -120,6 +121,7 @@ const FOOTER_LINKS = [
 const FOOTER_PRODUCT_ITEMS = ['CRM клуба', 'Расписание', 'Оплаты', 'Личный кабинет', 'Лига и прогресс'];
 
 export const Landing = () => {
+  const { partners } = useAdmin();
   const heroCardRef = useRef(null);
 
   const handleHeroCardMove = (event) => {
@@ -268,6 +270,34 @@ export const Landing = () => {
             </div>
           </div>
         </section>
+
+        {partners.length > 0 && (
+          <section className="landing-partners-strip" style={{ padding: '60px 0', backgroundColor: '#fff', borderTop: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}>
+            <div className="container">
+              <p style={{ textAlign: 'center', fontSize: 11, fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 40 }}>С нами работают:</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: '40px 60px' }}>
+                {partners.map(p => (
+                  <a key={p.id} href={p.link} target="_blank" rel="noreferrer" style={{ display: 'block', height: '36px', opacity: 0.5, transition: 'all 0.3s ease' }} className="partner-logo-link">
+                    {p.logoUrl ? (
+                      <img src={p.logoUrl} alt={p.name} style={{ height: '100%', width: 'auto', filter: 'grayscale(100%) brightness(0.8)' }} />
+                    ) : (
+                      <span style={{ fontSize: 16, fontWeight: 900, color: '#0f172a' }}>{p.name}</span>
+                    )}
+                  </a>
+                ))}
+              </div>
+              <style dangerouslySetInnerHTML={{ __html: `
+                .partner-logo-link:hover {
+                  opacity: 1 !important;
+                  transform: translateY(-2px);
+                }
+                .partner-logo-link img:hover {
+                  filter: grayscale(0%) !important;
+                }
+              ` }} />
+            </div>
+          </section>
+        )}
 
         <section id="features" className="landing-section" aria-labelledby="features-heading">
           <div className="container">

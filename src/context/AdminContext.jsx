@@ -116,6 +116,7 @@ export const AdminProvider = ({ children }) => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [automations, setAutomations] = useState({ fired: [] });
   const [messages, setMessages] = useState([]);
+  const [partners, setPartners] = useState([]);
 
   const [monthlyAward, setMonthlyAward] = useState(() => normalizeMonthlyAward({ title: '', description: '', daysLeft: 0 }));
 
@@ -162,6 +163,7 @@ export const AdminProvider = ({ children }) => {
         setFeedbacks(Array.isArray(remote.feedbacks) ? remote.feedbacks : []);
         setAutomations(remote.automations || { fired: [] });
         setMessages(Array.isArray(remote.messages) ? remote.messages : []);
+        setPartners(Array.isArray(remote.partners) ? remote.partners : []);
         setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
         setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
         setClubInfo(normalizeClubInfo(remote.clubInfo));
@@ -200,6 +202,7 @@ export const AdminProvider = ({ children }) => {
       automations, messages,
       selectedLocationId, clubInfo, subscription,
       dashboardLayout,
+      partners,
     };
 
     const impersonatedClubId = sessionStorage.getItem('palestra-impersonate-club-id');
@@ -219,7 +222,7 @@ export const AdminProvider = ({ children }) => {
     });
 
     return () => controller.abort();
-  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches, dashboardLayout, messages]);
+  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches, dashboardLayout, messages, partners]);
 
   // --- AUTOMATIONS ---
   const sendTelegramMessage = (userId, text) => {
@@ -578,6 +581,19 @@ export const AdminProvider = ({ children }) => {
     }));
   };
 
+  const addPartner = (partner) => {
+    const newPartner = { id: createId(), ...partner };
+    setPartners(prev => [...prev, newPartner]);
+  };
+
+  const updatePartner = (id, data) => {
+    setPartners(prev => prev.map(p => p.id === id ? { ...p, ...data } : p));
+  };
+
+  const removePartner = (id) => {
+    setPartners(prev => prev.filter(p => p.id !== id));
+  };
+
   const updateMemberXP = (memberId, xpToAdd) => {
     setMembers(prev => prev.map(m => {
       if (m.id === memberId) {
@@ -611,15 +627,7 @@ export const AdminProvider = ({ children }) => {
     
     updateMemberXP(studentId, 20); // Small bonus for feedback
   };
-      date: new Date().toISOString()
-    };
-    setPosts(prev => prev.map(post => {
-      if (post.id === postId) {
-        return { ...post, comments: [...(post.comments || []), comment] };
-      }
-      return post;
-    }));
-  };
+
 
   const addCoach = (coachData) => {
     if (!ensureCanCreate('coaches', 'количество тренеров')) return false;
@@ -793,6 +801,7 @@ export const AdminProvider = ({ children }) => {
     achievements, setAchievements, addAchievement, removeAchievement,
     monthlyAward, updateMonthlyAward,
     activities, logActivity, removeActivity,
+    partners, addPartner, updatePartner, removePartner,
     subscription, updateSubscription, usage, getLimitStatus, canUseFeature, getUpgradeMessage, ensureCanCreate,
     user, login, logout,
     activeChildId, setActiveChildId,

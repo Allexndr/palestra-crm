@@ -4,7 +4,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, ChevronLeft, ChevronRight, Clock, User, X, CheckCircle2, Edit2, Trash2, Zap, Search } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Clock, User, X, CheckCircle2, Edit2, Trash2, Zap } from 'lucide-react';
 
 const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -221,13 +221,12 @@ export const Schedule = () => {
                 </select>
              </div>
              <div className="relative group min-w-[200px]">
-               <Search size={14} className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400" />
                <input 
                  type="text" 
                  placeholder="ПОИСК..." 
                  value={calendarSearch}
                  onChange={(e) => setCalendarSearch(e.target.value)}
-                 className="w-full bg-transparent border-none pl-6 pr-4 py-2 text-[11px] font-black uppercase tracking-widest outline-none"
+                 className="w-full bg-transparent border-none px-0 pr-4 py-2 text-[11px] font-black uppercase tracking-widest outline-none"
                />
              </div>
           </div>

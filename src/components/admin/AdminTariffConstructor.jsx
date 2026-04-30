@@ -70,11 +70,10 @@ const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
         />
       </div>
 
-      <div className="tariff-res-card__footer">
         <div className="flex flex-col">
-          <span className="tariff-res-card__price-label">Составляющая цены</span>
-          <strong className={`tariff-res-card__price-val ${isBillable ? 'text-primary' : 'text-slate-300'}`}>
-            {isBillable ? `+ ${extraCost.toLocaleString('ru-RU')} ₸` : 'Включено в базу'}
+          <span className="tariff-res-card__price-label">Стоимость</span>
+          <strong className={`tariff-res-card__price-val ${isBillable ? 'text-primary' : 'text-emerald-600'}`}>
+            {isBillable ? `+ ${extraCost.toLocaleString('ru-RU')} ₸` : (selected <= option.included ? 'Бесплатно (Starter)' : 'Включено в базу')}
           </strong>
         </div>
         <div className="tariff-res-card__badge">
@@ -107,7 +106,7 @@ export const AdminTariffConstructor = ({
     const items = [];
     if (calculated.plan === 'starter') return [];
     
-    items.push({ label: 'База Growth', price: PAID_BASE_PRICE });
+    items.push({ label: 'База Масштабирование', price: PAID_BASE_PRICE });
     
     RESOURCE_OPTIONS.forEach(opt => {
       const selected = Number(draft.limits?.[opt.key] || opt.included);
@@ -162,8 +161,8 @@ export const AdminTariffConstructor = ({
             <span className="admin-tariff__eyebrow">Ваш текущий тариф</span>
             <h2 className="text-4xl font-black mb-4">Starter</h2>
             <p className="text-white/60 text-lg leading-relaxed max-w-xl">
-              Базовый функционал для запуска клуба: 1 филиал, 15 учеников и 3 тренера. 
-              Все CRM-модули уже включены бесплатно навсегда.
+              Базовый функционал для старта: 1 филиал, 15 учеников и 3 тренера. 
+              Это абсолютно бесплатно. Оплата начинается только при превышении этих лимитов или подключении модулей масштабирования.
             </p>
             <div className="admin-tariff__included">
               {Object.entries(FEATURE_NAMES).map(([key, label]) => (
@@ -191,8 +190,8 @@ export const AdminTariffConstructor = ({
               <SlidersHorizontal size={20} />
             </div>
             <div>
-              <h3 className="text-2xl font-black m-0">Масштабирование Growth</h3>
-              <p className="text-muted text-sm font-medium mt-1">Добавляйте ресурсы по мере роста вашего бизнеса</p>
+              <h3 className="text-2xl font-black m-0">Масштабирование системы</h3>
+              <p className="text-muted text-sm font-medium mt-1">Настройте ресурсы под размер вашего клуба</p>
             </div>
           </div>
         </div>
@@ -253,7 +252,7 @@ export const AdminTariffConstructor = ({
       <section className="admin-tariff__summary">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h4 className="m-0 text-white">{calculated.plan === 'starter' ? 'Starter бесплатно' : 'Growth План'}</h4>
+            <h4 className="m-0 text-white">{calculated.plan === 'starter' ? 'Тариф: Starter (0 ₸)' : 'Тариф: Масштабирование'}</h4>
             {calculated.plan !== 'starter' && (
               <span className="text-[10px] font-black bg-white/10 text-white/60 px-2 py-0.5 rounded-md uppercase tracking-wider">Настраиваемый</span>
             )}

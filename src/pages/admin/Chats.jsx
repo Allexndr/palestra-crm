@@ -3,7 +3,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Search, Send, Paperclip, MoreVertical, Users, User, Hash, MessageSquare, Filter, X, Image as ImageIcon, File as FileIcon } from 'lucide-react';
+import { Send, Paperclip, MoreVertical, Users, User, Hash, MessageSquare, Filter, X, Image as ImageIcon, File as FileIcon } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Chats = () => {
@@ -103,13 +103,12 @@ export const Chats = () => {
         <div className="p-6">
           <h2 className="h4 mb-6">Мессенджер</h2>
           <div className="relative mb-6">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
               placeholder="Поиск чатов..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white rounded-2xl border-none shadow-sm text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+              className="w-full px-4 py-3 bg-white rounded-2xl border-none shadow-sm text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none"
             />
           </div>
           

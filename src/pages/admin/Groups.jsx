@@ -4,7 +4,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
-import { Plus, Users, Search, Target, MapPin, User, ArrowRight, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Users, Target, MapPin, User, ArrowRight, Edit2, Trash2 } from 'lucide-react';
 
 export const Groups = () => {
   const navigate = useNavigate();

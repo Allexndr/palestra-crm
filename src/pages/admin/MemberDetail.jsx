@@ -227,7 +227,6 @@ export const MemberDetail = () => {
               </div>
             )}
             <Button variant="ghost" className="w-full text-xs font-bold" style={{ border: '1px solid var(--color-border)' }}>История платежей</Button>
-          </Card>
 
           <Card style={{ padding: '24px' }} className={member.medicalNotes ? 'border-rose-200 bg-rose-50/30' : ''}>
             <h3 className="h5 mb-6 flex items-center gap-2">

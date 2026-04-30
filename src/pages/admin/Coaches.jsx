@@ -3,7 +3,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, Users, Search, Trash2, Edit2, Camera, Phone, Mail, Award, MapPin } from 'lucide-react';
+import { Plus, Users, Trash2, Edit2, Camera, Phone, Mail, Award, MapPin } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Coaches = () => {
@@ -164,7 +164,6 @@ export const Coaches = () => {
 
       <Card>
         <div className="mb-8 relative">
-          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
           <input 
             type="text" 
             placeholder="Поиск по имени или специализации..."
@@ -172,7 +171,7 @@ export const Coaches = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ 
               width: '100%', 
-              padding: '16px 16px 16px 48px', 
+              padding: '16px', 
               borderRadius: '16px', 
               border: '1px solid var(--color-border)',
               backgroundColor: 'var(--color-ice-100)'

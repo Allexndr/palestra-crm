@@ -4,7 +4,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, Trophy, GraduationCap, Users, Calendar, Info, X, CheckCircle, Edit2, Trash2, Search } from 'lucide-react';
+import { Plus, Trophy, GraduationCap, Users, Calendar, Info, X, CheckCircle, Edit2, Trash2 } from 'lucide-react';
 import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const Events = () => {
@@ -141,7 +141,6 @@ export const Events = () => {
                 <div style={{ border: '1px solid var(--color-border)', borderRadius: '16px', padding: '16px', backgroundColor: 'var(--color-ice-100)' }}>
                   <div className="flex gap-2 mb-4">
                     <div className="p-2 bg-white rounded-lg border flex-1 flex items-center gap-2">
-                       <Search size={14} className="text-muted" />
                        <input 
                          placeholder="Поиск учеников..." 
                          className="bg-transparent border-none text-xs outline-none w-full"

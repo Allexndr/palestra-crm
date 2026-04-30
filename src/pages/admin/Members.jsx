@@ -4,7 +4,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
-import { Plus, Search, Trash2, Edit2, Eye } from 'lucide-react';
+import { Plus, Trash2, Edit2, Eye } from 'lucide-react';
 
 export const Members = () => {
   const navigate = useNavigate();
@@ -49,7 +49,6 @@ export const Members = () => {
 
       <Card className="shadow-sm border-slate-100" style={{ padding: 'var(--space-8)' }}>
         <div className="mb-10 relative group">
-          <Search size={22} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
           <input 
             type="text" 
             placeholder="Поиск по имени, фамилии или номеру телефона..."
@@ -57,7 +56,7 @@ export const Members = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ 
               width: '100%', 
-              padding: '20px 20px 20px 60px', 
+              padding: '20px', 
               borderRadius: '20px', 
               border: '1.5px solid var(--color-border)',
               backgroundColor: 'var(--color-bg)',

@@ -413,7 +413,7 @@ export const MemberForm = () => {
                         label="Стоимость к оплате (₸)" isCurrency
                         value={formData.paidAmount} onChange={e => setFormData({...formData, paidAmount: e.target.value})} 
                       />
-                    )}
+
                     <Input 
                       label="Депозитный баланс (₸)" isCurrency
                       value={formData.balance} onChange={e => setFormData({...formData, balance: e.target.value})} 
