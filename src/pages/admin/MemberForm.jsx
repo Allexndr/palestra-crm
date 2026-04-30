@@ -340,42 +340,63 @@ export const MemberForm = () => {
           {activeTab === 'physical' && (
             <div className="animate-fade-in flex flex-col lg:flex-row gap-16">
               <Card className="flex-1 border border-slate-100 shadow-sm p-12" style={{ borderRadius: '40px' }}>
-                <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-14 flex items-center gap-4">
-                  <div className="w-10 h-[3px] bg-primary rounded-full"></div> Характеристики ученика (1-100)
-                </h3>
-                <div className="flex flex-col gap-12">
-                  {[
-                    { id: 'strength', label: 'Сила', icon: '💪', color: '#F87171' },
-                    { id: 'speed', label: 'Скорость', icon: '⚡', color: '#FBBF24' },
-                    { id: 'reaction', label: 'Реакция', icon: '👁️', color: '#34D399' },
-                    { id: 'endurance', label: 'Выносливость', icon: '🫁', color: '#60A5FA' },
-                    { id: 'technique', label: 'Техника', icon: '🥋', color: '#818CF8' }
-                  ].map(stat => (
-                    <div key={stat.id} className="flex flex-col gap-5">
-                      <div className="flex justify-between items-center">
-                        <label className="text-sm font-black flex items-center gap-4 uppercase tracking-wider text-slate-700">
-                          <span className="w-12 h-12 bg-slate-50 rounded-3xl flex items-center justify-center text-2xl shadow-sm border border-slate-100">{stat.icon}</span> 
-                          {stat.label}
-                        </label>
-                        <div className="flex items-center gap-3">
+                <div className="space-y-10">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {[
+                      { id: 'strength', label: 'Сила', icon: '💪', color: '#F87171' },
+                      { id: 'speed', label: 'Скорость', icon: '⚡', color: '#FBBF24' },
+                      { id: 'reaction', label: 'Реакция', icon: '👁️', color: '#34D399' },
+                      { id: 'endurance', label: 'Выносливость', icon: '🫁', color: '#60A5FA' },
+                      { id: 'technique', label: 'Техника', icon: '🥋', color: '#818CF8' }
+                    ].map(stat => (
+                      <div 
+                        key={stat.id} 
+                        className="p-8 bg-slate-50/50 rounded-[40px] border border-slate-100/60 hover:bg-white hover:shadow-2xl hover:shadow-slate-200/30 transition-all duration-500 group relative overflow-hidden"
+                      >
+                        {/* Subtle background glow */}
+                        <div 
+                          className="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-[80px] opacity-0 group-hover:opacity-20 transition-opacity duration-500"
+                          style={{ backgroundColor: stat.color }}
+                        ></div>
+
+                        <div className="flex justify-between items-center mb-8 relative z-10">
+                          <div className="flex items-center gap-4">
+                            <div 
+                              className="w-14 h-14 rounded-[20px] bg-white flex items-center justify-center shadow-sm text-3xl group-hover:scale-110 transition-transform duration-500"
+                              style={{ borderBottom: `4px solid ${stat.color}20` }}
+                            >
+                              {stat.icon}
+                            </div>
+                            <span className="font-black text-slate-800 uppercase tracking-[0.15em] text-[13px]">{stat.label}</span>
+                          </div>
+                          <div className="relative">
+                            <input 
+                              type="number" 
+                              className="w-16 h-12 text-center font-black bg-white border-none rounded-2xl outline-none shadow-sm text-xl text-primary focus:ring-4 focus:ring-primary/10 transition-all"
+                              value={formData[stat.id]} 
+                              onChange={e => setFormData({...formData, [stat.id]: Math.min(100, Math.max(1, parseInt(e.target.value) || 1))})}
+                            />
+                            <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: stat.color }}></div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-5 relative z-10">
                           <input 
-                            type="number" 
-                            className="w-20 h-14 text-center font-black bg-slate-50 border-none rounded-2xl outline-none focus:ring-4 focus:ring-primary/20 transition-all text-xl text-primary shadow-inner"
+                            type="range" 
+                            min="1" max="100" 
                             value={formData[stat.id]} 
-                            onChange={e => setFormData({...formData, [stat.id]: Math.min(100, Math.max(1, parseInt(e.target.value) || 1))})}
+                            onChange={e => setFormData({...formData, [stat.id]: parseInt(e.target.value)})}
+                            style={{ '--thumb-color': stat.color }}
+                            className="custom-range w-full h-3 bg-slate-200/60 rounded-full appearance-none cursor-pointer"
                           />
+                          <div className="flex justify-between px-1 text-[10px] font-black text-slate-400 tracking-widest uppercase">
+                            <span>Новичок</span>
+                            <span>Мастер</span>
+                          </div>
                         </div>
                       </div>
-                      <input 
-                        type="range" 
-                        min="1" max="100" 
-                        value={formData[stat.id]} 
-                        onChange={e => setFormData({...formData, [stat.id]: parseInt(e.target.value)})}
-                        style={{ '--thumb-color': stat.color }}
-                        className="custom-range w-full h-3 bg-slate-100 rounded-full appearance-none cursor-pointer"
-                      />
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </Card>
               
