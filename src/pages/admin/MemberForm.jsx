@@ -360,7 +360,7 @@ export const MemberForm = () => {
                         <div className="flex items-center gap-3">
                           <input 
                             type="number" 
-                            className="w-20 h-12 text-center font-black bg-white border border-slate-200 rounded-3xl outline-none focus:border-primary focus:ring-4 focus:ring-primary-soft transition-all text-lg shadow-sm"
+                            className="w-20 h-14 text-center font-black bg-slate-50 border-none rounded-2xl outline-none focus:ring-4 focus:ring-primary/20 transition-all text-xl text-primary shadow-inner"
                             value={formData[stat.id]} 
                             onChange={e => setFormData({...formData, [stat.id]: Math.min(100, Math.max(1, parseInt(e.target.value) || 1))})}
                           />
@@ -371,8 +371,8 @@ export const MemberForm = () => {
                         min="1" max="100" 
                         value={formData[stat.id]} 
                         onChange={e => setFormData({...formData, [stat.id]: parseInt(e.target.value)})}
-                        style={{ accentColor: stat.color }}
-                        className="w-full h-2.5 bg-slate-100 rounded-full appearance-none cursor-pointer"
+                        style={{ '--thumb-color': stat.color }}
+                        className="custom-range w-full h-3 bg-slate-100 rounded-full appearance-none cursor-pointer"
                       />
                     </div>
                   ))}
@@ -518,21 +518,30 @@ export const MemberForm = () => {
         .admin-container {
           padding-top: var(--space-8);
         }
-        input[type=range] {
+        .custom-range {
           -webkit-appearance: none;
           background: #f1f5f9;
-          height: 8px;
-          border-radius: 4px;
+          height: 12px;
+          border-radius: 6px;
         }
-        input[type=range]::-webkit-slider-thumb {
+        .custom-range::-webkit-slider-thumb {
           -webkit-appearance: none;
-          width: 24px;
-          height: 24px;
-          background: var(--color-primary);
+          width: 28px;
+          height: 28px;
+          background: var(--thumb-color, var(--color-primary));
           border-radius: 50%;
           cursor: pointer;
           border: 4px solid white;
-          box-shadow: 0 4px 12px rgba(49, 70, 166, 0.25);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .custom-range::-moz-range-thumb {
+          width: 28px;
+          height: 28px;
+          background: var(--thumb-color, var(--color-primary));
+          border-radius: 50%;
+          cursor: pointer;
+          border: 4px solid white;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
