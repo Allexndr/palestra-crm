@@ -7,7 +7,7 @@ import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 import { ClubLogo } from '../ui/ClubLogo';
 
 export const AdminLayout = () => {
-  const { user, clubInfo, logout } = useAdmin();
+  const { user, clubInfo, logout, locations, selectedLocationId, setSelectedLocationId } = useAdmin();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -37,6 +37,36 @@ export const AdminLayout = () => {
             <button className="mobile-menu-close" onClick={() => setIsMenuOpen(false)}>
               <X size={24} />
             </button>
+          </div>
+
+          <div style={{ padding: '0 var(--space-6) var(--space-4)' }}>
+            <div style={{ 
+              backgroundColor: 'var(--color-bg)',
+              borderRadius: '16px',
+              padding: '12px 16px',
+              border: '1px solid var(--color-border)'
+            }}>
+              <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em' }}>Филиал</p>
+              <select 
+                value={selectedLocationId} 
+                onChange={(e) => setSelectedLocationId(e.target.value)}
+                style={{
+                  width: '100%',
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: '14px',
+                  fontWeight: 800,
+                  color: 'var(--color-text-primary)',
+                  padding: '4px 0',
+                  outline: 'none'
+                }}
+              >
+                <option value="all">Все филиалы</option>
+                {locations.map(loc => (
+                  <option key={loc.id} value={loc.id}>{loc.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <nav className="mobile-menu-nav">

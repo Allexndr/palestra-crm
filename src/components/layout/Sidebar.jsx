@@ -26,7 +26,7 @@ import { ClubLogo } from '../ui/ClubLogo';
 import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 
 export const Sidebar = () => {
-  const { user, logout, clubInfo } = useAdmin();
+  const { user, logout, clubInfo, locations, selectedLocationId, setSelectedLocationId } = useAdmin();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -48,6 +48,56 @@ export const Sidebar = () => {
         <div>
           <p>{user?.name || roleLabel}</p>
           <span>{roleLabel}</span>
+        </div>
+      </div>
+
+      <div className="sidebar-location-switcher" style={{ margin: '0 var(--space-4) var(--space-6)', position: 'relative' }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 'var(--space-3)', 
+          padding: 'var(--space-3) var(--space-4)',
+          backgroundColor: 'rgba(255,255,255,0.6)',
+          borderRadius: '16px',
+          border: '1px solid var(--color-border)',
+          cursor: 'pointer'
+        }}>
+          <div style={{ 
+            width: '32px', 
+            height: '32px', 
+            borderRadius: '10px', 
+            backgroundColor: 'var(--color-primary-soft)', 
+            color: 'var(--color-primary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <MapPin size={16} strokeWidth={2.5} />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em' }}>Филиал</p>
+            <select 
+              value={selectedLocationId} 
+              onChange={(e) => setSelectedLocationId(e.target.value)}
+              style={{
+                width: '100%',
+                border: 'none',
+                background: 'transparent',
+                fontSize: '13px',
+                fontWeight: 800,
+                color: 'var(--color-text-primary)',
+                padding: 0,
+                cursor: 'pointer',
+                outline: 'none',
+                appearance: 'none'
+              }}
+            >
+              <option value="all">Все филиалы</option>
+              {locations.map(loc => (
+                <option key={loc.id} value={loc.id}>{loc.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
