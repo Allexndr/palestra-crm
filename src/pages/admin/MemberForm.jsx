@@ -531,4 +531,3 @@ export const MemberForm = () => {
     </div>
   );
 };
-};
