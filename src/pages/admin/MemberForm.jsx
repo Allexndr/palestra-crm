@@ -230,7 +230,7 @@ export const MemberForm = () => {
         <div className="flex flex-col gap-16">
           {activeTab === 'general' && (
             <div className="flex flex-col gap-16 animate-fade-in">
-              <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
+              <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                 <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
                     <div className="w-10 h-[3px] bg-primary rounded-full"></div> Личные данные и филиал
@@ -284,7 +284,7 @@ export const MemberForm = () => {
                 </div>
               </Card>
 
-              <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
+              <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                 <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
                     <div className="w-10 h-[3px] bg-primary rounded-full"></div> Спортивный профиль
@@ -320,7 +320,7 @@ export const MemberForm = () => {
                 </div>
               </Card>
 
-              <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
+              <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                 <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
                     <Shield size={18} className="text-primary" /> Доступы в приложение
@@ -339,7 +339,7 @@ export const MemberForm = () => {
 
           {activeTab === 'physical' && (
             <div className="animate-fade-in flex flex-col lg:flex-row gap-16">
-              <Card className="flex-1 border-none shadow-2xl shadow-slate-200/50 p-12" style={{ borderRadius: '40px' }}>
+              <Card className="flex-1 border border-slate-100 shadow-sm p-12" style={{ borderRadius: '40px' }}>
                 <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-14 flex items-center gap-4">
                   <div className="w-10 h-[3px] bg-primary rounded-full"></div> Характеристики ученика (1-100)
                 </h3>
@@ -426,7 +426,7 @@ export const MemberForm = () => {
           )}
 
           {activeTab === 'finances' && (
-            <Card className="animate-fade-in border-none shadow-2xl shadow-slate-200/50 p-12" style={{ borderRadius: '40px' }}>
+            <Card className="animate-fade-in border border-slate-100 shadow-sm p-12" style={{ borderRadius: '40px' }}>
               <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-12 flex items-center gap-4">
                 <div className="w-10 h-[3px] bg-primary rounded-full"></div> Финансовые настройки
               </h3>
@@ -455,7 +455,7 @@ export const MemberForm = () => {
 
           {activeTab === 'parent' && (
             <div className="flex flex-col gap-10 animate-fade-in">
-              <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
+              <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                  <div className="p-10 border-b border-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                    <div>
                      <h3 className="h4 mb-1">Представитель (Родитель)</h3>
@@ -500,7 +500,7 @@ export const MemberForm = () => {
           )}
         </div>
 
-        <Card className="mt-16 flex flex-col sm:flex-row justify-between items-center gap-8 border-none shadow-2xl shadow-slate-200/50 p-8" style={{ borderRadius: '40px' }}>
+        <Card className="mt-16 flex flex-col sm:flex-row justify-between items-center gap-8 border border-slate-100 shadow-sm p-8" style={{ borderRadius: '40px' }}>
           <button 
             type="button" 
             onClick={() => navigate('/admin/members')} 
