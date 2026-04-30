@@ -223,7 +223,7 @@ export const Dashboard = () => {
                     </div>
                     <div className="mt-6 pt-6 border-t border-white/10">
                        <p className="text-[10px] text-indigo-300 font-bold uppercase tracking-wider mb-2">Последний запуск</p>
-                       <p className="text-xs font-medium opacity-60 italic">Система проверила {members.length} атлетов • Сегодня 09:00</p>
+                       <p className="text-xs font-medium opacity-60 italic">Система проверила {members.length} учеников • Сегодня 09:00</p>
                     </div>
                   </div>
                 </Card>

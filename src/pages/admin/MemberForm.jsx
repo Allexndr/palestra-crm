@@ -177,8 +177,8 @@ export const MemberForm = () => {
 
   const tabs = [
     { id: 'general', label: 'Общее', icon: '👤' },
-    { id: 'physical', label: 'RPG', icon: '⚡' },
-    { id: 'finances', label: 'Деньги', icon: '💳' },
+    { id: 'physical', label: 'Характеристики', icon: '⚡' },
+    { id: 'finances', label: 'Финансы', icon: '💳' },
     { id: 'parent', label: 'Родитель', icon: '👪' }
   ];
 
@@ -196,12 +196,12 @@ export const MemberForm = () => {
           </button>
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <span className="px-3 py-1 bg-primary-soft text-primary text-[10px] font-black uppercase tracking-widest rounded-lg">База атлетов</span>
+              <span className="px-3 py-1 bg-primary-soft text-primary text-[10px] font-black uppercase tracking-widest rounded-lg">База учеников</span>
               <h1 className="h2" style={{ margin: 0 }}>
-                {isEditing ? 'Профиль ученика' : 'Регистрация нового атлета'}
+                {isEditing ? 'Профиль ученика' : 'Регистрация нового ученика'}
               </h1>
             </div>
-            <p className="text-secondary font-medium opacity-70">Заполните данные для зачисления в Palestra Academy</p>
+            <p className="text-secondary font-medium opacity-70">Заполните данные для зачисления в {clubInfo?.name || 'Palestra'}</p>
           </div>
         </div>
       </div>
@@ -234,10 +234,10 @@ export const MemberForm = () => {
                     <div className="w-10 h-[3px] bg-primary rounded-full"></div> Личные данные и филиал
                   </h3>
                 </div>
-                <div className="p-12">
+                <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
                   <div className="admin-form-grid" style={{ gap: 'var(--space-10)' }}>
-                    <Input label="Имя" required minLength={2} placeholder="Имя атлета" value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
-                    <Input label="Фамилия" required minLength={2} placeholder="Фамилия атлета" value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
+                    <Input label="Имя" required minLength={2} placeholder="Имя ученика" value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
+                    <Input label="Фамилия" required minLength={2} placeholder="Фамилия ученика" value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
                     <Input label="Дата рождения" type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
                     <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
                     
@@ -288,7 +288,7 @@ export const MemberForm = () => {
                     <div className="w-10 h-[3px] bg-primary rounded-full"></div> Спортивный профиль
                   </h3>
                 </div>
-                <div className="p-12">
+                <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
                   <div className="admin-form-grid admin-form-grid--compact" style={{ gap: 'var(--space-10)' }}>
                     <Input label="Вес (кг)" type="number" placeholder="0" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
                     <Input label="Рост (см)" type="number" placeholder="0" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
@@ -335,7 +335,7 @@ export const MemberForm = () => {
             <div className="animate-fade-in flex flex-col lg:flex-row gap-10">
               <Card className="flex-1 border-none shadow-2xl shadow-slate-200/50 p-12" style={{ borderRadius: '40px' }}>
                 <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-14 flex items-center gap-4">
-                  <div className="w-10 h-[3px] bg-primary rounded-full"></div> RPG Характеристики (1-100)
+                  <div className="w-10 h-[3px] bg-primary rounded-full"></div> Характеристики ученика (1-100)
                 </h3>
                 <div className="flex flex-col gap-12">
                   {[
@@ -411,7 +411,7 @@ export const MemberForm = () => {
                     </p>
                     <p className="text-sm text-slate-600 font-bold leading-relaxed">
                       {avgStats < 40 ? 'Ученик на стадии «Белого листа». Требуется интенсивная база ОФП и дисциплина.' : 
-                       avgStats < 70 ? 'Стабильный атлет. Рекомендуется участие в турнирах для повышения стрессоустойчивости.' : 
+                       avgStats < 70 ? 'Стабильный ученик. Рекомендуется участие в турнирах для повышения стрессоустойчивости.' : 
                        'Потенциальный чемпион. Индивидуальный план подготовки к профессиональным лигам.'}
                     </p>
                  </div>
@@ -453,7 +453,7 @@ export const MemberForm = () => {
                  <div className="p-10 border-b border-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                    <div>
                      <h3 className="h4 mb-1">Представитель (Родитель)</h3>
-                     <p className="text-xs text-secondary font-black uppercase tracking-widest opacity-60">Для атлетов до 18 лет</p>
+                     <p className="text-xs text-secondary font-black uppercase tracking-widest opacity-60">Для учеников до 18 лет</p>
                    </div>
                    {!formData.parentLogin && (
                      <Button type="button" variant="secondary" className="gap-3 h-12 px-8 rounded-2xl shadow-sm border-slate-200" onClick={handleCreateParent}>
@@ -495,7 +495,7 @@ export const MemberForm = () => {
             Отменить и выйти
           </button>
           <Button variant="primary" type="submit" className="gap-4 px-16 h-16 text-lg shadow-2xl shadow-primary/30 rounded-[24px] w-full sm:w-auto">
-            <Save size={24} /> {isEditing ? 'Сохранить изменения' : 'Зачислить атлета в клуб'}
+            <Save size={24} /> {isEditing ? 'Сохранить изменения' : 'Зачислить ученика в клуб'}
           </Button>
         </div>
       </form>

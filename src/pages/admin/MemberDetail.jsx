@@ -43,7 +43,7 @@ export const MemberDetail = () => {
           </button>
           <div className="page-title-block page-title-block--row">
             <h1 className="h2">
-              Профиль атлета
+              Профиль ученика
             </h1>
           </div>
         </div>
