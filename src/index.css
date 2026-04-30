@@ -77,10 +77,10 @@
   --duration-base: 240ms;
   --duration-slow: 420ms;
 
-  /* Tilda-style rhythm: крупные отступы между смысловыми блоками (~120–180px) */
-  --section-y: clamp(4rem, 10vw, 11.25rem);
-  --section-y-md: clamp(3rem, 8vw, 8rem);
-  --section-y-sm: clamp(2rem, 5vw, 4.5rem);
+  /* Tilda-style rhythm: крупные отступы между смысловыми блоками (~60–100px) */
+  --section-y: clamp(2.5rem, 6vw, 6.25rem);
+  --section-y-md: clamp(2rem, 5vw, 4.5rem);
+  --section-y-sm: clamp(1.5rem, 3vw, 2.5rem);
   --prose-width: 42rem;
 }
 

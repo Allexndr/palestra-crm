@@ -62,7 +62,7 @@ export const Dashboard = () => {
   
   return (
     <div className="animate-fade-in pb-12">
-      <div className="mb-12 flex flex-col gap-4 dashboard-hero">
+      <div className="mb-6 flex flex-col gap-4 dashboard-hero">
         <div className="page-title-block page-title-block--in-hero">
           <h1 className="h1 mb-2" style={{ fontFamily: 'var(--font-family-display)', fontSize: 'clamp(1.5rem, 2.5vw, 2.25rem)' }}>
             {isAdmin ? 'Дашборд клуба' : `Привет, ${user?.name || 'Тренер'}!`}
@@ -80,7 +80,7 @@ export const Dashboard = () => {
 
 
 
-      <div className="dashboard-dynamic-grid" style={{ marginTop: '32px' }}>
+      <div className="dashboard-dynamic-grid" style={{ marginTop: '16px' }}>
         {dashboardLayout.filter(w => w.visible).map((widget) => {
           switch (widget.id) {
             case 'stats':
@@ -150,7 +150,7 @@ export const Dashboard = () => {
                   </div>
                   <div className="p-0 overflow-x-auto">
                     {coachSchedule.length === 0 ? (
-                      <div className="text-center py-24 px-4 text-slate-400 flex flex-col items-center justify-center min-h-[250px]">
+                      <div className="text-center py-12 px-4 text-slate-400 flex flex-col items-center justify-center min-h-[200px]">
                          <Calendar size={56} className="mx-auto mb-6 text-slate-300" />
                          <p className="font-bold text-lg text-slate-500">Нет запланированных тренировок</p>
                       </div>
@@ -487,7 +487,7 @@ export const Dashboard = () => {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 24px;
-          align-items: start;
+          align-items: stretch;
         }
         @media (max-width: 1024px) {
           .dashboard-dynamic-grid {

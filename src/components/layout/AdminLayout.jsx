@@ -54,7 +54,7 @@ export const AdminLayout = () => {
           className="member-page-frame"
           style={{ paddingBottom: 'calc(5.5rem + var(--safe-area-inset-bottom))' }}
         >
-          <div className="admin-container" style={{ maxWidth: '1000px', width: '100%', margin: '0 auto', padding: '0 16px' }}>
+          <div className="admin-container" style={{ maxWidth: '1200px', width: '100%', margin: '0', padding: '0 var(--space-8)' }}>
             <Outlet />
           </div>
         </main>
