@@ -43,7 +43,7 @@ export const AdminLayout = () => {
       <div className={`mobile-menu-overlay ${isMenuOpen ? 'is-open' : ''}`} onClick={() => setIsMenuOpen(false)}>
         <aside className="mobile-menu-sidebar" onClick={e => e.stopPropagation()}>
           <div className="mobile-menu-header">
-            <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={50} />
+            <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={65} />
             <button className="mobile-menu-close" onClick={() => setIsMenuOpen(false)}>
               <X size={24} />
             </button>
@@ -179,10 +179,6 @@ export const AdminLayout = () => {
               <Menu size={24} />
             </button>
             
-            <Link to="/admin" className="mobile-only" style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-               <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={42} />
-            </Link>
-
             <div style={{ minWidth: 0, flex: 1 }}>
               <p className="member-kicker">{clubInfo?.name || 'Palestra'}</p>
               <h1 className="desktop-only">{clubInfo?.name || 'Palestra'}</h1>
