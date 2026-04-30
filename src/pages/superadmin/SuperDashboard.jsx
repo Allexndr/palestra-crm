@@ -121,11 +121,20 @@ export const SuperDashboard = () => {
 
       <main style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 24px' }}>
         {/* Page title */}
+        {/* Page title */}
         <div style={{ marginBottom: 32 }}>
           <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: '#0f172a' }}>Обзор платформы</h1>
           <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 14 }}>
             Все клубы в реальном времени · {clubs.length} клубов зарегистрировано
           </p>
+        </div>
+
+        {/* KPI Row */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 40 }}>
+          <StatBox label="Всего клубов" value={clubs.length} sub="зарегистрировано" />
+          <StatBox label="Активных (7д)" value={activeClubs} sub={`из ${clubs.length}`} color="#22c55e" />
+          <StatBox label="Учеников" value={fmt(totalStudents)} sub="по всем клубам" />
+          <StatBox label="Общая выручка" value={`${fmt(totalRevenue)} ₸`} sub="по всей платформе" />
         </div>
 
         {/* Tab Switcher */}
@@ -156,13 +165,6 @@ export const SuperDashboard = () => {
 
         {view === 'clubs' ? (
           <>
-        {/* KPI Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 40 }}>
-          <StatBox label="Всего клубов" value={clubs.length} sub="зарегистрировано" />
-          <StatBox label="Активных (7д)" value={activeClubs} sub={`из ${clubs.length}`} color="#22c55e" />
-          <StatBox label="Учеников" value={fmt(totalStudents)} sub="по всем клубам" />
-          <StatBox label="Общая выручка" value={`${fmt(totalRevenue)} ₸`} sub="по всей платформе" />
-        </div>
 
         {/* Search + Refresh */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 24, alignItems: 'center' }}>
