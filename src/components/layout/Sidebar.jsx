@@ -42,8 +42,8 @@ export const Sidebar = () => {
 
   return (
     <aside className="member-desktop-sidebar desktop-only">
-      <NavLink to="/" className="member-sidebar-brand" style={{ textDecoration: 'none' }}>
-        <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={64} />
+      <NavLink to="/" className="member-sidebar-brand" style={{ textDecoration: 'none', padding: 0, marginBottom: 'var(--space-6)', display: 'flex', justifyContent: 'center' }}>
+        <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={100} />
       </NavLink>
 
       <div className="member-user-card">
