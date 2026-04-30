@@ -42,6 +42,7 @@ export const SuperDashboard = () => {
   const [view, setView] = useState('clubs');
   const [showAddPartner, setShowAddPartner] = useState(false);
   const [editingPartner, setEditingPartner] = useState(null);
+  const [search, setSearch] = useState('');
   const { logout, partners, addPartner, updatePartner, removePartner } = useAdmin();
   const navigate = useNavigate();
 
