@@ -216,7 +216,7 @@ export const MemberForm = () => {
             onClick={() => setActiveTab(tab.id)}
             className={`px-8 py-3.5 rounded-3xl text-[13px] font-black whitespace-nowrap transition-all border-none cursor-pointer flex items-center gap-3 ${
               activeTab === tab.id
-                ? 'bg-primary text-white shadow-xl shadow-indigo-100 scale-[1.02]'
+                ? 'bg-primary text-white shadow-xl shadow-indigo-100'
                 : 'text-slate-500 hover:text-slate-800 hover:bg-white/80'
             }`}
           >
@@ -227,9 +227,9 @@ export const MemberForm = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-16">
           {activeTab === 'general' && (
-            <div className="flex flex-col gap-8 animate-fade-in">
+            <div className="flex flex-col gap-16 animate-fade-in">
               <Card className="border-none shadow-2xl shadow-slate-200/50 p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                 <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
@@ -338,7 +338,7 @@ export const MemberForm = () => {
           )}
 
           {activeTab === 'physical' && (
-            <div className="animate-fade-in flex flex-col lg:flex-row gap-10">
+            <div className="animate-fade-in flex flex-col lg:flex-row gap-16">
               <Card className="flex-1 border-none shadow-2xl shadow-slate-200/50 p-12" style={{ borderRadius: '40px' }}>
                 <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-14 flex items-center gap-4">
                   <div className="w-10 h-[3px] bg-primary rounded-full"></div> Характеристики ученика (1-100)
