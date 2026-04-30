@@ -256,7 +256,7 @@ export const AdminTariffConstructor = ({
         </div>
       </section>
 
-      <section className="admin-tariff__summary" style={{ minHeight: '400px', padding: '60px', alignItems: 'flex-start' }}>
+      <section className="admin-tariff__summary" style={{ minHeight: '400px', padding: '60px', alignItems: 'flex-start', position: 'relative' }}>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h4 className="m-0 text-white">{calculated.plan === 'starter' ? 'Тариф: Starter (0 ₸)' : 'Тариф: Масштабирование'}</h4>
@@ -327,16 +327,16 @@ export const AdminTariffConstructor = ({
           </div>
         </div>
         
-        <div className="mt-12 flex justify-center border-t border-white/5 pt-8">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
            <button 
              onClick={() => {
-               if (window.confirm('Вы уверены, что хотите отменить подписку? Все платные функции будут отключены в конце расчетного периода.')) {
+               if (window.confirm('Вы уверены, что хотите отменить подписку? Все платные функции будут отключены.')) {
                  resetToStarter();
                }
              }}
-             className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer"
+             className="text-[9px] font-medium text-white/10 hover:text-red-400/50 transition-colors bg-transparent border-none cursor-pointer underline decoration-white/5"
            >
-             Отменить подписку и вернуться на Starter
+             отменить подписку
            </button>
         </div>
       </section>
