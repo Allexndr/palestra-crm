@@ -237,7 +237,7 @@ export const MemberForm = () => {
                   </h3>
                 </div>
                 <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
-                  <div className="admin-form-grid" style={{ gap: 'var(--space-10)' }}>
+                  <div className="admin-form-grid">
                     <Input label="Имя" required minLength={2} placeholder="Имя ученика" value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
                     <Input label="Фамилия" required minLength={2} placeholder="Фамилия ученика" value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
                     <Input label="Дата рождения" type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
@@ -291,7 +291,7 @@ export const MemberForm = () => {
                   </h3>
                 </div>
                 <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
-                  <div className="admin-form-grid admin-form-grid--compact" style={{ gap: 'var(--space-10)' }}>
+                  <div className="admin-form-grid admin-form-grid--compact">
                     <Input label="Вес (кг)" type="number" placeholder="0" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
                     <Input label="Рост (см)" type="number" placeholder="0" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
                     
@@ -426,7 +426,7 @@ export const MemberForm = () => {
               <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-12 flex items-center gap-4">
                 <div className="w-10 h-[3px] bg-primary rounded-full"></div> Финансовые настройки
               </h3>
-              <div className="admin-form-grid" style={{ gap: 'var(--space-10)' }}>
+              <div className="admin-form-grid">
                 <div className="input-group">
                   <label className="input-label">Выбор тарифа</label>
                   <select className="input-field" style={{ height: '58px' }} value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})}>
@@ -465,7 +465,7 @@ export const MemberForm = () => {
                  </div>
                 
                 <div className="p-12">
-                  <div className="admin-form-grid" style={{ gap: 'var(--space-10)' }}>
+                  <div className="admin-form-grid">
                     <Input label="ФИО Родителя" value={formData.parentName} onChange={e => handleParentNameChange(e.target.value)} placeholder="Иванов Иван Иванович" />
                     <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.parentPhone} onChange={e => handleInputChange('parentPhone', e.target.value)} />
                     <Input label="Заметка" value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})} placeholder="Мама / Папа / Опекун" />

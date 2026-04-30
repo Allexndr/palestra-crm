@@ -44,6 +44,7 @@
   --space-4: 1rem;
   --space-6: clamp(1rem, 0.8rem + 1vw, 1.5rem);
   --space-8: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  --space-10: clamp(1.75rem, 1.4rem + 2vw, 2.5rem);
   --space-12: clamp(2rem, 1.5rem + 2.5vw, 3rem);
   --space-16: clamp(3rem, 2.5rem + 2.5vw, 4rem);
   --space-24: clamp(4rem, 3rem + 5vw, 6rem);
@@ -428,6 +429,9 @@ button,
   .tablet-hidden { display: none !important; }
 }
 
+/* Utilities */
+.hidden { display: none !important; }
+
 /* Admin Layout Styles */
 .admin-page-header {
   display: flex;
@@ -462,7 +466,7 @@ button,
 .admin-form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-8);
+  gap: var(--space-10) var(--space-8);
 }
 
 .admin-form-grid--compact {
