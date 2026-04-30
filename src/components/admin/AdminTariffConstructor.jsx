@@ -79,7 +79,7 @@ const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
         <div className="tariff-res-card__badge">
           {status.percent}%
         </div>
-      </div>
+
     </article>
   );
 };
