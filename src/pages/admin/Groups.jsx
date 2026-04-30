@@ -19,11 +19,6 @@ export const Groups = () => {
           <h1 className="h1 m-0">Группы</h1>
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted mt-3">Управление секциями и составом</p>
         </div>
-        <Link to="/admin/groups/new">
-          <button className="px-8 h-12 text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--color-primary)' }}>
-            Создать группу
-          </button>
-        </Link>
       </div>
 
       <div className="admin-card-grid">
@@ -85,16 +80,17 @@ export const Groups = () => {
             </Card>
           );
         })}
-        {groups.length === 0 && (
-          <div className="col-span-full py-16 text-center text-secondary bg-white border border-slate-200 shadow-sm rounded-2xl">
-            <Users size={48} className="mx-auto mb-4 text-slate-300" />
-            <p className="text-xl font-bold text-slate-800 mb-2">Нет созданных групп</p>
-            <p className="mb-6 text-slate-500">Создайте первую тренировочную группу для вашего клуба.</p>
-            <Link to="/admin/groups/new">
-              <Button variant="primary" size="lg">Создать группу</Button>
-            </Link>
+        <Card 
+          onClick={() => navigate('/admin/groups/new')}
+          className="card-hover border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-10 text-center cursor-pointer group bg-slate-50/30"
+          style={{ minHeight: '340px' }}
+        >
+          <div className="w-16 h-16 rounded-full bg-white shadow-sm border border-slate-100 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <Plus size={32} className="text-primary" />
           </div>
-        )}
+          <p className="text-sm font-black uppercase tracking-widest text-slate-800 mb-2">Создать группу</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Настройте новую секцию за 1 минуту</p>
+        </Card>
       </div>
 
       <ConfirmModal 
