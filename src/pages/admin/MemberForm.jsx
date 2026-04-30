@@ -192,7 +192,7 @@ export const MemberForm = () => {
         <div className="flex items-center gap-8">
           <button 
             onClick={() => navigate('/admin/members')} 
-            className="w-14 h-14 flex items-center justify-center bg-white rounded-[20px] border border-slate-200 shadow-sm hover:shadow-md hover:bg-slate-50 transition-all cursor-pointer"
+            className="w-14 h-14 flex items-center justify-center bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-md hover:bg-slate-50 transition-all cursor-pointer"
           >
             <ArrowLeft size={22} className="text-slate-600" />
           </button>
@@ -208,13 +208,13 @@ export const MemberForm = () => {
         </div>
       </div>
 
-      <div className="flex gap-3 mb-16 bg-white/80 backdrop-blur-md p-2 rounded-[26px] w-full sm:w-fit border border-slate-100 shadow-sm overflow-x-auto max-w-full scrollbar-hide">
+      <div className="flex gap-3 mb-16 bg-white/80 backdrop-blur-md p-2 rounded-3xl w-full sm:w-fit border border-slate-100 shadow-sm overflow-x-auto max-w-full scrollbar-hide">
         {tabs.map(tab => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-8 py-3.5 rounded-[18px] text-[13px] font-black whitespace-nowrap transition-all border-none cursor-pointer flex items-center gap-3 ${
+            className={`px-8 py-3.5 rounded-3xl text-[13px] font-black whitespace-nowrap transition-all border-none cursor-pointer flex items-center gap-3 ${
               activeTab === tab.id
                 ? 'bg-primary text-white shadow-xl shadow-indigo-100 scale-[1.02]'
                 : 'text-slate-500 hover:text-slate-800 hover:bg-white/80'
@@ -255,8 +255,8 @@ export const MemberForm = () => {
 
                     <div className="input-group">
                       <label className="input-label">Фото профиля</label>
-                      <div className="flex items-center gap-6 p-2 pr-6 bg-slate-50 rounded-[22px] border border-slate-100">
-                        <div className="w-14 h-14 rounded-[18px] bg-white flex items-center justify-center overflow-hidden border border-slate-200 shadow-sm shrink-0">
+                      <div className="flex items-center gap-6 p-2 pr-6 bg-slate-50 rounded-3xl border border-slate-100">
+                        <div className="w-14 h-14 rounded-3xl bg-white flex items-center justify-center overflow-hidden border border-slate-200 shadow-sm shrink-0">
                            {formData.avatar ? <img src={formData.avatar} className="w-full h-full object-cover" /> : <Camera size={22} className="text-slate-300" />}
                         </div>
                         <div className="flex-1">
@@ -354,13 +354,13 @@ export const MemberForm = () => {
                     <div key={stat.id} className="flex flex-col gap-5">
                       <div className="flex justify-between items-center">
                         <label className="text-sm font-black flex items-center gap-4 uppercase tracking-wider text-slate-700">
-                          <span className="w-12 h-12 bg-slate-50 rounded-[18px] flex items-center justify-center text-2xl shadow-sm border border-slate-100">{stat.icon}</span> 
+                          <span className="w-12 h-12 bg-slate-50 rounded-3xl flex items-center justify-center text-2xl shadow-sm border border-slate-100">{stat.icon}</span> 
                           {stat.label}
                         </label>
                         <div className="flex items-center gap-3">
                           <input 
                             type="number" 
-                            className="w-20 h-12 text-center font-black bg-white border border-slate-200 rounded-[18px] outline-none focus:border-primary focus:ring-4 focus:ring-primary-soft transition-all text-lg shadow-sm"
+                            className="w-20 h-12 text-center font-black bg-white border border-slate-200 rounded-3xl outline-none focus:border-primary focus:ring-4 focus:ring-primary-soft transition-all text-lg shadow-sm"
                             value={formData[stat.id]} 
                             onChange={e => setFormData({...formData, [stat.id]: Math.min(100, Math.max(1, parseInt(e.target.value) || 1))})}
                           />
@@ -380,7 +380,7 @@ export const MemberForm = () => {
               </Card>
               
               <div className="lg:w-96 flex flex-col gap-8">
-                 <div className="p-10 bg-slate-950 rounded-[44px] text-white shadow-2xl relative overflow-hidden group">
+                 <div className="p-10 bg-slate-950 rounded-3xl text-white shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-[-40px] right-[-40px] opacity-10 group-hover:scale-110 transition-transform duration-700"><Zap size={200} fill="white" /></div>
                     <div className="relative z-10">
                       <p className="text-[10px] font-black uppercase tracking-[0.4em] mb-4 opacity-50">Global Power Score</p>
@@ -411,7 +411,7 @@ export const MemberForm = () => {
                     </div>
                  </div>
                  
-                 <div className="p-8 bg-white border border-slate-200 rounded-[40px] shadow-sm">
+                 <div className="p-8 bg-white border border-slate-200 rounded-3xl shadow-sm">
                     <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 flex items-center gap-3">
                       <Star size={16} fill="var(--color-primary)" fillOpacity={0.1} /> Анализ потенциала
                     </p>
@@ -444,7 +444,7 @@ export const MemberForm = () => {
                 <Input label="Баланс депозита (₸)" isCurrency value={formData.balance} onChange={e => setFormData({...formData, balance: e.target.value})} />
                 <Input label="Абонемент до" type="date" value={formData.subscriptionEndDate} onChange={e => setFormData({...formData, subscriptionEndDate: e.target.value})} />
               </div>
-              <div className="mt-12 p-8 bg-slate-50 rounded-[28px] border border-slate-100 flex gap-5 items-start">
+              <div className="mt-12 p-8 bg-slate-50 rounded-3xl border border-slate-100 flex gap-5 items-start">
                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0">💳</div>
                 <p className="text-xs text-slate-500 font-bold leading-relaxed">
                   При выборе тарифа сумма подставится автоматически. Депозит можно использовать для покупки товаров в магазине клуба или оплаты доп. тренировок.
@@ -484,7 +484,7 @@ export const MemberForm = () => {
                   </div>
 
                   {(formData.hasParent || formData.parentLogin) && (
-                    <div className="mt-12 p-10 bg-emerald-50/50 rounded-[36px] border border-emerald-100 animate-up">
+                    <div className="mt-12 p-10 bg-emerald-50/50 rounded-3xl border border-emerald-100 animate-up">
                       <h4 className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.4em] mb-10 flex items-center gap-3">
                         <Shield size={18} /> Кабинет родителя активирован
                       </h4>
@@ -508,7 +508,7 @@ export const MemberForm = () => {
           >
             Отменить и выйти
           </button>
-          <Button variant="primary" type="submit" className="gap-4 px-16 h-16 text-lg shadow-2xl shadow-primary/30 rounded-[24px] w-full sm:w-auto">
+          <Button variant="primary" type="submit" className="gap-4 px-16 h-16 text-lg shadow-2xl shadow-primary/30 rounded-3xl w-full sm:w-auto">
             <Save size={24} /> {isEditing ? 'Сохранить изменения' : 'Зачислить ученика в клуб'}
           </Button>
         </Card>
