@@ -256,7 +256,7 @@ export const AdminTariffConstructor = ({
         </div>
       </section>
 
-      <section className="admin-tariff__summary" style={{ minHeight: '400px', padding: '60px', alignItems: 'flex-start', position: 'relative' }}>
+      <section className="admin-tariff__summary" style={{ minHeight: '400px', padding: '60px', alignItems: 'flex-start' }}>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h4 className="m-0 text-white">{calculated.plan === 'starter' ? 'Тариф: Starter (0 ₸)' : 'Тариф: Масштабирование'}</h4>
@@ -327,19 +327,20 @@ export const AdminTariffConstructor = ({
           </div>
         </div>
         
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-           <button 
-             onClick={() => {
-               if (window.confirm('Вы уверены, что хотите отменить подписку? Все платные функции будут отключены.')) {
-                 resetToStarter();
-               }
-             }}
-             className="text-[9px] font-medium text-white/10 hover:text-red-400/50 transition-colors bg-transparent border-none cursor-pointer underline decoration-white/5"
-           >
-             отменить подписку
-           </button>
-        </div>
       </section>
+
+      <div className="mt-12 flex justify-center pb-8">
+         <button 
+           onClick={() => {
+             if (window.confirm('Вы уверены, что хотите отменить подписку? Все платные функции будут отключены.')) {
+               resetToStarter();
+             }
+           }}
+           className="text-[9px] font-medium text-slate-300 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer underline decoration-slate-200"
+         >
+           отменить подписку и вернуться на бесплатный тариф
+         </button>
+      </div>
     </div>
   );
 };
