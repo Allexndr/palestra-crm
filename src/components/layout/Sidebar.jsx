@@ -17,7 +17,8 @@ import {
   LogOut,
   MapPin,
   Zap,
-  CreditCard
+  CreditCard,
+  MessageSquare
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { ClubLogo } from '../ui/ClubLogo';
@@ -45,8 +46,9 @@ export const Sidebar = () => {
     { to: '/admin/locations', icon: MapPin, label: 'Филиалы', roles: ['admin'] },
     { to: '/admin/billing', icon: Wallet, label: 'Финансы', roles: ['admin'] },
     { to: '/admin/payroll', icon: CreditCard, label: 'Зарплаты', roles: ['admin'] },
+    { to: '/admin/chats', icon: MessageSquare, label: 'Чаты', roles: ['admin', 'coach'] },
     { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'] },
-    { to: '/feed', icon: LayoutList, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'] },
+    { to: (user?.role === 'admin' || user?.role === 'coach') ? '/admin/feed' : '/feed', icon: LayoutList, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'] },
     { to: '/admin/settings', icon: Settings, label: 'Настройки', roles: ['admin'] },
   ];
 

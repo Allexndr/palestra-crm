@@ -81,6 +81,16 @@ function normalizeScheduleList(arr) {
   });
 }
 
+const DEFAULT_DASHBOARD_LAYOUT = [
+  { id: 'stats', label: 'Статистика (KPI)', visible: true },
+  { id: 'schedule', label: 'Расписание', visible: true },
+  { id: 'events', label: 'События (Карусель)', visible: true },
+  { id: 'autopilot', label: 'Автопилот TG', visible: true },
+  { id: 'quickActions', label: 'Быстрые действия', visible: true },
+  { id: 'activity', label: 'Живая лента', visible: true },
+  { id: 'achievements', label: 'Достижения', visible: true },
+  { id: 'monthlyAward', label: 'Награда месяца', visible: true },
+];
 
 export const AdminProvider = ({ children }) => {
   const [isStateReady, setIsStateReady] = useState(false);
@@ -105,6 +115,7 @@ export const AdminProvider = ({ children }) => {
   const [quests, setQuests] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
   const [automations, setAutomations] = useState({ fired: [] });
+  const [messages, setMessages] = useState([]);
 
   const [monthlyAward, setMonthlyAward] = useState(() => normalizeMonthlyAward({ title: '', description: '', daysLeft: 0 }));
 
@@ -113,6 +124,7 @@ export const AdminProvider = ({ children }) => {
   const [subscription, setSubscription] = useState(() => normalizeSubscription(DEFAULT_SUBSCRIPTION));
   const [user, setUser] = useState(null);
   const [activeChildId, setActiveChildId] = useState(null);
+  const [dashboardLayout, setDashboardLayout] = useState(DEFAULT_DASHBOARD_LAYOUT);
 
   useEffect(() => {
     let cancelled = false;
@@ -149,10 +161,12 @@ export const AdminProvider = ({ children }) => {
         setQuests(Array.isArray(remote.quests) ? remote.quests : []);
         setFeedbacks(Array.isArray(remote.feedbacks) ? remote.feedbacks : []);
         setAutomations(remote.automations || { fired: [] });
+        setMessages(Array.isArray(remote.messages) ? remote.messages : []);
         setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
         setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
         setClubInfo(normalizeClubInfo(remote.clubInfo));
         setSubscription(normalizeSubscription(remote.subscription));
+        setDashboardLayout(Array.isArray(remote.dashboardLayout) ? remote.dashboardLayout : DEFAULT_DASHBOARD_LAYOUT);
         setUser(meData.user || null);
         
         // Auto-select first child for parents on load
@@ -183,8 +197,9 @@ export const AdminProvider = ({ children }) => {
       members, leads, schedule, locations, groups, activities, leagues, plans, posts,
       coaches, events, attendance, finances, achievements, monthlyAward,
       quests, feedbacks,
-      automations,
+      automations, messages,
       selectedLocationId, clubInfo, subscription,
+      dashboardLayout,
     };
 
     const impersonatedClubId = sessionStorage.getItem('palestra-impersonate-club-id');
@@ -204,7 +219,7 @@ export const AdminProvider = ({ children }) => {
     });
 
     return () => controller.abort();
-  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches]);
+  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches, dashboardLayout, messages]);
 
   // --- AUTOMATIONS ---
   const sendTelegramMessage = (userId, text) => {
@@ -723,6 +738,24 @@ export const AdminProvider = ({ children }) => {
     setSelectedLocationId('all');
     setClubInfo(normalizeClubInfo({ name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' }));
     setSubscription(normalizeSubscription(DEFAULT_SUBSCRIPTION));
+    setDashboardLayout(DEFAULT_DASHBOARD_LAYOUT);
+  };
+
+  const toggleWidget = (id) => {
+    setDashboardLayout(prev => prev.map(w => w.id === id ? { ...w, visible: !w.visible } : w));
+  };
+
+  const moveWidget = (id, direction) => {
+    setDashboardLayout(prev => {
+      const index = prev.findIndex(w => w.id === id);
+      if (index === -1) return prev;
+      const nextIndex = direction === 'up' ? index - 1 : index + 1;
+      if (nextIndex < 0 || nextIndex >= prev.length) return prev;
+      const nextLayout = [...prev];
+      const [moved] = nextLayout.splice(index, 1);
+      nextLayout.splice(nextIndex, 0, moved);
+      return nextLayout;
+    });
   };
 
   const value = {
@@ -742,6 +775,20 @@ export const AdminProvider = ({ children }) => {
     coaches, addCoach, removeCoach, updateCoach,
     events, addEvent, updateEvent, removeEvent,
     attendance, markAttendance,
+    messages, sendMessage: (chatId, text, attachments = []) => {
+      const msg = {
+        id: createId(),
+        chatId,
+        senderId: user?.id,
+        senderName: user?.name,
+        senderRole: user?.role,
+        text,
+        attachments,
+        date: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, msg]);
+      return msg;
+    },
     finances, addTransaction,
     achievements, setAchievements, addAchievement, removeAchievement,
     monthlyAward, updateMonthlyAward,
@@ -749,6 +796,7 @@ export const AdminProvider = ({ children }) => {
     subscription, updateSubscription, usage, getLimitStatus, canUseFeature, getUpgradeMessage, ensureCanCreate,
     user, login, logout,
     activeChildId, setActiveChildId,
+    dashboardLayout, setDashboardLayout, toggleWidget, moveWidget,
     isStateReady,
     resetData, fetchClubState: async () => {
       try {

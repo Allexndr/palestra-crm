@@ -77,7 +77,7 @@ const BottomNavAdmin = () => {
     { to: '/admin/leads', icon: Target, label: 'Лиды', roles: ['admin'] },
     { to: '/admin/schedule', icon: Calendar, label: 'Расписание', roles: ['admin', 'coach'] },
     { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'] },
-    { to: '/feed', icon: MessageSquare, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'] },
+    { to: (user?.role === 'admin' || user?.role === 'coach') ? '/admin/feed' : '/feed', icon: MessageSquare, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'] },
   ];
 
   const filteredLinks = links.filter(l => l.roles.includes(user?.role || 'admin'));

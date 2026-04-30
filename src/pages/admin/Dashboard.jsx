@@ -2,14 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
-import { Users, DollarSign, Calendar, Target, ArrowUpRight, Plus, Trophy, MessageSquare, TrendingUp, Activity, CheckCircle, AlertCircle, Info, ShoppingBag, Star, X, Sparkles, Flame, ShieldAlert, HeartPulse } from 'lucide-react';
+import { Users, DollarSign, Calendar, Target, ArrowUpRight, Plus, Trophy, MessageSquare, TrendingUp, Activity, CheckCircle, AlertCircle, Info, ShoppingBag, Star, X, Sparkles, Flame, ShieldAlert, HeartPulse, Zap } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { EventCarousel } from '../../components/features/EventCarousel';
 import { formatKzt } from '../../utils/money';
 import { scheduleTypeLabel, coachLine, firstGrapheme } from '../../utils/displayStrings';
 
 export const Dashboard = () => {
-  const { members, leads, schedule, finances, user, events, selectedLocationId, achievements, monthlyAward, activities, markAttendance, groups, removeActivity, sendFeedback } = useAdmin();
+  const { 
+    members, leads, schedule, finances, user, events, selectedLocationId, 
+    achievements, monthlyAward, activities, markAttendance, groups, 
+    removeActivity, sendFeedback, dashboardLayout 
+  } = useAdmin();
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
   const navigate = useNavigate();
@@ -74,267 +78,283 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      <div className="dashboard-stat-grid admin-kpi-grid">
-        <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#EEF2FF', color: '#4F46E5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Users size={24} />
-          </div>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Ученики</p>
-            <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeMembers}</p>
-          </div>
-        </Card>
 
-        {isAdmin ? (
-          <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#ECFDF5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <DollarSign size={24} />
-            </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Выручка (всего)</p>
-              <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={formatKzt(monthlyRevenue)}>{formatKzt(monthlyRevenue)}</p>
-            </div>
-          </Card>
-        ) : (
-          <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFFBEB', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Star size={24} />
-            </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Мой рейтинг</p>
-              <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>4.9</p>
-            </div>
-          </Card>
-        )}
 
-        <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFFBEB', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Calendar size={24} />
-          </div>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{isCoach ? 'В расписании' : 'Все тренировки'}</p>
-            <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{todayTrainings}</p>
-          </div>
-        </Card>
-
-        {isAdmin && (
-          <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
-            <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFF1F2', color: '#E11D48', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Target size={24} />
-            </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Новые лиды</p>
-              <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>+{newLeadsCount}</p>
-            </div>
-          </Card>
-        )}
-      </div>
-
-      <div className="responsive-grid admin-dashboard-main" style={{ marginTop: '32px' }}>
-        <div className="flex flex-col gap-8 min-w-0">
-          <Card className="card-hover border-none shadow-xl shadow-slate-100 overflow-hidden" style={{ padding: 0 }}>
-            <div className="p-8 flex justify-between items-center border-b border-slate-50">
-              <h3 className="h4">{isCoach ? 'Мои занятия на сегодня' : 'Расписание клуба'}</h3>
-              <button className="px-4 py-2 bg-indigo-50 text-primary text-xs font-bold rounded-xl hover:bg-indigo-100 transition-all border-none cursor-pointer" onClick={() => navigate('/admin/schedule')}>Открыть календарь</button>
-            </div>
-            <div className="p-0 overflow-x-auto">
-              {coachSchedule.length === 0 ? (
-                <div className="text-center py-24 px-4 text-slate-400 flex flex-col items-center justify-center min-h-[250px]">
-                   <Calendar size={56} className="mx-auto mb-6 text-slate-300" />
-                   <p className="font-bold text-lg text-slate-500">Нет запланированных тренировок</p>
-                </div>
-              ) : (
-                <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', minWidth: '400px', tableLayout: 'fixed' }}>
-                  <thead style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
-                    <tr>
-                      <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', width: '15%' }}>Время</th>
-                      <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Группа / дисциплина</th>
-                      <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', width: '30%' }}>Тренер</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {coachSchedule.slice(0, 5).map((item) => {
-                      const coach = coachLine(item);
-                      return (
-                      <tr key={item.id} onClick={() => isCoach ? setSelectedClass(item) : null} style={{ borderBottom: '1px solid var(--color-border)', transition: 'background-color 0.2s', cursor: isCoach ? 'pointer' : 'default' }}>
-                        <td style={{ padding: 'var(--space-4)', fontWeight: 'bold', fontSize: '0.875rem', color: 'var(--color-text-primary)', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>{item.time || '—'}</td>
-                        <td style={{ padding: 'var(--space-4)', verticalAlign: 'middle' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
-                             <div
-                               style={{ width: '6px', height: '40px', borderRadius: '9999px', flexShrink: 0, backgroundColor: (typeof item.color === 'string' && item.color.trim().charAt(0) === '#') ? item.color : 'var(--color-primary)' }}
-                               aria-hidden
-                             />
-                             <div style={{ minWidth: 0 }}>
-                               <p style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{item.groupName || '—'}</p>
-                               <p style={{ fontSize: '0.65rem', fontWeight: 'bold', color: 'var(--color-text-secondary)', letterSpacing: '0.02em', margin: 0, marginTop: '2px' }}>{scheduleTypeLabel(item.type)}</p>
-                             </div>
-                          </div>
-                        </td>
-                        <td style={{ padding: 'var(--space-4)', verticalAlign: 'middle' }}>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                              <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--color-bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', color: 'var(--color-text-secondary)', flexShrink: 0 }}>
-                                {firstGrapheme(coach)}
-                              </div>
-                              <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={coach}>{coach}</span>
-                           </div>
-                        </td>
-                      </tr>
-                    );})}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </Card>
-
-          <div className="admin-card-grid">
-             <EventCarousel isAdmin={isAdmin} />
-
-             <Card className="card-hover border-none shadow-xl shadow-slate-100 bg-slate-900 text-white overflow-hidden relative">
-                <div className="absolute top-[-20px] right-[-20px] opacity-10 rotate-12"><MessageSquare size={120} fill="white" /></div>
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg"><Zap size={20} fill="currentColor" /></div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Smart Triggers</p>
-                      <h4 className="font-bold">Автопилот TG</h4>
+      <div className="dashboard-dynamic-grid" style={{ marginTop: '32px' }}>
+        {dashboardLayout.filter(w => w.visible).map((widget) => {
+          switch (widget.id) {
+            case 'stats':
+              return (
+                <div key="stats" className="dashboard-stat-grid admin-kpi-grid" style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '8px' }}>
+                  <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#EEF2FF', color: '#4F46E5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Users size={24} />
                     </div>
-                  </div>
-                  
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                       <span className="text-xs font-medium opacity-80">День рождения (XP)</span>
-                       <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">ACTIVE</Badge>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Ученики</p>
+                      <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeMembers}</p>
                     </div>
-                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                       <span className="text-xs font-medium opacity-80">Продление абонемента</span>
-                       <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">ACTIVE</Badge>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6 pt-6 border-t border-white/10">
-                     <p className="text-[10px] text-indigo-300 font-bold uppercase tracking-wider mb-2">Последний запуск</p>
-                     <p className="text-xs font-medium opacity-60 italic">Система проверила 14 атлетов • Сегодня 09:00</p>
-                  </div>
-                </div>
-             </Card>
+                  </Card>
 
-             <Card className="card-hover border-none shadow-xl shadow-slate-100" style={{ minHeight: '200px' }}>
-                <p className="text-[10px] font-black uppercase mb-5 text-muted tracking-widest">Быстрые действия</p>
-                <div className="flex flex-col gap-2">
+                  {isAdmin ? (
+                    <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#ECFDF5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <DollarSign size={24} />
+                      </div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Выручка (всего)</p>
+                        <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={formatKzt(monthlyRevenue)}>{formatKzt(monthlyRevenue)}</p>
+                      </div>
+                    </Card>
+                  ) : (
+                    <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFFBEB', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Star size={24} />
+                      </div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Мой рейтинг</p>
+                        <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>4.9</p>
+                      </div>
+                    </Card>
+                  )}
+
+                  <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFFBEB', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Calendar size={24} />
+                    </div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{isCoach ? 'В расписании' : 'Все тренировки'}</p>
+                      <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{todayTrainings}</p>
+                    </div>
+                  </Card>
+
                   {isAdmin && (
-                    <button type="button" className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl hover:bg-indigo-50 transition-all border-none cursor-pointer group text-left" onClick={() => navigate('/admin/members/new')}>
-                      <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary group-hover:scale-105 transition-transform flex-shrink-0"><Plus size={18}/></div>
-                      <span className="text-sm font-bold text-slate-800">Зачислить ученика</span>
-                    </button>
+                    <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFF1F2', color: '#E11D48', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Target size={24} />
+                      </div>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Новые лиды</p>
+                        <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>+{newLeadsCount}</p>
+                      </div>
+                    </Card>
                   )}
-                  {isCoach && (
-                    <button type="button" className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl hover:bg-indigo-50 transition-all border-none cursor-pointer group text-left" onClick={() => navigate('/admin/schedule')}>
-                      <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary group-hover:scale-105 transition-transform flex-shrink-0"><Calendar size={18}/></div>
-                      <span className="text-sm font-bold text-slate-800">Календарь и занятия</span>
-                    </button>
-                  )}
-                  <button type="button" className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl hover:bg-amber-50 transition-all border-none cursor-pointer group text-left" onClick={() => navigate('/admin/shop')}>
-                    <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-amber-600 group-hover:scale-105 transition-transform flex-shrink-0"><ShoppingBag size={18}/></div>
-                    <span className="text-sm font-bold text-slate-800">Магазин клуба</span>
-                  </button>
-                  <button type="button" className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-all border-none cursor-pointer group text-left" onClick={() => navigate('/admin/league')}>
-                    <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-600 group-hover:scale-105 transition-transform flex-shrink-0"><Trophy size={18}/></div>
-                    <span className="text-sm font-bold text-slate-800">Лига и рейтинг</span>
-                  </button>
                 </div>
-             </Card>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-8 min-w-0">
-          <Card className="card-hover border-none shadow-xl shadow-slate-100" style={{ padding: 0 }}>
-            <div className="p-8 border-b border-slate-50 flex justify-between items-center">
-              <h3 className="font-bold">Живая лента событий</h3>
-              <div className="p-2 bg-indigo-50 text-primary rounded-lg"><Activity size={18} /></div>
-            </div>
-            <div className="p-4 flex flex-col gap-1 max-h-[400px] overflow-y-auto scrollbar-hide">
-               {activities.length === 0 ? (
-                 <div className="py-12 text-center">
-                    <MessageSquare size={48} className="mx-auto mb-4 text-slate-100" />
-                    <p className="text-slate-400 text-sm font-medium">Событий пока нет</p>
-                 </div>
-               ) : activities.slice(0, 4).map((act) => (
-                 <div key={act.id} className="flex items-start gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all border-b border-slate-50 last:border-0 group relative">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                      act.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 
-                      act.type === 'warning' ? 'bg-rose-50 text-rose-600' : 'bg-indigo-50 text-primary'
-                    }`}>
-                       {act.type === 'success' ? <CheckCircle size={18} /> : 
-                        act.type === 'warning' ? <AlertCircle size={18} /> : <Info size={18} />}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-bold text-slate-800 leading-snug">{act.text}</p>
-                      <p className="text-[10px] font-medium text-slate-400 mt-1">
-                        {new Date(act.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })} • Сегодня
-                      </p>
-                    </div>
-                    <button 
-                      onClick={() => removeActivity(act.id)}
-                      className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-white rounded-lg transition-all border-none bg-transparent cursor-pointer text-slate-400 hover:text-rose-500 shadow-sm"
-                      title="Удалить из ленты"
-                    >
-                      <X size={14} />
-                    </button>
-                 </div>
-               ))}
-            </div>
-          </Card>
-
-          <Card className="card-hover border-none shadow-xl shadow-slate-100" style={{ minWidth: 0, overflow: 'hidden' }}>
-            <div className="flex justify-between items-center mb-8">
-               <h3 className="text-[10px] font-black uppercase text-muted tracking-widest">Достижения клуба</h3>
-               {isAdmin && <button onClick={() => navigate('/admin/league')} className="p-2 hover:bg-slate-50 rounded-lg transition-all border-none bg-transparent cursor-pointer text-primary"><Plus size={16}/></button>}
-            </div>
-            <div className="flex flex-col gap-4">
-               {achievements.slice(0, 3).map((ach, i) => {
-                 const IconComponent = ach.icon === 'Target' ? Target : ach.icon === 'TrendingUp' ? TrendingUp : Trophy;
-                 return (
-                  <div key={ach.id || i} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:translate-x-1 transition-all cursor-pointer">
-                      <div style={{ backgroundColor: ach.color, color: ach.iconColor }} className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm shrink-0">
-                        <IconComponent size={20} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-900 line-clamp-1">{ach.title}</p>
-                        <p className="text-[11px] text-slate-500 font-medium line-clamp-1">{ach.desc}</p>
-                      </div>
+              );
+            case 'schedule':
+              return (
+                <Card key="schedule" className="card-hover border-none shadow-xl shadow-slate-100 overflow-hidden" style={{ padding: 0, gridColumn: '1 / -1' }}>
+                  <div className="p-8 flex justify-between items-center border-b border-slate-50">
+                    <h3 className="h4">{isCoach ? 'Мои занятия на сегодня' : 'Расписание клуба'}</h3>
+                    <button className="px-4 py-2 bg-indigo-50 text-primary text-xs font-bold rounded-xl hover:bg-indigo-100 transition-all border-none cursor-pointer" onClick={() => navigate('/admin/schedule')}>Открыть календарь</button>
                   </div>
-                 );
-               })}
-               {achievements.length === 0 && (
-                 <p className="text-xs text-slate-400 italic text-center py-4">Достижения пока не добавлены</p>
-               )}
-            </div>
-          </Card>
-
-          <Card
-            className="shadow-2xl shadow-indigo-200"
-            style={{
-              minWidth: 0,
-              backgroundColor: 'var(--color-primary)',
-              color: 'white',
-              position: 'relative',
-              overflow: 'hidden',
-              borderRadius: '32px',
-            }}
-          >
-            <div style={{ position: 'absolute', top: -20, right: -20, opacity: 0.15, pointerEvents: 'none' }}>
-              <Trophy size={140} />
-            </div>
-            <div className="p-3 rounded-2xl w-fit mb-6 border" style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.15)' }}><Trophy size={24}/></div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 opacity-80">Награда месяца</p>
-            <h4 className="text-2xl font-black mb-2 pr-2" style={{ fontFamily: 'var(--font-family-display)', wordBreak: 'break-word' }}>{monthlyAward.title || 'Главный кубок'}</h4>
-            <p className="text-sm mb-6 opacity-90 leading-relaxed font-medium" style={{ wordBreak: 'break-word' }}>{monthlyAward.description || 'По итогам посещаемости и активности в лиге.'}</p>
-            <div className="p-4 rounded-2xl flex items-center justify-between gap-2" style={{ backgroundColor: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.12)' }}>
-              <span className="text-[11px] font-black uppercase tracking-widest flex-shrink-0">До финала:</span>
-              <span className="text-xl font-black flex-shrink-0">{monthlyAward.daysLeft != null ? monthlyAward.daysLeft : 0} дн.</span>
-            </div>
-          </Card>
-        </div>
+                  <div className="p-0 overflow-x-auto">
+                    {coachSchedule.length === 0 ? (
+                      <div className="text-center py-24 px-4 text-slate-400 flex flex-col items-center justify-center min-h-[250px]">
+                         <Calendar size={56} className="mx-auto mb-6 text-slate-300" />
+                         <p className="font-bold text-lg text-slate-500">Нет запланированных тренировок</p>
+                      </div>
+                    ) : (
+                      <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', minWidth: '400px', tableLayout: 'fixed' }}>
+                        <thead style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
+                          <tr>
+                            <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', width: '15%' }}>Время</th>
+                            <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Группа / дисциплина</th>
+                            <th style={{ padding: 'var(--space-3) var(--space-4)', textAlign: 'left', fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', width: '30%' }}>Тренер</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {coachSchedule.slice(0, 5).map((item) => {
+                            const coach = coachLine(item);
+                            return (
+                            <tr key={item.id} onClick={() => isCoach ? setSelectedClass(item) : null} style={{ borderBottom: '1px solid var(--color-border)', transition: 'background-color 0.2s', cursor: isCoach ? 'pointer' : 'default' }}>
+                              <td style={{ padding: 'var(--space-4)', fontWeight: 'bold', fontSize: '0.875rem', color: 'var(--color-text-primary)', verticalAlign: 'middle', whiteSpace: 'nowrap' }}>{item.time || '—'}</td>
+                              <td style={{ padding: 'var(--space-4)', verticalAlign: 'middle' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
+                                   <div
+                                     style={{ width: '6px', height: '40px', borderRadius: '9999px', flexShrink: 0, backgroundColor: (typeof item.color === 'string' && item.color.trim().charAt(0) === '#') ? item.color : 'var(--color-primary)' }}
+                                     aria-hidden
+                                   />
+                                   <div style={{ minWidth: 0 }}>
+                                     <p style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{item.groupName || '—'}</p>
+                                     <p style={{ fontSize: '0.65rem', fontWeight: 'bold', color: 'var(--color-text-secondary)', letterSpacing: '0.02em', margin: 0, marginTop: '2px' }}>{scheduleTypeLabel(item.type)}</p>
+                                   </div>
+                                </div>
+                              </td>
+                              <td style={{ padding: 'var(--space-4)', verticalAlign: 'middle' }}>
+                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                                    <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--color-bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', color: 'var(--color-text-secondary)', flexShrink: 0 }}>
+                                      {firstGrapheme(coach)}
+                                    </div>
+                                    <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={coach}>{coach}</span>
+                                 </div>
+                              </td>
+                            </tr>
+                          );})}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </Card>
+              );
+            case 'events':
+              return <EventCarousel key="events" isAdmin={isAdmin} />;
+            case 'autopilot':
+              return (
+                <Card key="autopilot" className="card-hover border-none shadow-xl shadow-slate-100 bg-slate-900 text-white overflow-hidden relative">
+                  <div className="absolute top-[-20px] right-[-20px] opacity-10 rotate-12"><MessageSquare size={120} fill="white" /></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg"><Zap size={20} fill="currentColor" /></div>
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Smart Triggers</p>
+                        <h4 className="font-bold">Автопилот TG</h4>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                         <span className="text-xs font-medium opacity-80">День рождения (XP)</span>
+                         <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">ACTIVE</Badge>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                         <span className="text-xs font-medium opacity-80">Продление абонемента</span>
+                         <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">ACTIVE</Badge>
+                      </div>
+                    </div>
+                    <div className="mt-6 pt-6 border-t border-white/10">
+                       <p className="text-[10px] text-indigo-300 font-bold uppercase tracking-wider mb-2">Последний запуск</p>
+                       <p className="text-xs font-medium opacity-60 italic">Система проверила {members.length} атлетов • Сегодня 09:00</p>
+                    </div>
+                  </div>
+                </Card>
+              );
+            case 'quickActions':
+              return (
+                <Card key="quickActions" className="card-hover border-none shadow-xl shadow-slate-100" style={{ minHeight: '200px' }}>
+                  <p className="text-[10px] font-black uppercase mb-5 text-muted tracking-widest">Быстрые действия</p>
+                  <div className="flex flex-col gap-2">
+                    {isAdmin && (
+                      <button type="button" className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl hover:bg-indigo-50 transition-all border-none cursor-pointer group text-left" onClick={() => navigate('/admin/members/new')}>
+                        <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary group-hover:scale-105 transition-transform flex-shrink-0"><Plus size={18}/></div>
+                        <span className="text-sm font-bold text-slate-800">Зачислить ученика</span>
+                      </button>
+                    )}
+                    {isCoach && (
+                      <button type="button" className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl hover:bg-indigo-50 transition-all border-none cursor-pointer group text-left" onClick={() => navigate('/admin/schedule')}>
+                        <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary group-hover:scale-105 transition-transform flex-shrink-0"><Calendar size={18}/></div>
+                        <span className="text-sm font-bold text-slate-800">Календарь и занятия</span>
+                      </button>
+                    )}
+                    <button type="button" className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl hover:bg-amber-50 transition-all border-none cursor-pointer group text-left" onClick={() => navigate('/admin/shop')}>
+                      <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-amber-600 group-hover:scale-105 transition-transform flex-shrink-0"><ShoppingBag size={18}/></div>
+                      <span className="text-sm font-bold text-slate-800">Магазин клуба</span>
+                    </button>
+                    <button type="button" className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl hover:bg-emerald-50 transition-all border-none cursor-pointer group text-left" onClick={() => navigate('/admin/league')}>
+                      <div className="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-600 group-hover:scale-105 transition-transform flex-shrink-0"><Trophy size={18}/></div>
+                      <span className="text-sm font-bold text-slate-800">Лига и рейтинг</span>
+                    </button>
+                  </div>
+                </Card>
+              );
+            case 'activity':
+              return (
+                <Card key="activity" className="card-hover border-none shadow-xl shadow-slate-100" style={{ padding: 0 }}>
+                  <div className="p-8 border-b border-slate-50 flex justify-between items-center">
+                    <h3 className="font-bold">Живая лента событий</h3>
+                    <div className="p-2 bg-indigo-50 text-primary rounded-lg"><Activity size={18} /></div>
+                  </div>
+                  <div className="p-4 flex flex-col gap-1 max-h-[400px] overflow-y-auto scrollbar-hide">
+                     {activities.length === 0 ? (
+                       <div className="py-12 text-center">
+                          <MessageSquare size={48} className="mx-auto mb-4 text-slate-100" />
+                          <p className="text-slate-400 text-sm font-medium">Событий пока нет</p>
+                       </div>
+                     ) : activities.slice(0, 4).map((act) => (
+                       <div key={act.id} className="flex items-start gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all border-b border-slate-50 last:border-0 group relative">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                            act.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 
+                            act.type === 'warning' ? 'bg-rose-50 text-rose-600' : 'bg-indigo-50 text-primary'
+                          }`}>
+                             {act.type === 'success' ? <CheckCircle size={18} /> : 
+                              act.type === 'warning' ? <AlertCircle size={18} /> : <Info size={18} />}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-bold text-slate-800 leading-snug">{act.text}</p>
+                            <p className="text-[10px] font-medium text-slate-400 mt-1">
+                              {new Date(act.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })} • Сегодня
+                            </p>
+                          </div>
+                          <button 
+                            onClick={() => removeActivity(act.id)}
+                            className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-white rounded-lg transition-all border-none bg-transparent cursor-pointer text-slate-400 hover:text-rose-500 shadow-sm"
+                            title="Удалить из ленты"
+                          >
+                            <X size={14} />
+                          </button>
+                       </div>
+                     ))}
+                  </div>
+                </Card>
+              );
+            case 'achievements':
+              return (
+                <Card key="achievements" className="card-hover border-none shadow-xl shadow-slate-100" style={{ minWidth: 0, overflow: 'hidden' }}>
+                  <div className="flex justify-between items-center mb-8">
+                     <h3 className="text-[10px] font-black uppercase text-muted tracking-widest">Достижения клуба</h3>
+                     {isAdmin && <button onClick={() => navigate('/admin/league')} className="p-2 hover:bg-slate-50 rounded-lg transition-all border-none bg-transparent cursor-pointer text-primary"><Plus size={16}/></button>}
+                  </div>
+                  <div className="flex flex-col gap-4">
+                     {achievements.slice(0, 3).map((ach, i) => {
+                       const IconComponent = ach.icon === 'Target' ? Target : ach.icon === 'TrendingUp' ? TrendingUp : Trophy;
+                       return (
+                        <div key={ach.id || i} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl hover:translate-x-1 transition-all cursor-pointer">
+                            <div style={{ backgroundColor: ach.color, color: ach.iconColor }} className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                              <IconComponent size={20} />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900 line-clamp-1">{ach.title}</p>
+                              <p className="text-[11px] text-slate-500 font-medium line-clamp-1">{ach.desc}</p>
+                            </div>
+                        </div>
+                       );
+                     })}
+                     {achievements.length === 0 && (
+                       <p className="text-xs text-slate-400 italic text-center py-4">Достижения пока не добавлены</p>
+                     )}
+                  </div>
+                </Card>
+              );
+            case 'monthlyAward':
+              return (
+                <Card
+                  key="monthlyAward"
+                  className="shadow-2xl shadow-indigo-200"
+                  style={{
+                    minWidth: 0,
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'white',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    borderRadius: '32px',
+                  }}
+                >
+                  <div style={{ position: 'absolute', top: -20, right: -20, opacity: 0.15, pointerEvents: 'none' }}>
+                    <Trophy size={140} />
+                  </div>
+                  <div className="p-3 rounded-2xl w-fit mb-6 border" style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderColor: 'rgba(255,255,255,0.15)' }}><Trophy size={24}/></div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 opacity-80">Награда месяца</p>
+                  <h4 className="text-2xl font-black mb-2 pr-2" style={{ fontFamily: 'var(--font-family-display)', wordBreak: 'break-word' }}>{monthlyAward.title || 'Главный кубок'}</h4>
+                  <p className="text-sm mb-6 opacity-90 leading-relaxed font-medium" style={{ wordBreak: 'break-word' }}>{monthlyAward.description || 'По итогам посещаемости и активности в лиге.'}</p>
+                  <div className="p-4 rounded-2xl flex items-center justify-between gap-2" style={{ backgroundColor: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                    <span className="text-[11px] font-black uppercase tracking-widest flex-shrink-0">До финала:</span>
+                    <span className="text-xl font-black flex-shrink-0">{monthlyAward.daysLeft != null ? monthlyAward.daysLeft : 0} дн.</span>
+                  </div>
+                </Card>
+              );
+            default:
+              return null;
+          }
+        })}
       </div>
 
       {selectedClass && isCoach && (
@@ -463,14 +483,14 @@ export const Dashboard = () => {
         @media (min-width: 640px) {
           .dashboard-hero { flex-direction: row; align-items: flex-end; justify-content: space-between; }
         }
-        .responsive-grid.admin-dashboard-main {
+        .dashboard-dynamic-grid {
           display: grid;
-          grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+          grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 24px;
           align-items: start;
         }
         @media (max-width: 1024px) {
-          .responsive-grid.admin-dashboard-main {
+          .dashboard-dynamic-grid {
             grid-template-columns: 1fr;
           }
         }

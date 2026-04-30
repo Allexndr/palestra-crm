@@ -6,7 +6,7 @@ import { Login } from './pages/auth/Login';
 import { Feed } from './pages/social/Feed';
 import { QuestsMember } from './pages/social/QuestsMember';
 import { Profile } from './pages/profile/Profile';
-import { AdminProvider } from './context/AdminContext';
+import { AdminProvider, useAdmin } from './context/AdminContext';
 import { ShopProvider } from './context/ShopContext';
 import { PageLoader } from './components/ui/PageLoader';
 import { SkipToMain } from './components/layout/SkipToMain';
@@ -34,9 +34,50 @@ const MemberForm = lazy(() => import('./pages/admin/MemberForm').then((m) => ({ 
 const MemberDetail = lazy(() => import('./pages/admin/MemberDetail').then((m) => ({ default: m.MemberDetail })));
 const GroupForm = lazy(() => import('./pages/admin/GroupForm').then((m) => ({ default: m.GroupForm })));
 const GroupDetail = lazy(() => import('./pages/admin/GroupDetail').then((m) => ({ default: m.GroupDetail })));
+const Chats = lazy(() => import('./pages/admin/Chats').then((m) => ({ default: m.Chats })));
 const Shop = lazy(() => import('./pages/admin/Shop').then((m) => ({ default: m.Shop })));
 const BillingSuccess = lazy(() => import('./pages/admin/BillingSuccess').then((m) => ({ default: m.BillingSuccess })));
 const BillingFailure = lazy(() => import('./pages/admin/BillingFailure').then((m) => ({ default: m.BillingFailure })));
+
+const FeedRedirect = () => {
+  const { user } = useAdmin();
+  if (user?.role === 'admin' || user?.role === 'coach') {
+    return <Navigate to="/admin/feed" replace />;
+  }
+  return <Feed />;
+};
+
+const ProfileRedirect = () => {
+  const { user } = useAdmin();
+  if (user?.role === 'admin' || user?.role === 'coach') {
+    return <Navigate to="/admin" replace />;
+  }
+  return <Profile />;
+};
+
+const QuestsRedirect = () => {
+  const { user } = useAdmin();
+  if (user?.role === 'admin' || user?.role === 'coach') {
+    return <Navigate to="/admin/quests" replace />;
+  }
+  return <QuestsMember />;
+};
+
+const ScheduleRedirect = () => {
+  const { user } = useAdmin();
+  if (user?.role === 'admin' || user?.role === 'coach') {
+    return <Navigate to="/admin/schedule" replace />;
+  }
+  return <ScheduleEntry />;
+};
+
+const LeagueRedirect = () => {
+  const { user } = useAdmin();
+  if (user?.role === 'admin' || user?.role === 'coach') {
+    return <Navigate to="/admin/league" replace />;
+  }
+  return <LeagueEntry />;
+};
 
 function App() {
   return (
@@ -74,6 +115,7 @@ function App() {
                   <Route path="events" element={<Events />} />
                   <Route path="league" element={<LeaguePage />} />
                   <Route path="billing" element={<Billing />} />
+                  <Route path="chats" element={<Chats />} />
                   <Route path="shop" element={<Shop />} />
                   <Route path="settings" element={<Settings />} />
                   <Route path="feed" element={<Feed />} />
@@ -87,11 +129,11 @@ function App() {
 
               <Route element={<RequireAuth />}>
                 <Route element={<MemberLayout />}>
-                  <Route path="/feed" element={<Feed />} />
-                  <Route path="/schedule" element={<ScheduleEntry />} />
-                  <Route path="/quests" element={<QuestsMember />} />
-                  <Route path="/league" element={<LeagueEntry />} />
-                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/feed" element={<FeedRedirect />} />
+                  <Route path="/schedule" element={<ScheduleRedirect />} />
+                  <Route path="/quests" element={<QuestsRedirect />} />
+                  <Route path="/league" element={<LeagueRedirect />} />
+                  <Route path="/profile" element={<ProfileRedirect />} />
                 </Route>
               </Route>
 
