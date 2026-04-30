@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { useAdmin } from '../../context/AdminContext';
-import { Menu, X, LogOut, Shield } from 'lucide-react';
+import { Menu, X, LogOut, Shield, ChevronDown, Check, MapPin } from 'lucide-react';
 import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 import { ClubLogo } from '../ui/ClubLogo';
 
 export const AdminLayout = () => {
   const { user, clubInfo, logout, locations, selectedLocationId, setSelectedLocationId } = useAdmin();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLocOpen, setIsLocOpen] = useState(false);
   const navigate = useNavigate();
 
   const isImpersonating = !!sessionStorage.getItem('palestra-impersonate-club-id');
@@ -40,32 +41,80 @@ export const AdminLayout = () => {
           </div>
 
           <div style={{ padding: '0 var(--space-6) var(--space-4)' }}>
-            <div style={{ 
-              backgroundColor: 'var(--color-bg)',
-              borderRadius: '16px',
-              padding: '12px 16px',
-              border: '1px solid var(--color-border)'
-            }}>
-              <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em' }}>Филиал</p>
-              <select 
-                value={selectedLocationId} 
-                onChange={(e) => setSelectedLocationId(e.target.value)}
-                style={{
-                  width: '100%',
-                  border: 'none',
-                  background: 'transparent',
-                  fontSize: '14px',
-                  fontWeight: 800,
-                  color: 'var(--color-text-primary)',
-                  padding: '4px 0',
-                  outline: 'none'
-                }}
-              >
-                <option value="all">Все филиалы</option>
-                {locations.map(loc => (
-                  <option key={loc.id} value={loc.id}>{loc.name}</option>
-                ))}
-              </select>
+            <div 
+              onClick={() => setIsLocOpen(!isLocOpen)}
+              style={{ 
+                backgroundColor: 'white',
+                borderRadius: '16px',
+                padding: '12px 16px',
+                border: '1px solid var(--color-border)',
+                position: 'relative',
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: 32, height: 32, borderRadius: '8px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <MapPin size={16} />
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em' }}>Филиал</p>
+                    <p style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
+                      {selectedLocationId === 'all' ? 'Все филиалы' : locations.find(l => l.id === selectedLocationId)?.name || 'Выбрать...'}
+                    </p>
+                  </div>
+                </div>
+                <ChevronDown size={18} className={`transition-transform duration-300 ${isLocOpen ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted)' }} />
+              </div>
+
+              {isLocOpen && (
+                <div style={{ 
+                  marginTop: '12px',
+                  borderTop: '1px solid var(--color-border)',
+                  paddingTop: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px'
+                }}>
+                  <div 
+                    onClick={(e) => { e.stopPropagation(); setSelectedLocationId('all'); setIsLocOpen(false); }}
+                    style={{ 
+                      padding: '10px 12px', 
+                      borderRadius: '10px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      backgroundColor: selectedLocationId === 'all' ? 'var(--color-primary-soft)' : 'transparent',
+                      color: selectedLocationId === 'all' ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                      fontWeight: 700,
+                      fontSize: '13px'
+                    }}
+                  >
+                    Все филиалы
+                    {selectedLocationId === 'all' && <Check size={14} />}
+                  </div>
+                  {locations.map(loc => (
+                    <div 
+                      key={loc.id}
+                      onClick={(e) => { e.stopPropagation(); setSelectedLocationId(loc.id); setIsLocOpen(false); }}
+                      style={{ 
+                        padding: '10px 12px', 
+                        borderRadius: '10px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between',
+                        backgroundColor: selectedLocationId === loc.id ? 'var(--color-primary-soft)' : 'transparent',
+                        color: selectedLocationId === loc.id ? 'var(--color-primary)' : 'var(--color-text-primary)',
+                        fontWeight: 700,
+                        fontSize: '13px'
+                      }}
+                    >
+                      {loc.name}
+                      {selectedLocationId === loc.id && <Check size={14} />}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
