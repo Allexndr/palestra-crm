@@ -21,13 +21,51 @@ export const League = () => {
   const [leagueToDelete, setLeagueToDelete] = useState(null);
   const [achievementToDelete, setAchievementToDelete] = useState(null);
   const [newLeague, setNewLeague] = useState({ 
-    name: '', 
-    sport: sports[0], 
-    startDate: '', 
-    endDate: '',
     participantIds: [],
-    groupIds: []
+    groupIds: [],
+    template: 'martial_arts'
   });
+
+  const LEAGUE_TEMPLATES = {
+    martial_arts: {
+      name: 'Боевые искусства (по фото)',
+      metrics: [
+        { id: 'strength', label: 'Сила', color: 'red' },
+        { id: 'speed', label: 'Скорость', color: 'amber' },
+        { id: 'endurance', label: 'Выносливость', color: 'emerald' },
+        { id: 'discipline', label: 'Дисциплина', color: 'indigo' }
+      ]
+    },
+    rpg: {
+      name: 'RPG Прогресс',
+      metrics: [
+        { id: 'points', label: 'Опыт', color: 'blue' },
+        { id: 'level', label: 'Уровень', color: 'purple' },
+        { id: 'quests', label: 'Квесты', color: 'orange' },
+        { id: 'rank', label: 'Ранг', color: 'slate' }
+      ]
+    },
+    tournament: {
+      name: 'Турнирная таблица',
+      metrics: [
+        { id: 'wins', label: 'Победы', color: 'emerald' },
+        { id: 'losses', label: 'Поражения', color: 'red' },
+        { id: 'draws', label: 'Ничьи', color: 'slate' },
+        { id: 'points', label: 'Очки', color: 'amber' }
+      ]
+    },
+    attendance: {
+      name: 'Посещаемость и Дисциплина',
+      metrics: [
+        { id: 'attendance', label: 'Посещаемость', color: 'blue' },
+        { id: 'discipline', label: 'Дисциплина', color: 'indigo' },
+        { id: 'activity', label: 'Активность', color: 'orange' },
+        { id: 'results', label: 'Результат', color: 'emerald' }
+      ]
+    }
+  };
+
+  const currentTemplate = LEAGUE_TEMPLATES[currentLeague?.template || 'martial_arts'];
   
   const [resultPoints, setResultPoints] = useState({}); // memberId -> points
   const [resultDesc, setResultDesc] = useState('');
@@ -151,6 +189,14 @@ export const League = () => {
               </div>
               <Input label="Начало" type="date" required value={newLeague.startDate} onChange={e => setNewLeague({...newLeague, startDate: e.target.value})} />
               <Input label="Конец" type="date" required value={newLeague.endDate} onChange={e => setNewLeague({...newLeague, endDate: e.target.value})} />
+              <div className="input-group">
+                <label className="input-label">Шаблон лиги</label>
+                <select className="input-field" value={newLeague.template} onChange={e => setNewLeague({...newLeague, template: e.target.value})}>
+                  {Object.entries(LEAGUE_TEMPLATES).map(([id, t]) => (
+                    <option key={id} value={id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="admin-two-column">
@@ -248,10 +294,9 @@ export const League = () => {
                   <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-16">№</th>
                   <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-24">Возраст</th>
                   <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Боец (ФИО)</th>
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Сила</th>
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Скорость</th>
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Выносливость</th>
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Дисциплина</th>
+                  {currentTemplate.metrics.map(m => (
+                    <th key={m.id} className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">{m.label}</th>
+                  ))}
                   <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Итого</th>
                   <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Прогресс</th>
                 </tr>
@@ -259,7 +304,7 @@ export const League = () => {
               <tbody>
                 {sortedMembers.map((member, idx) => {
                   const age = member.birthDate ? new Date().getFullYear() - new Date(member.birthDate).getFullYear() : '-';
-                  const total = Math.round(((member.strength || 0) + (member.speed || 0) + (member.endurance || 0) + (member.discipline || 0)) / 4);
+                  const total = Math.round(currentTemplate.metrics.reduce((acc, m) => acc + (member[m.id] || 0), 0) / currentTemplate.metrics.length);
                   return (
                     <tr key={member.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
                       <td className="p-6">
@@ -274,18 +319,13 @@ export const League = () => {
                           <span className="font-black text-slate-900">{member.firstName} {member.lastName}</span>
                         </div>
                       </td>
-                      <td className="p-6 text-center">
-                        <div className="w-12 h-12 rounded-xl bg-red-50 text-red-500 font-black flex items-center justify-center mx-auto shadow-sm border border-red-100/50">{member.strength || 0}</div>
-                      </td>
-                      <td className="p-6 text-center">
-                        <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 font-black flex items-center justify-center mx-auto shadow-sm border border-amber-100/50">{member.speed || 0}</div>
-                      </td>
-                      <td className="p-6 text-center">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 font-black flex items-center justify-center mx-auto shadow-sm border border-emerald-100/50">{member.endurance || 0}</div>
-                      </td>
-                      <td className="p-6 text-center">
-                        <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500 font-black flex items-center justify-center mx-auto shadow-sm border border-indigo-100/50">{member.discipline || 0}</div>
-                      </td>
+                      {currentTemplate.metrics.map(m => (
+                        <td key={m.id} className="p-6 text-center">
+                          <div className={`w-12 h-12 rounded-xl bg-${m.color}-50 text-${m.color}-500 font-black flex items-center justify-center mx-auto shadow-sm border border-${m.color}-100/50`}>
+                            {member[m.id] || 0}
+                          </div>
+                        </td>
+                      ))}
                       <td className="p-6 text-center">
                         <span className="font-black text-primary text-xl">{total}</span>
                       </td>
@@ -459,38 +499,16 @@ export const League = () => {
                      </div>
                      
                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div className="flex flex-col gap-2">
-                           <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2">Сила</label>
-                           <input 
-                              type="number" className="w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-red-100 text-red-500 shadow-sm"
-                              value={formData[m.id]?.strength || m.strength || 0}
-                              onChange={e => updateMember(m.id, { strength: parseInt(e.target.value) || 0 })}
-                           />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                           <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2">Скорость</label>
-                           <input 
-                              type="number" className="w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-amber-100 text-amber-500 shadow-sm"
-                              value={formData[m.id]?.speed || m.speed || 0}
-                              onChange={e => updateMember(m.id, { speed: parseInt(e.target.value) || 0 })}
-                           />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                           <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2">Выносл.</label>
-                           <input 
-                              type="number" className="w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-emerald-100 text-emerald-500 shadow-sm"
-                              value={formData[m.id]?.endurance || m.endurance || 0}
-                              onChange={e => updateMember(m.id, { endurance: parseInt(e.target.value) || 0 })}
-                           />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                           <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2">Дисципл.</label>
-                           <input 
-                              type="number" className="w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-indigo-100 text-indigo-500 shadow-sm"
-                              value={formData[m.id]?.discipline || m.discipline || 0}
-                              onChange={e => updateMember(m.id, { discipline: parseInt(e.target.value) || 0 })}
-                           />
-                        </div>
+                        {currentTemplate.metrics.map(m => (
+                          <div key={m.id} className="flex flex-col gap-2">
+                             <label className={`text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2`}>{m.label}</label>
+                             <input 
+                                type="number" className={`w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-${m.color}-100 text-${m.color}-500 shadow-sm`}
+                                value={formData[m.id] || member[m.id] || 0}
+                                onChange={e => updateMember(member.id, { [m.id]: parseInt(e.target.value) || 0 })}
+                             />
+                          </div>
+                        ))}
                      </div>
 
                      <div className="flex items-center gap-4 pt-4 border-t border-slate-100/50">
