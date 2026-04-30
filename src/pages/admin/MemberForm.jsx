@@ -347,7 +347,8 @@ export const MemberForm = () => {
                       { id: 'speed', label: 'Скорость', icon: '⚡', color: '#FBBF24' },
                       { id: 'reaction', label: 'Реакция', icon: '👁️', color: '#34D399' },
                       { id: 'endurance', label: 'Выносливость', icon: '🫁', color: '#60A5FA' },
-                      { id: 'technique', label: 'Техника', icon: '🥋', color: '#818CF8' }
+                      { id: 'technique', label: 'Техника', icon: '🥋', color: '#818CF8' },
+                      { id: 'discipline', label: 'Дисциплина', icon: '📋', color: '#6366F1' }
                     ].map(stat => (
                       <div 
                         key={stat.id} 

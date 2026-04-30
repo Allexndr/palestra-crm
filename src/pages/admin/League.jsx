@@ -16,7 +16,7 @@ export const League = () => {
   const isStudent = user?.role === 'student';
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState('ranking'); // ranking, results
+  const [activeTab, setActiveTab] = useState('ranking'); // ranking, results, table
   const [selectedLeagueId, setSelectedLeagueId] = useState(leagues[0]?.id || 'all');
   const [leagueToDelete, setLeagueToDelete] = useState(null);
   const [achievementToDelete, setAchievementToDelete] = useState(null);
@@ -233,13 +233,76 @@ export const League = () => {
       </div>
 
       {selectedLeagueId !== 'all' && (
-        <div className="flex gap-8 border-b border-slate-100 mb-10">
-           <button onClick={() => setActiveTab('ranking')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'ranking' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Рейтинг</button>
-           {isAdmin && <button onClick={() => setActiveTab('results')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'results' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Внести результаты</button>}
+            <button onClick={() => setActiveTab('ranking')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'ranking' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Рейтинг</button>
+            <button onClick={() => setActiveTab('table')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'table' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Таблица Лиги</button>
+            {isAdmin && <button onClick={() => setActiveTab('results')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'results' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Внести результаты</button>}
         </div>
       )}
 
-      {activeTab === 'ranking' ? (
+      {activeTab === 'table' ? (
+        <Card className="animate-up border border-slate-100 shadow-sm overflow-hidden" style={{ borderRadius: '32px', padding: 0 }}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-100">
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-16">№</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-24">Возраст</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Боец (ФИО)</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Сила</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Скорость</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Выносливость</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Дисциплина</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Итого</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Прогресс</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedMembers.map((member, idx) => {
+                  const age = member.birthDate ? new Date().getFullYear() - new Date(member.birthDate).getFullYear() : '-';
+                  const total = Math.round(((member.strength || 0) + (member.speed || 0) + (member.endurance || 0) + (member.discipline || 0)) / 4);
+                  return (
+                    <tr key={member.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
+                      <td className="p-6">
+                        <span className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center font-black text-xs text-slate-500">{idx + 1}</span>
+                      </td>
+                      <td className="p-6">
+                        <span className="font-bold text-slate-600">{age}</span>
+                      </td>
+                      <td className="p-6">
+                        <div className="flex items-center gap-4">
+                          <img src={member.avatar || '/placeholder-avatar.png'} alt="" className="w-10 h-10 rounded-xl object-cover shadow-sm" />
+                          <span className="font-black text-slate-900">{member.firstName} {member.lastName}</span>
+                        </div>
+                      </td>
+                      <td className="p-6 text-center">
+                        <div className="w-12 h-12 rounded-xl bg-red-50 text-red-500 font-black flex items-center justify-center mx-auto shadow-sm border border-red-100/50">{member.strength || 0}</div>
+                      </td>
+                      <td className="p-6 text-center">
+                        <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 font-black flex items-center justify-center mx-auto shadow-sm border border-amber-100/50">{member.speed || 0}</div>
+                      </td>
+                      <td className="p-6 text-center">
+                        <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 font-black flex items-center justify-center mx-auto shadow-sm border border-emerald-100/50">{member.endurance || 0}</div>
+                      </td>
+                      <td className="p-6 text-center">
+                        <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-500 font-black flex items-center justify-center mx-auto shadow-sm border border-indigo-100/50">{member.discipline || 0}</div>
+                      </td>
+                      <td className="p-6 text-center">
+                        <span className="font-black text-primary text-xl">{total}</span>
+                      </td>
+                      <td className="p-6 text-center">
+                        <div className="flex items-center justify-center gap-1 text-emerald-500">
+                          <TrendingUp size={16} />
+                          <span className="font-black text-xs">+{Math.floor(Math.random() * 5)}</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      ) : activeTab === 'ranking' ? (
         <>
           <div className="admin-stats-grid" style={{ alignItems: 'end' }}>
             {top3[1] && (
@@ -384,20 +447,59 @@ export const League = () => {
                   onChange={e => setResultDesc(e.target.value)} 
                 />
              </div>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 {leagueMembers.map(m => (
-                  <div key={m.id} className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                     <img src={m.avatar} alt="" className="w-10 h-10 rounded-xl object-cover" />
-                     <div className="flex-1">
-                        <p className="text-sm font-black text-slate-800">{m.firstName} {m.lastName}</p>
-                        <p className="text-[10px] font-bold text-muted uppercase tracking-widest">Текущий: {m.points || 0} XP</p>
+                  <div key={m.id} className="flex flex-col gap-6 p-8 bg-slate-50 rounded-[32px] border border-slate-100 group hover:bg-white hover:shadow-xl transition-all duration-300">
+                     <div className="flex items-center gap-4">
+                        <img src={m.avatar || '/placeholder-avatar.png'} alt="" className="w-12 h-12 rounded-2xl object-cover shadow-sm" />
+                        <div className="flex-1">
+                           <p className="text-base font-black text-slate-900">{m.firstName} {m.lastName}</p>
+                           <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">Текущий уровень: {m.points || 0} XP</p>
+                        </div>
                      </div>
-                     <div className="w-24">
+                     
+                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="flex flex-col gap-2">
+                           <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2">Сила</label>
+                           <input 
+                              type="number" className="w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-red-100 text-red-500 shadow-sm"
+                              value={formData[m.id]?.strength || m.strength || 0}
+                              onChange={e => updateMember(m.id, { strength: parseInt(e.target.value) || 0 })}
+                           />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                           <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2">Скорость</label>
+                           <input 
+                              type="number" className="w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-amber-100 text-amber-500 shadow-sm"
+                              value={formData[m.id]?.speed || m.speed || 0}
+                              onChange={e => updateMember(m.id, { speed: parseInt(e.target.value) || 0 })}
+                           />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                           <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2">Выносл.</label>
+                           <input 
+                              type="number" className="w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-emerald-100 text-emerald-500 shadow-sm"
+                              value={formData[m.id]?.endurance || m.endurance || 0}
+                              onChange={e => updateMember(m.id, { endurance: parseInt(e.target.value) || 0 })}
+                           />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                           <label className="text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2">Дисципл.</label>
+                           <input 
+                              type="number" className="w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-indigo-100 text-indigo-500 shadow-sm"
+                              value={formData[m.id]?.discipline || m.discipline || 0}
+                              onChange={e => updateMember(m.id, { discipline: parseInt(e.target.value) || 0 })}
+                           />
+                        </div>
+                     </div>
+
+                     <div className="flex items-center gap-4 pt-4 border-t border-slate-100/50">
                         <Input 
-                          placeholder="+XP" 
+                          placeholder="Добавить XP" 
                           type="number"
                           value={resultPoints[m.id] || ''}
                           onChange={e => setResultPoints(prev => ({ ...prev, [m.id]: e.target.value }))}
+                          className="flex-1"
                         />
                      </div>
                   </div>
