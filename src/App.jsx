@@ -4,6 +4,7 @@ import { Landing } from './pages/public/Landing';
 import { RegisterClub } from './pages/auth/RegisterClub';
 import { Login } from './pages/auth/Login';
 import { Feed } from './pages/social/Feed';
+import { QuestsMember } from './pages/social/QuestsMember';
 import { Profile } from './pages/profile/Profile';
 import { AdminProvider } from './context/AdminContext';
 import { ShopProvider } from './context/ShopContext';
@@ -19,12 +20,14 @@ const ClubDetail = lazy(() => import('./pages/superadmin/ClubDetail').then((m) =
 const Dashboard = lazy(() => import('./pages/admin/Dashboard').then((m) => ({ default: m.Dashboard })));
 const Members = lazy(() => import('./pages/admin/Members').then((m) => ({ default: m.Members })));
 const Leads = lazy(() => import('./pages/admin/Leads').then((m) => ({ default: m.Leads })));
+const Quests = lazy(() => import('./pages/admin/Quests').then((m) => ({ default: m.Quests })));
 import { SchedulePage, LeaguePage } from './pages/admin/lazyAdminPages';
 const Events = lazy(() => import('./pages/admin/Events').then((m) => ({ default: m.Events })));
 const Groups = lazy(() => import('./pages/admin/Groups').then((m) => ({ default: m.Groups })));
 const Billing = lazy(() => import('./pages/admin/Billing').then((m) => ({ default: m.Billing })));
 const Settings = lazy(() => import('./pages/admin/Settings').then((m) => ({ default: m.Settings })));
 const Coaches = lazy(() => import('./pages/admin/Coaches').then((m) => ({ default: m.Coaches })));
+const Payroll = lazy(() => import('./pages/admin/Payroll').then((m) => ({ default: m.Payroll })));
 const Locations = lazy(() => import('./pages/admin/Locations').then((m) => ({ default: m.Locations })));
 const LocationForm = lazy(() => import('./pages/admin/LocationForm').then((m) => ({ default: m.LocationForm })));
 const MemberForm = lazy(() => import('./pages/admin/MemberForm').then((m) => ({ default: m.MemberForm })));
@@ -60,7 +63,9 @@ function App() {
                   <Route path="groups/new" element={<GroupForm />} />
                   <Route path="groups/:id" element={<GroupDetail />} />
                   <Route path="groups/:id/edit" element={<GroupForm />} />
+                  <Route path="quests" element={<Quests />} />
                   <Route path="coaches" element={<Coaches />} />
+                  <Route path="payroll" element={<Payroll />} />
                   <Route path="locations" element={<Locations />} />
                   <Route path="locations/new" element={<LocationForm />} />
                   <Route path="locations/:id/edit" element={<LocationForm />} />
@@ -84,6 +89,7 @@ function App() {
                 <Route element={<MemberLayout />}>
                   <Route path="/feed" element={<Feed />} />
                   <Route path="/schedule" element={<ScheduleEntry />} />
+                  <Route path="/quests" element={<QuestsMember />} />
                   <Route path="/league" element={<LeagueEntry />} />
                   <Route path="/profile" element={<Profile />} />
                 </Route>

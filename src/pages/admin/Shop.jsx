@@ -5,14 +5,14 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, Search, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User, Phone, Tag } from 'lucide-react';
+import { Plus, Search, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User, Phone, Tag, Zap } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
 import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const Shop = () => {
   const { products, categories, orders, addProduct, updateProduct, removeProduct, updateOrderStatus, placeOrder } = useShop();
-  const { user, members, canUseFeature, getUpgradeMessage } = useAdmin();
+  const { user, members, canUseFeature, getUpgradeMessage, updateMemberXP, activeChildId } = useAdmin();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   
@@ -32,7 +32,8 @@ export const Shop = () => {
     category: 'Защита',
     description: '',
     image: '',
-    stock: 10
+    stock: 10,
+    isPointsOnly: false
   });
 
   if (!canUseFeature('shop')) {
@@ -60,7 +61,7 @@ export const Shop = () => {
     }
     setIsAdding(false);
     setEditingProduct(null);
-    setFormData({ name: '', price: '', category: 'Защита', description: '', image: '', stock: 10 });
+    setFormData({ name: '', price: '', category: 'Защита', description: '', image: '', stock: 10, isPointsOnly: false });
   };
 
   const handleProductImageUpload = async (event) => {
@@ -91,17 +92,35 @@ export const Shop = () => {
   };
 
   const handlePlaceOrder = (product) => {
-    // In a real app, this would check if user is a Parent
+    const studentId = user?.role === 'parent' ? activeChildId : user?.id;
+    const student = members.find(m => m.id === studentId);
+
+    if (product.isPointsOnly) {
+      if (!student) {
+        alert('Выберите ученика для покупки за баллы');
+        return;
+      }
+      if ((student.xp || 0) < Number(product.price)) {
+        alert(`Недостаточно Neks! У вас ${(student.xp || 0)}, а нужно ${product.price}`);
+        return;
+      }
+      // Deduct XP
+      updateMemberXP(studentId, -Number(product.price));
+      alert('Покупка за Neks успешна! Заберите товар у администратора.');
+    } else {
+      alert('Заказ успешно оформлен! Админ свяжется с вами для уточнения деталей.');
+    }
+
     const order = {
       productId: product.id,
       productName: product.name,
       price: product.price,
+      isPointsOnly: product.isPointsOnly,
       customerName: user?.name || 'Гость',
       customerPhone: user?.phone || 'Не указан',
-      memberId: user?.id, // Assume user is the one buying
+      memberId: studentId,
     };
     placeOrder(order);
-    alert('Заказ успешно оформлен! Админ свяжется с вами для уточнения деталей.');
   };
 
   const getStatusColor = (status) => {
@@ -197,6 +216,15 @@ export const Shop = () => {
                  {formData.image && <p className="text-xs text-primary mt-2">Изображение загружено</p>}
                </div>
                <Input label="Остаток на складе" type="number" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
+               <div className="flex items-center gap-2 mt-4">
+                 <input 
+                   type="checkbox" 
+                   id="isPointsOnly"
+                   checked={formData.isPointsOnly}
+                   onChange={e => setFormData({...formData, isPointsOnly: e.target.checked})}
+                 />
+                 <label htmlFor="isPointsOnly" className="text-xs font-bold text-slate-700">Продажа за Neks (баллы)</label>
+               </div>
              </div>
              <div className="input-group">
                <label className="input-label">Описание</label>
@@ -240,7 +268,10 @@ export const Shop = () => {
                <div className="p-6 flex-1 flex flex-col">
                  <div className="flex justify-between items-start mb-2">
                    <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{product.name}</h3>
-                   <span className="font-black text-primary text-xl">{Number(product.price).toLocaleString()} ₸</span>
+                   <span className={`font-black text-xl ${product.isPointsOnly ? 'text-amber-500 flex items-center gap-1' : 'text-primary'}`}>
+                     {product.isPointsOnly && <Zap size={18} fill="currentColor" />}
+                     {Number(product.price).toLocaleString()} {product.isPointsOnly ? 'N' : '₸'}
+                   </span>
                  </div>
                  <p className="text-secondary text-sm mb-6 line-clamp-2">{product.description || 'Нет описания'}</p>
                  <div className="mt-auto flex justify-between items-center pt-6 border-t border-slate-50">
@@ -281,8 +312,11 @@ export const Shop = () => {
                  
                  <div className="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
                    <div>
-                     <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-1">Стоимость</p>
-                     <p className="text-2xl font-black text-slate-900" style={{ fontFamily: 'var(--font-family-display)' }}>{Number(product.price).toLocaleString()} <span className="text-sm font-bold">₸</span></p>
+                     <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-1">{product.isPointsOnly ? 'Стоимость в Neks' : 'Стоимость'}</p>
+                     <p className={`text-2xl font-black ${product.isPointsOnly ? 'text-amber-500 flex items-center gap-2' : 'text-slate-900'}`} style={{ fontFamily: 'var(--font-family-display)' }}>
+                       {product.isPointsOnly && <Zap size={24} fill="currentColor" />}
+                       {Number(product.price).toLocaleString()} <span className="text-sm font-bold">{product.isPointsOnly ? 'N' : '₸'}</span>
+                     </p>
                    </div>
                    <button 
                      onClick={() => handlePlaceOrder(product)}
@@ -322,7 +356,10 @@ export const Shop = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-xl text-slate-900 mb-1">{order.productName}</h4>
-                        <p className="text-primary font-black text-lg">{Number(order.price).toLocaleString()} ₸</p>
+                        <p className={`font-black text-lg ${order.isPointsOnly ? 'text-amber-500 flex items-center gap-1' : 'text-primary'}`}>
+                          {order.isPointsOnly && <Zap size={18} fill="currentColor" />}
+                          {Number(order.price).toLocaleString()} {order.isPointsOnly ? 'N' : '₸'}
+                        </p>
                       </div>
                    </div>
                 </div>

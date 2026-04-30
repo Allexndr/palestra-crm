@@ -102,6 +102,9 @@ export const AdminProvider = ({ children }) => {
   const [finances, setFinances] = useState(() => normalizeFinances({ revenue: 0, transactions: [] }));
 
   const [achievements, setAchievements] = useState([]);
+  const [quests, setQuests] = useState([]);
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [automations, setAutomations] = useState({ fired: [] });
 
   const [monthlyAward, setMonthlyAward] = useState(() => normalizeMonthlyAward({ title: '', description: '', daysLeft: 0 }));
 
@@ -143,6 +146,9 @@ export const AdminProvider = ({ children }) => {
         setAttendance(Array.isArray(remote.attendance) ? remote.attendance : []);
         setFinances(normalizeFinances(remote.finances));
         setAchievements(Array.isArray(remote.achievements) ? remote.achievements : []);
+        setQuests(Array.isArray(remote.quests) ? remote.quests : []);
+        setFeedbacks(Array.isArray(remote.feedbacks) ? remote.feedbacks : []);
+        setAutomations(remote.automations || { fired: [] });
         setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
         setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
         setClubInfo(normalizeClubInfo(remote.clubInfo));
@@ -176,6 +182,8 @@ export const AdminProvider = ({ children }) => {
     const state = {
       members, leads, schedule, locations, groups, activities, leagues, plans, posts,
       coaches, events, attendance, finances, achievements, monthlyAward,
+      quests, feedbacks,
+      automations,
       selectedLocationId, clubInfo, subscription,
     };
 
@@ -196,7 +204,75 @@ export const AdminProvider = ({ children }) => {
     });
 
     return () => controller.abort();
-  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, selectedLocationId, clubInfo, subscription, activities, coaches]);
+  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches]);
+
+  // --- AUTOMATIONS ---
+  const sendTelegramMessage = (userId, text) => {
+    const userObj = members.find(m => m.id === userId) || coaches.find(c => c.id === userId);
+    const userName = userObj ? `${userObj.firstName} ${userObj.lastName}` : 'Пользователь';
+    
+    logActivity(`[TG] ${userName}: ${text}`, 'info');
+    
+    // In a real app, this would be an API call to a Telegram Bot
+    // fetch('https://api.telegram.org/bot.../sendMessage', ...)
+  };
+
+  useEffect(() => {
+    if (!isStateReady || members.length === 0) return;
+
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    const monthDay = todayStr.slice(5); // MM-DD
+
+    let updatedFired = [...(automations.fired || [])];
+    let xpUpdates = [];
+    let hasChanges = false;
+
+    members.forEach(member => {
+      // 1. Birthday Trigger
+      if (member.birthDate && member.birthDate.slice(5) === monthDay) {
+        const fireId = `birthday-${member.id}-${today.getFullYear()}`;
+        if (!updatedFired.includes(fireId)) {
+          xpUpdates.push({ id: member.id, xp: 50 });
+          sendTelegramMessage(member.id, "С днем рождения! 🎉 В честь праздника мы начислили вам 50 XP. Ждем на тренировке!");
+          updatedFired.push(fireId);
+          hasChanges = true;
+        }
+      }
+
+      // 2. Subscription Expiry Trigger
+      if (member.subscriptionEndDate) {
+        const expiryDate = new Date(member.subscriptionEndDate);
+        const diffDays = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays <= 3 && diffDays > 0) {
+          const fireId = `expiry-warning-${member.id}-${member.subscriptionEndDate}`;
+          if (!updatedFired.includes(fireId)) {
+            sendTelegramMessage(member.id, `Внимание! Ваш абонемент заканчивается через ${diffDays} дня. Не забудьте продлить, чтобы сохранить серию тренировок! 🥊`);
+            updatedFired.push(fireId);
+            hasChanges = true;
+          }
+        } else if (diffDays <= 0) {
+          const fireId = `expiry-expired-${member.id}-${member.subscriptionEndDate}`;
+          if (!updatedFired.includes(fireId)) {
+            sendTelegramMessage(member.id, "Ваш абонемент истек. Ждем вас для продления! Без тренировок герой слабеет. 🥋");
+            updatedFired.push(fireId);
+            hasChanges = true;
+          }
+        }
+      }
+    });
+
+    if (hasChanges) {
+      if (xpUpdates.length > 0) {
+        setMembers(prev => prev.map(m => {
+          const update = xpUpdates.find(u => u.id === m.id);
+          return update ? { ...m, xp: (m.xp || 0) + update.xp } : m;
+        }));
+      }
+      setAutomations({ fired: updatedFired });
+    }
+  }, [isStateReady, members, automations.fired]);
 
   // --- ACTIONS ---
 
@@ -450,6 +526,78 @@ export const AdminProvider = ({ children }) => {
       text,
       date: new Date().toISOString()
     };
+    setPosts(prev => prev.map(p => p.id === postId ? { ...p, comments: [...(p.comments || []), comment] } : p));
+  };
+
+  const addQuest = (quest) => {
+    const newQuest = { id: createId(), createdAt: new Date().toISOString(), completions: [], ...quest };
+    setQuests(prev => [newQuest, ...prev]);
+    logActivity(`Добавлен новый квест: ${quest.title}`, 'info');
+  };
+
+  const removeQuest = (id) => {
+    setQuests(prev => prev.filter(q => q.id !== id));
+  };
+
+  const completeQuest = (questId, studentId) => {
+    setQuests(prev => prev.map(q => {
+      if (q.id === questId) {
+        return { ...q, completions: [...(q.completions || []), { studentId, date: new Date().toISOString(), status: 'pending' }] };
+      }
+      return q;
+    }));
+  };
+
+  const approveQuest = (questId, studentId) => {
+    setQuests(prev => prev.map(q => {
+      if (q.id === questId) {
+        const reward = q.rewardPoints || 0;
+        updateMemberXP(studentId, reward);
+        logActivity(`Квест "${q.title}" подтвержден! Ученику начислено ${reward} XP`, 'success');
+        return { 
+          ...q, 
+          completions: (q.completions || []).map(c => c.studentId === studentId ? { ...c, status: 'approved' } : c) 
+        };
+      }
+      return q;
+    }));
+  };
+
+  const updateMemberXP = (memberId, xpToAdd) => {
+    setMembers(prev => prev.map(m => {
+      if (m.id === memberId) {
+        const newXp = (m.xp || 0) + xpToAdd;
+        return { ...m, xp: newXp };
+      }
+      return m;
+    }));
+  };
+
+  const sendFeedback = (studentId, type, message) => {
+    const member = members.find(m => m.id === studentId);
+    if (!member) return;
+
+    const newFeedback = {
+      id: createId(),
+      studentId,
+      type,
+      message,
+      date: new Date().toISOString()
+    };
+    setFeedbacks(prev => [newFeedback, ...prev]);
+    
+    // Auto-post to feed
+    addPost({
+      title: `Похвала от тренера: ${type === 'fire' ? 'Огонь на тренировке 🔥' : type === 'discipline' ? 'Образцовая дисциплина 🥋' : 'Отличная техника 🎯'}`,
+      content: `${member.firstName} ${member.lastName} получает награду от тренера: "${message}"`,
+      author: user?.name || 'Тренер',
+      authorRole: 'coach',
+    });
+    
+    updateMemberXP(studentId, 20); // Small bonus for feedback
+  };
+      date: new Date().toISOString()
+    };
     setPosts(prev => prev.map(post => {
       if (post.id === postId) {
         return { ...post, comments: [...(post.comments || []), comment] };
@@ -578,7 +726,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   const value = {
-    members, addMember, removeMember, updateMember,
+    members, addMember, removeMember, updateMember, updateMemberXP,
     leads, addLead, updateLeadStatus, removeLead, convertLeadToMember,
     schedule, addScheduleItem, updateScheduleItem, removeScheduleItem,
     locations, addLocation, updateLocation, removeLocation,
@@ -589,6 +737,8 @@ export const AdminProvider = ({ children }) => {
     clubInfo, setClubInfo,
     plans, addPlan, removePlan,
     posts, addPost, likePost, addComment,
+    quests, addQuest, removeQuest, completeQuest, approveQuest,
+    feedbacks, sendFeedback,
     coaches, addCoach, removeCoach, updateCoach,
     events, addEvent, updateEvent, removeEvent,
     attendance, markAttendance,

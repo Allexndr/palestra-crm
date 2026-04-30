@@ -22,7 +22,9 @@ export const Coaches = () => {
     experience: '',
     locationId: locations[0]?.id || '',
     bio: '',
-    avatar: ''
+    avatar: '',
+    salaryRate: '2000',
+    salaryType: 'per_session'
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -117,6 +119,18 @@ export const Coaches = () => {
                 <select className="input-field" value={formData.locationId} onChange={e => setFormData({...formData, locationId: e.target.value})}>
                   <option value="">Все филиалы</option>
                   {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div className="admin-form-grid">
+              <Input label="Ставка (₸)" type="number" value={formData.salaryRate} onChange={e => setFormData({...formData, salaryRate: e.target.value})} />
+              <div className="input-group">
+                <label className="input-label">Тип оплаты</label>
+                <select className="input-field" value={formData.salaryType} onChange={e => setFormData({...formData, salaryType: e.target.value})}>
+                  <option value="per_session">За тренировку</option>
+                  <option value="per_student">За каждого ученика</option>
+                  <option value="monthly">Фикс в месяц</option>
                 </select>
               </div>
             </div>

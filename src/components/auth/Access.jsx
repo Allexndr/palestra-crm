@@ -1,5 +1,5 @@
 import { Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, Home, LogOut, Trophy, User } from 'lucide-react';
+import { Calendar, Home, LogOut, Trophy, User, Zap } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { BottomNav } from '../layout/BottomNav';
 import { ClubLogo } from '../ui/ClubLogo';
@@ -26,6 +26,7 @@ export function MemberLayout() {
   const links = [
     { to: '/feed', icon: Home, label: 'Лента' },
     { to: '/schedule', icon: Calendar, label: 'Расписание' },
+    { to: '/quests', icon: Zap, label: 'Квесты' },
     { to: '/league', icon: Trophy, label: 'Лига' },
     { to: '/profile', icon: User, label: 'Профиль' },
   ];

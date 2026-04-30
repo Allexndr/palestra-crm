@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
-import { Users, DollarSign, Calendar, Target, ArrowUpRight, Plus, Trophy, MessageSquare, TrendingUp, Activity, CheckCircle, AlertCircle, Info, ShoppingBag, Star, X } from 'lucide-react';
+import { Users, DollarSign, Calendar, Target, ArrowUpRight, Plus, Trophy, MessageSquare, TrendingUp, Activity, CheckCircle, AlertCircle, Info, ShoppingBag, Star, X, Sparkles, Flame, ShieldAlert, HeartPulse } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { EventCarousel } from '../../components/features/EventCarousel';
 import { formatKzt } from '../../utils/money';
 import { scheduleTypeLabel, coachLine, firstGrapheme } from '../../utils/displayStrings';
 
 export const Dashboard = () => {
-  const { members, leads, schedule, finances, user, events, selectedLocationId, achievements, monthlyAward, activities, markAttendance, groups, removeActivity } = useAdmin();
+  const { members, leads, schedule, finances, user, events, selectedLocationId, achievements, monthlyAward, activities, markAttendance, groups, removeActivity, sendFeedback } = useAdmin();
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ export const Dashboard = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedMemberIds, setSelectedMemberIds] = useState([]);
   const [isAttendanceSuccess, setIsAttendanceSuccess] = useState(false);
+  const [feedbackTarget, setFeedbackTarget] = useState(null);
 
   // Filter data by location
   const filteredMembers = selectedLocationId === 'all' ? members : members.filter(m => m.locationId === selectedLocationId);
@@ -74,56 +75,56 @@ export const Dashboard = () => {
       </div>
 
       <div className="dashboard-stat-grid admin-kpi-grid">
-        <Card className="flex items-center gap-4 card-hover shadow-slate-100 border-none" style={{ padding: 'var(--space-4) var(--space-6)' }}>
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-indigo-50 text-primary" style={{ flexShrink: 0 }}>
+        <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#EEF2FF', color: '#4F46E5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Users size={24} />
           </div>
-          <div>
-            <p className="text-muted text-[10px] font-black uppercase tracking-widest mb-1">Ученики</p>
-            <p className="text-xl font-black text-slate-900 leading-tight">{activeMembers}</p>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Ученики</p>
+            <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeMembers}</p>
           </div>
         </Card>
 
         {isAdmin ? (
-          <Card className="flex items-center gap-4 card-hover shadow-slate-100 border-none" style={{ padding: 'var(--space-4) var(--space-6)' }}>
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-emerald-50 text-emerald-600" style={{ flexShrink: 0 }}>
+          <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#ECFDF5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <DollarSign size={24} />
             </div>
-            <div style={{ minWidth: 0 }}>
-              <p className="text-muted text-[10px] font-black uppercase tracking-widest mb-1">Выручка (всего)</p>
-              <p className="text-xl font-black text-slate-900 leading-tight" title={formatKzt(monthlyRevenue)}>{formatKzt(monthlyRevenue)}</p>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Выручка (всего)</p>
+              <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={formatKzt(monthlyRevenue)}>{formatKzt(monthlyRevenue)}</p>
             </div>
           </Card>
         ) : (
-          <Card className="flex items-center gap-4 card-hover shadow-slate-100 border-none" style={{ padding: 'var(--space-4) var(--space-6)' }}>
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-amber-50 text-amber-600" style={{ flexShrink: 0 }}>
+          <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFFBEB', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Star size={24} />
             </div>
-            <div>
-              <p className="text-muted text-[10px] font-black uppercase tracking-widest mb-1">Мой рейтинг</p>
-              <p className="text-xl font-black text-slate-900 leading-tight">4.9</p>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Мой рейтинг</p>
+              <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>4.9</p>
             </div>
           </Card>
         )}
 
-        <Card className="flex items-center gap-4 card-hover shadow-slate-100 border-none" style={{ padding: 'var(--space-4) var(--space-6)' }}>
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-amber-50 text-amber-600" style={{ flexShrink: 0 }}>
+        <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFFBEB', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Calendar size={24} />
           </div>
-          <div>
-            <p className="text-muted text-[10px] font-black uppercase tracking-widest mb-1">{isCoach ? 'В расписании' : 'Все тренировки'}</p>
-            <p className="text-xl font-black text-slate-900 leading-tight">{todayTrainings}</p>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{isCoach ? 'В расписании' : 'Все тренировки'}</p>
+            <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{todayTrainings}</p>
           </div>
         </Card>
 
         {isAdmin && (
-          <Card className="flex items-center gap-4 card-hover shadow-slate-100 border-none" style={{ padding: 'var(--space-4) var(--space-6)' }}>
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-rose-50 text-rose-600" style={{ flexShrink: 0 }}>
+          <Card style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 20px', minWidth: 0 }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '16px', backgroundColor: '#FFF1F2', color: '#E11D48', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Target size={24} />
             </div>
-            <div>
-              <p className="text-muted text-[10px] font-black uppercase tracking-widest mb-1">Новые лиды</p>
-              <p className="text-xl font-black text-slate-900 leading-tight">+{newLeadsCount}</p>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p style={{ color: 'var(--color-text-muted)', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Новые лиды</p>
+              <p style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.1, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>+{newLeadsCount}</p>
             </div>
           </Card>
         )}
@@ -187,6 +188,35 @@ export const Dashboard = () => {
 
           <div className="admin-card-grid">
              <EventCarousel isAdmin={isAdmin} />
+
+             <Card className="card-hover border-none shadow-xl shadow-slate-100 bg-slate-900 text-white overflow-hidden relative">
+                <div className="absolute top-[-20px] right-[-20px] opacity-10 rotate-12"><MessageSquare size={120} fill="white" /></div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg"><Zap size={20} fill="currentColor" /></div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Smart Triggers</p>
+                      <h4 className="font-bold">Автопилот TG</h4>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                       <span className="text-xs font-medium opacity-80">День рождения (XP)</span>
+                       <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">ACTIVE</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                       <span className="text-xs font-medium opacity-80">Продление абонемента</span>
+                       <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">ACTIVE</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 pt-6 border-t border-white/10">
+                     <p className="text-[10px] text-indigo-300 font-bold uppercase tracking-wider mb-2">Последний запуск</p>
+                     <p className="text-xs font-medium opacity-60 italic">Система проверила 14 атлетов • Сегодня 09:00</p>
+                  </div>
+                </div>
+             </Card>
 
              <Card className="card-hover border-none shadow-xl shadow-slate-100" style={{ minHeight: '200px' }}>
                 <p className="text-[10px] font-black uppercase mb-5 text-muted tracking-widest">Быстрые действия</p>
@@ -346,16 +376,79 @@ export const Dashboard = () => {
                             {member.firstName.charAt(0)}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-sm text-slate-900 truncate">{member.firstName} {member.lastName}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold text-sm text-slate-900 truncate">{member.firstName} {member.lastName}</p>
+                              {member.medicalNotes && (
+                                <div 
+                                  onClick={(e) => { e.stopPropagation(); alert(`Медицинская заметка: ${member.medicalNotes}`); }}
+                                  className="flex items-center justify-center w-5 h-5 bg-rose-50 text-rose-500 rounded-full cursor-help"
+                                  title={member.medicalNotes}
+                                >
+                                  <HeartPulse size={12} />
+                                </div>
+                              )}
+                            </div>
                             <p className="text-[10px] font-bold text-muted uppercase tracking-wider truncate">{groups.find(g => g.id === member.groupId)?.name || 'Индивидуально'}</p>
                           </div>
                         </div>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${selectedMemberIds.includes(member.id) ? 'bg-primary border-primary text-white' : 'border-slate-200'}`}>
-                           {selectedMemberIds.includes(member.id) && <CheckCircle size={14} />}
+                        <div className="flex items-center gap-2">
+                           <button 
+                             onClick={(e) => { e.stopPropagation(); setFeedbackTarget(member); }}
+                             className="p-2 hover:bg-amber-50 text-amber-500 rounded-xl border-none bg-transparent cursor-pointer transition-all"
+                             title="Похвалить"
+                           >
+                             <Star size={18} />
+                           </button>
+                           <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${selectedMemberIds.includes(member.id) ? 'bg-primary border-primary text-white' : 'border-slate-200'}`}>
+                              {selectedMemberIds.includes(member.id) && <CheckCircle size={14} />}
+                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
+      {feedbackTarget && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 110, backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <Card className="animate-up" style={{ width: '100%', maxWidth: '400px', borderRadius: '32px' }}>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="h4">Похвалить {feedbackTarget.firstName}</h3>
+              <button onClick={() => setFeedbackTarget(null)} className="p-2 hover:bg-slate-100 rounded-full border-none bg-transparent cursor-pointer"><X size={20}/></button>
+            </div>
+            <p className="text-secondary text-sm mb-8 font-medium">Выберите тип награды, которая отобразится в ленте и принесет ученику +20 XP.</p>
+            <div className="grid grid-cols-1 gap-3">
+              <button 
+                onClick={() => { sendFeedback(feedbackTarget.id, 'fire', 'Проявил невероятную волю и энергию!'); setFeedbackTarget(null); }}
+                className="flex items-center gap-4 p-4 bg-orange-50 hover:bg-orange-100 rounded-2xl border-none cursor-pointer transition-all text-left"
+              >
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-orange-500 shadow-sm"><Flame size={24} /></div>
+                <div>
+                  <p className="font-bold text-slate-900">Огонь на тренировке</p>
+                  <p className="text-xs text-orange-600 font-medium">За волю и энергию</p>
+                </div>
+              </button>
+              <button 
+                onClick={() => { sendFeedback(feedbackTarget.id, 'discipline', 'Образцовое выполнение всех указаний тренера.'); setFeedbackTarget(null); }}
+                className="flex items-center gap-4 p-4 bg-emerald-50 hover:bg-emerald-100 rounded-2xl border-none cursor-pointer transition-all text-left"
+              >
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm"><ShieldAlert size={24} /></div>
+                <div>
+                  <p className="font-bold text-slate-900">Дисциплина</p>
+                  <p className="text-xs text-emerald-600 font-medium">За порядок и внимание</p>
+                </div>
+              </button>
+              <button 
+                onClick={() => { sendFeedback(feedbackTarget.id, 'technique', 'Великолепное исполнение приемов и техники.'); setFeedbackTarget(null); }}
+                className="flex items-center gap-4 p-4 bg-indigo-50 hover:bg-indigo-100 rounded-2xl border-none cursor-pointer transition-all text-left"
+              >
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm"><Target size={24} /></div>
+                <div>
+                  <p className="font-bold text-slate-900">Техника</p>
+                  <p className="text-xs text-indigo-600 font-medium">За точность движений</p>
+                </div>
+              </button>
+            </div>
+          </Card>
+        </div>
+      )}
                   <button onClick={handleMarkAttendance} disabled={selectedMemberIds.length === 0} className="w-full h-14 bg-primary text-white rounded-2xl font-bold disabled:opacity-50 transition-all hover:opacity-90 cursor-pointer border-none text-base shadow-lg shadow-primary/20">
                     Отметить посещаемость
                   </button>

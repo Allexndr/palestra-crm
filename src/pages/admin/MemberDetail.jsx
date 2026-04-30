@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { ArrowLeft, User, Phone, MapPin, Target, Calendar, Trophy, Zap, Shield } from 'lucide-react';
+import { ArrowLeft, User, Phone, MapPin, Target, Calendar, Trophy, Zap, Shield, HeartPulse, Wallet } from 'lucide-react';
 
 export const MemberDetail = () => {
   const { id } = useParams();
@@ -213,19 +213,37 @@ export const MemberDetail = () => {
         </div>
 
         <div className="flex flex-col gap-6">
-          <Card style={{ padding: '24px' }}>
-            <h3 className="h5 mb-6">Финансы</h3>
-            <div className="p-5 bg-slate-50 rounded-2xl mb-6">
-               <p className="text-[10px] font-bold text-muted uppercase mb-1">Тарифный план</p>
-               <p className="font-bold mb-3">{member.plan || 'Не выбран'}</p>
-               <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 shadow-sm">
-                 <div className="flex items-center gap-2 text-success font-bold text-sm">
-                   < Zap size={14} fill="var(--color-success)" /> Оплачено
-                 </div>
-                 <div className="font-bold text-slate-800">{member.paidAmount ? `${parseInt(member.paidAmount).toLocaleString('ru-RU').replace(/,/g, ' ')} ₸` : '0 ₸'}</div>
-               </div>
+            <div className="p-5 bg-indigo-50/50 rounded-2xl mb-6 border border-indigo-100">
+               <p className="text-[10px] font-bold text-indigo-700 uppercase mb-2 flex items-center gap-2"><Wallet size={12}/> Баланс счета</p>
+               <p className="text-2xl font-black text-indigo-900 mb-1">{member.balance ? `${Number(member.balance).toLocaleString()} ₸` : '0 ₸'}</p>
+               <p className="text-[10px] text-indigo-600 font-medium">Для безналичных покупок в баре</p>
             </div>
+            {member.subscriptionEndDate && (
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 mb-6">
+                <p className="text-[10px] font-bold text-muted uppercase mb-1">Абонемент до</p>
+                <p className={`font-bold ${new Date(member.subscriptionEndDate) < new Date() ? 'text-rose-500' : 'text-slate-700'}`}>
+                  {new Date(member.subscriptionEndDate).toLocaleDateString('ru-RU')}
+                </p>
+              </div>
+            )}
             <Button variant="ghost" className="w-full text-xs font-bold" style={{ border: '1px solid var(--color-border)' }}>История платежей</Button>
+          </Card>
+
+          <Card style={{ padding: '24px' }} className={member.medicalNotes ? 'border-rose-200 bg-rose-50/30' : ''}>
+            <h3 className="h5 mb-6 flex items-center gap-2">
+              <HeartPulse size={20} className={member.medicalNotes ? 'text-rose-500' : 'text-slate-400'} /> 
+              Медкарта
+            </h3>
+            {member.medicalNotes ? (
+              <div className="p-4 bg-white rounded-2xl border border-rose-100 shadow-sm">
+                <p className="text-sm font-bold text-rose-700 mb-2">Особые указания:</p>
+                <p className="text-sm text-slate-700 leading-relaxed italic">"{member.medicalNotes}"</p>
+              </div>
+            ) : (
+              <div className="py-6 text-center text-slate-400 text-xs font-medium bg-slate-50 rounded-2xl border border-dashed">
+                Медицинских заметок нет
+              </div>
+            )}
           </Card>
 
           <Card style={{ padding: '24px' }}>

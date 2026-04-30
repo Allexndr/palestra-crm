@@ -16,7 +16,7 @@ export const ShopProvider = ({ children }) => {
   const [orders, setOrders] = useState([]);
   const [isReady, setIsReady] = useState(false);
 
-  const [categories, setCategories] = useState(['Защита', 'Снаряжение', 'Мерч', 'Аксессуары']);
+  const [categories, setCategories] = useState(['Защита', 'Снаряжение', 'Мерч', 'Аксессуары', 'Награды (Neks)']);
 
   useEffect(() => {
     let cancelled = false;

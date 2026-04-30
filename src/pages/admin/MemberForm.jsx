@@ -63,7 +63,10 @@ export const MemberForm = () => {
     speed: 50,
     reaction: 50,
     endurance: 50,
-    technique: 50
+    technique: 50,
+    medicalNotes: '',
+    balance: '0',
+    subscriptionEndDate: ''
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -251,6 +254,17 @@ export const MemberForm = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="mt-8">
+                    <div className="input-group">
+                      <label className="input-label text-rose-600 font-black">Медицинские особенности / Аллергии</label>
+                      <textarea 
+                        className="input-field min-h-[80px] border-rose-100 focus:border-rose-300" 
+                        value={formData.medicalNotes} 
+                        onChange={e => setFormData({...formData, medicalNotes: e.target.value})}
+                        placeholder="Например: аллергия на цитрусовые, проблемы с коленями, астма..."
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Athletic Info */}
@@ -395,12 +409,19 @@ export const MemberForm = () => {
                         ))}
                       </select>
                     </div>
-                    {isAdmin && (
                       <Input 
                         label="Стоимость к оплате (₸)" isCurrency
                         value={formData.paidAmount} onChange={e => setFormData({...formData, paidAmount: e.target.value})} 
                       />
                     )}
+                    <Input 
+                      label="Депозитный баланс (₸)" isCurrency
+                      value={formData.balance} onChange={e => setFormData({...formData, balance: e.target.value})} 
+                    />
+                    <Input 
+                      label="Действует до" type="date"
+                      value={formData.subscriptionEndDate} onChange={e => setFormData({...formData, subscriptionEndDate: e.target.value})} 
+                    />
                   </div>
                   <div className="mt-8 p-6 bg-slate-50 rounded-2xl border border-slate-100">
                     <p className="text-xs text-slate-500 font-medium">
