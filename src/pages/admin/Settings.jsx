@@ -117,7 +117,7 @@ export const Settings = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="flex items-center gap-5 px-8 py-5 transition-all border-none cursor-pointer text-left w-full group"
+              className="flex items-center gap-8 px-10 py-5 transition-all border-none cursor-pointer text-left w-full group"
               style={{
                 borderRadius: '24px',
                 backgroundColor: activeTab === tab.id ? 'var(--color-primary)' : 'transparent',
@@ -125,11 +125,10 @@ export const Settings = () => {
                 fontWeight: activeTab === tab.id ? '900' : '700',
                 fontSize: '13px',
                 border: activeTab === tab.id ? 'none' : '1px solid transparent',
-                boxShadow: activeTab === tab.id ? 'var(--shadow-primary)' : 'none',
-                transform: activeTab === tab.id ? 'translateX(8px)' : 'none'
+                boxShadow: activeTab === tab.id ? 'var(--shadow-primary)' : 'none'
               }}
             >
-              <div className={`transition-transform duration-300 ${activeTab === tab.id ? 'scale-125' : 'group-hover:scale-110 text-slate-400'}`}>
+              <div className={`flex items-center justify-center transition-transform duration-300 ${activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110 text-slate-400'}`} style={{ width: '24px' }}>
                 {tab.icon}
               </div>
               <span className="uppercase tracking-[0.2em] text-[10px]">{tab.label}</span>
