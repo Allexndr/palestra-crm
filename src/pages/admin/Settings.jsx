@@ -102,7 +102,7 @@ export const Settings = () => {
 
       <div className="settings-layout">
         {/* Sidebar Tabs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
           {[
             { id: 'palestra-tariff', label: 'Тариф Palestra', icon: <SettingsIcon size={18} /> },
             { id: 'club', label: 'Профиль клуба', icon: <Globe size={18} /> },
@@ -117,20 +117,22 @@ export const Settings = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="flex items-center gap-5 px-8 py-4 rounded-[22px] transition-all border-none cursor-pointer text-left w-full group"
+              className="flex items-center gap-5 px-8 py-5 transition-all border-none cursor-pointer text-left w-full group"
               style={{
+                borderRadius: '24px',
                 backgroundColor: activeTab === tab.id ? 'var(--color-primary)' : 'transparent',
-                color: activeTab === tab.id ? 'white' : '#666',
-                fontWeight: activeTab === tab.id ? '900' : '600',
+                color: activeTab === tab.id ? 'white' : '#64748b',
+                fontWeight: activeTab === tab.id ? '900' : '700',
                 fontSize: '13px',
-                border: activeTab === tab.id ? '2.5px solid rgba(255,255,255,0.4)' : '1px solid transparent',
-                boxShadow: activeTab === tab.id ? '0 8px 20px -4px rgba(49, 70, 166, 0.3)' : 'none'
+                border: activeTab === tab.id ? 'none' : '1px solid transparent',
+                boxShadow: activeTab === tab.id ? 'var(--shadow-primary)' : 'none',
+                transform: activeTab === tab.id ? 'translateX(8px)' : 'none'
               }}
             >
-              <div className={`transition-transform duration-300 ${activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110'}`}>
+              <div className={`transition-transform duration-300 ${activeTab === tab.id ? 'scale-125' : 'group-hover:scale-110 text-slate-400'}`}>
                 {tab.icon}
               </div>
-              <span className="uppercase tracking-[0.15em] text-[10px]">{tab.label}</span>
+              <span className="uppercase tracking-[0.2em] text-[10px]">{tab.label}</span>
             </button>
           ))}
         </div>
