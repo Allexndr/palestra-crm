@@ -279,6 +279,7 @@ export const League = () => {
       </div>
 
       {selectedLeagueId !== 'all' && (
+        <div className="flex gap-8 border-b border-slate-100 mb-10">
             <button onClick={() => setActiveTab('ranking')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'ranking' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Рейтинг</button>
             <button onClick={() => setActiveTab('table')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'table' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Таблица Лиги</button>
             {isAdmin && <button onClick={() => setActiveTab('results')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'results' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Внести результаты</button>}
