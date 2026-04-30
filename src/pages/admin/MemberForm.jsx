@@ -197,18 +197,18 @@ export const MemberForm = () => {
             <ArrowLeft size={22} className="text-slate-600" />
           </button>
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="px-3 py-1 bg-primary-soft text-primary text-[10px] font-black uppercase tracking-widest rounded-lg">База учеников</span>
-              <h1 className="h2" style={{ margin: 0 }}>
+            <div className="flex items-center gap-4 mb-3">
+              <span className="px-4 py-1.5 bg-primary-soft text-primary text-[11px] font-black uppercase tracking-widest rounded-xl">База учеников</span>
+              <h1 className="h1" style={{ margin: 0, fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
                 {isEditing ? 'Профиль ученика' : 'Регистрация нового ученика'}
               </h1>
             </div>
-            <p className="text-secondary font-medium opacity-70">Заполните данные для зачисления в {clubInfo?.name || 'Palestra'}</p>
+            <p className="text-secondary text-lg font-medium opacity-60">Заполните данные для зачисления в {clubInfo?.name || 'Palestra'}</p>
           </div>
         </div>
       </div>
 
-      <div className="flex gap-3 mb-12 bg-white/60 backdrop-blur-md p-2 rounded-[24px] w-fit border border-white shadow-sm overflow-x-auto max-w-full scrollbar-hide">
+      <div className="flex gap-3 mb-16 bg-white/80 backdrop-blur-md p-2 rounded-[26px] w-full sm:w-fit border border-slate-100 shadow-sm overflow-x-auto max-w-full scrollbar-hide">
         {tabs.map(tab => (
           <button
             key={tab.id}

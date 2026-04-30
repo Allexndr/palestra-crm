@@ -1776,22 +1776,21 @@ a:focus:not(:focus-visible) {
 }
 
 .skip-to-main {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: fixed;
+  top: 10px;
+  left: 10px;
   z-index: 10000;
-  padding: var(--space-3) var(--space-4);
+  padding: 12px 24px;
   background: var(--color-primary);
-  color: #fff;
-  font-weight: 700;
-  font-size: var(--text-sm);
+  color: white;
+  border-radius: 12px;
+  font-weight: 800;
   text-decoration: none;
-  border-radius: 0 0 var(--radius-sm) 0;
-  transform: translateY(-120%);
-  transition: transform 0.2s ease;
+  display: none;
 }
+
 .skip-to-main:focus {
-  transform: translateY(0);
+  display: block;
 }
 
 .page-loader {
@@ -2307,6 +2306,7 @@ a:focus:not(:focus-visible) {
 
 .member-page-frame {
   min-width: 0;
+  padding: 16px;
 }
 
 @media (min-width: 768px) {
