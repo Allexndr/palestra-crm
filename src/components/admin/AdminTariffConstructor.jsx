@@ -295,13 +295,14 @@ export const AdminTariffConstructor = ({
               <span>/ месяц</span>
             </div>
           </div>
-          <Button variant="primary" onClick={() => {
-            if (window.confirm(`Вы подключаете дополнительные ресурсы. Лимиты увеличатся сразу, а оплата за них будет включена в следующий счет (${calculated.price.toLocaleString('ru-RU')} ₸). Продолжить?`)) {
-              updateSubscription(calculated);
-            }
-          }} className="h-14 px-10 shadow-xl shadow-primary/20">
-            {calculated.plan === 'starter' ? 'Оставить Starter' : 'Подключить и пользоваться'}
-          </Button>
+          <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
+            <Button variant="primary" onClick={() => updateSubscription(calculated)} className="h-14 px-10 shadow-xl shadow-primary/20 w-full">
+              {calculated.plan === 'starter' ? 'Оставить Starter' : 'Подключить и пользоваться'}
+            </Button>
+            <p className="text-[10px] text-white/30 text-right max-w-[240px] leading-relaxed">
+              Лимиты увеличатся сразу. Оплата за доп. ресурсы будет включена в ваш следующий регулярный счет.
+            </p>
+          </div>
         </div>
       </section>
     </div>
