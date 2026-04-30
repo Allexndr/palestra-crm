@@ -9,7 +9,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 export const GroupForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { groups, addGroup, updateGroup, locations, sports, coaches } = useAdmin();
+  const { groups, addGroup, updateGroup, locations, sports, coaches, selectedLocationId } = useAdmin();
 
   const isEditing = !!id;
   const existingGroup = isEditing ? groups.find(g => g.id === id) : null;

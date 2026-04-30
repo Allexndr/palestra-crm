@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -8,8 +9,13 @@ import { LockedFeature } from '../../components/admin/LockedFeature';
 
 export const Billing = () => {
   const { finances, addTransaction, canUseFeature, getUpgradeMessage, subscription } = useAdmin();
+  const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({ amount: '', type: 'income', description: '' });
+
+  const handlePayTariff = () => {
+    navigate('/admin/settings');
+  };
 
   const isStarter = subscription.plan === 'starter';
 
