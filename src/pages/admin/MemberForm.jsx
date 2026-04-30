@@ -208,20 +208,20 @@ export const MemberForm = () => {
         </div>
       </div>
 
-      <div className="flex gap-3 mb-16 bg-white/80 backdrop-blur-md p-2 rounded-3xl w-full sm:w-fit border border-slate-100 shadow-sm overflow-x-auto max-w-full scrollbar-hide">
+      <div className="flex gap-2 mb-20 bg-slate-100/40 p-2 rounded-[32px] w-full sm:w-fit border border-slate-200/50 shadow-inner overflow-x-auto max-w-full scrollbar-hide">
         {tabs.map(tab => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-8 py-3.5 rounded-3xl text-[13px] font-black whitespace-nowrap transition-all border-none cursor-pointer flex items-center gap-3 ${
+            className={`px-10 py-5 rounded-[26px] text-[15px] font-black whitespace-nowrap transition-all border-none cursor-pointer flex items-center gap-4 ${
               activeTab === tab.id
-                ? 'bg-primary text-white shadow-xl shadow-indigo-100'
-                : 'text-slate-500 hover:text-slate-800 hover:bg-white/80'
+                ? 'bg-white text-primary shadow-md shadow-slate-200/50'
+                : 'text-slate-400 hover:text-slate-600 hover:bg-white/60'
             }`}
           >
-            <span className="text-xl leading-none">{tab.icon}</span>
-            <span className="uppercase tracking-widest">{tab.label}</span>
+            <span className="text-2xl leading-none transition-transform duration-300 group-hover:scale-110">{tab.icon}</span>
+            <span className="uppercase tracking-[0.2em]">{tab.label}</span>
           </button>
         ))}
       </div>
@@ -474,7 +474,7 @@ export const MemberForm = () => {
                     <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.parentPhone} onChange={e => handleInputChange('parentPhone', e.target.value)} />
                     <div className="input-group">
                       <label className="input-label">Кем приходится</label>
-                      <select className="input-field" style={{ height: '58px' }} value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})}>
+                      <select className="input-field" value={formData.parentNote} onChange={e => setFormData({...formData, parentNote: e.target.value})}>
                         <option value="">Выберите статус</option>
                         <option value="Мама">Мама</option>
                         <option value="Папа">Папа</option>

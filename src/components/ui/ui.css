@@ -110,12 +110,13 @@
 
 .input-field {
   width: 100%;
-  padding: 16px 20px;
-  border-radius: 16px;
+  padding: 18px 24px;
+  border-radius: 20px;
   border: 1px solid var(--color-border);
   background: var(--color-bg-secondary);
   color: var(--color-text-primary);
-  font-size: 1rem; /* 16px - avoids iOS zoom */
+  font-size: 1.125rem; /* Larger font */
+  font-weight: 500;
   transition: background-color var(--duration-base) var(--ease-standard), border-color var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard);
   font-family: var(--font-family-sans);
 }
@@ -128,10 +129,10 @@
 }
 
 .input-label {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: var(--color-text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   display: block;
   text-transform: uppercase;
   letter-spacing: 0.05em;
