@@ -21,7 +21,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { ClubLogo } from '../ui/ClubLogo';
 
 export const Sidebar = () => {
-  const { user, logout, locations, selectedLocationId, setSelectedLocationId, clubInfo } = useAdmin();
+  const { user, logout, clubInfo } = useAdmin();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -31,51 +31,39 @@ export const Sidebar = () => {
 
   // Filter links based on role
   const allLinks = [
-    { to: '/admin', icon: LayoutDashboard, label: 'Дашборд', end: true, roles: ['admin', 'coach'], color: '#6366f1' },
-    { to: '/admin/members', icon: UserCircle, label: 'Ученики', roles: ['admin', 'coach'], color: '#3b82f6' },
-    { to: '/admin/groups', icon: Network, label: 'Группы', roles: ['admin', 'coach'], color: '#8b5cf6' },
-    { to: '/admin/coaches', icon: ShieldCheck, label: 'Тренеры', roles: ['admin'], color: '#ec4899' },
-    { to: '/admin/leads', icon: Target, label: 'Лиды', roles: ['admin'], color: '#f59e0b' },
-    { to: '/admin/schedule', icon: Calendar, label: 'Расписание', roles: ['admin', 'coach'], color: '#10b981' },
-    { to: '/admin/events', icon: Clock, label: 'События', roles: ['admin', 'coach'], color: '#06b6d4' },
-    { to: '/admin/league', icon: Trophy, label: 'Лига', roles: ['admin', 'coach'], color: '#f43f5e' },
-    { to: '/admin/locations', icon: MapPin, label: 'Филиалы', roles: ['admin'], color: '#8b5cf6' },
-    { to: '/admin/billing', icon: Wallet, label: 'Финансы', roles: ['admin'], color: '#14b8a6' },
-    { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'], color: '#8b5cf6' },
-    { to: '/feed', icon: LayoutList, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'], color: '#64748b' },
-    { to: '/admin/settings', icon: Settings, label: 'Настройки', roles: ['admin'], color: '#475569' },
+    { to: '/admin', icon: LayoutDashboard, label: 'Дашборд', end: true, roles: ['admin', 'coach'] },
+    { to: '/admin/members', icon: UserCircle, label: 'Ученики', roles: ['admin', 'coach'] },
+    { to: '/admin/groups', icon: Network, label: 'Группы', roles: ['admin', 'coach'] },
+    { to: '/admin/coaches', icon: ShieldCheck, label: 'Тренеры', roles: ['admin'] },
+    { to: '/admin/leads', icon: Target, label: 'Лиды', roles: ['admin'] },
+    { to: '/admin/schedule', icon: Calendar, label: 'Расписание', roles: ['admin', 'coach'] },
+    { to: '/admin/events', icon: Clock, label: 'События', roles: ['admin', 'coach'] },
+    { to: '/admin/league', icon: Trophy, label: 'Лига', roles: ['admin', 'coach'] },
+    { to: '/admin/locations', icon: MapPin, label: 'Филиалы', roles: ['admin'] },
+    { to: '/admin/billing', icon: Wallet, label: 'Финансы', roles: ['admin'] },
+    { to: '/admin/shop', icon: ShoppingBag, label: 'Магазин', roles: ['admin', 'coach'] },
+    { to: '/feed', icon: LayoutList, label: 'Лента', roles: ['admin', 'coach', 'parent', 'student'] },
+    { to: '/admin/settings', icon: Settings, label: 'Настройки', roles: ['admin'] },
   ];
 
   const filteredLinks = allLinks.filter(link => link.roles.includes(user?.role || 'admin'));
+  const roleLabel = user?.role === 'admin' ? 'Администратор' : 'Тренер';
 
   return (
-    <aside className="desktop-only" style={{
-      width: '100px',
-      flexShrink: 0,
-      backgroundColor: '#fff',
-      borderRight: '1px solid #f0f0f0',
-      height: '100vh',
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      padding: 'var(--space-6) var(--space-2)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      zIndex: 100,
-      overflowY: 'auto'
-    }}>
-      <div className="mb-12">
-        <NavLink
-          to="/"
-          className="flex items-center justify-center"
-          style={{ textDecoration: 'none' }}
-        >
-          <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={36} />
-        </NavLink>
+    <aside className="member-desktop-sidebar desktop-only">
+      <NavLink to="/" className="member-sidebar-brand" style={{ textDecoration: 'none' }}>
+        <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={44} />
+      </NavLink>
+
+      <div className="member-user-card">
+        <div className="member-user-avatar">{user?.name?.charAt(0) || 'U'}</div>
+        <div>
+          <p>{user?.name || roleLabel}</p>
+          <span>{roleLabel}</span>
+        </div>
       </div>
 
-      <nav className="flex flex-col gap-6 flex-1 items-center">
+      <nav className="member-desktop-nav" aria-label="Основное меню" style={{ overflowY: 'auto', paddingRight: '4px' }}>
         {filteredLinks.map((link) => {
           const Icon = link.icon;
           return (
@@ -83,49 +71,21 @@ export const Sidebar = () => {
               key={link.to} 
               to={link.to}
               end={link.end}
-              title={link.label}
-              style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '48px',
-                height: '48px',
-                borderRadius: '16px',
-                backgroundColor: isActive ? 'var(--color-primary)' : 'transparent',
-                color: isActive ? '#fff' : '#888',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                textDecoration: 'none',
-                position: 'relative'
-              })}
-              className="group"
+              className={({ isActive }) =>
+                isActive ? 'member-desktop-nav__link is-active' : 'member-desktop-nav__link'
+              }
             >
-              <Icon size={22} strokeWidth={2} />
-              <div className="absolute left-full ml-4 px-3 py-1.5 text-white text-[10px] font-black uppercase tracking-widest rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-[200]" style={{ backgroundColor: 'var(--color-primary)' }}>
-                {link.label}
-              </div>
+              <Icon size={18} strokeWidth={2} />
+              <span>{link.label}</span>
             </NavLink>
           );
         })}
       </nav>
 
-      <div className="pt-8 mt-auto flex flex-col items-center gap-6">
-        {user?.role === 'admin' && (
-           <button 
-             onClick={() => navigate('/admin/locations')}
-             className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-primary transition-colors"
-             title="Филиалы"
-           >
-             <MapPin size={22} />
-           </button>
-        )}
-        <button 
-          onClick={handleLogout}
-          className="w-12 h-12 flex items-center justify-center text-slate-300 hover:text-danger transition-colors"
-          title="Выйти"
-        >
-          <LogOut size={22} />
-        </button>
-      </div>
+      <button type="button" className="member-logout" onClick={handleLogout}>
+        <LogOut size={18} />
+        Выйти
+      </button>
     </aside>
   );
 };
