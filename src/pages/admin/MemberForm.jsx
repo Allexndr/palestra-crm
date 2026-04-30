@@ -208,20 +208,20 @@ export const MemberForm = () => {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-20 bg-slate-100/40 p-2 rounded-[32px] w-full sm:w-fit border border-slate-200/50 shadow-inner overflow-x-auto max-w-full scrollbar-hide">
+      <div className="chrome-tabs-container overflow-x-auto scrollbar-hide">
         {tabs.map(tab => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-10 py-5 rounded-[26px] text-[15px] font-black whitespace-nowrap transition-all border-none cursor-pointer flex items-center gap-4 ${
-              activeTab === tab.id
-                ? 'bg-white text-primary shadow-md shadow-slate-200/50'
-                : 'text-slate-400 hover:text-slate-600 hover:bg-white/60'
-            }`}
+            className={`chrome-tab ${activeTab === tab.id ? 'active' : ''}`}
           >
-            <span className="text-2xl leading-none transition-transform duration-300 group-hover:scale-110">{tab.icon}</span>
-            <span className="uppercase tracking-[0.2em]">{tab.label}</span>
+            <div className="chrome-tab-content">
+              <span className="chrome-tab-icon">{tab.icon}</span>
+              <span className="chrome-tab-label">{tab.label}</span>
+            </div>
+            <div className="chrome-tab-curve-left"></div>
+            <div className="chrome-tab-curve-right"></div>
           </button>
         ))}
       </div>
@@ -515,6 +515,102 @@ export const MemberForm = () => {
       </form>
 
       <style>{`
+        .chrome-tabs-container {
+          display: flex;
+          align-items: flex-end;
+          padding: 0 10px;
+          margin-bottom: 40px;
+          border-bottom: 2px solid white;
+          gap: 4px;
+        }
+
+        .chrome-tab {
+          position: relative;
+          padding: 16px 40px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          color: #94a3b8;
+          z-index: 1;
+        }
+
+        .chrome-tab.active {
+          color: var(--color-primary);
+          z-index: 10;
+        }
+
+        .chrome-tab.active::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: white;
+          border-radius: 24px 24px 0 0;
+          z-index: -1;
+          box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .chrome-tab-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          position: relative;
+          z-index: 2;
+        }
+
+        .chrome-tab-icon {
+          font-size: 24px;
+          transition: transform 0.3s;
+        }
+
+        .chrome-tab:hover .chrome-tab-icon {
+          transform: scale(1.1);
+        }
+
+        .chrome-tab-label {
+          font-size: 14px;
+          font-weight: 900;
+          text-transform: uppercase;
+          letter-spacing: 0.15em;
+        }
+
+        .chrome-tab.active .chrome-tab-curve-left,
+        .chrome-tab.active .chrome-tab-curve-right {
+          position: absolute;
+          bottom: 0;
+          width: 24px;
+          height: 24px;
+          background: transparent;
+          display: block;
+        }
+
+        .chrome-tab.active .chrome-tab-curve-left {
+          left: -24px;
+          border-bottom-right-radius: 24px;
+          box-shadow: 8px 0 0 0 white;
+        }
+
+        .chrome-tab.active .chrome-tab-curve-right {
+          right: -24px;
+          border-bottom-left-radius: 24px;
+          box-shadow: -8px 0 0 0 white;
+        }
+
+        .chrome-tab:not(.active):hover::before {
+          content: '';
+          position: absolute;
+          top: 6px;
+          left: 6px;
+          right: 6px;
+          bottom: 0;
+          background: rgba(255, 255, 255, 0.5);
+          border-radius: 20px 20px 0 0;
+          z-index: -1;
+        }
+
         .admin-container {
           padding-top: var(--space-8);
         }
