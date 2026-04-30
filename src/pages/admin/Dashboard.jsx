@@ -201,7 +201,7 @@ export const Dashboard = () => {
               return <EventCarousel key="events" isAdmin={isAdmin} />;
             case 'autopilot':
               return (
-                <Card key="autopilot" className="card-hover border-none shadow-xl shadow-slate-100 bg-slate-900 text-white overflow-hidden relative">
+                <Card key="autopilot" className="card-hover border-none shadow-xl shadow-slate-100 overflow-hidden relative" style={{ backgroundColor: '#0f172a', color: 'white' }}>
                   <div className="absolute top-[-20px] right-[-20px] opacity-10 rotate-12"><MessageSquare size={120} fill="white" /></div>
                   <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-6">

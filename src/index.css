@@ -417,6 +417,7 @@ button,
   .container { padding: 0 var(--space-4) !important; }
   .glass { padding: var(--space-3) var(--space-4) !important; }
   .desktop-only { display: none !important; }
+  .member-main-region { margin-left: 0 !important; }
 }
 
 @media (min-width: 601px) {
@@ -2033,7 +2034,8 @@ a:focus:not(:focus-visible) {
   .member-app-shell {
     display: flex;
     max-width: none;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background: var(--color-bg);
   }
 }
@@ -2042,12 +2044,14 @@ a:focus:not(:focus-visible) {
   width: 260px;
   flex-shrink: 0;
   height: 100vh;
-  position: sticky;
+  position: fixed;
+  left: 0;
   top: 0;
   align-self: flex-start;
   padding: var(--space-4);
   background: #fff;
   border-right: 1px solid var(--color-border);
+  z-index: 100;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -2256,6 +2260,9 @@ a:focus:not(:focus-visible) {
 .member-main-region {
   flex: 1;
   min-width: 0;
+  margin-left: 260px;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .member-desktop-header {
@@ -2268,9 +2275,9 @@ a:focus:not(:focus-visible) {
   align-items: center;
   gap: var(--space-4);
   padding: 0 var(--space-8);
-  background: rgba(255,255,255,0.92);
+  background: #ffffff;
   border-bottom: 1px solid var(--color-border);
-  backdrop-filter: blur(14px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
 }
 
 .member-desktop-header h1 {
