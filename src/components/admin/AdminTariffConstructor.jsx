@@ -93,6 +93,12 @@ export const AdminTariffConstructor = ({
   const [draft, setDraft] = useState(subscription);
   const [isSaved, setIsSaved] = useState(false);
   const calculated = useMemo(() => calculateTariff(draft), [draft]);
+
+  const isCurrentPlan = useMemo(() => {
+    return JSON.stringify(draft.limits) === JSON.stringify(subscription.limits) &&
+           JSON.stringify(draft.features) === JSON.stringify(subscription.features) &&
+           draft.billingPeriod === subscription.billingPeriod;
+  }, [draft, subscription]);
   
   // Sync draft if subscription changes externally
   useEffect(() => {
@@ -297,22 +303,41 @@ export const AdminTariffConstructor = ({
             </div>
           </div>
           <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
-            <Button 
-              variant={isSaved ? 'success' : 'primary'} 
-              onClick={() => {
-                updateSubscription(calculated);
-                setIsSaved(true);
-                setTimeout(() => setIsSaved(false), 2000);
-              }} 
-              className={`h-14 px-10 shadow-xl transition-all duration-300 w-full ${isSaved ? 'shadow-emerald-100' : 'shadow-primary/20'}`}
-              style={{ backgroundColor: isSaved ? '#10b981' : undefined }}
-            >
-              {isSaved ? '✓ Конфигурация сохранена' : (calculated.plan === 'starter' ? 'Оставить Starter' : 'Подключить и пользоваться')}
-            </Button>
+            {isCurrentPlan ? (
+              <Button variant="ghost" disabled className="h-14 px-10 border-slate-700 text-slate-400 w-full cursor-default opacity-80">
+                Ваш текущий тариф
+              </Button>
+            ) : (
+              <Button 
+                variant={isSaved ? 'success' : 'primary'} 
+                onClick={() => {
+                  updateSubscription(calculated);
+                  setIsSaved(true);
+                  setTimeout(() => setIsSaved(false), 2000);
+                }} 
+                className={`h-14 px-10 shadow-xl transition-all duration-300 w-full ${isSaved ? 'shadow-emerald-100' : 'shadow-primary/20'}`}
+                style={{ backgroundColor: isSaved ? '#10b981' : undefined }}
+              >
+                {isSaved ? '✓ Конфигурация сохранена' : 'Применить изменения'}
+              </Button>
+            )}
             <p className="text-[10px] text-white/30 text-right max-w-[240px] leading-relaxed">
               Лимиты увеличатся сразу. Оплата за доп. ресурсы будет включена в ваш следующий регулярный счет.
             </p>
           </div>
+        </div>
+        
+        <div className="mt-12 flex justify-center border-t border-white/5 pt-8">
+           <button 
+             onClick={() => {
+               if (window.confirm('Вы уверены, что хотите отменить подписку? Все платные функции будут отключены в конце расчетного периода.')) {
+                 resetToStarter();
+               }
+             }}
+             className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer"
+           >
+             Отменить подписку и вернуться на Starter
+           </button>
         </div>
       </section>
     </div>
