@@ -436,7 +436,7 @@ export const Landing = () => {
           <div className="landing-footer__grid">
             <section className="landing-footer__brand" aria-label="О продукте Palestra">
               <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную" style={{ display: 'block', maxWidth: '160px', marginBottom: '16px' }}>
-                <img src="/logo-footer.png" alt="Palestra Logo" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} decoding="async" />
+                <img src="/logo-footer-light.png" alt="Palestra Logo" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} decoding="async" />
               </Link>
               <p>
                 CRM-платформа для клубов единоборств: ученики, группы, расписание, оплаты и прогресс в одной системе.

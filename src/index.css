@@ -1946,15 +1946,15 @@ a:focus:not(:focus-visible) {
   display: block;
   width: auto;
   max-width: 100%;
-  height: 32px;
-  max-height: 32px;
+  height: 64px;
+  max-height: 64px;
   object-fit: contain;
   object-position: left center;
 }
 @media (min-width: 480px) {
   .navbar-brand-logo {
-    height: 36px;
-    max-height: 36px;
+    height: 72px;
+    max-height: 72px;
   }
 }
 @media (max-width: 768px) {
@@ -1963,7 +1963,7 @@ a:focus:not(:focus-visible) {
   }
 
   .navbar-logo-wrap {
-    max-width: min(220px, 52vw);
+    max-width: min(440px, 52vw);
   }
 }
 @media (max-width: 1100px) {
@@ -1985,8 +1985,8 @@ a:focus:not(:focus-visible) {
   }
 
   .navbar-brand-logo {
-    height: 34px;
-    max-height: 34px;
+    height: 68px;
+    max-height: 68px;
   }
 }
 @media (max-width: 560px) {
@@ -1996,12 +1996,12 @@ a:focus:not(:focus-visible) {
   }
 
   .navbar-logo-wrap {
-    max-width: min(190px, 54vw);
+    max-width: min(380px, 54vw);
   }
 
   .navbar-brand-logo {
-    height: 30px;
-    max-height: 30px;
+    height: 60px;
+    max-height: 60px;
   }
 
   .navbar-auth-actions > a {
@@ -2015,11 +2015,11 @@ a:focus:not(:focus-visible) {
 }
 @media (min-width: 1024px) {
   .navbar-logo-wrap {
-    max-width: min(320px, 32vw);
+    max-width: min(640px, 32vw);
   }
   .navbar-brand-logo {
-    height: 42px;
-    max-height: 42px;
+    height: 84px;
+    max-height: 84px;
   }
 }
 

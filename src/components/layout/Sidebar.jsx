@@ -58,7 +58,7 @@ export const Sidebar = () => {
   return (
     <aside className="member-desktop-sidebar desktop-only">
       <NavLink to="/" className="member-sidebar-brand" style={{ textDecoration: 'none' }}>
-        <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={44} />
+        <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={64} />
       </NavLink>
 
       <div className="member-user-card">
