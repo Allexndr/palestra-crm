@@ -31,8 +31,10 @@ const randomPassword = () => {
 export const MemberForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { members, addMember, updateMember, user, locations, plans, selectedLocationId, groups } = useAdmin();
+  const { members, addMember, updateMember, user, locations, plans, selectedLocationId, groups, clubInfo, isStateReady } = useAdmin();
   const isAdmin = user?.role === 'admin';
+
+  if (!isStateReady) return <PageLoader />;
 
   const isEditing = !!id;
   const existingMember = isEditing ? members.find(m => m.id === id) : null;
