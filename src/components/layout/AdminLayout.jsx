@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { useAdmin } from '../../context/AdminContext';
 import { Menu, X, LogOut, Shield, ChevronDown, Check, MapPin } from 'lucide-react';
