@@ -167,7 +167,18 @@ export const AdminProvider = ({ children }) => {
         setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
         setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
         setClubInfo(normalizeClubInfo(remote.clubInfo));
-        setSubscription(normalizeSubscription(remote.subscription));
+        let loadedSubscription = normalizeSubscription(remote.subscription);
+        if (loadedSubscription.plan === 'starter') {
+          try {
+            const localSub = localStorage.getItem('palestra_demo_subscription');
+            if (localSub) {
+              loadedSubscription = normalizeSubscription(JSON.parse(localSub));
+            }
+          } catch (e) {
+            console.error('Failed to parse local subscription', e);
+          }
+        }
+        setSubscription(loadedSubscription);
         setDashboardLayout(Array.isArray(remote.dashboardLayout) ? remote.dashboardLayout : DEFAULT_DASHBOARD_LAYOUT);
         setUser(meData.user || null);
         
@@ -347,7 +358,13 @@ export const AdminProvider = ({ children }) => {
   };
 
   const updateSubscription = (nextSubscription) => {
-    setSubscription(normalizeSubscription(nextSubscription));
+    const normalized = normalizeSubscription(nextSubscription);
+    setSubscription(normalized);
+    try {
+      localStorage.setItem('palestra_demo_subscription', JSON.stringify(normalized));
+    } catch (e) {
+      console.error('Failed to save subscription to localStorage', e);
+    }
     logActivity('Обновлена конфигурация тарифа Palestra', 'success');
   };
 
