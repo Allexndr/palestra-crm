@@ -500,7 +500,7 @@ export const MemberForm = () => {
           )}
         </div>
 
-        <Card className="mt-16 flex flex-col sm:flex-row justify-between items-center gap-8 border border-slate-100 shadow-sm p-8" style={{ borderRadius: '40px' }}>
+        <Card className="mt-24 flex flex-col sm:flex-row justify-between items-center gap-8 border border-slate-100 shadow-sm p-8" style={{ borderRadius: '40px' }}>
           <button 
             type="button" 
             onClick={() => navigate('/admin/members')} 

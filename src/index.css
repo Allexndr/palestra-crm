@@ -434,6 +434,11 @@ button,
 .rounded-2xl { border-radius: 16px !important; }
 .rounded-3xl { border-radius: 24px !important; }
 .gap-16 { gap: 4rem !important; }
+.mt-12 { margin-top: 3rem !important; }
+.mt-16 { margin-top: 4rem !important; }
+.mt-24 { margin-top: 6rem !important; }
+.mb-16 { margin-bottom: 4rem !important; }
+.mb-20 { margin-bottom: 5rem !important; }
 
 /* Admin Layout Styles */
 .admin-page-header {
