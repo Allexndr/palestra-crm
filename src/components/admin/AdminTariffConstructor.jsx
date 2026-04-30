@@ -91,6 +91,7 @@ export const AdminTariffConstructor = ({
   updateSubscription,
 }) => {
   const [draft, setDraft] = useState(subscription);
+  const [isSaved, setIsSaved] = useState(false);
   const calculated = useMemo(() => calculateTariff(draft), [draft]);
   
   // Sync draft if subscription changes externally
@@ -296,8 +297,17 @@ export const AdminTariffConstructor = ({
             </div>
           </div>
           <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
-            <Button variant="primary" onClick={() => updateSubscription(calculated)} className="h-14 px-10 shadow-xl shadow-primary/20 w-full">
-              {calculated.plan === 'starter' ? 'Оставить Starter' : 'Подключить и пользоваться'}
+            <Button 
+              variant={isSaved ? 'success' : 'primary'} 
+              onClick={() => {
+                updateSubscription(calculated);
+                setIsSaved(true);
+                setTimeout(() => setIsSaved(false), 2000);
+              }} 
+              className={`h-14 px-10 shadow-xl transition-all duration-300 w-full ${isSaved ? 'shadow-emerald-100' : 'shadow-primary/20'}`}
+              style={{ backgroundColor: isSaved ? '#10b981' : undefined }}
+            >
+              {isSaved ? '✓ Конфигурация сохранена' : (calculated.plan === 'starter' ? 'Оставить Starter' : 'Подключить и пользоваться')}
             </Button>
             <p className="text-[10px] text-white/30 text-right max-w-[240px] leading-relaxed">
               Лимиты увеличатся сразу. Оплата за доп. ресурсы будет включена в ваш следующий регулярный счет.
