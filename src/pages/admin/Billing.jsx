@@ -7,20 +7,25 @@ import { useAdmin } from '../../context/AdminContext';
 import { TrendingUp, TrendingDown, CreditCard, ArrowUpRight, ArrowDownRight, Download, Plus, Receipt } from 'lucide-react';
 import { LockedFeature } from '../../components/admin/LockedFeature';
 
+import { PageLoader } from '../../components/ui/PageLoader';
+
 export const Billing = () => {
   const { finances, addTransaction, canUseFeature, getUpgradeMessage, subscription } = useAdmin();
   const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState({ amount: '', type: 'income', description: '' });
 
+  if (!finances || !subscription) return <PageLoader />;
+
   const handlePayTariff = () => {
     navigate('/admin/settings');
   };
 
-  const isStarter = subscription.plan === 'starter';
+  const isStarter = subscription?.plan === 'starter';
 
   // Simple stats
-  const totalIncome = finances.transactions
+  const transactions = finances?.transactions || [];
+  const totalIncome = transactions
     .filter(t => t.type === 'income')
     .reduce((sum, t) => sum + t.amount, 0);
   

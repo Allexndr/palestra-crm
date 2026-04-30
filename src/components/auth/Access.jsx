@@ -3,13 +3,14 @@ import { Calendar, Home, LogOut, Trophy, User, Zap } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { BottomNav } from '../layout/BottomNav';
 import { ClubLogo } from '../ui/ClubLogo';
+import { PageLoader } from '../ui/PageLoader';
 
 /** Только авторизованные пользователи (любая роль). */
 export function RequireAuth() {
   const { user, isStateReady } = useAdmin();
   const loc = useLocation();
 
-  if (!isStateReady) return null;
+  if (!isStateReady) return <PageLoader />;
 
   if (!user) {
     return <Navigate to="/auth/login" replace state={{ from: loc.pathname }} />;
@@ -128,7 +129,7 @@ export function AdminRoleGuard() {
   const { user, isStateReady } = useAdmin();
   const loc = useLocation();
 
-  if (!isStateReady) return null;
+  if (!isStateReady) return <PageLoader />;
 
   if (!user) {
     return <Navigate to="/auth/login" replace state={{ from: loc.pathname }} />;
@@ -146,7 +147,7 @@ export function SuperAdminRoleGuard() {
   const { user, isStateReady } = useAdmin();
   const loc = useLocation();
 
-  if (!isStateReady) return null;
+  if (!isStateReady) return <PageLoader />;
 
   if (!user) {
     return <Navigate to="/auth/login" replace state={{ from: loc.pathname }} />;

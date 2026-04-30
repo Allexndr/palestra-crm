@@ -5,9 +5,10 @@ import { useAdmin } from '../../context/AdminContext';
 import { Menu, X, LogOut, Shield, ChevronDown, Check, MapPin } from 'lucide-react';
 import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 import { ClubLogo } from '../ui/ClubLogo';
+import { PageLoader } from '../ui/PageLoader';
 
 export const AdminLayout = () => {
-  const { user, clubInfo, logout, locations, selectedLocationId, setSelectedLocationId } = useAdmin();
+  const { user, clubInfo, logout, locations, selectedLocationId, setSelectedLocationId, isStateReady } = useAdmin();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLocOpen, setIsLocOpen] = useState(false);
   const navigate = useNavigate();
@@ -29,6 +30,8 @@ export const AdminLayout = () => {
     logout();
     navigate('/auth/login');
   };
+
+  if (!isStateReady) return <PageLoader />;
 
   const filteredLinks = ADMIN_NAV_LINKS.filter(link => link.roles.includes(user?.role || 'admin'));
 

@@ -10,15 +10,19 @@ import { uploadBlobFile } from '../../lib/blobClient';
 import { AdminTariffConstructor } from '../../components/admin/AdminTariffConstructor';
 import { formatLimit } from '../../lib/tariff';
 
+import { PageLoader } from '../../components/ui/PageLoader';
+
 export const Settings = () => {
   const { 
     members, coaches, groups, subscription, usage, getLimitStatus, updateSubscription,
     achievements, addAchievement, removeAchievement, monthlyAward, updateMonthlyAward, resetData,
     dashboardLayout, toggleWidget, moveWidget, clubInfo, setClubInfo,
     addLocation, removeLocation, updateLocation, locations,
-    addPlan, removePlan, plans
+    addPlan, removePlan, plans, isStateReady
   } = useAdmin();
   const navigate = useNavigate();
+  
+  if (!isStateReady) return <PageLoader />;
   const [activeTab, setActiveTab] = useState('palestra-tariff');
   
   const [isAddingLoc, setIsAddingLoc] = useState(false);
