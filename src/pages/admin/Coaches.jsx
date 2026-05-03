@@ -3,11 +3,34 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Plus, Users, Trash2, Edit2, Camera, Phone, Mail, Award, MapPin } from 'lucide-react';
+import { Plus, Users, Trash2, Edit2, Camera, Phone, Mail, Award, MapPin, Copy } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
 
+const translit = (str) => {
+  if (!str) return '';
+  const ru = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'j', 'з': 'z',
+    'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r',
+    'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'c', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
+    'ы': 'y', 'э': 'e', 'ю': 'u', 'я': 'ya'
+  };
+  return str.toLowerCase().split('').map(char => ru[char] || char).join('').replace(/[^a-z0-9]/g, '');
+};
+
+const randomPassword = () => {
+  const letters = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  const numbers = '23456789';
+  const symbols = '!@#$%&*';
+  const all = letters + numbers + symbols;
+  
+  const bytes = new Uint32Array(8);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (value) => all[value % all.length]).join('');
+};
+
 export const Coaches = () => {
-  const { coaches, addCoach, removeCoach, updateCoach, locations, sports } = useAdmin();
+  const { coaches, addCoach, removeCoach, updateCoach, locations, sports, fixBlobUrl } = useAdmin();
+  const { t } = useTranslation();
   const [isAdding, setIsAdding] = useState(false);
   const [editingCoachId, setEditingCoachId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,10 +47,36 @@ export const Coaches = () => {
     bio: '',
     avatar: '',
     salaryRate: '2000',
-    salaryType: 'per_session'
+    salaryType: 'per_session',
+    login: '',
+    password: ''
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
   };
 
   const [formData, setFormData] = useState(initialFormState);
+
+  const generateCredentials = (first, last) => {
+    if (!first) return;
+    const login = translit(first) + (last ? '.' + translit(last) : '');
+    const password = randomPassword();
+    
+    setFormData(prev => ({ 
+      ...prev, 
+      login: prev.login || login, 
+      password: prev.password || password 
+    }));
+  };
+
+  const handleNameChange = (field, val) => {
+    const updated = { ...formData, [field]: val };
+    setFormData(updated);
+    if (!editingCoachId) {
+      generateCredentials(updated.firstName, updated.lastName);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -77,8 +126,8 @@ export const Coaches = () => {
     <div className="animate-fade-in">
       <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h2">Команда тренеров</h1>
-          <p className="text-secondary text-lg">Управление тренерским составом и их специализациями</p>
+          <h1 className="h2">{t('coaches.title')}</h1>
+          <p className="text-secondary text-lg">{t('coaches.subtitle')}</p>
         </div>
         <Button variant="primary" onClick={() => {
           if (isAdding) {
@@ -89,7 +138,7 @@ export const Coaches = () => {
             setIsAdding(true);
           }
         }} style={{ gap: '8px' }}>
-          <Plus size={18} /> {isAdding ? 'Отмена' : 'Добавить тренера'}
+          <Plus size={18} /> {isAdding ? t('common.cancel') : t('coaches.add_btn')}
         </Button>
       </div>
 
@@ -99,10 +148,25 @@ export const Coaches = () => {
           <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             {/* Basic Info */}
             <div className="admin-form-grid">
-              <Input label="Имя" required value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} />
-              <Input label="Фамилия" required value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} />
+              <Input label="Имя" required value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
+              <Input label="Фамилия" required value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
               <Input label="Телефон" type="tel" placeholder="7 777 000 00 00" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
               <Input label="Email" type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+            </div>
+
+            <div className="admin-form-grid" style={{ backgroundColor: 'var(--color-primary-soft)', padding: '24px', borderRadius: '20px' }}>
+              <div className="relative">
+                <Input label="Логин для входа" placeholder="Создается автоматически" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
+                <button 
+                  type="button"
+                  onClick={() => copyToClipboard(`${formData.login} ${formData.password}`)}
+                  className="absolute right-4 top-[42px] p-2 text-slate-400 hover:text-primary transition-colors bg-white/80 rounded-lg border border-slate-100 shadow-sm"
+                  title="Скопировать логин и пароль"
+                >
+                  <Copy size={16} />
+                </button>
+              </div>
+              <Input label="Пароль" placeholder="Создается автоматически" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
             </div>
 
             {/* Professional Info */}
@@ -182,7 +246,7 @@ export const Coaches = () => {
         <div className="admin-card-grid">
           {filteredCoaches.length === 0 ? (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }} className="text-muted">
-              Список тренеров пуст.
+              <p className="text-secondary">{t('coaches.empty_list')}</p>
             </div>
           ) : filteredCoaches.map(coach => (
             <Card key={coach.id} className="card-hover" style={{ padding: '24px', position: 'relative' }}>
@@ -194,16 +258,23 @@ export const Coaches = () => {
                   fontSize: '24px', fontWeight: 'bold'
                 }}>
                   {coach.avatar ? (
-                    <img src={coach.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 20 }} />
+                    <img src={fixBlobUrl(coach.avatar)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 20 }} />
                   ) : (
                     coach.firstName[0]
                   )}
                 </div>
                 <div>
                   <h4 className="font-bold text-lg">{coach.firstName} {coach.lastName}</h4>
-                  <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', color: 'var(--color-primary)', backgroundColor: 'var(--color-primary-soft)', padding: '2px 8px', borderRadius: '4px' }}>
-                    {coach.specialization}
-                  </span>
+                  <div className="flex gap-2 items-center">
+                    <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', color: 'var(--color-primary)', backgroundColor: 'var(--color-primary-soft)', padding: '2px 8px', borderRadius: '4px' }}>
+                      {coach.specialization}
+                    </span>
+                    {coach.login && (
+                      <span style={{ fontSize: '10px', fontWeight: 'bold', color: 'var(--color-slate-500)', backgroundColor: 'var(--color-slate-100)', padding: '2px 8px', borderRadius: '4px' }}>
+                        {coach.login} : {coach.password}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 

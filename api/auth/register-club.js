@@ -32,15 +32,17 @@ export default async function handler(req, res) {
       const supabase = getServiceClient();
       
       // 1. Check for duplicates
-      const { data: existingP } = await supabase.from('profiles').select('id').or(`email.eq.${formData.email},phone.eq.${formData.phone}`).maybeSingle();
+      const { normalizePhone } = await import('../_lib/utils.js');
+      const normalizedPhone = normalizePhone(formData.phone);
+      
+      const { data: existingP } = await supabase.from('profiles').select('id').eq('phone', normalizedPhone).maybeSingle();
       const { data: existingC } = await supabase.from('clubs').select('id').ilike('name', formData.clubName).maybeSingle();
       
       if (existingP || existingC) {
         return sendJson(res, 400, { 
-          error: 'Club or User already registered',
+          error: 'Club or Phone already registered',
           details: { 
             fieldErrors: {
-              email: existingP ? ['Уже зарегистрирован'] : undefined,
               phone: existingP ? ['Уже зарегистрирован'] : undefined,
               clubName: existingC ? ['Уже зарегистрировано'] : undefined
             }

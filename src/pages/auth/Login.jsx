@@ -5,6 +5,7 @@ import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 import { Navbar } from '../../components/layout/Navbar';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Shield, Users, User, ArrowRight, Info, PlusCircle, HelpCircle, ShieldCheck } from 'lucide-react';
 
 export const Login = () => {
@@ -12,6 +13,7 @@ export const Login = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAdmin();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from;
@@ -64,23 +66,23 @@ export const Login = () => {
               }}>
                 <Shield size={36} />
               </div>
-              <h1 className="h3 mb-4" style={{ fontFamily: 'var(--font-family-display)' }}>Вход в Palestra</h1>
-              <p className="text-secondary text-sm">Управление вашим клубом в одном месте</p>
+              <h1 className="h3 mb-4" style={{ fontFamily: 'var(--font-family-display)' }}>{t('auth.login_title')}</h1>
+              <p className="text-secondary text-sm">{t('auth.login_subtitle')}</p>
             </div>
 
             <form onSubmit={handleLogin} className="flex flex-col gap-8">
               <Input 
-                label="Email" 
-                type="email" 
-                placeholder="example@mail.com" 
+                label={t('auth.login_or_email')} 
+                type="text" 
+                placeholder="ваш_логин или mail@example.com" 
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
                 required
               />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label className="text-sm font-bold text-slate-700">Пароль</label>
-                  <a href="#" className="text-xs text-primary font-bold hover:underline">Забыли пароль?</a>
+                  <label className="text-sm font-bold text-slate-700">{t('auth.password')}</label>
+                  <a href="#" className="text-xs text-primary font-bold hover:underline">{t('auth.forgot_password')}</a>
                 </div>
                 <Input 
                   type="password" 
@@ -93,7 +95,7 @@ export const Login = () => {
               </div>
 
               <Button variant="primary" type="submit" disabled={isLoading} style={{ width: '100%', marginTop: 'var(--space-4)' }}>
-                {isLoading ? 'Загрузка...' : 'Войти в систему'}
+                {isLoading ? t('common.loading') : t('auth.login_btn')}
               </Button>
             </form>
           </Card>

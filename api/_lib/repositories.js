@@ -76,6 +76,7 @@ function mapCoach(row, clubId) {
 }
 
 function mapMember(row, clubId) {
+  const metrics = row.metrics || {};
   return {
     id: row.id,
     club_id: clubId,
@@ -86,12 +87,12 @@ function mapMember(row, clubId) {
     phone: row.phone || null,
     sport: row.sport || null,
     plan: row.plan || null,
-    points: asNumber(row.points),
+    points: asNumber(metrics.points || row.points),
     level: row.level || 'Новичок',
-    strength: asNumber(row.strength),
-    speed: asNumber(row.speed),
-    technique: asNumber(row.technique),
-    endurance: asNumber(row.endurance),
+    strength: asNumber(metrics.strength || row.strength),
+    speed: asNumber(metrics.speed || row.speed),
+    technique: asNumber(metrics.technique || row.technique),
+    endurance: asNumber(metrics.endurance || row.endurance),
     avatar_blob_url: row.avatar || null,
     created_at: asDate(row.createdAt),
   };
@@ -375,7 +376,44 @@ export async function getNormalizedState(user, fallbackState = createSeedState()
     groups: groups.map((row) => ({ id: row.id, name: row.name, coachId: row.coach_id || '', sport: row.sport || '', locationId: row.location_id || '' })),
     members: members.map((row) => {
       const parent = parents.find((item) => item.id === row.parent_id);
-      return { id: row.id, firstName: row.first_name, lastName: row.last_name || '', phone: row.phone || '', parentId: row.parent_id || '', parentName: parent?.name || '', parentPhone: parent?.phone || '', hasParent: Boolean(parent), groupId: row.group_id || '', points: row.points || 0, level: row.level || 'Новичок', sport: row.sport || '', plan: row.plan || '', strength: row.strength || 0, speed: row.speed || 0, technique: row.technique || 0, endurance: row.endurance || 0, avatar: row.avatar_blob_url || '', createdAt: row.created_at };
+      const fallbackMember = (fallbackState.members || []).find(m => m.id === row.id) || {};
+      
+      // Reconstruct metrics from relational columns for backward compatibility
+      const relationalMetrics = {
+        strength: row.strength || 0,
+        speed: row.speed || 0,
+        technique: row.technique || 0,
+        endurance: row.endurance || 0,
+        points: row.points || 0,
+      };
+
+      return { 
+        ...fallbackMember, // Preserve any extra fields from the JSON state (like dynamic metrics)
+        id: row.id, 
+        firstName: row.first_name, 
+        lastName: row.last_name || '', 
+        phone: row.phone || '', 
+        parentId: row.parent_id || '', 
+        parentName: parent?.name || '', 
+        parentPhone: parent?.phone || '', 
+        hasParent: Boolean(parent), 
+        groupId: row.group_id || '', 
+        points: row.points || 0, 
+        level: row.level || 'Новичок', 
+        sport: row.sport || '', 
+        plan: row.plan || '', 
+        // We keep individual fields for compatibility, but also provide the metrics object
+        strength: row.strength || 0, 
+        speed: row.speed || 0, 
+        technique: row.technique || 0, 
+        endurance: row.endurance || 0, 
+        metrics: {
+          ...relationalMetrics,
+          ...(fallbackMember.metrics || {})
+        },
+        avatar: row.avatar_blob_url || '', 
+        createdAt: row.created_at 
+      };
     }),
     leads: leads.map((row) => ({ id: row.id, name: row.name, phone: row.phone || '', sport: row.sport || '', status: row.status || 'new', createdAt: row.created_at })),
     schedule: schedule.map((row) => ({ id: row.id, groupId: row.group_id || '', locationId: row.location_id || '', groupName: row.group_name || '', coachName: row.coach_name || '', coach: row.coach_name || '', type: row.sport || '', day: row.day || '', days: row.days || [], time: row.time || '', color: row.color || '#3146A6' })),

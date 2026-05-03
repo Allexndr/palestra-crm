@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
@@ -8,7 +9,8 @@ import { Plus, Trash2, Edit2, Eye } from 'lucide-react';
 
 export const Members = () => {
   const navigate = useNavigate();
-  const { members, removeMember, user, selectedLocationId, groups, coaches } = useAdmin();
+  const { members, removeMember, user, selectedLocationId, groups, coaches, fixBlobUrl } = useAdmin();
+  const { t } = useTranslation();
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,15 +36,15 @@ export const Members = () => {
       <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
           <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>
-            {isAdmin ? 'База учеников' : 'Мои ученики'}
+            {isAdmin ? t('members.title') : 'Мои ученики'}
           </h1>
           <p className="text-secondary text-lg">
-            {isAdmin ? 'Управление всеми клиентами клуба' : 'Список учеников в ваших группах'}
+            {isAdmin ? t('members.subtitle') : 'Список учеников в ваших группах'}
           </p>
         </div>
         <Link to="/admin/members/new">
           <Button variant="primary" style={{ gap: '8px' }}>
-            <Plus size={18} /> Добавить ученика
+            <Plus size={18} /> {t('members.add_btn')}
           </Button>
         </Link>
       </div>
@@ -51,7 +53,7 @@ export const Members = () => {
         <div className="mb-10 relative group">
           <input 
             type="text" 
-            placeholder="Поиск по имени, фамилии или номеру телефона..."
+            placeholder={t('members.placeholder_search')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ 
@@ -72,10 +74,10 @@ export const Members = () => {
           <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'separate', borderSpacing: '0 8px', minWidth: '800px' }}>
             <thead>
               <tr>
-                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Ученик</th>
-                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Контакты</th>
-                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">Тариф</th>
-                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">Действия</th>
+                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_member')}</th>
+                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_contacts')}</th>
+                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_plan')}</th>
+                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('common.actions')}</th>
               </tr>
             </thead>
             <tbody className="before:block before:h-2">
@@ -83,8 +85,12 @@ export const Members = () => {
                 <tr key={member.id} className="bg-white hover:bg-slate-50 transition-all group shadow-sm">
                   <td className="py-5 px-6 rounded-l-2xl border-y border-l border-slate-50">
                     <div className="flex items-center gap-4">
-                      <div style={{ width: 44, height: 44, borderRadius: '14px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '16px' }}>
-                        {member.firstName?.charAt(0) || '?'}
+                      <div style={{ width: 44, height: 44, borderRadius: '14px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '16px', overflow: 'hidden' }}>
+                        {member.avatar ? (
+                          <img src={fixBlobUrl(member.avatar)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          member.firstName?.charAt(0) || '?'
+                        )}
                       </div>
                       <span className="font-bold text-slate-900 text-base">{member.firstName || ''} {member.lastName || ''}</span>
                     </div>
@@ -124,7 +130,7 @@ export const Members = () => {
           </table>
           {filteredMembers.length === 0 && (
             <div className="text-center py-12 text-secondary">
-              <p>Учеников не найдено.</p>
+              <p>{t('members.no_members')}</p>
             </div>
           )}
         </div>

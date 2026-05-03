@@ -33,12 +33,16 @@ export default async function handler(req, res) {
     const blob = result.blobs?.find((item) => item.pathname === pathname);
     if (!blob?.url) return sendJson(res, 404, { error: 'File not found' });
 
-    // Private stores are still resolved server-side; the browser only sees this
-    // authenticated endpoint and receives a short redirect to the Blob URL.
-    res.statusCode = 302;
-    res.setHeader('Location', blob.url);
-    res.setHeader('Cache-Control', 'private, max-age=300');
-    res.end();
+    const response = await fetch(blob.url);
+    if (!response.ok) return sendJson(res, 500, { error: 'Failed to fetch blob content' });
+
+    const contentType = response.headers.get('content-type');
+    if (contentType) res.setHeader('Content-Type', contentType);
+    
+    res.setHeader('Cache-Control', 'private, max-age=3600');
+    
+    const buffer = await response.arrayBuffer();
+    res.send(Buffer.from(buffer));
   } catch (error) {
     if (error.statusCode) return sendJson(res, error.statusCode, { error: error.message });
     return safeError(res, error, 'Unable to read file');

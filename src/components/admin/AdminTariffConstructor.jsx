@@ -89,6 +89,7 @@ export const AdminTariffConstructor = ({
   usage,
   getLimitStatus,
   updateSubscription,
+  clubInfo
 }) => {
   const [draft, setDraft] = useState(subscription);
   const [isSaved, setIsSaved] = useState(false);
@@ -104,6 +105,13 @@ export const AdminTariffConstructor = ({
   useEffect(() => {
     setDraft(subscription);
   }, [subscription]);
+
+  // Pre-fill from registration info if it's a new club on starter
+  useEffect(() => {
+    if (clubInfo?.estimatedStudents > draft.limits?.members && subscription?.plan === 'starter') {
+      updateLimit('members', clubInfo.estimatedStudents);
+    }
+  }, [clubInfo?.estimatedStudents]);
 
   const yearlySaving = calculated.billingPeriod === 'yearly'
     ? Math.round((calculated.price / 0.85) - calculated.price)

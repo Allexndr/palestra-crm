@@ -88,7 +88,9 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
   if (clubError) throw clubError;
 
   let profile = null;
-  if (ownerAuthUserId) {
+    const { normalizePhone } = await import('./utils.js');
+    const normalizedPhone = normalizePhone(formData.phone);
+
     const { data, error } = await supabase
       .from('profiles')
       .insert({
@@ -97,7 +99,7 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
         role: 'admin', // Use admin role to avoid DB constraint violation. Superadmin status is handled via email check in app logic.
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
-        phone: formData.phone,
+        phone: normalizedPhone,
       })
       .select('*')
       .single();
@@ -121,7 +123,12 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
     club_id: club.id,
     state: {
       ...createSeedState(true),
-      clubInfo: { name: club.name, logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' },
+      clubInfo: { 
+        name: club.name, 
+        logo: '/palestra-logo-nav-full.png', 
+        primaryColor: '#3146A6',
+        estimatedStudents: formData.studentsCount 
+      },
       tg_reg_code: tgCode,
       admin_email: formData.email,
       admin_auth_id: ownerAuthUserId,

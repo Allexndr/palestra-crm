@@ -8,8 +8,10 @@ import { Trophy, Medal, Target, TrendingUp, Award, Star, ArrowUpRight, Edit2, Tr
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { LockedFeature } from '../../components/admin/LockedFeature';
 
+import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
+
 export const League = () => {
-  const { members, user, leagues, addLeague, removeLeague, updateLeague, sports, achievements, addAchievement, removeAchievement, monthlyAward, groups, updateMember, canUseFeature, getUpgradeMessage, activeChildId } = useAdmin();
+  const { members, user, leagues, addLeague, removeLeague, updateLeague, sports, achievements, addAchievement, removeAchievement, monthlyAward, groups, updateMember, canUseFeature, getUpgradeMessage, activeChildId, clubInfo, updateClubInfo } = useAdmin();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   const isParent = user?.role === 'parent';
@@ -26,46 +28,7 @@ export const League = () => {
     template: 'martial_arts'
   });
 
-  const LEAGUE_TEMPLATES = {
-    martial_arts: {
-      name: 'Боевые искусства (по фото)',
-      metrics: [
-        { id: 'strength', label: 'Сила', color: 'red' },
-        { id: 'speed', label: 'Скорость', color: 'amber' },
-        { id: 'endurance', label: 'Выносливость', color: 'emerald' },
-        { id: 'discipline', label: 'Дисциплина', color: 'indigo' }
-      ]
-    },
-    rpg: {
-      name: 'RPG Прогресс',
-      metrics: [
-        { id: 'points', label: 'Опыт', color: 'blue' },
-        { id: 'level', label: 'Уровень', color: 'purple' },
-        { id: 'quests', label: 'Квесты', color: 'orange' },
-        { id: 'rank', label: 'Ранг', color: 'slate' }
-      ]
-    },
-    tournament: {
-      name: 'Турнирная таблица',
-      metrics: [
-        { id: 'wins', label: 'Победы', color: 'emerald' },
-        { id: 'losses', label: 'Поражения', color: 'red' },
-        { id: 'draws', label: 'Ничьи', color: 'slate' },
-        { id: 'points', label: 'Очки', color: 'amber' }
-      ]
-    },
-    attendance: {
-      name: 'Посещаемость и Дисциплина',
-      metrics: [
-        { id: 'attendance', label: 'Посещаемость', color: 'blue' },
-        { id: 'discipline', label: 'Дисциплина', color: 'indigo' },
-        { id: 'activity', label: 'Активность', color: 'orange' },
-        { id: 'results', label: 'Результат', color: 'emerald' }
-      ]
-    }
-  };
-
-  const currentTemplate = LEAGUE_TEMPLATES[currentLeague?.template || 'martial_arts'];
+  const currentTemplate = LEAGUE_TEMPLATES[clubInfo?.activeLeagueTemplate || 'martial_arts'];
   
   const [resultPoints, setResultPoints] = useState({}); // memberId -> points
   const [resultDesc, setResultDesc] = useState('');
@@ -161,6 +124,18 @@ export const League = () => {
                 </button>
               </>
             )}
+            <select 
+              className="input-field" 
+              style={{ width: 'auto', padding: '0 16px', height: '42px', borderRadius: '14px', fontSize: '14px', fontWeight: 'bold' }}
+              value={clubInfo?.activeLeagueTemplate || 'martial_arts'}
+              onChange={(e) => updateClubInfo({ activeLeagueTemplate: e.target.value })}
+            >
+              <optgroup label="Глобальный шаблон метрик">
+                {Object.entries(LEAGUE_TEMPLATES).map(([id, t]) => (
+                  <option key={id} value={id}>{t.name}</option>
+                ))}
+              </optgroup>
+            </select>
             <Button variant="primary" onClick={() => {
               setIsAdding(!isAdding);
               setIsEditing(false);
@@ -189,14 +164,6 @@ export const League = () => {
               </div>
               <Input label="Начало" type="date" required value={newLeague.startDate} onChange={e => setNewLeague({...newLeague, startDate: e.target.value})} />
               <Input label="Конец" type="date" required value={newLeague.endDate} onChange={e => setNewLeague({...newLeague, endDate: e.target.value})} />
-              <div className="input-group">
-                <label className="input-label">Шаблон лиги</label>
-                <select className="input-field" value={newLeague.template} onChange={e => setNewLeague({...newLeague, template: e.target.value})}>
-                  {Object.entries(LEAGUE_TEMPLATES).map(([id, t]) => (
-                    <option key={id} value={id}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             <div className="admin-two-column">

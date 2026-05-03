@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { ArrowLeft, Save, Camera, Zap, Star, Plus, Shield } from 'lucide-react';
+import { ArrowLeft, Save, Camera, Zap, Star, Plus, Shield, Copy, Check } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
+import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 
 const translit = (str) => {
   const ru = {
@@ -31,7 +33,8 @@ const randomPassword = () => {
 export const MemberForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { members, addMember, updateMember, user, locations, plans, selectedLocationId, groups, clubInfo, isStateReady } = useAdmin();
+  const { members, addMember, updateMember, user, locations, plans, selectedLocationId, groups, clubInfo, isStateReady, fixBlobUrl } = useAdmin();
+  const { t } = useTranslation();
   const isAdmin = user?.role === 'admin';
 
   if (!isStateReady) return <PageLoader />;
@@ -61,11 +64,7 @@ export const MemberForm = () => {
     parentLogin: '',
     parentPassword: '',
     avatar: '',
-    strength: 50,
-    speed: 50,
-    reaction: 50,
-    endurance: 50,
-    technique: 50,
+    metrics: {},
     medicalNotes: '',
     balance: '0',
     subscriptionEndDate: ''
@@ -80,6 +79,14 @@ export const MemberForm = () => {
       setFormData({
         ...initialFormState,
         ...existingMember,
+        metrics: existingMember.metrics || {
+          strength: existingMember.strength || 50,
+          speed: existingMember.speed || 50,
+          reaction: existingMember.reaction || 50,
+          endurance: existingMember.endurance || 50,
+          technique: existingMember.technique || 50,
+          discipline: existingMember.discipline || 50
+        },
         hasParent: !!(existingMember.parentName || existingMember.parentPhone || existingMember.parentLogin),
       });
     }
@@ -157,6 +164,13 @@ export const MemberForm = () => {
     setFormData(prev => ({ ...prev, hasParent: true }));
   };
 
+  const copyToClipboard = (text, label) => {
+    navigator.clipboard.writeText(text).then(() => {
+      // Small feedback could be added here, but user just asked for the button
+      // We'll use a simple alert or just assume it worked
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.firstName.length < 2 || formData.lastName.length < 2) {
@@ -178,10 +192,10 @@ export const MemberForm = () => {
   };
 
   const tabs = [
-    { id: 'general', label: 'Общее', icon: '👤' },
-    { id: 'physical', label: 'Характеристики', icon: '⚡' },
-    { id: 'finances', label: 'Финансы', icon: '💳' },
-    { id: 'parent', label: 'Родитель', icon: '👪' }
+    { id: 'general', label: t('members.general_tab'), icon: '👤' },
+    { id: 'physical', label: t('members.physical_tab'), icon: '⚡' },
+    { id: 'finances', label: t('members.finance_tab'), icon: '💳' },
+    { id: 'parent', label: t('members.parent_tab'), icon: '👪' }
   ];
 
   const avgStats = Math.round((formData.strength + formData.speed + formData.reaction + formData.endurance + formData.technique) / 5);
@@ -198,9 +212,9 @@ export const MemberForm = () => {
           </button>
           <div>
             <div className="flex items-center gap-4 mb-3">
-              <span className="px-4 py-1.5 bg-primary-soft text-primary text-[11px] font-black uppercase tracking-widest rounded-xl">База учеников</span>
+              <span className="px-4 py-1.5 bg-primary-soft text-primary text-[11px] font-black uppercase tracking-widest rounded-xl">{t('members.title')}</span>
               <h1 className="h1" style={{ margin: 0, fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
-                {isEditing ? 'Профиль ученика' : 'Регистрация нового ученика'}
+                {isEditing ? t('members.edit_member') : t('members.new_member')}
               </h1>
             </div>
             <p className="text-secondary text-lg font-medium opacity-60">Заполните данные для зачисления в {clubInfo?.name || 'Palestra'}</p>
@@ -233,18 +247,18 @@ export const MemberForm = () => {
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                 <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
-                    <div className="w-10 h-[3px] bg-primary rounded-full"></div> Личные данные и филиал
+                    <div className="w-10 h-[3px] bg-primary rounded-full"></div> {t('members.personal_data')}
                   </h3>
                 </div>
                 <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
                   <div className="admin-form-grid">
-                    <Input label="Имя" required minLength={2} placeholder="Имя ученика" value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
-                    <Input label="Фамилия" required minLength={2} placeholder="Фамилия ученика" value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
-                    <Input label="Дата рождения" type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
-                    <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
+                    <Input label={t('members.first_name')} required minLength={2} placeholder="Имя ученика" value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
+                    <Input label={t('members.last_name')} required minLength={2} placeholder="Фамилия ученика" value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
+                    <Input label={t('members.birth_date')} type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
+                    <Input label={t('members.phone')} type="tel" placeholder="+7 (777) 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
                     
                     <div className="input-group">
-                      <label className="input-label">Филиал / Клуб</label>
+                      <label className="input-label">{t('members.branch')}</label>
                       <select className="input-field" style={{ height: '58px' }} value={formData.locationId} onChange={e => handleInputChange('locationId', e.target.value)}>
                         {locations.length === 0 && <option value="1">Основной зал</option>}
                         {locations.map(loc => (
@@ -257,7 +271,7 @@ export const MemberForm = () => {
                       <label className="input-label">Фото профиля</label>
                       <div className="flex items-center gap-6 p-2 pr-6 bg-slate-50 rounded-3xl border border-slate-100">
                         <div className="w-14 h-14 rounded-3xl bg-white flex items-center justify-center overflow-hidden border border-slate-200 shadow-sm shrink-0">
-                           {formData.avatar ? <img src={formData.avatar} className="w-full h-full object-cover" /> : <Camera size={22} className="text-slate-300" />}
+                           {formData.avatar ? <img src={fixBlobUrl(formData.avatar)} className="w-full h-full object-cover" /> : <Camera size={22} className="text-slate-300" />}
                         </div>
                         <div className="flex-1">
                           <input className="hidden" id="avatar-input" type="file" accept="image/*" onChange={handleAvatarUpload} />
@@ -323,15 +337,25 @@ export const MemberForm = () => {
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                 <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
-                    <Shield size={18} className="text-primary" /> Доступы в приложение
+                    <Shield size={18} className="text-primary" /> {t('members.app_access')}
                   </h3>
                 </div>
                 <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
                   <div className="admin-form-grid">
-                    <Input label="Логин" placeholder="Создается автоматически" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
-                    <Input label="Пароль" type="text" placeholder="Создается автоматически" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+                    <div className="relative">
+                      <Input label={t('members.login')} placeholder="Создается автоматически" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
+                      <button 
+                        type="button"
+                        onClick={() => copyToClipboard(`${formData.login} ${formData.password}`)}
+                        className="absolute right-4 top-[42px] p-2 text-slate-400 hover:text-primary transition-colors bg-white/80 rounded-lg border border-slate-100 shadow-sm"
+                        title={t('common.copy')}
+                      >
+                        <Copy size={16} />
+                      </button>
+                    </div>
+                    <Input label={t('members.password')} type="text" placeholder="Создается автоматически" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                   </div>
-                  <p className="text-[10px] text-slate-400 font-bold mt-12 uppercase tracking-widest border-t border-slate-100 pt-8">Ученик сможет войти в Palestra App по этим данным сразу после сохранения</p>
+                  <p className="text-[10px] text-slate-400 font-bold mt-12 uppercase tracking-widest border-t border-slate-100 pt-8">{t('members.access_ready')}</p>
                 </div>
               </Card>
             </div>
@@ -342,14 +366,7 @@ export const MemberForm = () => {
               <Card className="flex-1 border border-slate-100 shadow-sm p-12" style={{ borderRadius: '40px' }}>
                 <div className="space-y-10">
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {[
-                      { id: 'strength', label: 'Сила', icon: '💪', color: '#F87171' },
-                      { id: 'speed', label: 'Скорость', icon: '⚡', color: '#FBBF24' },
-                      { id: 'reaction', label: 'Реакция', icon: '👁️', color: '#34D399' },
-                      { id: 'endurance', label: 'Выносливость', icon: '🫁', color: '#60A5FA' },
-                      { id: 'technique', label: 'Техника', icon: '🥋', color: '#818CF8' },
-                      { id: 'discipline', label: 'Дисциплина', icon: '📋', color: '#6366F1' }
-                    ].map(stat => (
+                    {(LEAGUE_TEMPLATES[clubInfo?.activeLeagueTemplate || 'martial_arts']?.metrics || []).map(stat => (
                       <div 
                         key={stat.id} 
                         className="p-8 bg-slate-50/50 rounded-[40px] border border-slate-100/60 hover:bg-white hover:shadow-2xl hover:shadow-slate-200/30 transition-all duration-500 group relative overflow-hidden"
@@ -366,7 +383,13 @@ export const MemberForm = () => {
                               className="w-14 h-14 rounded-[20px] bg-white flex items-center justify-center shadow-sm text-3xl group-hover:scale-110 transition-transform duration-500"
                               style={{ borderBottom: `4px solid ${stat.color}20` }}
                             >
-                              {stat.icon}
+                              {/* Using a generic emoji if none provided in template */}
+                              {stat.id === 'strength' ? '💪' : 
+                               stat.id === 'speed' ? '⚡' : 
+                               stat.id === 'endurance' ? '🫁' : 
+                               stat.id === 'discipline' ? '📋' : 
+                               stat.id === 'technique' ? '🥋' : 
+                               stat.id === 'reaction' ? '👁️' : '📊'}
                             </div>
                             <span className="font-black text-slate-800 uppercase tracking-[0.15em] text-[13px]">{stat.label}</span>
                           </div>
@@ -374,8 +397,14 @@ export const MemberForm = () => {
                             <input 
                               type="number" 
                               className="w-16 h-12 text-center font-black bg-white border-none rounded-2xl outline-none shadow-sm text-xl text-primary focus:ring-4 focus:ring-primary/10 transition-all"
-                              value={formData[stat.id]} 
-                              onChange={e => setFormData({...formData, [stat.id]: Math.min(100, Math.max(1, parseInt(e.target.value) || 1))})}
+                              value={formData.metrics?.[stat.id] || 50} 
+                              onChange={e => setFormData({
+                                ...formData, 
+                                metrics: {
+                                  ...formData.metrics,
+                                  [stat.id]: Math.min(100, Math.max(1, parseInt(e.target.value) || 1))
+                                }
+                              })}
                             />
                             <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: stat.color }}></div>
                           </div>
@@ -385,14 +414,20 @@ export const MemberForm = () => {
                           <input 
                             type="range" 
                             min="1" max="100" 
-                            value={formData[stat.id]} 
-                            onChange={e => setFormData({...formData, [stat.id]: parseInt(e.target.value)})}
+                            value={formData.metrics?.[stat.id] || 50} 
+                            onChange={e => setFormData({
+                              ...formData, 
+                              metrics: {
+                                ...formData.metrics,
+                                [stat.id]: parseInt(e.target.value)
+                              }
+                            })}
                             style={{ '--thumb-color': stat.color }}
                             className="custom-range w-full h-3 bg-slate-200/60 rounded-full appearance-none cursor-pointer"
                           />
                           <div className="flex justify-between px-1 text-[10px] font-black text-slate-400 tracking-widest uppercase">
-                            <span>Новичок</span>
-                            <span>Мастер</span>
+                            <span>{stat.id === 'points' || stat.id === 'level' ? 'Min' : 'Новичок'}</span>
+                            <span>{stat.id === 'points' || stat.id === 'level' ? 'Max' : 'Мастер'}</span>
                           </div>
                         </div>
                       </div>
@@ -511,7 +546,17 @@ export const MemberForm = () => {
                         <Shield size={18} /> Кабинет родителя активирован
                       </h4>
                       <div className="admin-form-grid">
-                        <Input label="Логин (Email)" value={formData.parentLogin} onChange={e => setFormData({...formData, parentLogin: e.target.value})} />
+                        <div className="relative">
+                          <Input label="Логин (Email)" value={formData.parentLogin} onChange={e => setFormData({...formData, parentLogin: e.target.value})} />
+                          <button 
+                            type="button"
+                            onClick={() => copyToClipboard(`${formData.parentLogin} ${formData.parentPassword}`)}
+                            className="absolute right-4 top-[42px] p-2 text-slate-400 hover:text-primary transition-colors bg-white/80 rounded-lg border border-slate-100 shadow-sm"
+                            title="Скопировать логин и пароль"
+                          >
+                            <Copy size={16} />
+                          </button>
+                        </div>
                         <Input label="Пароль" value={formData.parentPassword} onChange={e => setFormData({...formData, parentPassword: e.target.value})} />
                       </div>
                     </div>

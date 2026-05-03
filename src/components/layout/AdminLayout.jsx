@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { Outlet, NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Menu, X, LogOut, Shield, ChevronDown, Check, MapPin } from 'lucide-react';
 import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 import { ClubLogo } from '../ui/ClubLogo';
 import { PageLoader } from '../ui/PageLoader';
+import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 
 export const AdminLayout = () => {
   const { user, clubInfo, logout, locations, selectedLocationId, setSelectedLocationId, isStateReady } = useAdmin();
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLocOpen, setIsLocOpen] = useState(false);
   const navigate = useNavigate();
@@ -17,7 +20,7 @@ export const AdminLayout = () => {
   const currentLink = ADMIN_NAV_LINKS.find(link => 
     link.to === location.pathname || (location.pathname.startsWith(link.to) && link.to !== '/admin')
   );
-  const pageTitle = currentLink ? currentLink.label : 'Панель';
+  const pageTitle = currentLink ? t(currentLink.labelKey) : t('nav.dashboard');
 
   const isImpersonating = !!sessionStorage.getItem('palestra-impersonate-club-id');
 
@@ -67,9 +70,9 @@ export const AdminLayout = () => {
                     <MapPin size={16} />
                   </div>
                   <div>
-                    <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em' }}>Филиал</p>
+                    <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.05em' }}>{t('common.branch')}</p>
                     <p style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: 'var(--color-text-primary)' }}>
-                      {selectedLocationId === 'all' ? 'Все филиалы' : locations.find(l => l.id === selectedLocationId)?.name || 'Выбрать...'}
+                      {selectedLocationId === 'all' ? t('common.all_branches') : locations.find(l => l.id === selectedLocationId)?.name || t('common.select')}
                     </p>
                   </div>
                 </div>
@@ -99,7 +102,7 @@ export const AdminLayout = () => {
                       fontSize: '13px'
                     }}
                   >
-                    Все филиалы
+                    {t('common.all_branches')}
                     {selectedLocationId === 'all' && <Check size={14} />}
                   </div>
                   {locations.map(loc => (
@@ -141,7 +144,7 @@ export const AdminLayout = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <Icon size={20} />
-                  <span>{link.label}</span>
+                  <span>{t(link.labelKey)}</span>
                 </NavLink>
               );
             })}
@@ -149,7 +152,7 @@ export const AdminLayout = () => {
 
           <button type="button" className="mobile-menu-logout" onClick={handleLogout}>
             <LogOut size={20} />
-            Выйти
+            {t('nav.logout')}
           </button>
         </aside>
       </div>
@@ -185,7 +188,8 @@ export const AdminLayout = () => {
               <h1 className="mobile-only" style={{ fontSize: '1.1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 800 }}>{pageTitle}</h1>
             </div>
           </div>
-          <div className="member-header-pill desktop-only">
+          <div className="member-header-pill desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <LanguageSwitcher />
             <span>{user?.email || `${user?.role || 'admin'}@palestra.fit`}</span>
           </div>
         </header>

@@ -23,12 +23,14 @@ import {
   Check
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { ClubLogo } from '../ui/ClubLogo';
 
 import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 
 export const Sidebar = () => {
   const { user, logout, clubInfo, locations, selectedLocationId, setSelectedLocationId } = useAdmin();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isLocOpen, setIsLocOpen] = React.useState(false);
 
@@ -38,7 +40,7 @@ export const Sidebar = () => {
   };
 
   const filteredLinks = ADMIN_NAV_LINKS.filter(link => link.roles.includes(user?.role || 'admin'));
-  const roleLabel = user?.role === 'admin' ? 'Администратор' : 'Тренер';
+  const roleLabel = user?.role === 'admin' ? t('roles.admin') : t('roles.coach');
 
   return (
     <aside className="member-desktop-sidebar desktop-only">
@@ -84,9 +86,9 @@ export const Sidebar = () => {
             <MapPin size={20} strokeWidth={2.5} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.08em' }}>Филиал</p>
+            <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '0.08em' }}>{t('common.branch')}</p>
             <p style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: 'var(--color-text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {selectedLocationId === 'all' ? 'Все филиалы' : locations.find(l => l.id === selectedLocationId)?.name || 'Выбрать...'}
+              {selectedLocationId === 'all' ? t('common.all_branches') : locations.find(l => l.id === selectedLocationId)?.name || t('common.select')}
             </p>
           </div>
           <ChevronDown size={18} className={`transition-transform duration-300 ${isLocOpen ? 'rotate-180' : ''}`} style={{ color: 'var(--color-text-muted)' }} />
@@ -128,8 +130,8 @@ export const Sidebar = () => {
                 }}
                 className="hover:bg-slate-50"
               >
-                Все филиалы
-                {selectedLocationId === 'all' && <Check size={16} />}
+              {t('common.all_branches')}
+              {selectedLocationId === 'all' && <Check size={16} />}
               </div>
               {locations.map(loc => (
                 <div 
@@ -171,7 +173,7 @@ export const Sidebar = () => {
               }
             >
               <Icon size={18} strokeWidth={2} />
-              <span>{link.label}</span>
+              <span>{t(link.labelKey)}</span>
             </NavLink>
           );
         })}
@@ -179,7 +181,7 @@ export const Sidebar = () => {
 
       <button type="button" className="member-logout" onClick={handleLogout}>
         <LogOut size={18} />
-        Выйти
+        {t('nav.logout')}
       </button>
     </aside>
   );

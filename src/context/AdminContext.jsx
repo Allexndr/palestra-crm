@@ -32,7 +32,7 @@ function normalizeFinances(v) {
 
 function normalizeClubInfo(v) {
   if (!v || typeof v !== 'object' || Array.isArray(v)) {
-    return { name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' };
+    return { name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6', activeLeagueTemplate: 'martial_arts' };
   }
   const logo =
     typeof v.logo === 'string' && v.logo.trim() ? v.logo.trim() : '/palestra-logo-nav-full.png';
@@ -44,6 +44,8 @@ function normalizeClubInfo(v) {
     name: typeof v.name === 'string' && v.name.trim() ? v.name.trim() : 'Palestra Fight Club',
     logo: normalizedLogo,
     primaryColor: typeof v.primaryColor === 'string' ? v.primaryColor : '#3146A6',
+    activeLeagueTemplate: typeof v.activeLeagueTemplate === 'string' ? v.activeLeagueTemplate : 'martial_arts',
+    estimatedStudents: typeof v.estimatedStudents === 'number' ? v.estimatedStudents : (Number(v.estimatedStudents) || 0)
   };
 }
 
@@ -92,6 +94,26 @@ const DEFAULT_DASHBOARD_LAYOUT = [
   { id: 'monthlyAward', label: 'Награда месяца', visible: true },
 ];
 
+export const STUDENT_WIDGET_CATALOG = [
+  { id: 'rpg_rank', label: 'Ранг и прогресс', desc: 'Уровень XP и шкала до следующего ранга' },
+  { id: 'physical_stats', label: 'Физические показатели', desc: 'Параметры силы, скорости и техники' },
+  { id: 'rewards', label: 'Коллекция наград', desc: 'Все медали и достижения ученика' },
+  { id: 'quick_actions', label: 'Кнопки действий', desc: 'Запись на занятия и оплата' },
+  { id: 'club_events', label: 'События клуба', desc: 'Карусель ближайших мероприятий' },
+  { id: 'last_activity', label: 'Последняя активность', desc: 'История посещений и начислений XP' },
+  { id: 'attendance_chart', label: 'График посещаемости', desc: 'Визуальная статистика занятий' },
+  { id: 'leaderboard_mini', label: 'Мини-рейтинг', desc: 'Топ-3 ученика вашей группы' },
+];
+
+const DEFAULT_STUDENT_POOL = ['rpg_rank', 'physical_stats', 'rewards', 'quick_actions', 'club_events'];
+const DEFAULT_STUDENT_LAYOUT = [
+  { id: 'rpg_rank', visible: true },
+  { id: 'physical_stats', visible: true },
+  { id: 'rewards', visible: true },
+  { id: 'quick_actions', visible: true },
+  { id: 'club_events', visible: true },
+];
+
 export const AdminProvider = ({ children }) => {
   const [isStateReady, setIsStateReady] = useState(false);
   const [members, setMembers] = useState([]);
@@ -126,6 +148,8 @@ export const AdminProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [activeChildId, setActiveChildId] = useState(null);
   const [dashboardLayout, setDashboardLayout] = useState(DEFAULT_DASHBOARD_LAYOUT);
+  const [studentDashboardPool, setStudentDashboardPool] = useState(DEFAULT_STUDENT_POOL);
+  const [studentDashboardLayout, setStudentDashboardLayout] = useState(DEFAULT_STUDENT_LAYOUT);
 
   useEffect(() => {
     let cancelled = false;
@@ -180,6 +204,8 @@ export const AdminProvider = ({ children }) => {
         }
         setSubscription(loadedSubscription);
         setDashboardLayout(Array.isArray(remote.dashboardLayout) ? remote.dashboardLayout : DEFAULT_DASHBOARD_LAYOUT);
+        setStudentDashboardPool(Array.isArray(remote.studentDashboardPool) ? remote.studentDashboardPool : DEFAULT_STUDENT_POOL);
+        setStudentDashboardLayout(Array.isArray(remote.studentDashboardLayout) ? remote.studentDashboardLayout : DEFAULT_STUDENT_LAYOUT);
         setUser(meData.user || null);
         
         // Auto-select first child for parents on load
@@ -213,6 +239,8 @@ export const AdminProvider = ({ children }) => {
       automations, messages,
       selectedLocationId, clubInfo, subscription,
       dashboardLayout,
+      studentDashboardPool,
+      studentDashboardLayout,
       partners,
     };
 
@@ -233,7 +261,7 @@ export const AdminProvider = ({ children }) => {
     });
 
     return () => controller.abort();
-  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches, dashboardLayout, messages, partners]);
+  }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches, dashboardLayout, studentDashboardPool, studentDashboardLayout, messages, partners]);
 
   // --- AUTOMATIONS ---
   const sendTelegramMessage = (userId, text) => {
@@ -772,19 +800,74 @@ export const AdminProvider = ({ children }) => {
 
   const moveWidget = (id, direction) => {
     setDashboardLayout(prev => {
-      const index = prev.findIndex(w => w.id === id);
-      if (index === -1) return prev;
-      const nextIndex = direction === 'up' ? index - 1 : index + 1;
-      if (nextIndex < 0 || nextIndex >= prev.length) return prev;
-      const nextLayout = [...prev];
-      const [moved] = nextLayout.splice(index, 1);
-      nextLayout.splice(nextIndex, 0, moved);
-      return nextLayout;
+      const idx = prev.findIndex(w => w.id === id);
+      if (idx === -1) return prev;
+      const newLayout = [...prev];
+      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= newLayout.length) return prev;
+      [newLayout[idx], newLayout[targetIdx]] = [newLayout[targetIdx], newLayout[idx]];
+      return newLayout;
     });
   };
 
+  const toggleStudentPoolWidget = (id) => {
+    setStudentDashboardPool(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(wId => wId !== id);
+      }
+      if (prev.length >= 7) {
+        alert('Максимальный пул для учеников — 7 виджетов');
+        return prev;
+      }
+      return [...prev, id];
+    });
+    
+    // Ensure layout also contains the new widget if it was added
+    setStudentDashboardLayout(prev => {
+      const exists = prev.find(w => w.id === id);
+      if (!exists) return [...prev, { id, visible: true }];
+      return prev;
+    });
+  };
+
+  const moveStudentWidget = (id, direction) => {
+    setStudentDashboardLayout(prev => {
+      const idx = prev.findIndex(w => w.id === id);
+      if (idx === -1) return prev;
+      const newLayout = [...prev];
+      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= newLayout.length) return prev;
+      [newLayout[idx], newLayout[targetIdx]] = [newLayout[targetIdx], newLayout[idx]];
+      return newLayout;
+    });
+  };
+
+  const toggleStudentWidget = (id) => {
+    setStudentDashboardLayout(prev => prev.map(w => w.id === id ? { ...w, visible: !w.visible } : w));
+  };
+
+  const updateMemberProfile = (id, data) => {
+    setMembers(prev => prev.map(m => m.id === id ? { ...m, ...data } : m));
+  };
+
+  const fixBlobUrl = (url) => {
+    if (!url) return '';
+    // If it's a private vercel blob URL, route it through our proxy
+    if (url.includes('private.blob.vercel-storage.com')) {
+      try {
+        const urlObj = new URL(url);
+        const pathname = urlObj.pathname.replace(/^\/+/, '');
+        return `/api/blob/read?pathname=${encodeURIComponent(pathname)}`;
+      } catch (e) {
+        return url;
+      }
+    }
+    return url;
+  };
+
   const value = {
-    members, addMember, removeMember, updateMember, updateMemberXP,
+    members, addMember, removeMember, updateMember, updateMemberXP, updateMemberProfile,
+    fixBlobUrl,
     leads, addLead, updateLeadStatus, removeLead, convertLeadToMember,
     schedule, addScheduleItem, updateScheduleItem, removeScheduleItem,
     locations, addLocation, updateLocation, removeLocation,
@@ -792,7 +875,10 @@ export const AdminProvider = ({ children }) => {
     sports,
     leagues, addLeague, removeLeague, updateLeague, updateLeagueParticipants,
     selectedLocationId, setSelectedLocationId,
-    clubInfo, setClubInfo,
+    clubInfo, setClubInfo, updateClubInfo: (updates) => {
+      setClubInfo(prev => ({ ...prev, ...updates }));
+      logActivity('Обновлены настройки клуба', 'success');
+    },
     plans, addPlan, removePlan,
     posts, addPost, likePost, addComment,
     quests, addQuest, removeQuest, completeQuest, approveQuest,
@@ -823,6 +909,7 @@ export const AdminProvider = ({ children }) => {
     user, login, logout,
     activeChildId, setActiveChildId,
     dashboardLayout, setDashboardLayout, toggleWidget, moveWidget,
+    studentDashboardPool, studentDashboardLayout, toggleStudentPoolWidget, moveStudentWidget, toggleStudentWidget,
     isStateReady,
     resetData, fetchClubState: async () => {
       try {

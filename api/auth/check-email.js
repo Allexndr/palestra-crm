@@ -18,14 +18,11 @@ export default async function handler(req, res) {
 
     const supabase = getServiceClient();
     
-    // Check Profiles (Email and Phone)
-    if (email) {
-      const { data } = await supabase.from('profiles').select('id').eq('email', email.toLowerCase()).maybeSingle();
-      if (data) return sendJson(res, 200, { exists: true, field: 'email' });
-    }
-
+    // Check Profiles (Phone) - Email check is relaxed as per user request
     if (phone) {
-      const { data } = await supabase.from('profiles').select('id').eq('phone', phone.trim()).maybeSingle();
+      const { normalizePhone } = await import('../_lib/utils.js');
+      const normalizedPhone = normalizePhone(phone);
+      const { data } = await supabase.from('profiles').select('id').eq('phone', normalizedPhone).maybeSingle();
       if (data) return sendJson(res, 200, { exists: true, field: 'phone' });
     }
 

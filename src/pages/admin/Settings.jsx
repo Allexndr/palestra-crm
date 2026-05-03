@@ -4,7 +4,8 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, LayoutList, CheckCircle, LayoutDashboard, Sparkles } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, LayoutList, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowUp, ArrowDown, Eye, EyeOff } from 'lucide-react';
+import { STUDENT_WIDGET_CATALOG } from '../../context/AdminContext';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
 import { AdminTariffConstructor } from '../../components/admin/AdminTariffConstructor';
@@ -18,7 +19,8 @@ export const Settings = () => {
     achievements, addAchievement, removeAchievement, monthlyAward, updateMonthlyAward, resetData,
     dashboardLayout, toggleWidget, moveWidget, clubInfo, setClubInfo,
     addLocation, removeLocation, updateLocation, locations,
-    addPlan, removePlan, plans, isStateReady
+    addPlan, removePlan, plans, isStateReady,
+    studentDashboardPool, studentDashboardLayout, toggleStudentPoolWidget, moveStudentWidget, toggleStudentWidget
   } = useAdmin();
   const navigate = useNavigate();
   
@@ -114,7 +116,8 @@ export const Settings = () => {
             { id: 'plans', label: 'Абонементы', icon: <Save size={18} /> },
             { id: 'motivation', label: 'Мотивация', icon: <Trophy size={18} /> },
             { id: 'team', label: 'Команда и роли', icon: <Users size={18} /> },
-            { id: 'dashboard', label: 'Конструктор', icon: <LayoutDashboard size={18} /> },
+            { id: 'dashboard', label: 'Конструктор админа', icon: <LayoutDashboard size={18} /> },
+            { id: 'student_dashboard', label: 'Виджеты ученика', icon: <Sparkles size={18} /> },
             { id: 'notif', label: 'Уведомления', icon: <Bell size={18} /> },
             { id: 'security', label: 'Безопасность', icon: <Lock size={18} /> }
           ].map(tab => (
@@ -201,6 +204,7 @@ export const Settings = () => {
                 usage={usage}
                 getLimitStatus={getLimitStatus}
                 updateSubscription={updateSubscription}
+                clubInfo={clubInfo}
               />
             </div>
           )}
@@ -547,6 +551,85 @@ export const Settings = () => {
           )}
 
 
+
+          {activeTab === 'student_dashboard' && (
+            <div className="animate-fade-in">
+              <div className="mb-10">
+                <h3 className="h4 flex items-center gap-3"><Sparkles className="text-primary" /> Пул виджетов ученика</h3>
+                <p className="text-secondary text-sm mt-1">Выберите до 7 виджетов, которые будут доступны ученикам для кастомизации их личного кабинета</p>
+              </div>
+
+              <div className="admin-card-grid mb-12">
+                {STUDENT_WIDGET_CATALOG.map(widget => {
+                  const isActive = studentDashboardPool.includes(widget.id);
+                  return (
+                    <Card 
+                      key={widget.id} 
+                      onClick={() => toggleStudentPoolWidget(widget.id)}
+                      style={{ 
+                        cursor: 'pointer',
+                        border: isActive ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
+                        backgroundColor: isActive ? 'var(--color-primary-soft)' : 'white',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <h5 className={`font-bold ${isActive ? 'text-primary' : 'text-slate-800'}`}>{widget.label}</h5>
+                        {isActive && <CheckCircle size={16} className="text-primary" />}
+                      </div>
+                      <p className="text-[11px] text-secondary leading-relaxed">{widget.desc}</p>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              <div className="pt-8 border-t">
+                <div className="mb-8">
+                  <h3 className="h4 flex items-center gap-3"><LayoutList className="text-primary" /> Стандартный дашборд</h3>
+                  <p className="text-secondary text-sm mt-1">Настройте порядок и видимость по умолчанию. Ученики смогут изменить это сами.</p>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  {studentDashboardLayout.filter(w => studentDashboardPool.includes(w.id)).map((widget, index) => {
+                    const catalogInfo = STUDENT_WIDGET_CATALOG.find(c => c.id === widget.id);
+                    return (
+                      <div key={widget.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${widget.visible ? 'bg-white border-slate-100 shadow-sm' : 'bg-slate-50 border-dashed border-slate-200 opacity-60'}`}>
+                        <div className="flex items-center gap-5">
+                          <div className="flex flex-col gap-1">
+                            <button 
+                              disabled={index === 0}
+                              onClick={() => moveStudentWidget(widget.id, 'up')}
+                              className="p-1 hover:bg-slate-100 rounded text-slate-400 disabled:opacity-20 border-none bg-transparent cursor-pointer"
+                            >
+                              <ArrowUp size={14} />
+                            </button>
+                            <button 
+                              disabled={index === studentDashboardLayout.filter(w => studentDashboardPool.includes(w.id)).length - 1}
+                              onClick={() => moveStudentWidget(widget.id, 'down')}
+                              className="p-1 hover:bg-slate-100 rounded text-slate-400 disabled:opacity-20 border-none bg-transparent cursor-pointer"
+                            >
+                              <ArrowDown size={14} />
+                            </button>
+                          </div>
+                          <div>
+                            <p className={`font-bold ${widget.visible ? 'text-slate-800' : 'text-slate-400'}`}>{catalogInfo?.label || widget.id}</p>
+                            <p className="text-[10px] uppercase tracking-wider text-slate-400 font-black">Позиция #{index + 1}</p>
+                          </div>
+                        </div>
+                        
+                        <button 
+                          onClick={() => toggleStudentWidget(widget.id)}
+                          className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer ${widget.visible ? 'bg-indigo-50 text-primary' : 'bg-slate-200 text-slate-500'}`}
+                        >
+                          {widget.visible ? <div className="flex items-center gap-2"><Eye size={12} /> Виден</div> : <div className="flex items-center gap-2"><EyeOff size={12} /> Скрыт</div>}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
 
           {activeTab === 'dashboard' && (
             <div className="animate-fade-in">

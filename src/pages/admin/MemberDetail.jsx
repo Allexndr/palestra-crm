@@ -3,12 +3,12 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { ArrowLeft, User, Phone, MapPin, Target, Calendar, Trophy, Zap, Shield, HeartPulse, Wallet } from 'lucide-react';
+import { ArrowLeft, User, Phone, MapPin, Target, Calendar, Trophy, Zap, Shield, HeartPulse, Wallet, Copy } from 'lucide-react';
 
 export const MemberDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { members, groups, locations, plans } = useAdmin();
+  const { members, groups, locations, plans, fixBlobUrl } = useAdmin();
   const [activeTab, setActiveTab] = React.useState('overview');
   
   const member = members.find(m => m.id === id);
@@ -65,7 +65,7 @@ export const MemberDetail = () => {
             }}>
                <div style={{ position: 'absolute', bottom: -50, left: 40, width: 140, height: 140, borderRadius: '40px', border: '8px solid white', overflow: 'hidden', backgroundColor: 'white', boxShadow: 'var(--shadow-lg)' }}>
                  {member.avatar ? (
-                    <img src={member.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={fixBlobUrl(member.avatar)} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
                       <User size={60} />
@@ -158,8 +158,15 @@ export const MemberDetail = () => {
                       {member.parentLogin && (
                         <div className="pt-3 border-t border-emerald-100 flex flex-col gap-2">
                           <p className="text-[10px] font-bold text-emerald-600 uppercase">Доступ родителя</p>
-                          <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-emerald-100">
+                          <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-emerald-100 relative group/copy">
                             <span className="text-xs font-mono text-emerald-700">{member.parentLogin}</span>
+                            <button 
+                              onClick={() => navigator.clipboard.writeText(`${member.parentLogin} ${member.parentPassword}`)}
+                              className="p-1 hover:text-primary transition-colors text-slate-300"
+                              title="Копировать логин и пароль"
+                            >
+                              <Copy size={14} />
+                            </button>
                             <span className="text-[10px] font-bold text-emerald-400 uppercase">Логин</span>
                           </div>
                         </div>
@@ -248,13 +255,22 @@ export const MemberDetail = () => {
           <Card style={{ padding: '24px' }}>
             <h3 className="h5 mb-6">Доступы</h3>
             <div className="flex flex-col gap-4">
-              <div className="p-4 bg-slate-50 rounded-2xl">
-                 <p className="text-[10px] font-bold text-muted uppercase mb-1">Логин ученика</p>
-                 <code className="text-sm font-bold text-primary">{member.login || '—'}</code>
+              <div className="p-4 bg-slate-50 rounded-2xl flex justify-between items-center group/copy">
+                 <div className="flex-1">
+                    <p className="text-[10px] font-bold text-muted uppercase mb-1">Логин ученика</p>
+                    <code className="text-sm font-bold text-primary">{member.login || '—'}</code>
+                 </div>
+                 <button 
+                    onClick={() => navigator.clipboard.writeText(`${member.login} ${member.password}`)}
+                    className="p-2 hover:text-primary transition-colors text-slate-300"
+                    title="Копировать логин и пароль"
+                 >
+                    <Copy size={16} />
+                 </button>
               </div>
               <div className="p-4 bg-slate-50 rounded-2xl">
                  <p className="text-[10px] font-bold text-muted uppercase mb-1">Пароль</p>
-                 <code className="text-xs font-bold text-primary opacity-60 italic">Хранится в зашифрованном виде</code>
+                 <code className="text-sm font-bold text-primary">{member.password || '—'}</code>
               </div>
             </div>
           </Card>

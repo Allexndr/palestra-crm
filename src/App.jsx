@@ -8,6 +8,7 @@ import { QuestsMember } from './pages/social/QuestsMember';
 import { Profile } from './pages/profile/Profile';
 import { AdminProvider, useAdmin } from './context/AdminContext';
 import { ShopProvider } from './context/ShopContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { PageLoader } from './components/ui/PageLoader';
 import { SkipToMain } from './components/layout/SkipToMain';
 import { AdminRoleGuard, SuperAdminRoleGuard, RequireAuth, MemberLayout } from './components/auth/Access';
@@ -81,8 +82,9 @@ const LeagueRedirect = () => {
 
 function App() {
   return (
-    <AdminProvider>
-      <ShopProvider>
+    <LanguageProvider>
+      <AdminProvider>
+        <ShopProvider>
         <BrowserRouter>
           <SkipToMain />
           <Suspense fallback={<PageLoader />}>
@@ -141,8 +143,9 @@ function App() {
             </Routes>
           </Suspense>
         </BrowserRouter>
-      </ShopProvider>
-    </AdminProvider>
+        </ShopProvider>
+      </AdminProvider>
+    </LanguageProvider>
   );
 }
 

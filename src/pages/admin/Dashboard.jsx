@@ -78,6 +78,38 @@ export const Dashboard = () => {
         </div>
       </div>
 
+      {isAdmin && clubInfo.estimatedStudents > 15 && subscription?.plan === 'starter' && (
+        <Card style={{ 
+          backgroundColor: 'var(--color-bg-secondary)', 
+          border: '2px solid var(--color-primary)', 
+          borderRadius: '24px',
+          padding: '24px',
+          marginBottom: '24px',
+          display: 'flex',
+          gap: '20px',
+          alignItems: 'center',
+          animation: 'fadeIn 0.5s ease-out'
+        }}>
+          <div style={{ 
+            width: '56px', height: '56px', borderRadius: '16px', 
+            backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 
+          }}>
+            <ShieldAlert size={28} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <h4 className="h4 mb-1">Вы указали {clubInfo.estimatedStudents} учеников при регистрации</h4>
+            <p className="text-secondary text-sm font-medium">
+              На бесплатном тарифе Starter лимит — <strong>15 учеников</strong>. 
+              Система запомнила ваши данные. Чтобы добавить всех, перейдите к настройке тарифа и выберите нужный объем.
+            </p>
+          </div>
+          <Button variant="primary" onClick={() => navigate('/admin/settings/billing')} style={{ whiteSpace: 'nowrap' }}>
+            Настроить тариф
+          </Button>
+        </Card>
+      )}
+
 
 
       <div className="dashboard-dynamic-grid" style={{ marginTop: '16px' }}>

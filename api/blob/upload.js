@@ -40,16 +40,15 @@ export default async function handler(req, res) {
     const pathname = `clubs/${clubId}/${scope}/${objectId}-${prepared.fileName}`;
 
     const blob = await put(pathname, prepared.body, {
-      access: 'private',
+      access: 'public',
       addRandomSuffix: false,
       token: process.env.BLOB_READ_WRITE_TOKEN,
       contentType: prepared.contentType,
     });
 
     return sendJson(res, 200, {
-      url: `/api/blob/read?pathname=${encodeURIComponent(blob.pathname)}`,
+      url: blob.url,
       pathname: blob.pathname,
-      blobUrl: blob.url,
       contentType: prepared.contentType,
       optimized: prepared.optimized,
       originalBytes: prepared.originalBytes,

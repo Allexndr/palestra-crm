@@ -25,43 +25,47 @@ const OPERATIONS = [
 
 const FEATURES = [
   {
+    id: 'crm',
     icon: UsersRound,
-    title: 'Единая база клуба',
-    text: 'Ученики, родители, абонементы и история посещений без таблиц и дублей.',
+    title: 'CRM клуба',
+    text: 'Лиды попадают в базу напрямую с сайта и соцсетей. Менеджер видит всю историю общения и не забывает перезвонить.',
   },
   {
+    id: 'schedule',
     icon: CalendarDays,
-    title: 'Расписание и группы',
-    text: 'Тренеры, филиалы, занятость залов и переносы тренировок в одном контуре.',
+    title: 'Умное расписание',
+    text: 'Контроль загрузки залов и тренеров. Автоматические уведомления о переносах и отменах для всей группы.',
   },
   {
+    id: 'payments',
     icon: CreditCard,
-    title: 'Оплаты и контроль',
-    text: 'Владелец видит выручку, долги и активность групп без ручной сверки.',
+    title: 'Прозрачные оплаты',
+    text: 'Автоматический учет абонементов, расчет зарплат тренеров и аналитика выручки в реальном времени.',
   },
   {
+    id: 'league',
     icon: Trophy,
     title: 'Лига и прогресс',
-    text: 'Рейтинги, достижения и личные кабинеты помогают удерживать учеников.',
+    text: 'Личный кабинет ученика с рейтингами и достижениями превращает тренировки в игру, повышая LTV клуба.',
   },
 ];
 
 const ROLE_CARDS = [
   {
+    title: 'Владелец',
+    text: 'Видит чистую прибыль, эффективность маркетинга и работу всей сети филиалов без звонков администраторам.',
+  },
+  {
     title: 'Администратор',
-    text: 'Ведёт лиды, учеников, абонементы, расписание и переносы без ручной сверки в чатах.',
+    text: 'Тратит на 50% меньше времени на рутину: быстрая запись, отметка посещаемости в один клик и учет оплат.',
   },
   {
     title: 'Тренер',
-    text: 'Понимает состав группы, посещаемость, прогресс учеников и ближайшие тренировки.',
+    text: 'Видит состав группы на телефоне, отмечает опоздавших и следит за прогрессом учеников для повышения мотивации.',
   },
   {
     title: 'Родитель',
-    text: 'Видит расписание ребёнка, посещаемость, достижения и важные сообщения от клуба.',
-  },
-  {
-    title: 'Ученик',
-    text: 'Следит за тренировками, прогрессом, рейтингом и личными достижениями в клубе.',
+    text: 'Контролирует оплату абонемента и видит успехи ребенка через приложение — клуб становится прозрачным и современным.',
   },
 ];
 
@@ -118,7 +122,13 @@ const FOOTER_LINKS = [
   { label: 'FAQ', href: '#faq' },
 ];
 
-const FOOTER_PRODUCT_ITEMS = ['CRM клуба', 'Расписание', 'Оплаты', 'Личный кабинет', 'Лига и прогресс'];
+const FOOTER_PRODUCT_ITEMS = [
+  { label: 'CRM клуба', href: '#crm' },
+  { label: 'Расписание', href: '#schedule' },
+  { label: 'Оплаты', href: '#payments' },
+  { label: 'Личный кабинет', href: '#roles' },
+  { label: 'Лига и прогресс', href: '#league' }
+];
 
 export const Landing = () => {
   const { partners } = useAdmin();
@@ -163,17 +173,17 @@ export const Landing = () => {
       <Navbar />
       
       <main id="main-content" tabIndex={-1} style={{ position: 'relative', zIndex: 1, outline: 'none' }}>
-        <section className="landing-hero" aria-label="Первый экран">
+        <section className="landing-hero" aria-label="Первый экран" style={{ paddingTop: 'calc(var(--section-y) + 80px)' }}>
           <div className="container landing-hero-grid">
             
             <div className="animate-up">
-              <h1 className="h1 mb-6" style={{ textTransform: 'uppercase', lineHeight: '1.1' }}>
-                Соберите <br />
-                <span style={{ color: 'var(--color-primary)' }}>клуб в одну <br/>систему</span>
+              <h1 className="h1 mb-6" style={{ textTransform: 'uppercase', lineHeight: '1.05' }}>
+                Перестаньте <br />
+                <span style={{ color: 'var(--color-primary)' }}>терять лидов <br/>и время</span>
               </h1>
               
               <p className="text-body-lg mb-8" style={{ maxWidth: '480px' }}>
-                Ученики, тренеры, расписание, оплаты, родители и прогресс — в одной CRM для MMA, бокса, борьбы и других клубов единоборств.
+                Внедрите CRM Palestra за 1 день. Каждый ученик под контролем, каждая оплата в базе, а родители видят прогресс без лишних переписок.
               </p>
               <div className="landing-hero-points" aria-label="Ключевые преимущества">
                 {['Без Excel и WhatsApp', 'Бесплатный старт', 'Контур для родителей', 'Лига и достижения'].map((item) => (
@@ -212,7 +222,7 @@ export const Landing = () => {
               >
                 <div className="flex justify-between items-start mb-8">
                   <div>
-                    <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800 }}>Сегодня в клубе</p>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800 }}>Кейс партнера за месяц</p>
                     <h3 style={{ color: '#fff', fontFamily: 'var(--font-family-display)', fontSize: 28, fontWeight: 900, lineHeight: 1.1, margin: 0 }}>Palestra Almaty</h3>
                   </div>
                   <ShieldCheck size={30} color="var(--color-success)" aria-hidden />
@@ -258,15 +268,51 @@ export const Landing = () => {
               style={{ gap: 'var(--space-8)', textAlign: 'center' }}
             >
               {[
-                { k: 'Без хаоса', v: 'в чатах и таблицах' },
-                { k: 'Удержание', v: 'через лиги и кабинеты' },
-                { k: 'Семьи', v: 'удобство для родителей' },
+                { k: '-30% потерь', v: 'лидов в первый месяц' },
+                { k: '15 часов / мес', v: 'экономии на рутине' },
+                { k: 'x2 LTV', v: 'удержание через геймификацию' },
               ].map((item) => (
                 <div key={item.k} className="flex flex-col gap-1" style={{ minWidth: 'min(200px, 100%)' }}>
                   <span className="text-caption text-primary font-bold" style={{ letterSpacing: '0.12em' }}>{item.k}</span>
                   <span className="text-sm font-medium text-secondary">{item.v}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Problem Section - Designer's Insight */}
+        <section className="landing-section" style={{ padding: '100px 0', backgroundColor: '#f8fafc' }}>
+          <div className="container">
+            <div className="landing-section-head">
+              <span className="landing-eyebrow">Почему клубы теряют деньги?</span>
+              <h2 className="h2" style={{ textTransform: 'uppercase' }}>Хаос — главный враг маржи</h2>
+            </div>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-8)' }}>
+              <div className="card shadow-none" style={{ border: 'none', backgroundColor: 'transparent', padding: 0 }}>
+                <div style={{ color: 'var(--color-danger)', marginBottom: 16 }}>
+                  <UsersRound size={32} />
+                </div>
+                <h3 className="h4 mb-4">Лиды уходят из-за молчания</h3>
+                <p className="text-body">Пока администратор ищет прайс в WhatsApp или вспоминает расписание, клиент уходит к конкуренту, который ответил за 5 минут.</p>
+              </div>
+              
+              <div className="card shadow-none" style={{ border: 'none', backgroundColor: 'transparent', padding: 0 }}>
+                <div style={{ color: 'var(--color-danger)', marginBottom: 16 }}>
+                  <CreditCard size={32} />
+                </div>
+                <h3 className="h4 mb-4">ФОТ съедает прибыль</h3>
+                <p className="text-body">Ошибки в расчете зарплат тренеров, неучтенные персоналки и «бесплатные» гости воруют до 20% реальной выручки владельца.</p>
+              </div>
+
+              <div className="card shadow-none" style={{ border: 'none', backgroundColor: 'transparent', padding: 0 }}>
+                <div style={{ color: 'var(--color-danger)', marginBottom: 16 }}>
+                  <CalendarDays size={32} />
+                </div>
+                <h3 className="h4 mb-4">Команда тонет в рутине</h3>
+                <p className="text-body">Вместо продаж и работы с залом, администраторы часами сверяют таблицы, отмечают посещаемость и оправдываются перед родителями.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -307,8 +353,8 @@ export const Landing = () => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-6)' }}>
-              {FEATURES.map(({ icon: Icon, title, text }) => (
-                <div key={title} className="card" style={{ minHeight: 220 }}>
+              {FEATURES.map(({ id, icon: Icon, title, text }) => (
+                <div key={title} id={id} className="card" style={{ minHeight: 220 }}>
                   <div style={{ width: 48, height: 48, borderRadius: 16, display: 'grid', placeItems: 'center', marginBottom: 'var(--space-6)', background: 'var(--color-primary-soft)', color: 'var(--color-primary)' }}>
                     <Icon size={24} aria-hidden />
                   </div>
@@ -435,8 +481,8 @@ export const Landing = () => {
         <div className="container">
           <div className="landing-footer__grid">
             <section className="landing-footer__brand" aria-label="О продукте Palestra">
-              <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную" style={{ display: 'block', maxWidth: '184px', marginBottom: '16px' }}>
-                <img src="/logo-footer-light.png" alt="Palestra Logo" style={{ width: '100%', height: 'auto', objectFit: 'contain' }} decoding="async" />
+              <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную" style={{ display: 'block', marginBottom: '24px' }}>
+                <img src="/palestra-logo-nav-full.png" alt="Palestra Logo" style={{ height: '83px', width: 'auto', objectFit: 'contain' }} decoding="async" />
               </Link>
               <p>
                 CRM-платформа для клубов единоборств: ученики, группы, расписание, оплаты и прогресс в одной системе.
@@ -453,7 +499,7 @@ export const Landing = () => {
             <section className="landing-footer__nav" aria-label="Что входит в Palestra">
               <h2>Продукт</h2>
               {FOOTER_PRODUCT_ITEMS.map((item) => (
-                <span key={item}>{item}</span>
+                <a key={item.label} href={item.href}>{item.label}</a>
               ))}
             </section>
 

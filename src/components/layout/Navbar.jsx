@@ -1,22 +1,27 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Phone, MessageCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { useTranslation } from '../../context/LanguageContext';
+import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 
-const NAV_LINKS = [
-  { label: 'Возможности', href: '#features' },
-  { label: 'Роли', href: '#roles' },
-  { label: 'Безопасность', href: '#security' },
-  { label: 'Тариф', href: '#pricing' },
-  { label: 'FAQ', href: '#faq' },
+const getNavLinks = (t) => [
+  { label: t('nav.features') || 'Возможности', href: '#features' },
+  { label: t('nav.roles') || 'Роли', href: '#roles' },
+  { label: t('nav.security') || 'Безопасность', href: '#security' },
+  { label: t('nav.launch') || 'Запуск', href: '#implementation' },
+  { label: t('nav.pricing') || 'Тариф', href: '#pricing' },
+  { label: t('nav.faq') || 'FAQ', href: '#faq' },
 ];
 
 export const Navbar = () => {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const closeMenu = () => setIsMenuOpen(false);
+  const NAV_LINKS = getNavLinks(t);
 
   return (
-    <div style={{ position: 'sticky', top: 0, zIndex: 50, padding: 'var(--space-6) 0' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: 'var(--space-4) 0', transition: 'all 0.3s ease' }}>
       <header className="container">
         <div
           className="glass navbar-landing-bar"
@@ -66,13 +71,25 @@ export const Navbar = () => {
             ))}
           </nav>
           
-          <div className="navbar-auth-actions">
+          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+            <div className="mobile-hidden" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginRight: 'var(--space-2)' }}>
+              <a href="https://wa.me/77051112240" target="_blank" rel="noreferrer" className="contact-icon-link" title="WhatsApp">
+                <MessageCircle size={24} style={{ color: '#25D366' }} />
+              </a>
+              <a href="tel:+77002579004" className="contact-icon-link" title="Позвонить">
+                <Phone size={20} style={{ color: 'var(--color-primary)' }} />
+              </a>
+            </div>
+
             <Link to="/auth/login" style={{ textDecoration: 'none' }} className="mobile-hidden">
-              <Button variant="ghost" className="font-display" style={{ fontWeight: 700 }}>Войти</Button>
+              <Button variant="ghost" className="font-display" style={{ fontWeight: 700 }}>{t('nav.login') || 'Войти'}</Button>
             </Link>
+            <div className="mobile-hidden">
+              <LanguageSwitcher />
+            </div>
             <Link to="/auth/register" style={{ textDecoration: 'none' }} onClick={closeMenu}>
               <Button variant="primary" size="md" className="font-display" style={{ paddingLeft: 'var(--space-8)', paddingRight: 'var(--space-8)' }}>
-                Подключить бесплатно
+                {t('nav.register_free') || 'Подключить бесплатно'}
               </Button>
             </Link>
             <button
