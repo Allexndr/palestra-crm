@@ -1,27 +1,33 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Shield } from 'lucide-react';
+import { useTranslation } from '../../context/LanguageContext';
 import './tariff-constructor.css';
 
 const BASE_PRICE = 0;
 /** ~19 USD за базу 9000 ₸ (оценка для UI) */
 const usdApprox = (kzt) => (kzt > 0 ? Math.max(1, Math.round((kzt / 9000) * 19)) : 0);
 
-const CORE_FEATURE = {
+const getCoreFeature = (t) => ({
   id: 'core',
-  label: 'Базовая CRM',
+  label: t('tariff.core_crm'),
   icon: <Shield size={16} strokeWidth={2.25} />,
-  desc: 'Учёт учеников, филиалов и групп',
-};
+  desc: t('tariff.core_desc'),
+});
 
-const INCLUDED_ITEMS = [
-  '1 филиал, 15 учеников и 3 тренера включены',
-  'Расписание, посещаемость и база клиентов',
-  'Личный кабинет для родителей и учеников',
+const getIncludedItems = (t) => [
+  t('tariff.included_item1'),
+  t('tariff.included_item2'),
+  t('tariff.included_item3'),
 ];
 
 export const TariffConstructor = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  
+  const CORE_FEATURE = getCoreFeature(t);
+  const INCLUDED_ITEMS = getIncludedItems(t);
+  
   const basePrice = BASE_PRICE;
   const totalPrice = basePrice;
   const selectedFeatures = ['core'];
@@ -38,15 +44,15 @@ export const TariffConstructor = () => {
 
   return (
     <article className="tariff-constructor" aria-labelledby="tariff-constructor-title">
-      <div className="tariff-constructor__eyebrow">Подключение бесплатно</div>
+      <div className="tariff-constructor__eyebrow">{t('tariff.eyebrow')}</div>
 
       <div className="tariff-constructor__top">
         <div className="tariff-constructor__intro">
           <h2 id="tariff-constructor-title" className="tariff-constructor__title">
-            Palestra Starter
+            {t('tariff.title')}
           </h2>
           <p className="tariff-constructor__subtitle">
-            Соберите базу бесплатно: 1 филиал, 15 учеников, 3 тренера и базовая CRM. Когда клуб вырастет, включите Growth от 9 000 ₸ и нужные модули.
+            {t('tariff.subtitle')}
           </p>
         </div>
 
@@ -54,7 +60,7 @@ export const TariffConstructor = () => {
           <div className="tariff-constructor__price-kzt">
             {totalPrice.toLocaleString('ru-RU')} <span>₸/мес</span>
           </div>
-          <div className="tariff-constructor__price-usd">Growth от 9 000 ₸/мес</div>
+          <div className="tariff-constructor__price-usd">{t('tariff.growth_from')}</div>
         </div>
       </div>
 
@@ -69,7 +75,7 @@ export const TariffConstructor = () => {
           </div>
         </div>
 
-        <ul className="tariff-constructor__list" aria-label="Что входит в тариф">
+        <ul className="tariff-constructor__list" aria-label={t('tariff.included_title')}>
           {INCLUDED_ITEMS.map((item) => (
             <li key={item} className="tariff-constructor__item">
               <CheckCircle2 size={18} strokeWidth={2.3} aria-hidden />
@@ -81,9 +87,9 @@ export const TariffConstructor = () => {
 
       <div className="tariff-constructor__footer">
         <button type="button" className="tariff-constructor__cta" onClick={handleConnect}>
-          Подключить бесплатно
+          {t('landing.hero.cta_free')}
         </button>
-        <p className="tariff-constructor__hint">Дальше тариф собирается под ваш клуб: ученики, тренеры, филиалы и модули.</p>
+        <p className="tariff-constructor__hint">{t('tariff.hint')}</p>
       </div>
     </article>
   );

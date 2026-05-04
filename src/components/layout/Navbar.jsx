@@ -43,12 +43,13 @@ export const Navbar = () => {
                 src="/palestra-logo-nav-full.png"
                 alt=""
                 className="navbar-brand-logo"
+                style={{ height: '32px', width: 'auto' }}
                 decoding="async"
               />
             </Link>
           </div>
 
-          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу">
+          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-4)' }}>
             {NAV_LINKS.map((link) => (
               <a 
                 key={link.label}
@@ -56,14 +57,13 @@ export const Navbar = () => {
                 className="nav-link"
                 style={{ 
                   textDecoration: 'none',
-                  fontSize: '0.78rem',
+                  fontSize: '0.65rem',
                   fontWeight: 900,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
+                  letterSpacing: '0.12em',
                   color: 'var(--color-text-secondary)',
                   fontFamily: 'var(--font-family-display)',
-                  transition: 'all 0.2s ease',
-                  position: 'relative'
+                  transition: 'all 0.2s ease'
                 }}
               >
                 {link.label}
@@ -71,24 +71,17 @@ export const Navbar = () => {
             ))}
           </nav>
           
-          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-            <div className="mobile-hidden" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginRight: 'var(--space-2)' }}>
-              <a href="https://wa.me/77051112240" target="_blank" rel="noreferrer" className="contact-icon-link" title="WhatsApp">
-                <MessageCircle size={24} style={{ color: '#25D366' }} />
-              </a>
-              <a href="tel:+77002579004" className="contact-icon-link" title="Позвонить">
-                <Phone size={20} style={{ color: 'var(--color-primary)' }} />
-              </a>
-            </div>
-
-            <Link to="/auth/login" style={{ textDecoration: 'none' }} className="mobile-hidden">
-              <Button variant="ghost" className="font-display" style={{ fontWeight: 700 }}>{t('nav.login') || 'Войти'}</Button>
-            </Link>
+          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
             <div className="mobile-hidden">
               <LanguageSwitcher />
             </div>
+
+            <Link to="/auth/login" style={{ textDecoration: 'none' }} className="mobile-hidden">
+              <Button variant="ghost" className="font-display" style={{ fontWeight: 700, fontSize: '0.8rem' }}>{t('nav.login') || 'Войти'}</Button>
+            </Link>
+            
             <Link to="/auth/register" style={{ textDecoration: 'none' }} onClick={closeMenu}>
-              <Button variant="primary" size="md" className="font-display" style={{ paddingLeft: 'var(--space-8)', paddingRight: 'var(--space-8)' }}>
+              <Button variant="primary" size="sm" className="font-display" style={{ paddingLeft: 'var(--space-5)', paddingRight: 'var(--space-5)', fontWeight: 800, fontSize: '0.8rem' }}>
                 {t('nav.register_free') || 'Подключить бесплатно'}
               </Button>
             </Link>
@@ -99,7 +92,7 @@ export const Navbar = () => {
               aria-expanded={isMenuOpen}
               aria-controls="landing-mobile-menu"
               onClick={() => setIsMenuOpen((value) => !value)}
-              style={{ zIndex: 110, position: 'relative' }}
+              style={{ zIndex: 110, position: 'relative', background: 'none', border: 'none', padding: 'var(--space-2)' }}
             >
               {isMenuOpen ? <X size={26} aria-hidden /> : <Menu size={26} aria-hidden />}
             </button>
@@ -166,11 +159,11 @@ export const Navbar = () => {
           }}
         >
           <Link to="/auth/login" onClick={closeMenu} style={{ textDecoration: 'none' }}>
-            <Button variant="ghost" className="w-full h-14 font-display" style={{ fontSize: '1.25rem', fontWeight: 700 }}>Войти</Button>
+            <Button variant="ghost" className="w-full h-14 font-display" style={{ fontSize: '1.25rem', fontWeight: 700 }}>{t('nav.login') || 'Войти'}</Button>
           </Link>
           <Link to="/auth/register" onClick={closeMenu} style={{ textDecoration: 'none' }}>
             <Button variant="primary" className="w-full h-14 font-display" style={{ fontSize: '1.25rem', fontWeight: 700 }}>
-              Подключить бесплатно
+              {t('nav.register_free') || 'Подключить бесплатно'}
             </Button>
           </Link>
         </div>

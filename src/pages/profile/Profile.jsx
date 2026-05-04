@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, ChevronRight, CreditCard, Medal, Shield, Trophy, TrendingUp, User, Zap, Settings, Eye, EyeOff, ArrowUp, ArrowDown, Layout, Save, X, BarChart3, Users } from 'lucide-react';
+import { Calendar, ChevronRight, CreditCard, Medal, Shield, Trophy, TrendingUp, User, Zap, Settings, Eye, EyeOff, ArrowUp, ArrowDown, Layout, Save, X, BarChart3, Users, Sparkles } from 'lucide-react';
 import { useAdmin, STUDENT_WIDGET_CATALOG } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
+import { Button } from '../../components/ui/Button';
 import { EventCarousel } from '../../components/features/EventCarousel';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -9,6 +11,7 @@ import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 
 export const Profile = () => {
   const { user, members, attendance, achievements, groups, schedule, activeChildId, clubInfo, studentDashboardPool, studentDashboardLayout, updateMemberProfile } = useAdmin();
+  const { t, language } = useTranslation();
   const [activeTab, setActiveTab] = useState('sports'); // 'sports' or 'rpg'
   const [isCustomizing, setIsCustomizing] = useState(false);
   
@@ -39,9 +42,9 @@ export const Profile = () => {
       <main id="main-content" tabIndex={-1} className="member-content">
         <Card className="member-empty-state">
           <User size={48} />
-          <h2 className="h2">Профиль не найден</h2>
+          <h2 className="h2">{t('profile_member.not_found')}</h2>
           <p className="text-secondary">
-            Демо-родитель и демо-ученик будут восстановлены автоматически после обновления страницы.
+            {t('profile_member.demo_restored')}
           </p>
         </Card>
       </main>
@@ -92,7 +95,7 @@ export const Profile = () => {
         return (
           <Card key={id} className="shadow-2xl shadow-slate-200/50 mb-8">
             <h3 className="member-card-title">
-              <TrendingUp size={18} className="text-primary" /> Физические показатели
+              <TrendingUp size={18} className="text-primary" /> {t('profile_member.physical_stats')}
             </h3>
             <div className="member-stats-grid">
               {stats.map(stat => (
@@ -112,20 +115,20 @@ export const Profile = () => {
       case 'last_activity':
         return (
           <Card key={id} className="mb-8">
-            <h3 className="member-card-title"><Calendar size={18} className="text-primary" /> Последняя активность</h3>
+            <h3 className="member-card-title"><Calendar size={18} className="text-primary" /> {t('profile_member.last_activity')}</h3>
             <div className="member-activity-list">
               {studentAttendance.length === 0 ? (
                 <div className="member-empty-inline">
                   <Calendar size={36} />
-                  <p>История тренировок пуста</p>
+                  <p>{t('profile_member.activity_empty')}</p>
                 </div>
               ) : (
                 studentAttendance.slice(0, 6).map((a, i) => (
                   <div key={a.id || i} className="member-activity-row">
                     <div><Calendar size={18} /></div>
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-slate-800">Посещение занятия</p>
-                      <p className="text-[11px] text-muted font-medium">{new Date(a.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</p>
+                      <p className="text-sm font-bold text-slate-800">{t('profile_member.visit_class')}</p>
+                      <p className="text-[11px] text-muted font-medium">{new Date(a.date).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ', { day: 'numeric', month: 'long' })}</p>
                     </div>
                     <span>+10 XP</span>
                   </div>
@@ -139,11 +142,11 @@ export const Profile = () => {
           <Card key={id} className="card-hover mb-8">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <p className="member-kicker">Текущий ранг</p>
-                <h3 className="h4 text-primary">{profileData.level || 'Новичок'}</h3>
+                <p className="member-kicker">{t('profile_member.current_rank')}</p>
+                <h3 className="h4 text-primary">{profileData.level || t('common.beginner')}</h3>
               </div>
               <div className="text-right">
-                <p className="member-kicker">Прогресс</p>
+                <p className="member-kicker">{t('profile_member.progress')}</p>
                 <h3 className="h4 text-slate-900">{nextRankProgress}%</h3>
               </div>
             </div>
@@ -151,15 +154,15 @@ export const Profile = () => {
               <div style={{ width: `${nextRankProgress}%` }} />
             </div>
             <div className="member-rank-footer">
-              <span>Старт</span>
-              <span>Следующий ранг <ChevronRight size={12}/></span>
+              <span>{t('profile_member.start')}</span>
+              <span>{t('profile_member.next_rank')} <ChevronRight size={12}/></span>
             </div>
           </Card>
         );
       case 'rewards':
         return (
           <Card key={id} className="mb-8">
-            <h3 className="member-card-title"><Trophy size={18} className="text-primary" /> Коллекция наград</h3>
+            <h3 className="member-card-title"><Trophy size={18} className="text-primary" /> {t('profile_member.rewards_title')}</h3>
             <div className="member-achievements-grid">
               {memberAchievements.length > 0 ? memberAchievements.map((ach) => (
                 <div key={ach.id} className="member-achievement">
@@ -167,12 +170,12 @@ export const Profile = () => {
                     <Medal size={26} />
                   </div>
                   <span>{ach.title}</span>
-                  <small>{ach.desc || 'Достижение клуба'}</small>
+                  <small>{ach.desc || t('profile_member.rewards_desc')}</small>
                 </div>
               )) : (
                 <div className="member-empty-inline">
                   <Trophy size={36} />
-                  <p>Наград пока нет</p>
+                  <p>{t('profile_member.rewards_empty')}</p>
                 </div>
               )}
             </div>
@@ -184,24 +187,24 @@ export const Profile = () => {
             <Link to="/schedule">
               <Calendar size={20} />
               <div>
-                <strong>Расписание</strong>
-                <span>{childSchedule.length || 1} занятий в неделю</span>
+                <strong>{t('nav.schedule')}</strong>
+                <span>{t('profile_member.sessions_per_week', { count: childSchedule.length || 1 })}</span>
               </div>
               <ChevronRight size={16} />
             </Link>
             <button type="button">
               <CreditCard size={20} />
               <div>
-                <strong>Оплата тарифа</strong>
-                <span>{profileData.plan || 'Базовый тариф'}</span>
+                <strong>{t('profile_member.pay_plan')}</strong>
+                <span>{profileData.plan || (language === 'ru' ? 'Базовый тариф' : 'Базалық тариф')}</span>
               </div>
               <ChevronRight size={16} />
             </button>
             <Link to="/league">
               <Shield size={20} />
               <div>
-                <strong>Лига клуба</strong>
-                <span>{points} рейтинговых очков</span>
+                <strong>{t('nav.league')}</strong>
+                <span>{t('profile_member.league_points', { count: points })}</span>
               </div>
               <ChevronRight size={16} />
             </Link>
@@ -216,7 +219,7 @@ export const Profile = () => {
       case 'attendance_chart':
         return (
           <Card key={id} className="mb-8">
-            <h3 className="member-card-title"><BarChart3 size={18} className="text-primary" /> Посещаемость по месяцам</h3>
+            <h3 className="member-card-title"><BarChart3 size={18} className="text-primary" /> {t('profile_member.attendance_chart')}</h3>
             <div className="flex items-end gap-3 h-32 px-4 mt-6">
               {[45, 70, 55, 90, 40, 85].map((val, i) => (
                 <div key={i} className="flex-1 bg-slate-100 rounded-t-lg relative group">
@@ -224,7 +227,7 @@ export const Profile = () => {
                     style={{ height: `${val}%` }} 
                     className="bg-primary opacity-20 group-hover:opacity-100 transition-all rounded-t-lg"
                   />
-                  <div className="absolute -bottom-6 left-0 right-0 text-[9px] text-center font-bold text-slate-400">М-{i+1}</div>
+                  <div className="absolute -bottom-6 left-0 right-0 text-[9px] text-center font-bold text-slate-400">M-{i+1}</div>
                 </div>
               ))}
             </div>
@@ -233,7 +236,7 @@ export const Profile = () => {
       case 'leaderboard_mini':
         return (
           <Card key={id} className="mb-8">
-            <h3 className="member-card-title"><Users size={18} className="text-primary" /> Топ группы</h3>
+            <h3 className="member-card-title"><Users size={18} className="text-primary" /> {t('profile_member.top_group')}</h3>
             <div className="flex flex-col gap-3 mt-4">
               {members.slice(0, 3).map((m, i) => (
                 <div key={m.id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -271,11 +274,11 @@ export const Profile = () => {
                 LVL {level}
               </Badge>
             </div>
-            <p>{group?.name || 'Индивидуально'} • {profileData.sport || 'Мультиспорт'}</p>
+            <p>{group?.name || (language === 'ru' ? 'Индивидуально' : 'Жекелей')} • {profileData.sport || (language === 'ru' ? 'Мультиспорт' : 'Мультиспорт')}</p>
             <div className="member-profile-hero__chips">
               <span>{points} XP</span>
-              <span>{profileData.plan || 'Базовый тариф'}</span>
-              {isParent && <span>{children.length} ребёнка в клубе</span>}
+              <span>{profileData.plan || (language === 'ru' ? 'Базовый тариф' : 'Базалық тариф')}</span>
+              {isParent && <span>{t('profile_member.children_in_club', { count: children.length })}</span>}
             </div>
           </div>
         </div>
@@ -286,28 +289,28 @@ export const Profile = () => {
               onClick={() => setIsCustomizing(true)}
               className="absolute -top-12 right-0 p-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all border-none cursor-pointer flex items-center gap-2 text-xs font-bold"
             >
-              <Settings size={16} /> Настроить дашборд
+              <Settings size={16} /> {t('profile_member.customize_dashboard')}
             </button>
           ) : (
             <button 
               onClick={() => setIsCustomizing(false)}
               className="absolute -top-12 right-0 p-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-all border-none cursor-pointer flex items-center gap-2 text-xs font-bold shadow-lg"
             >
-              <Save size={16} /> Сохранить
+              <Save size={16} /> {t('profile_member.save_dashboard')}
             </button>
           )}
 
           <div>
-            <span>Посещаемость</span>
+            <span>{t('dashboard.members_stat')}</span>
             <strong>{studentAttendance.length}</strong>
           </div>
           <div>
-            <span>Расписание</span>
+            <span>{t('nav.schedule')}</span>
             <strong>{childSchedule.length || 1}</strong>
           </div>
           <div>
-            <span>Ранг</span>
-            <strong>{profileData.level || 'Новичок'}</strong>
+            <span>{t('profile_member.current_rank')}</span>
+            <strong>{profileData.level || t('common.beginner')}</strong>
           </div>
         </div>
       </section>
@@ -318,20 +321,20 @@ export const Profile = () => {
             onClick={() => setActiveTab('sports')} 
             className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'sports' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}
           >
-            Спортивный паспорт
+            {t('profile_member.sports_passport')}
           </button>
           <button 
             onClick={() => setActiveTab('rpg')} 
             className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'rpg' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}
           >
-            Геймификация
+            {t('profile_member.gamification')}
           </button>
         </div>
 
         {isCustomizing && (
           <div className="flex items-center gap-2 pb-4 text-primary animate-pulse">
             <Layout size={16} />
-            <span className="text-[10px] font-black uppercase tracking-widest">Режим настройки</span>
+            <span className="text-[10px] font-black uppercase tracking-widest">{t('profile_member.settings_mode')}</span>
           </div>
         )}
       </section>
@@ -359,7 +362,7 @@ export const Profile = () => {
                       onClick={() => handleToggleWidget(widget.id)}
                       className={`p-2 rounded-lg flex items-center gap-2 text-[10px] font-black uppercase tracking-widest border-none cursor-pointer ${widget.visible ? 'bg-indigo-50 text-primary' : 'bg-slate-200 text-slate-500'}`}
                     >
-                      {widget.visible ? <><Eye size={12} /> Виден</> : <><EyeOff size={12} /> Скрыт</>}
+                      {widget.visible ? <><Eye size={12} /> {t('profile_member.widget_visible')}</> : <><EyeOff size={12} /> {t('profile_member.widget_hidden')}</>}
                     </button>
                     <button 
                       disabled={index === 0}
@@ -392,26 +395,26 @@ export const Profile = () => {
           <Card className="p-6 bg-primary text-white overflow-hidden relative group mb-8">
             <Sparkles size={120} className="absolute -right-8 -bottom-8 opacity-10 rotate-12 transition-transform group-hover:rotate-45" />
             <div className="relative z-10">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 opacity-60">Мой статус</p>
-              <h4 className="text-xl font-bold mb-4">Ученик месяца</h4>
-              <p className="text-xs leading-relaxed opacity-80 mb-6">Вы входите в топ-5 клуба по посещаемости. Еще 2 занятия и вы получите секретное достижение!</p>
-              <Button variant="secondary" size="sm" className="w-full bg-white text-primary border-none font-bold">Подробнее</Button>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-2 opacity-60">{t('profile_member.my_status')}</p>
+              <h4 className="text-xl font-bold mb-4">{t('profile_member.student_of_month')}</h4>
+              <p className="text-xs leading-relaxed opacity-80 mb-6">{t('profile_member.student_of_month_desc')}</p>
+              <Button variant="secondary" size="sm" className="w-full bg-white text-primary border-none font-bold">{t('profile_member.more_details')}</Button>
             </div>
           </Card>
           
           <div className="sticky top-28">
-             <Card className="mb-8">
-                <h3 className="text-sm font-bold mb-4">Мои тренеры</h3>
-                <div className="flex flex-col gap-4">
-                   <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold">АК</div>
-                      <div>
-                        <p className="text-xs font-bold">А. Карелин</p>
-                        <p className="text-[10px] text-muted">MMA · Pro Group</p>
-                      </div>
-                   </div>
-                </div>
-             </Card>
+            <Card className="mb-8">
+               <h3 className="text-sm font-bold mb-4">{t('profile_member.my_coaches')}</h3>
+               <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                     <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold">АК</div>
+                     <div>
+                       <p className="text-xs font-bold">А. Карелин</p>
+                       <p className="text-[10px] text-muted">MMA · Pro Group</p>
+                     </div>
+                  </div>
+               </div>
+            </Card>
           </div>
         </aside>
       </section>

@@ -9,10 +9,12 @@ import { Plus, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
 import { LockedFeature } from '../../components/admin/LockedFeature';
+import { useTranslation } from '../../context/LanguageContext';
 
 export const Shop = () => {
   const { products, categories, orders, addProduct, updateProduct, removeProduct, updateOrderStatus, placeOrder } = useShop();
   const { user, members, canUseFeature, getUpgradeMessage, updateMemberXP, activeChildId } = useAdmin();
+  const { t, language } = useTranslation();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   
@@ -29,7 +31,7 @@ export const Shop = () => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
-    category: 'Защита',
+    category: t('shop.default_category') || 'Защита',
     description: '',
     image: '',
     stock: 10,
@@ -39,8 +41,8 @@ export const Shop = () => {
   if (!canUseFeature('shop')) {
     return (
       <LockedFeature
-        title="Магазин клуба подключается отдельно"
-        description={getUpgradeMessage('feature', 'Магазин клуба')}
+        title={t('shop.locked_title')}
+        description={getUpgradeMessage('feature', t('shop.locked_feature'))}
         onConfigure={() => navigate('/admin/settings')}
       />
     );
@@ -61,7 +63,7 @@ export const Shop = () => {
     }
     setIsAdding(false);
     setEditingProduct(null);
-    setFormData({ name: '', price: '', category: 'Защита', description: '', image: '', stock: 10, isPointsOnly: false });
+    setFormData({ name: '', price: '', category: t('shop.default_category'), description: '', image: '', stock: 10, isPointsOnly: false });
   };
 
   const handleProductImageUpload = async (event) => {
@@ -73,7 +75,7 @@ export const Shop = () => {
       const url = await uploadBlobFile(file, 'products');
       setFormData((prev) => ({ ...prev, image: url }));
     } catch (error) {
-      alert(error.message || 'Не удалось загрузить изображение');
+      alert(error.message || t('shop.alerts.image_error'));
     } finally {
       setIsUploadingImage(false);
       event.target.value = '';
@@ -97,18 +99,18 @@ export const Shop = () => {
 
     if (product.isPointsOnly) {
       if (!student) {
-        alert('Выберите ученика для покупки за баллы');
+        alert(t('shop.alerts.points_select'));
         return;
       }
       if ((student.xp || 0) < Number(product.price)) {
-        alert(`Недостаточно Neks! У вас ${(student.xp || 0)}, а нужно ${product.price}`);
+        alert(t('shop.alerts.points_insufficient', { xp: (student.xp || 0), price: product.price }));
         return;
       }
       // Deduct XP
       updateMemberXP(studentId, -Number(product.price));
-      alert('Покупка за Neks успешна! Заберите товар у администратора.');
+      alert(t('shop.alerts.points_success'));
     } else {
-      alert('Заказ успешно оформлен! Админ свяжется с вами для уточнения деталей.');
+      alert(t('shop.alerts.order_success'));
     }
 
     const order = {
@@ -132,12 +134,21 @@ export const Shop = () => {
     }
   };
 
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'pending': return t('shop.orders.status_pending');
+      case 'completed': return t('shop.orders.status_completed');
+      case 'cancelled': return t('shop.orders.status_cancelled');
+      default: return status;
+    }
+  };
+
   return (
     <div className="animate-fade-in pb-20">
       <div className="admin-page-header">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h1">Магазин клуба</h1>
-          <p className="text-secondary font-medium">Экипировка, защита и фирменный мерч Palestra</p>
+          <h1 className="h1">{t('shop.title')}</h1>
+          <p className="text-secondary font-medium">{t('shop.subtitle')}</p>
         </div>
 
         <div className="admin-page-actions">
@@ -147,21 +158,21 @@ export const Shop = () => {
                 <button 
                   onClick={() => setActiveTab('products')} 
                   className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all border-none cursor-pointer ${activeTab === 'products' ? 'bg-white text-primary shadow-sm' : 'bg-transparent text-secondary'}`}
-                >Товары</button>
+                >{t('shop.tab_products')}</button>
                 <button 
                   onClick={() => setActiveTab('orders')} 
                   className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all border-none cursor-pointer ${activeTab === 'orders' ? 'bg-white text-primary shadow-sm' : 'bg-transparent text-secondary'}`}
-                >Заказы ({orders.filter(o => o.status === 'pending').length})</button>
+                >{t('shop.tab_orders')} ({orders.filter(o => o.status === 'pending').length})</button>
               </>
             )}
             <button 
               onClick={() => setActiveTab('browse')} 
               className={`px-6 py-2.5 rounded-xl font-bold text-xs transition-all border-none cursor-pointer ${activeTab === 'browse' ? 'bg-white text-primary shadow-sm' : 'bg-transparent text-secondary'}`}
-            >Витрина</button>
+            >{t('shop.tab_browse')}</button>
           </div>
           {isAdmin && activeTab === 'products' && (
             <Button variant="primary" onClick={() => { setIsAdding(true); setEditingProduct(null); }} style={{ borderRadius: '16px', gap: '8px' }}>
-              <Plus size={18} /> Добавить товар
+              <Plus size={18} /> {t('shop.add_btn')}
             </Button>
           )}
         </div>
@@ -171,7 +182,7 @@ export const Shop = () => {
         <div className="flex-1 relative">
            <input 
              type="text" 
-             placeholder="Поиск по названию..." 
+             placeholder={t('shop.search_placeholder')} 
              className="w-full bg-white border-2 border-slate-100 focus:border-primary px-6 py-4 rounded-3xl outline-none transition-all font-medium text-slate-700 shadow-sm"
              value={searchQuery}
              onChange={(e) => setSearchQuery(e.target.value)}
@@ -181,40 +192,54 @@ export const Shop = () => {
           <button 
             onClick={() => setSelectedCategory('all')}
             className={`px-6 py-4 rounded-3xl font-bold text-sm whitespace-nowrap transition-all border-none cursor-pointer ${selectedCategory === 'all' ? 'bg-primary text-white shadow-lg shadow-indigo-100' : 'bg-white text-secondary border border-slate-100 hover:border-slate-300'}`}
-          >Все</button>
+          >{t('common.all')}</button>
           {categories.map(cat => (
             <button 
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-6 py-4 rounded-3xl font-bold text-sm whitespace-nowrap transition-all border-none cursor-pointer ${selectedCategory === cat ? 'bg-primary text-white shadow-lg shadow-indigo-100' : 'bg-white text-secondary border border-slate-100 hover:border-slate-300'}`}
-            >{cat}</button>
+            >
+              {cat === 'Защита' ? t('shop.categories.protection') : 
+               cat === 'Снаряжение' ? t('shop.categories.equipment') : 
+               cat === 'Мерч' ? t('shop.categories.merch') : 
+               cat === 'Аксессуары' ? t('shop.categories.accessories') : 
+               cat === 'Награды (Neks)' ? t('shop.categories.awards') : cat}
+            </button>
           ))}
         </div>
       </div>
 
       {isAdding && isAdmin && (
-        <Card className="mb-12 animate-up shadow-2xl border-2 border-primary">
-           <div className="flex justify-between items-center mb-8">
-             <h3 className="h4">{editingProduct ? 'Редактировать товар' : 'Новый товар'}</h3>
-             <button onClick={() => setIsAdding(false)} className="p-2 hover:bg-slate-100 rounded-full border-none bg-transparent cursor-pointer"><X size={20}/></button>
-           </div>
+         <Card className="mb-12 animate-up shadow-2xl border-2 border-primary">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="h4">{editingProduct ? t('shop.form.edit_title') : t('shop.form.new_title')}</h3>
+              <button onClick={() => setIsAdding(false)} className="p-2 hover:bg-slate-100 rounded-full border-none bg-transparent cursor-pointer"><X size={20}/></button>
+            </div>
            <form onSubmit={handleAddProduct} className="flex flex-col gap-8">
              <div className="admin-form-grid">
-               <Input label="Название" placeholder="Перчатки Boxing Pro" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-               <Input label="Цена (₸)" isCurrency required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
+               <Input label={t('shop.form.name_label')} placeholder={t('shop.form.name_placeholder')} required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+               <Input label={t('shop.form.price_label')} isCurrency required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
                <div className="input-group">
-                 <label className="input-label">Категория</label>
+                 <label className="input-label">{t('shop.form.category_label')}</label>
                  <select className="input-field" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                   {categories.map(c => <option key={c}>{c}</option>)}
+                   {categories.map(cat => (
+                     <option key={cat} value={cat}>
+                       {cat === 'Защита' ? t('shop.categories.protection') : 
+                        cat === 'Снаряжение' ? t('shop.categories.equipment') : 
+                        cat === 'Мерч' ? t('shop.categories.merch') : 
+                        cat === 'Аксессуары' ? t('shop.categories.accessories') : 
+                        cat === 'Награды (Neks)' ? t('shop.categories.awards') : cat}
+                     </option>
+                   ))}
                  </select>
                </div>
                <div className="input-group">
-                 <label className="input-label">Изображение товара</label>
+                 <label className="input-label">{t('shop.form.image_label')}</label>
                  <input className="input-field" type="file" accept="image/*" onChange={handleProductImageUpload} />
-                 {isUploadingImage && <p className="text-xs text-muted mt-2">Загрузка в Blob...</p>}
-                 {formData.image && <p className="text-xs text-primary mt-2">Изображение загружено</p>}
+                 {isUploadingImage && <p className="text-xs text-muted mt-2">{t('shop.form.image_uploading')}</p>}
+                 {formData.image && <p className="text-xs text-primary mt-2">{t('shop.form.image_uploaded')}</p>}
                </div>
-               <Input label="Остаток на складе" type="number" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
+               <Input label={t('shop.form.stock_label')} type="number" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
                <div className="flex items-center gap-2 mt-4">
                  <input 
                    type="checkbox" 
@@ -222,22 +247,22 @@ export const Shop = () => {
                    checked={formData.isPointsOnly}
                    onChange={e => setFormData({...formData, isPointsOnly: e.target.checked})}
                  />
-                 <label htmlFor="isPointsOnly" className="text-xs font-bold text-slate-700">Продажа за Neks (баллы)</label>
+                 <label htmlFor="isPointsOnly" className="text-xs font-bold text-slate-700">{t('shop.form.points_only')}</label>
                </div>
              </div>
-             <div className="input-group">
-               <label className="input-label">Описание</label>
-               <textarea 
-                 className="input-field min-h-[100px]" 
-                 value={formData.description} 
-                 onChange={e => setFormData({...formData, description: e.target.value})}
-                 placeholder="Краткое описание товара..."
-               />
-             </div>
-             <div className="flex justify-end gap-4 pt-6 border-t">
-               <Button variant="ghost" onClick={() => setIsAdding(false)}>Отмена</Button>
-               <Button variant="primary" type="submit">{editingProduct ? 'Сохранить изменения' : 'Создать товар'}</Button>
-             </div>
+              <div className="input-group">
+                <label className="input-label">{t('shop.form.desc_label')}</label>
+                <textarea 
+                  className="input-field min-h-[100px]" 
+                  value={formData.description} 
+                  onChange={e => setFormData({...formData, description: e.target.value})}
+                  placeholder={t('shop.form.desc_placeholder')}
+                />
+              </div>
+              <div className="flex justify-end gap-4 pt-6 border-t">
+                <Button variant="ghost" onClick={() => setIsAdding(false)}>{t('common.cancel')}</Button>
+                <Button variant="primary" type="submit">{editingProduct ? t('shop.form.save_btn') : t('shop.form.create_btn')}</Button>
+              </div>
            </form>
         </Card>
       )}
@@ -266,21 +291,21 @@ export const Shop = () => {
                </div>
                <div className="p-6 flex-1 flex flex-col">
                  <div className="flex justify-between items-start mb-2">
-                   <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{product.name}</h3>
-                   <span className={`font-black text-xl ${product.isPointsOnly ? 'text-amber-500 flex items-center gap-1' : 'text-primary'}`}>
-                     {product.isPointsOnly && <Zap size={18} fill="currentColor" />}
-                     {Number(product.price).toLocaleString()} {product.isPointsOnly ? 'N' : '₸'}
-                   </span>
-                 </div>
-                 <p className="text-secondary text-sm mb-6 line-clamp-2">{product.description || 'Нет описания'}</p>
-                 <div className="mt-auto flex justify-between items-center pt-6 border-t border-slate-50">
-                   <div className="flex items-center gap-2 text-xs font-bold text-muted uppercase">
-                      <Clock size={14} /> Склад: <span className={product.stock < 5 ? 'text-rose-500' : 'text-emerald-500'}>{product.stock} шт</span>
-                   </div>
-                   <div className="flex gap-2">
-                      <button onClick={() => startEdit(product)} className="p-2.5 bg-indigo-50 text-primary rounded-xl border-none font-bold text-xs hover:bg-indigo-100 transition-all cursor-pointer">Редактировать</button>
-                   </div>
-                 </div>
+                    <h3 className="font-bold text-lg text-slate-900 line-clamp-1">{product.name}</h3>
+                    <span className={`font-black text-xl ${product.isPointsOnly ? 'text-amber-500 flex items-center gap-1' : 'text-primary'}`}>
+                      {product.isPointsOnly && <Zap size={18} fill="currentColor" />}
+                      {Number(product.price).toLocaleString()} {product.isPointsOnly ? 'N' : '₸'}
+                    </span>
+                  </div>
+                  <p className="text-secondary text-sm mb-6 line-clamp-2">{product.description || t('shop.product.no_desc')}</p>
+                  <div className="mt-auto flex justify-between items-center pt-6 border-t border-slate-50">
+                    <div className="flex items-center gap-2 text-xs font-bold text-muted uppercase">
+                       <Clock size={14} /> {t('shop.product.stock', { count: product.stock })}
+                    </div>
+                    <div className="flex gap-2">
+                       <button onClick={() => startEdit(product)} className="p-2.5 bg-indigo-50 text-primary rounded-xl border-none font-bold text-xs hover:bg-indigo-100 transition-all cursor-pointer">{t('common.edit')}</button>
+                    </div>
+                  </div>
                </div>
             </Card>
           ))}
@@ -305,34 +330,34 @@ export const Shop = () => {
                    </div>
                  </div>
                </div>
-               <div className="p-8 flex-1 flex flex-col">
-                 <h3 className="h4 mb-2">{product.name}</h3>
-                 <p className="text-secondary text-sm mb-8 leading-relaxed line-clamp-3">{product.description || 'Уточните характеристики у администратора вашего филиала.'}</p>
-                 
-                 <div className="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
-                   <div>
-                     <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-1">{product.isPointsOnly ? 'Стоимость в Neks' : 'Стоимость'}</p>
+                <div className="p-8 flex-1 flex flex-col">
+                  <h3 className="h4 mb-2">{product.name}</h3>
+                  <p className="text-secondary text-sm mb-8 leading-relaxed line-clamp-3">{product.description || t('shop.product.browse_desc_placeholder')}</p>
+                  
+                  <div className="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-1">{product.isPointsOnly ? t('shop.product.price_points') : t('shop.product.price_kzt')}</p>
                      <p className={`text-2xl font-black ${product.isPointsOnly ? 'text-amber-500 flex items-center gap-2' : 'text-slate-900'}`} style={{ fontFamily: 'var(--font-family-display)' }}>
                        {product.isPointsOnly && <Zap size={24} fill="currentColor" />}
                        {Number(product.price).toLocaleString()} <span className="text-sm font-bold">{product.isPointsOnly ? 'N' : '₸'}</span>
                      </p>
                    </div>
-                   <button 
-                     onClick={() => handlePlaceOrder(product)}
-                     className="px-8 py-4 bg-primary hover:bg-indigo-600 text-white rounded-2xl font-bold transition-all shadow-xl shadow-indigo-500/20 flex items-center gap-3 transform hover:-translate-y-1 cursor-pointer border-none"
-                   >
-                     Заказать <ShoppingBag size={18} />
-                   </button>
+                    <button 
+                      onClick={() => handlePlaceOrder(product)}
+                      className="px-8 py-4 bg-primary hover:bg-indigo-600 text-white rounded-2xl font-bold transition-all shadow-xl shadow-indigo-500/20 flex items-center gap-3 transform hover:-translate-y-1 cursor-pointer border-none"
+                    >
+                      {t('shop.product.order_btn')} <ShoppingBag size={18} />
+                    </button>
                  </div>
                </div>
             </Card>
           ))}
-          {filteredProducts.length === 0 && (
-            <div className="col-span-full py-20 text-center">
-               <ShoppingBag size={64} className="mx-auto text-slate-200 mb-6" />
-               <h3 className="h4 text-slate-400">Товары не найдены</h3>
-            </div>
-          )}
+           {filteredProducts.length === 0 && (
+             <div className="col-span-full py-20 text-center">
+                <ShoppingBag size={64} className="mx-auto text-slate-200 mb-6" />
+                <h3 className="h4 text-slate-400">{t('shop.no_products')}</h3>
+             </div>
+           )}
         </div>
       )}
 
@@ -342,13 +367,13 @@ export const Shop = () => {
             <Card key={order.id} className="p-8 border-none shadow-xl shadow-slate-100 animate-up">
               <div className="flex flex-col lg:flex-row justify-between gap-8">
                 <div className="flex-1">
-                   <div className="flex items-center gap-4 mb-6">
-                      <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] ${getStatusColor(order.status)}`}>
-                        {order.status === 'pending' ? 'В обработке' : order.status === 'completed' ? 'Завершен' : 'Отменен'}
-                      </div>
-                      <span className="text-xs font-bold text-muted">ID: {order.id}</span>
-                      <span className="text-xs font-bold text-muted">• {new Date(order.createdAt).toLocaleDateString('ru-RU')}</span>
-                   </div>
+                    <div className="flex items-center gap-4 mb-6">
+                       <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] ${getStatusColor(order.status)}`}>
+                         {getStatusLabel(order.status)}
+                       </div>
+                       <span className="text-xs font-bold text-muted">ID: {order.id}</span>
+                       <span className="text-xs font-bold text-muted">• {new Date(order.createdAt).toLocaleDateString(language === 'kk' ? 'kk-KZ' : 'ru-RU')}</span>
+                    </div>
                    <div className="flex items-center gap-6">
                       <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-primary">
                          <Package size={32} />
@@ -368,10 +393,10 @@ export const Shop = () => {
                       <User size={16} className="text-slate-400" />
                       <span className="text-sm font-bold text-slate-700">{order.customerName}</span>
                    </div>
-                   <div className="flex items-center gap-3">
-                      <Phone size={16} className="text-slate-400" />
-                      <span className="text-sm font-bold text-slate-700">{order.customerPhone}</span>
-                   </div>
+                    <div className="flex items-center gap-3">
+                       <Phone size={16} className="text-slate-400" />
+                       <span className="text-sm font-bold text-slate-700">{order.customerPhone || t('common.not_specified')}</span>
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-3 justify-center">
@@ -395,25 +420,25 @@ export const Shop = () => {
               </div>
             </Card>
           ))}
-          {orders.length === 0 && (
-             <div className="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
-                <Clock size={48} className="mx-auto text-slate-200 mb-4" />
-                <p className="text-slate-400 font-bold">Заказов пока нет</p>
-             </div>
-          )}
+           {orders.length === 0 && (
+              <div className="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
+                 <Clock size={48} className="mx-auto text-slate-200 mb-4" />
+                 <p className="text-slate-400 font-bold">{t('shop.orders.empty')}</p>
+              </div>
+           )}
         </div>
       )}
 
       {showConfirm && (
-        <ConfirmModal 
-          isOpen={showConfirm}
-          onClose={() => setShowConfirm(false)}
-          onConfirm={() => { removeProduct(productToDelete.id); setShowConfirm(false); }}
-          title="Удалить товар?"
-          message={`Вы уверены, что хотите навсегда удалить "${productToDelete?.name}" из магазина?`}
-          confirmText="Удалить"
-          variant="danger"
-        />
+         <ConfirmModal 
+           isOpen={showConfirm}
+           onClose={() => setShowConfirm(false)}
+           onConfirm={() => { removeProduct(productToDelete.id); setShowConfirm(false); }}
+           title={t('shop.delete.title')}
+           message={t('shop.delete.confirm', { name: productToDelete?.name })}
+           confirmText={t('shop.delete.btn')}
+           variant="danger"
+         />
       )}
     </div>
   );

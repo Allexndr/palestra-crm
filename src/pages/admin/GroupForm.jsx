@@ -10,6 +10,7 @@ export const GroupForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { groups, addGroup, updateGroup, locations, sports, coaches, selectedLocationId } = useAdmin();
+  const { t } = useTranslation();
 
   const isEditing = !!id;
   const existingGroup = isEditing ? groups.find(g => g.id === id) : null;
@@ -43,14 +44,14 @@ export const GroupForm = () => {
     <div className="animate-fade-in pb-12">
       <div className="admin-page-header admin-page-header--center">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/admin/groups')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors">
+          <button onClick={() => navigate('/admin/groups')} className="p-2 bg-white rounded-full border shadow-sm hover:bg-slate-50 transition-colors cursor-pointer">
             <ArrowLeft size={20} />
           </button>
           <div className="page-title-block page-title-block--row">
             <h1 className="h2">
-              {isEditing ? 'Редактировать группу' : 'Новая группа'}
+              {isEditing ? t('groups.form.edit_title') : t('groups.form.new_title')}
             </h1>
-            <p className="text-secondary">Управление тренировочной группой</p>
+            <p className="text-secondary">{t('groups.form.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -58,35 +59,35 @@ export const GroupForm = () => {
       <Card style={{ padding: 'var(--space-8)' }}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           <div className="admin-form-grid">
-            <Input label="Название группы" placeholder="ММА Старшая" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+            <Input label={t('groups.name_label')} placeholder={t('groups.name_placeholder')} required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
             
             <div className="input-group">
-              <label className="input-label">Дисциплина</label>
+              <label className="input-label">{t('groups.sport_label')}</label>
               <select className="input-field" value={formData.sport} onChange={e => setFormData({...formData, sport: e.target.value})}>
                 {sports.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             
             <div className="input-group">
-              <label className="input-label">Филиал</label>
+              <label className="input-label">{t('groups.location_label')}</label>
               <select className="input-field" value={formData.locationId} onChange={e => setFormData({...formData, locationId: e.target.value})}>
                 {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
               </select>
             </div>
             <div className="input-group">
-              <label className="input-label">Тренер</label>
+              <label className="input-label">{t('groups.coach_label')}</label>
               <select className="input-field" value={formData.coachId || ''} onChange={e => setFormData({...formData, coachId: e.target.value})}>
-                <option value="">Не назначен</option>
+                <option value="">{t('groups.form.no_coach')}</option>
                 {coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
-            <Input label="Вместимость (чел)" type="number" min="1" value={formData.maxCapacity} onChange={e => setFormData({...formData, maxCapacity: e.target.value})} />
+            <Input label={t('groups.capacity_label')} type="number" min="1" value={formData.maxCapacity} onChange={e => setFormData({...formData, maxCapacity: e.target.value})} />
           </div>
           
           <div className="flex justify-end gap-4 border-t pt-6" style={{ borderColor: 'var(--color-border)' }}>
-            <Button variant="ghost" type="button" onClick={() => navigate('/admin/groups')}>Отмена</Button>
+            <Button variant="ghost" type="button" onClick={() => navigate('/admin/groups')}>{t('common.cancel')}</Button>
             <Button variant="primary" type="submit" className="gap-2">
-              <Save size={18} /> {isEditing ? 'Сохранить изменения' : 'Создать группу'}
+              <Save size={18} /> {isEditing ? t('common.save') : t('common.create')}
             </Button>
           </div>
         </form>

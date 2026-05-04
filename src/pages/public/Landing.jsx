@@ -16,123 +16,135 @@ import {
 } from 'lucide-react';
 import { TariffConstructor } from '../../components/landing/TariffConstructor';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
+import { FloatingContact } from '../../components/ui/FloatingContact';
 
-const OPERATIONS = [
-  { label: 'Активных учеников', value: '128' },
-  { label: 'Групп сегодня', value: '14' },
-  { label: 'Оплаты за месяц', value: '3.2M ₸' },
+const getOperations = (t) => [
+  { label: t('landing.mock.active_members'), value: '128' },
+  { label: t('landing.mock.groups_today'), value: '14' },
+  { label: t('landing.mock.monthly_payments'), value: '3.2M ₸' },
 ];
 
-const FEATURES = [
+const getFeatures = (t) => [
   {
     id: 'crm',
     icon: UsersRound,
-    title: 'CRM клуба',
-    text: 'Лиды попадают в базу напрямую с сайта и соцсетей. Менеджер видит всю историю общения и не забывает перезвонить.',
+    title: t('landing.features.crm_title'),
+    text: t('landing.features.crm_text'),
   },
   {
     id: 'schedule',
     icon: CalendarDays,
-    title: 'Умное расписание',
-    text: 'Контроль загрузки залов и тренеров. Автоматические уведомления о переносах и отменах для всей группы.',
+    title: t('landing.features.schedule_title'),
+    text: t('landing.features.schedule_text'),
   },
   {
     id: 'payments',
     icon: CreditCard,
-    title: 'Прозрачные оплаты',
-    text: 'Автоматический учет абонементов, расчет зарплат тренеров и аналитика выручки в реальном времени.',
+    title: t('landing.features.payments_title'),
+    text: t('landing.features.payments_text'),
   },
   {
     id: 'league',
     icon: Trophy,
-    title: 'Лига и прогресс',
-    text: 'Личный кабинет ученика с рейтингами и достижениями превращает тренировки в игру, повышая LTV клуба.',
+    title: t('landing.features.league_title'),
+    text: t('landing.features.league_text'),
   },
 ];
 
-const ROLE_CARDS = [
+const getRoleCards = (t) => [
   {
-    title: 'Владелец',
-    text: 'Видит чистую прибыль, эффективность маркетинга и работу всей сети филиалов без звонков администраторам.',
+    title: t('landing.roles.owner_title'),
+    text: t('landing.roles.owner_text'),
   },
   {
-    title: 'Администратор',
-    text: 'Тратит на 50% меньше времени на рутину: быстрая запись, отметка посещаемости в один клик и учет оплат.',
+    title: t('landing.roles.admin_title'),
+    text: t('landing.roles.admin_text'),
   },
   {
-    title: 'Тренер',
-    text: 'Видит состав группы на телефоне, отмечает опоздавших и следит за прогрессом учеников для повышения мотивации.',
+    title: t('landing.roles.coach_title'),
+    text: t('landing.roles.coach_text'),
   },
   {
-    title: 'Родитель',
-    text: 'Контролирует оплату абонемента и видит успехи ребенка через приложение — клуб становится прозрачным и современным.',
+    title: t('landing.roles.parent_title'),
+    text: t('landing.roles.parent_text'),
   },
 ];
 
-const TRUST_ITEMS = [
+const getTrustItems = (t) => [
   {
     icon: LockKeyhole,
-    title: 'Роли и доступы',
-    text: 'Владелец, администратор, тренер, родитель и ученик видят только свой рабочий контур.',
+    title: t('landing.security.roles_title'),
+    text: t('landing.security.roles_text'),
   },
   {
     icon: Database,
-    title: 'Данные клуба',
-    text: 'Клиентская база, посещения и финансовые события отделены от публичной части продукта.',
+    title: t('landing.security.data_title'),
+    text: t('landing.security.data_text'),
   },
   {
     icon: UserCheck,
-    title: 'Семейные сценарии',
-    text: 'Для несовершеннолетних акцент на родительский кабинет и контролируемую коммуникацию.',
+    title: t('landing.security.family_title'),
+    text: t('landing.security.family_text'),
   },
 ];
 
-const IMPLEMENTATION_STEPS = [
-  'Заводите клуб, филиалы и направления',
-  'Переносите учеников, группы и тренеров',
-  'Публикуете расписание и открываете кабинеты',
-  'Контролируете оплаты, посещаемость и прогресс',
+const getImplementationSteps = (t) => [
+  t('landing.implementation.step1'),
+  t('landing.implementation.step2'),
+  t('landing.implementation.step3'),
+  t('landing.implementation.step4'),
 ];
 
-const FAQ_ITEMS = [
+const getFaqItems = (t) => [
   {
-    q: 'Palestra заменяет CRM или дополняет её?',
-    a: 'Для небольшого и среднего клуба Palestra закрывает базовую CRM: ученики, группы, расписание, оплаты и личные кабинеты.',
+    q: t('landing.faq.q1'),
+    a: t('landing.faq.a1'),
   },
   {
-    q: 'Подходит ли для сети филиалов?',
-    a: 'Да. В продукте заложены филиалы, группы, тренеры и общий контроль владельца по всей структуре клуба.',
+    q: t('landing.faq.q2'),
+    a: t('landing.faq.a2'),
   },
   {
-    q: 'Что получает родитель?',
-    a: 'Родитель видит расписание, посещения, прогресс ребёнка и ключевые события клуба без лишних переписок.',
+    q: t('landing.faq.q3'),
+    a: t('landing.faq.a3'),
   },
   {
-    q: 'Можно начать без долгого внедрения?',
-    a: 'Да. Базовый сценарий рассчитан на быстрый запуск: структура клуба, база учеников, расписание и доступы.',
+    q: t('landing.faq.q4'),
+    a: t('landing.faq.a4'),
   },
 ];
 
-const FOOTER_LINKS = [
-  { label: 'Возможности', href: '#features' },
-  { label: 'Роли', href: '#roles' },
-  { label: 'Безопасность', href: '#security' },
-  { label: 'Запуск', href: '#implementation' },
-  { label: 'Тариф', href: '#pricing' },
-  { label: 'FAQ', href: '#faq' },
+const getFooterLinks = (t) => [
+  { label: t('nav.features'), href: '#features' },
+  { label: t('nav.roles'), href: '#roles' },
+  { label: t('nav.security'), href: '#security' },
+  { label: t('nav.launch'), href: '#implementation' },
+  { label: t('nav.pricing'), href: '#pricing' },
+  { label: t('nav.faq'), href: '#faq' },
 ];
 
-const FOOTER_PRODUCT_ITEMS = [
-  { label: 'CRM клуба', href: '#crm' },
-  { label: 'Расписание', href: '#schedule' },
-  { label: 'Оплаты', href: '#payments' },
-  { label: 'Личный кабинет', href: '#roles' },
-  { label: 'Лига и прогресс', href: '#league' }
+const getFooterProductItems = (t) => [
+  { label: t('landing.footer.crm'), href: '#crm' },
+  { label: t('landing.footer.schedule'), href: '#schedule' },
+  { label: t('landing.footer.payments'), href: '#payments' },
+  { label: t('landing.footer.account'), href: '#roles' },
+  { label: t('landing.footer.league'), href: '#league' }
 ];
 
 export const Landing = () => {
-  const { partners } = useAdmin();
+  const { partners = [] } = useAdmin() || {};
+  const { t } = useTranslation();
   const heroCardRef = useRef(null);
+
+  const OPERATIONS = getOperations(t);
+  const FEATURES = getFeatures(t);
+  const ROLE_CARDS = getRoleCards(t);
+  const TRUST_ITEMS = getTrustItems(t);
+  const IMPLEMENTATION_STEPS = getImplementationSteps(t);
+  const FAQ_ITEMS = getFaqItems(t);
+  const FOOTER_LINKS = getFooterLinks(t);
+  const FOOTER_PRODUCT_ITEMS = getFooterProductItems(t);
 
   const handleHeroCardMove = (event) => {
     const card = heroCardRef.current;
@@ -178,15 +190,15 @@ export const Landing = () => {
             
             <div className="animate-up">
               <h1 className="h1 mb-6" style={{ textTransform: 'uppercase', lineHeight: '1.05' }}>
-                Перестаньте <br />
-                <span style={{ color: 'var(--color-primary)' }}>терять лидов <br/>и время</span>
+                {t('landing.hero.title_part1')} <br />
+                <span style={{ color: 'var(--color-primary)' }}>{t('landing.hero.title_part2')}</span>
               </h1>
               
               <p className="text-body-lg mb-8" style={{ maxWidth: '480px' }}>
-                Внедрите CRM Palestra за 1 день. Каждый ученик под контролем, каждая оплата в базе, а родители видят прогресс без лишних переписок.
+                {t('landing.hero.subtitle')}
               </p>
               <div className="landing-hero-points" aria-label="Ключевые преимущества">
-                {['Без Excel и WhatsApp', 'Бесплатный старт', 'Контур для родителей', 'Лига и достижения'].map((item) => (
+                {[t('landing.hero.check1'), t('landing.hero.check2'), t('landing.hero.check3'), t('landing.hero.check4')].map((item) => (
                   <span key={item}>
                     <CheckCircle2 size={16} aria-hidden />
                     {item}
@@ -197,11 +209,11 @@ export const Landing = () => {
               <div className="flex gap-4 responsive-row">
                 <Link to="/auth/register" style={{ width: '100%' }}>
                   <Button variant="primary" size="lg" className="gap-2 text-lg w-full">
-                    Подключить бесплатно <ArrowRight size={24} />
+                    {t('landing.hero.cta_free')} <ArrowRight size={24} />
                   </Button>
                 </Link>
                 <a href="#features" style={{ textDecoration: 'none', width: '100%' }}>
-                  <Button variant="secondary" size="lg" className="text-lg w-full">Возможности</Button>
+                  <Button variant="secondary" size="lg" className="text-lg w-full">{t('landing.hero.cta_features')}</Button>
                 </a>
               </div>
             </div>
@@ -222,7 +234,7 @@ export const Landing = () => {
               >
                 <div className="flex justify-between items-start mb-8">
                   <div>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800 }}>Кейс партнера за месяц</p>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800 }}>{t('landing.mock.partner_case')}</p>
                     <h3 style={{ color: '#fff', fontFamily: 'var(--font-family-display)', fontSize: 28, fontWeight: 900, lineHeight: 1.1, margin: 0 }}>Palestra Almaty</h3>
                   </div>
                   <ShieldCheck size={30} color="var(--color-success)" aria-hidden />
@@ -242,7 +254,7 @@ export const Landing = () => {
                     <span style={{ color: '#fff', fontWeight: 800, fontSize: '0.875rem' }}>18:00</span>
                     <div style={{ minWidth: 0 }}>
                       <p style={{ color: '#fff', fontWeight: 800, margin: 0, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>MMA Junior</p>
-                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Зал 2 · тренер А. Карелин</p>
+                      <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.75rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t('landing.mock.gym_1')}</p>
                     </div>
                     <span style={{ color: 'var(--color-success)', fontWeight: 900, fontSize: '0.875rem' }}>24/28</span>
                   </div>
@@ -268,9 +280,9 @@ export const Landing = () => {
               style={{ gap: 'var(--space-8)', textAlign: 'center' }}
             >
               {[
-                { k: '-30% потерь', v: 'лидов в первый месяц' },
-                { k: '15 часов / мес', v: 'экономии на рутине' },
-                { k: 'x2 LTV', v: 'удержание через геймификацию' },
+                { k: t('landing.stats.leads_loss'), v: t('landing.stats.leads_loss_desc') },
+                { k: t('landing.stats.time_saved'), v: t('landing.stats.time_saved_desc') },
+                { k: t('landing.stats.ltv_boost'), v: t('landing.stats.ltv_boost_desc') },
               ].map((item) => (
                 <div key={item.k} className="flex flex-col gap-1" style={{ minWidth: 'min(200px, 100%)' }}>
                   <span className="text-caption text-primary font-bold" style={{ letterSpacing: '0.12em' }}>{item.k}</span>
@@ -285,8 +297,8 @@ export const Landing = () => {
         <section className="landing-section" style={{ padding: '100px 0', backgroundColor: '#f8fafc' }}>
           <div className="container">
             <div className="landing-section-head">
-              <span className="landing-eyebrow">Почему клубы теряют деньги?</span>
-              <h2 className="h2" style={{ textTransform: 'uppercase' }}>Хаос — главный враг маржи</h2>
+              <span className="landing-eyebrow">{t('landing.problem.eyebrow')}</span>
+              <h2 className="h2" style={{ textTransform: 'uppercase' }}>{t('landing.problem.title')}</h2>
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-8)' }}>
@@ -294,24 +306,24 @@ export const Landing = () => {
                 <div style={{ color: 'var(--color-danger)', marginBottom: 16 }}>
                   <UsersRound size={32} />
                 </div>
-                <h3 className="h4 mb-4">Лиды уходят из-за молчания</h3>
-                <p className="text-body">Пока администратор ищет прайс в WhatsApp или вспоминает расписание, клиент уходит к конкуренту, который ответил за 5 минут.</p>
+                <h3 className="h4 mb-4">{t('landing.problem.card1_title')}</h3>
+                <p className="text-body">{t('landing.problem.card1_text')}</p>
               </div>
               
               <div className="card shadow-none" style={{ border: 'none', backgroundColor: 'transparent', padding: 0 }}>
                 <div style={{ color: 'var(--color-danger)', marginBottom: 16 }}>
                   <CreditCard size={32} />
                 </div>
-                <h3 className="h4 mb-4">ФОТ съедает прибыль</h3>
-                <p className="text-body">Ошибки в расчете зарплат тренеров, неучтенные персоналки и «бесплатные» гости воруют до 20% реальной выручки владельца.</p>
+                <h3 className="h4 mb-4">{t('landing.problem.card2_title')}</h3>
+                <p className="text-body">{t('landing.problem.card2_text')}</p>
               </div>
 
               <div className="card shadow-none" style={{ border: 'none', backgroundColor: 'transparent', padding: 0 }}>
                 <div style={{ color: 'var(--color-danger)', marginBottom: 16 }}>
                   <CalendarDays size={32} />
                 </div>
-                <h3 className="h4 mb-4">Команда тонет в рутине</h3>
-                <p className="text-body">Вместо продаж и работы с залом, администраторы часами сверяют таблицы, отмечают посещаемость и оправдываются перед родителями.</p>
+                <h3 className="h4 mb-4">{t('landing.problem.card3_title')}</h3>
+                <p className="text-body">{t('landing.problem.card3_text')}</p>
               </div>
             </div>
           </div>
@@ -348,8 +360,8 @@ export const Landing = () => {
         <section id="features" className="landing-section" aria-labelledby="features-heading">
           <div className="container">
             <div className="landing-section-head">
-              <h2 id="features-heading" className="h2" style={{ textTransform: 'uppercase' }}>Операционный контур клуба</h2>
-              <p className="text-body-lg">Не набор красивых экранов, а рабочие сценарии владельца, администратора, тренера и семьи ученика.</p>
+              <h2 id="features-heading" className="h2" style={{ textTransform: 'uppercase' }}>{t('landing.features.title')}</h2>
+              <p className="text-body-lg">{t('landing.features.subtitle')}</p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--space-6)' }}>
@@ -370,10 +382,10 @@ export const Landing = () => {
           <div className="container">
             <div className="landing-split">
               <div>
-                <span className="landing-eyebrow">Для всей команды</span>
-                <h2 id="roles-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>Каждая роль понимает, что делать</h2>
+                <span className="landing-eyebrow">{t('landing.roles.eyebrow')}</span>
+                <h2 id="roles-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>{t('landing.roles.title')}</h2>
                 <p className="text-body-lg">
-                  Каждый видит свой рабочий контур. Владелец управляет сетью, администратор ведёт базу, тренер видит расписание, а ученик — свой прогресс.
+                  {t('landing.roles.subtitle')}
                 </p>
               </div>
 
@@ -407,10 +419,10 @@ export const Landing = () => {
               </div>
 
               <div>
-                <span className="landing-eyebrow">Доверие</span>
-                <h2 id="security-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>Безопасность не отдельным чеклистом, а частью продукта</h2>
+                <span className="landing-eyebrow">{t('landing.security.eyebrow')}</span>
+                <h2 id="security-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>{t('landing.security.title')}</h2>
                 <p className="text-body-lg">
-                  Для CRM клуба важны не громкие обещания, а базовая дисциплина: роли, приватность семейных данных, аккуратная работа с доступами и понятная зона ответственности.
+                  {t('landing.security.subtitle')}
                 </p>
               </div>
             </div>
@@ -421,10 +433,10 @@ export const Landing = () => {
           <div className="container">
             <div className="landing-split">
               <div>
-                <span className="landing-eyebrow landing-eyebrow--dark">Запуск</span>
-                <h2 id="implementation-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>Переход без остановки клуба</h2>
+                <span className="landing-eyebrow landing-eyebrow--dark">{t('landing.implementation.eyebrow')}</span>
+                <h2 id="implementation-heading" className="h2 mb-4" style={{ textTransform: 'uppercase' }}>{t('landing.implementation.title')}</h2>
                 <p className="text-body-lg">
-                  Базовый запуск можно пройти быстро: сначала порядок, потом расширение. Внедрение разбито на понятные шаги.
+                  {t('landing.implementation.subtitle')}
                 </p>
               </div>
 
@@ -449,8 +461,8 @@ export const Landing = () => {
         <section id="faq" className="landing-section landing-section--surface" aria-labelledby="faq-heading">
           <div className="container">
             <div className="landing-section-head">
-              <span className="landing-eyebrow" style={{ display: 'block', marginBottom: 'var(--space-3)' }}>Вопросы перед стартом</span>
-              <h2 id="faq-heading" className="h2" style={{ textTransform: 'uppercase' }}>Что важно понять до запуска</h2>
+              <span className="landing-eyebrow" style={{ display: 'block', marginBottom: 'var(--space-3)' }}>{t('landing.faq.eyebrow')}</span>
+              <h2 id="faq-heading" className="h2" style={{ textTransform: 'uppercase' }}>{t('landing.faq.title')}</h2>
             </div>
 
             <div className="landing-faq-grid">
@@ -466,12 +478,12 @@ export const Landing = () => {
 
         <section className="landing-cta" aria-label="Регистрация">
           <div className="container">
-            <h2 className="landing-cta__title">Соберите клуб в одну систему</h2>
+            <h2 className="landing-cta__title">{t('landing.cta.title')}</h2>
             <p className="landing-cta__lead">
-              Начните бесплатно: 1 филиал, 15 учеников и 3 тренера. Дальше подключайте Growth и платите только за масштаб клуба.
+              {t('landing.cta.subtitle')}
             </p>
             <Link to="/auth/register">
-              <Button variant="primary" size="lg" className="text-xl" style={{ fontWeight: 800 }}>Подключить бесплатно</Button>
+              <Button variant="primary" size="lg" className="text-xl" style={{ fontWeight: 800 }}>{t('landing.hero.cta_free')}</Button>
             </Link>
           </div>
         </section>
@@ -482,31 +494,31 @@ export const Landing = () => {
           <div className="landing-footer__grid">
             <section className="landing-footer__brand" aria-label="О продукте Palestra">
               <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную" style={{ display: 'block', marginBottom: '24px' }}>
-                <img src="/palestra-logo-nav-full.png" alt="Palestra Logo" style={{ height: '83px', width: 'auto', objectFit: 'contain' }} decoding="async" />
+                <img src="/assets/logo-white.png" alt="Palestra Logo" style={{ height: '48px', width: 'auto', objectFit: 'contain' }} decoding="async" />
               </Link>
               <p>
-                CRM-платформа для клубов единоборств: ученики, группы, расписание, оплаты и прогресс в одной системе.
+                {t('landing.footer.cta_text')}
               </p>
             </section>
 
             <nav className="landing-footer__nav" aria-label="Навигация в футере">
-              <h2>Разделы</h2>
+              <h2>{t('landing.footer.nav_title')}</h2>
               {FOOTER_LINKS.map((link) => (
                 <a key={link.href} href={link.href}>{link.label}</a>
               ))}
             </nav>
 
             <section className="landing-footer__nav" aria-label="Что входит в Palestra">
-              <h2>Продукт</h2>
+              <h2>{t('landing.footer.product_title')}</h2>
               {FOOTER_PRODUCT_ITEMS.map((item) => (
                 <a key={item.label} href={item.href}>{item.label}</a>
               ))}
             </section>
 
             <section className="landing-footer__cta" aria-label="Начать работу">
-              <h2>Готовы собрать клуб в систему?</h2>
-              <p>Подключите Starter бесплатно, а Growth включите, когда клубу станет тесно.</p>
-              <Link to="/auth/register">Подключить бесплатно</Link>
+              <h2>{t('landing.footer.cta_title')}</h2>
+              <p>{t('landing.footer.cta_text')}</p>
+              <Link to="/auth/register">{t('landing.hero.cta_free')}</Link>
             </section>
           </div>
 
@@ -518,6 +530,7 @@ export const Landing = () => {
           </div>
         </div>
       </footer>
+      <FloatingContact />
     </div>
   );
 };

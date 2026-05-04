@@ -3,17 +3,20 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Plus, Trash2, ArrowRight, CheckCircle2, Phone, MessageSquare } from 'lucide-react';
 
-const COLUMNS = [
-  { id: 'new', title: 'Новые', color: 'var(--color-primary)', bg: 'var(--color-primary-soft)' },
-  { id: 'trial', title: 'Пробная', color: 'var(--color-warning)', bg: '#fef3c7' },
-  { id: 'contract', title: 'Договор', color: 'var(--color-accent)', bg: '#ffedd5' },
-  { id: 'won', title: 'Ученик', color: 'var(--color-success)', bg: '#dcfce7' }
+const getColumns = (t) => [
+  { id: 'new', title: t('leads.columns.new'), color: 'var(--color-primary)', bg: 'var(--color-primary-soft)' },
+  { id: 'trial', title: t('leads.columns.trial'), color: 'var(--color-warning)', bg: '#fef3c7' },
+  { id: 'contract', title: t('leads.columns.contract'), color: 'var(--color-accent)', bg: '#ffedd5' },
+  { id: 'won', title: t('leads.columns.won'), color: 'var(--color-success)', bg: '#dcfce7' }
 ];
 
 export const Leads = () => {
   const { leads, addLead, updateLeadStatus, removeLead, convertLeadToMember, selectedLocationId, locations, sports } = useAdmin();
+  const { t } = useTranslation();
+  const COLUMNS = getColumns(t);
   const [isAdding, setIsAdding] = useState(false);
   
   // Filter leads by location
@@ -22,7 +25,7 @@ export const Leads = () => {
   const [newLead, setNewLead] = useState({ 
     name: '', 
     phone: '', 
-    sport: sports[0] || 'Бокс',
+    sport: sports[0] || '',
     locationId: (selectedLocationId && selectedLocationId !== 'all') ? selectedLocationId : ((locations && locations.length > 0) ? locations[0].id : '1')
   });
 
@@ -38,7 +41,7 @@ export const Leads = () => {
     setNewLead({ 
       name: '', 
       phone: '', 
-      sport: sports[0] || 'Бокс',
+      sport: sports[0] || '',
       locationId: selectedLocationId === 'all' ? (locations[0]?.id || '1') : selectedLocationId
     });
     setIsAdding(false);
@@ -49,7 +52,7 @@ export const Leads = () => {
     if (nextIdx < COLUMNS.length) {
       const nextColId = COLUMNS[nextIdx].id;
       if (nextColId === 'won') {
-        if (window.confirm(`Превратить лида "${lead.name}" в ученика?`)) {
+        if (window.confirm(t('leads.actions.convert_confirm', { name: lead.name }))) {
           convertLeadToMember(lead.id);
         }
       } else {
@@ -62,33 +65,33 @@ export const Leads = () => {
     <div className="animate-fade-in">
       <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h2">Воронка лидов</h1>
-          <p className="text-secondary text-lg">Управление новыми заявками и конверсией в учеников</p>
+          <h1 className="h2">{t('leads.title')}</h1>
+          <p className="text-secondary text-lg">{t('leads.subtitle')}</p>
         </div>
         <Button variant="primary" onClick={() => setIsAdding(!isAdding)} style={{ gap: '8px' }}>
-          {isAdding ? 'Отмена' : <><Plus size={18} /> Новая заявка</>}
+          {isAdding ? t('common.cancel') : <><Plus size={18} /> {t('leads.add_btn')}</>}
         </Button>
       </div>
 
       {isAdding && (
         <Card className="admin-section-card animate-up" style={{ border: '1px solid var(--color-primary)' }}>
-          <h4 className="h4 mb-8">Новый лид</h4>
+          <h4 className="h4 mb-8">{t('leads.form.title')}</h4>
           <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-6 items-end">
             <div style={{ flex: 2, width: '100%' }}>
-              <Input label="Имя клиента" placeholder="Иван Иванов" required value={newLead.name} onChange={e => handleInputChange('name', e.target.value)} />
+              <Input label={t('leads.form.name')} placeholder={t('leads.form.name_placeholder')} required value={newLead.name} onChange={e => handleInputChange('name', e.target.value)} />
             </div>
             <div style={{ flex: 1, width: '100%' }}>
-              <Input label="Телефон" type="tel" placeholder="7 777 000 00 00" required value={newLead.phone} onChange={e => handleInputChange('phone', e.target.value)} />
+              <Input label={t('leads.form.phone')} type="tel" placeholder={t('common.phone_placeholder')} required value={newLead.phone} onChange={e => handleInputChange('phone', e.target.value)} />
             </div>
             <div style={{ flex: 1, width: '100%' }} className="input-group">
-              <label className="input-label">Спорт</label>
+              <label className="input-label">{t('leads.form.sport')}</label>
               <select className="input-field" value={newLead.sport} onChange={e => setNewLead({...newLead, sport: e.target.value})}>
                 {sports.map(sport => (
                   <option key={sport} value={sport}>{sport}</option>
                 ))}
               </select>
             </div>
-            <Button variant="primary" type="submit" style={{ height: '48px', minWidth: '140px' }}>Создать лид</Button>
+            <Button variant="primary" type="submit" style={{ height: '48px', minWidth: '140px' }}>{t('leads.form.create_btn')}</Button>
           </form>
         </Card>
       )}
@@ -131,11 +134,11 @@ export const Leads = () => {
                       
                       {col.id !== 'won' ? (
                         <button onClick={() => handleMove(lead, col.id)} className="flex items-center gap-1.5 text-xs font-bold text-primary hover:gap-2 transition-all">
-                          {col.id === 'contract' ? 'В ученики' : 'Далее'} <ArrowRight size={14} />
+                          {col.id === 'contract' ? t('leads.actions.to_member') : t('leads.actions.next')} <ArrowRight size={14} />
                         </button>
                       ) : (
                         <div className="text-success flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider">
-                          <CheckCircle2 size={14} /> Сделка закрыта
+                          <CheckCircle2 size={14} /> {t('leads.actions.closed')}
                         </div>
                       )}
                     </div>
@@ -144,7 +147,7 @@ export const Leads = () => {
                 
                 {filteredLeads.filter(l => l.status === col.id).length === 0 && (
                   <div style={{ border: '2px dashed #E2E8F0', borderRadius: '24px', padding: '40px 20px', textAlign: 'center', opacity: 0.5 }}>
-                    <p className="text-[10px] text-muted font-bold uppercase tracking-widest">Нет карточек</p>
+                    <p className="text-[10px] text-muted font-bold uppercase tracking-widest">{t('leads.actions.empty')}</p>
                   </div>
                 )}
               </div>

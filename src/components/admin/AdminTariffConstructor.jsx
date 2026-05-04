@@ -1,16 +1,17 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { CheckCircle2, SlidersHorizontal, Zap } from 'lucide-react';
-import { Button } from '../ui/Button';
 import { FEATURE_OPTIONS, PAID_BASE_PRICE, RESOURCE_OPTIONS, DEFAULT_SUBSCRIPTION, calculateTariff, formatLimit } from '../../lib/tariff';
+import { useTranslation } from '../../context/LanguageContext';
 
-const FEATURE_NAMES = {
-  crm: 'CRM клуба',
-  schedule: 'Расписание',
-  parentCabinet: 'Кабинет родителей',
-  feed: 'Лента клуба',
-};
+const getFeatureNames = (t) => ({
+  crm: t('settings.tabs.club_profile'),
+  schedule: t('sidebar.schedule'),
+  parentCabinet: t('settings.tabs.student_widgets'),
+  feed: t('sidebar.feed'),
+});
 
 const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
+  const { t } = useTranslation();
   const [localValue, setLocalValue] = useState(selected.toString());
   const isBillable = selected > option.paidIncluded;
   const extraCount = Math.max(0, selected - option.paidIncluded);
@@ -43,7 +44,7 @@ const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
         <div className="tariff-res-card__info">
           <h5 className="tariff-res-card__label">{option.label}</h5>
           <p className="tariff-res-card__usage">
-            {usage || 0} / {formatLimit(selected)} <span className="opacity-40">занято</span>
+            {usage || 0} / {formatLimit(selected)} <span className="opacity-40">{t('settings.tariff.used')}</span>
           </p>
         </div>
         <div className="tariff-res-card__input-wrap">
@@ -71,9 +72,9 @@ const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
       </div>
 
         <div className="flex flex-col">
-          <span className="tariff-res-card__price-label">Стоимость</span>
+          <span className="tariff-res-card__price-label">{t('shop.product.price_kzt')}</span>
           <strong className={`tariff-res-card__price-val ${isBillable ? 'text-primary' : 'text-emerald-600'}`}>
-            {isBillable ? `+ ${extraCost.toLocaleString('ru-RU')} ₸` : (selected <= option.included ? 'Бесплатно (Starter)' : 'Включено в базу')}
+            {isBillable ? `+ ${extraCost.toLocaleString()} ₸` : (selected <= option.included ? `${t('common.free')} (Starter)` : t('settings.tariff.growth'))}
           </strong>
         </div>
         <div className="tariff-res-card__badge">
@@ -85,12 +86,10 @@ const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
 };
 
 export const AdminTariffConstructor = ({
-  subscription,
-  usage,
-  getLimitStatus,
   updateSubscription,
   clubInfo
 }) => {
+  const { t } = useTranslation();
   const [draft, setDraft] = useState(subscription);
   const [isSaved, setIsSaved] = useState(false);
   const calculated = useMemo(() => calculateTariff(draft), [draft]);
@@ -121,14 +120,14 @@ export const AdminTariffConstructor = ({
     const items = [];
     if (calculated.plan === 'starter') return [];
     
-    items.push({ label: 'База Масштабирование', price: PAID_BASE_PRICE });
+    items.push({ label: t('settings.tariff.base_price_label'), price: PAID_BASE_PRICE });
     
     RESOURCE_OPTIONS.forEach(opt => {
       const selected = Number(draft.limits?.[opt.key] || opt.included);
       const extra = Math.max(0, selected - opt.paidIncluded);
       if (extra > 0) {
         items.push({ 
-          label: `Доп. ${opt.label.toLowerCase()} (+${extra})`, 
+          label: t('settings.tariff.extra_resource_label', { label: opt.label.toLowerCase(), count: extra }), 
           price: extra * opt.unitPrice 
         });
       }
@@ -162,7 +161,7 @@ export const AdminTariffConstructor = ({
   };
 
   const resetToStarter = () => {
-    if (window.confirm('Сбросить конфигурацию до базового Starter? Все дополнительные ресурсы будут отключены, а цена станет 0 ₸.')) {
+    if (window.confirm(t('settings.tariff.reset_confirm'))) {
       setDraft(DEFAULT_SUBSCRIPTION);
       updateSubscription(DEFAULT_SUBSCRIPTION);
     }
@@ -173,14 +172,13 @@ export const AdminTariffConstructor = ({
       {subscription.plan === 'starter' && (
         <section className="admin-tariff__hero">
           <div className="flex-1">
-            <span className="admin-tariff__eyebrow">Ваш текущий тариф</span>
+            <span className="admin-tariff__eyebrow">{t('settings.tariff.current_plan')}</span>
             <h2 className="text-4xl font-black mb-4">Starter</h2>
             <p className="text-white/60 text-lg leading-relaxed max-w-xl">
-              Базовый функционал для старта: 1 филиал, 15 учеников и 3 тренера. 
-              Это абсолютно бесплатно. Оплата начинается только при превышении этих лимитов или подключении модулей масштабирования.
+              {t('settings.tariff.starter_desc')}
             </p>
             <div className="admin-tariff__included">
-              {Object.entries(FEATURE_NAMES).map(([key, label]) => (
+              {Object.entries(getFeatureNames(t)).map(([key, label]) => (
                 <span key={key} className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full text-[11px] font-black uppercase tracking-wider">
                   <CheckCircle2 size={14} className="text-white" /> {label}
                 </span>
@@ -188,12 +186,12 @@ export const AdminTariffConstructor = ({
             </div>
           </div>
           <div className="admin-tariff__price-card bg-white/5 border border-white/10 backdrop-blur-xl">
-            <span className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3">Статус</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-3">{t('sidebar.status')}</span>
             <div className="flex items-baseline gap-2 mb-2">
               <strong className="text-5xl font-black">0</strong>
-              <span className="text-xl font-black opacity-40">₸/мес</span>
+              <span className="text-xl font-black opacity-40">₸/{t('payroll.per_month')}</span>
             </div>
-            <p className="text-white/40 font-bold text-xs uppercase tracking-widest">Бесплатно навсегда</p>
+            <p className="text-white/40 font-bold text-xs uppercase tracking-widest">{t('settings.tariff.forever_free')}</p>
           </div>
         </section>
       )}
@@ -205,8 +203,8 @@ export const AdminTariffConstructor = ({
               <SlidersHorizontal size={20} />
             </div>
             <div>
-              <h3 className="text-2xl font-black m-0">Масштабирование системы</h3>
-              <p className="text-muted text-sm font-medium mt-1">Настройте ресурсы под размер вашего клуба</p>
+              <h3 className="text-2xl font-black m-0">{t('settings.tariff.scaling_title')}</h3>
+              <p className="text-muted text-sm font-medium mt-1">{t('settings.tariff.scaling_subtitle')}</p>
             </div>
           </div>
         </div>
@@ -215,7 +213,7 @@ export const AdminTariffConstructor = ({
             onClick={resetToStarter}
             className="px-6 py-3 border border-slate-200 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all"
           >
-            Сбросить до Starter
+            {t('settings.tariff.reset_to_starter')}
           </button>
         )}
       </div>
@@ -241,8 +239,8 @@ export const AdminTariffConstructor = ({
             <Zap size={22} />
           </div>
           <div>
-            <h4 style={{ fontSize: '1.25rem', fontWeight: 900 }}>Модули роста</h4>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Подключайте дополнительные инструменты по мере необходимости</p>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 900 }}>{t('settings.tariff.growth_modules')}</h4>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>{t('settings.tariff.growth_modules_desc')}</p>
           </div>
         </div>
         <div className="admin-tariff__features">
@@ -255,7 +253,7 @@ export const AdminTariffConstructor = ({
                 className={`admin-tariff__feature ${enabled ? 'is-selected' : ''}`}
                 onClick={() => toggleFeature(feature.key)}
               >
-                <span>{enabled ? '✓ Подключено' : `+ ${feature.price.toLocaleString('ru-RU')} ₸`}</span>
+                <span>{enabled ? `✓ ${t('settings.tariff.connected')}` : `+ ${feature.price.toLocaleString()} ₸`}</span>
                 <strong>{feature.label}</strong>
                 <small>{feature.desc}</small>
               </button>
@@ -267,24 +265,24 @@ export const AdminTariffConstructor = ({
       <section className="admin-tariff__summary" style={{ minHeight: '400px', padding: '60px', alignItems: 'flex-start' }}>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h4 className="m-0 text-white">{calculated.plan === 'starter' ? 'Тариф: Starter (0 ₸)' : 'Тариф: Масштабирование'}</h4>
+            <h4 className="m-0 text-white">{calculated.plan === 'starter' ? `${t('settings.tariff.current_plan')}: Starter (0 ₸)` : t('settings.tariff.tariff_scaling')}</h4>
             {calculated.plan !== 'starter' && (
-              <span className="text-[10px] font-black bg-white/10 text-white/60 px-2 py-0.5 rounded-md uppercase tracking-wider">Настраиваемый</span>
+              <span className="text-[10px] font-black bg-white/10 text-white/60 px-2 py-0.5 rounded-md uppercase tracking-wider">{t('settings.tariff.customizable')}</span>
             )}
           </div>
           
           <div className="admin-tariff__billing">
             <button type="button" className={draft.billingPeriod !== 'yearly' ? 'is-active' : ''} onClick={() => setBillingPeriod('monthly')}>
-              Месяц
+              {t('settings.tariff.month')}
             </button>
             <button type="button" className={draft.billingPeriod === 'yearly' ? 'is-active' : ''} onClick={() => setBillingPeriod('yearly')}>
-              Год -15%
+              {t('settings.tariff.year_discount')}
             </button>
           </div>
           
           {breakdown.length > 0 && (
             <div className="mt-10 pt-8 border-t border-white/10">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-6">Состав вашего плана:</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-6">{t('settings.tariff.plan_structure')}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-4">
                 {breakdown.map((item, i) => (
                   <div key={i} className="flex items-center justify-between group">
@@ -299,21 +297,21 @@ export const AdminTariffConstructor = ({
             </div>
           )}
           
-          {yearlySaving > 0 && <p className="text-emerald-400 text-sm font-bold mt-4">Экономия {yearlySaving.toLocaleString('ru-RU')} ₸/мес при оплате за год</p>}
+          {yearlySaving > 0 && <p className="text-emerald-400 text-sm font-bold mt-4">{t('settings.tariff.yearly_saving', { amount: yearlySaving.toLocaleString() })}</p>}
         </div>
 
         <div className="flex flex-col items-end gap-6">
           <div className="admin-tariff__total">
             <div className="flex flex-col items-end">
-              <span className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Следующий платеж</span>
-              <strong>{calculated.price.toLocaleString('ru-RU')} ₸</strong>
-              <span>/ месяц</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">{t('settings.tariff.next_payment')}</span>
+              <strong>{calculated.price.toLocaleString()} ₸</strong>
+              <span>/ {t('payroll.per_month')}</span>
             </div>
           </div>
           <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
             {isCurrentPlan ? (
               <Button variant="ghost" disabled className="h-14 px-10 border-slate-700 text-slate-400 w-full cursor-default opacity-80">
-                Ваш текущий тариф
+                {t('settings.tariff.current_plan')}
               </Button>
             ) : (
               <Button 
@@ -326,11 +324,11 @@ export const AdminTariffConstructor = ({
                 className={`h-14 px-10 shadow-xl transition-all duration-300 w-full ${isSaved ? 'shadow-emerald-100' : 'shadow-primary/20'}`}
                 style={{ backgroundColor: isSaved ? '#10b981' : undefined }}
               >
-                {isSaved ? '✓ Конфигурация сохранена' : 'Применить изменения'}
+                {isSaved ? `✓ ${t('settings.tariff.changes_applied')}` : t('settings.tariff.apply_changes')}
               </Button>
             )}
             <p className="text-[10px] text-white/30 text-right max-w-[240px] leading-relaxed">
-              Лимиты увеличатся сразу. Оплата за доп. ресурсы будет включена в ваш следующий регулярный счет.
+              {t('settings.tariff.limits_notice')}
             </p>
           </div>
         </div>
@@ -338,16 +336,16 @@ export const AdminTariffConstructor = ({
       </section>
 
       <div className="mt-12 flex justify-center pb-8">
-         <button 
-           onClick={() => {
-             if (window.confirm('Вы уверены, что хотите отменить подписку? Все платные функции будут отключены.')) {
-               resetToStarter();
-             }
-           }}
-           className="text-[9px] font-medium text-slate-300 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer underline decoration-slate-200"
-         >
-           отменить подписку и вернуться на бесплатный тариф
-         </button>
+          <button 
+            onClick={() => {
+              if (window.confirm(t('settings.tariff.cancel_confirm'))) {
+                resetToStarter();
+              }
+            }}
+            className="text-[9px] font-medium text-slate-300 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer underline decoration-slate-200"
+          >
+            {t('settings.tariff.cancel_subscription')}
+          </button>
       </div>
     </div>
   );

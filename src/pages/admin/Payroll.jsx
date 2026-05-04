@@ -8,10 +8,11 @@ import { formatKzt } from '../../utils/money';
 
 export const Payroll = () => {
   const { coaches, attendance, schedule, addTransaction } = useAdmin();
+  const { t, language } = useTranslation();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const months = [
+  const months = t('common.months', { returnObjects: true }) || [
     'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
     'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
   ];
@@ -66,15 +67,15 @@ export const Payroll = () => {
   const handlePaySalary = (coach) => {
     if (coach.totalEarned <= 0) return;
     
-    const confirmPay = window.confirm(`Выплатить зарплату ${coach.firstName} ${coach.lastName} в размере ${formatKzt(coach.totalEarned)}?`);
+    const confirmPay = window.confirm(t('payroll.confirm_pay', { name: `${coach.firstName} ${coach.lastName}`, amount: formatKzt(coach.totalEarned) }));
     if (confirmPay) {
       addTransaction({
         type: 'expense',
         amount: coach.totalEarned,
-        description: `Зарплата: ${coach.firstName} ${coach.lastName} (${months[selectedMonth]})`,
-        category: 'Зарплата'
+        description: t('payroll.transaction_desc', { name: `${coach.firstName} ${coach.lastName}`, month: months[selectedMonth] }),
+        category: t('payroll.category')
       });
-      alert('Выплата зафиксирована в финансах клуба.');
+      alert(t('payroll.success_msg'));
     }
   };
 
@@ -82,8 +83,8 @@ export const Payroll = () => {
     <div className="animate-fade-in pb-20">
       <div className="admin-page-header">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h1">Расчет зарплат</h1>
-          <p className="text-secondary font-medium">Автоматический расчет выплат на основе посещаемости</p>
+          <h1 className="h1">{t('payroll.title')}</h1>
+          <p className="text-secondary font-medium">{t('payroll.subtitle')}</p>
         </div>
 
         <div className="flex gap-4 items-center bg-white p-2 rounded-2xl border shadow-sm">
@@ -111,12 +112,12 @@ export const Payroll = () => {
            <div className="flex items-center gap-4 mb-6">
              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center"><DollarSign size={24} /></div>
              <div>
-               <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">Общий ФОТ за месяц</p>
+               <p className="text-[10px] font-bold uppercase tracking-widest opacity-60">{t('payroll.total_payout')}</p>
                <h2 className="text-3xl font-black">{formatKzt(totalPayout)}</h2>
              </div>
            </div>
            <div className="flex items-center gap-2 text-xs font-bold bg-white/10 p-3 rounded-xl border border-white/10">
-              <TrendingUp size={14} /> На {payrollData.length} тренеров
+              <TrendingUp size={14} /> {t('payroll.trainers_count', { count: payrollData.length })}
            </div>
         </Card>
         
@@ -124,8 +125,8 @@ export const Payroll = () => {
            <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-indigo-50 text-primary rounded-2xl flex items-center justify-center"><Calendar size={24} /></div>
               <div>
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Проведено тренировок</p>
-                <p className="text-2xl font-black text-slate-900">{payrollData.reduce((acc, c) => acc + c.sessionsCount, 0)} сессий</p>
+                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">{t('payroll.sessions_title')}</p>
+                <p className="text-2xl font-black text-slate-900">{payrollData.reduce((acc, c) => acc + c.sessionsCount, 0)} {t('payroll.sessions_unit')}</p>
               </div>
            </div>
         </Card>
@@ -134,15 +135,15 @@ export const Payroll = () => {
            <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center"><User size={24} /></div>
               <div>
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Обучено учеников</p>
-                <p className="text-2xl font-black text-slate-900">{payrollData.reduce((acc, c) => acc + c.studentsCount, 0)} чел.</p>
+                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">{t('payroll.students_title')}</p>
+                <p className="text-2xl font-black text-slate-900">{payrollData.reduce((acc, c) => acc + c.studentsCount, 0)} {t('payroll.students_unit')}</p>
               </div>
            </div>
         </Card>
       </div>
 
       <div className="flex flex-col gap-6">
-        <h3 className="h4 flex items-center gap-3"><Clock size={20} className="text-primary" /> Детализация по тренерам</h3>
+        <h3 className="h4 flex items-center gap-3"><Clock size={20} className="text-primary" /> {t('payroll.details_title')}</h3>
         
         {payrollData.map(coach => (
           <Card key={coach.id} className="p-8 border-none shadow-xl shadow-slate-100 hover:shadow-indigo-100 transition-all group">
@@ -155,22 +156,22 @@ export const Payroll = () => {
                     <h4 className="font-bold text-xl text-slate-900 mb-1">{coach.firstName} {coach.lastName}</h4>
                     <div className="flex items-center gap-3">
                       <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px] font-bold uppercase tracking-wider">{coach.specialization}</span>
-                      <span className="text-xs text-muted font-medium">Ставка: {formatKzt(coach.salaryRate)} / {coach.salaryType === 'per_session' ? 'сессия' : coach.salaryType === 'per_student' ? 'ученик' : 'месяц'}</span>
+                      <span className="text-xs text-muted font-medium">{t('payroll.rate_label')}: {formatKzt(coach.salaryRate)} / {coach.salaryType === 'per_session' ? t('payroll.per_session') : coach.salaryType === 'per_student' ? t('payroll.per_student') : t('payroll.per_month')}</span>
                     </div>
                  </div>
               </div>
 
               <div className="flex flex-wrap gap-8 items-center">
                  <div className="text-center min-w-[80px]">
-                    <p className="text-[10px] font-bold text-muted uppercase mb-1">Сессии</p>
+                    <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('payroll.sessions_col')}</p>
                     <p className="text-lg font-bold text-slate-700">{coach.sessionsCount}</p>
                  </div>
                  <div className="text-center min-w-[80px]">
-                    <p className="text-[10px] font-bold text-muted uppercase mb-1">Ученики</p>
+                    <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('payroll.students_col')}</p>
                     <p className="text-lg font-bold text-slate-700">{coach.studentsCount}</p>
                  </div>
                  <div className="text-right min-w-[140px]">
-                    <p className="text-[10px] font-bold text-primary uppercase mb-1">К выплате</p>
+                    <p className="text-[10px] font-bold text-primary uppercase mb-1">{t('payroll.payout_col')}</p>
                     <p className="text-2xl font-black text-slate-900">{formatKzt(coach.totalEarned)}</p>
                  </div>
                  <div className="flex gap-3">
@@ -181,7 +182,7 @@ export const Payroll = () => {
                       className="gap-2 shadow-lg shadow-primary/10"
                       style={{ borderRadius: '14px' }}
                     >
-                      <CheckCircle size={18} /> Выплатить
+                      <CheckCircle size={18} /> {t('payroll.pay_btn')}
                     </Button>
                  </div>
               </div>
@@ -192,7 +193,7 @@ export const Payroll = () => {
         {payrollData.length === 0 && (
           <div className="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
              <AlertCircle size={48} className="mx-auto text-slate-200 mb-4" />
-             <p className="text-slate-400 font-bold">Нет данных для расчета</p>
+             <p className="text-slate-400 font-bold">{t('payroll.empty_msg')}</p>
           </div>
         )}
       </div>

@@ -8,6 +8,7 @@ import { Navbar } from '../../components/layout/Navbar';
 import { Autocomplete } from '../../components/ui/Autocomplete';
 import { MartialArtsSelector } from '../../components/ui/MartialArtsSelector';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 
 const KAZAKHSTAN_CITIES = [
   'Алматы', 'Астана', 'Шымкент', 'Караганда', 'Актобе', 'Тараз', 
@@ -29,6 +30,7 @@ export const RegisterClub = () => {
   const [successData, setSuccessData] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { login: signIn } = useAdmin();
   const [searchParams] = useSearchParams();
 
@@ -286,11 +288,11 @@ export const RegisterClub = () => {
                   WebkitTextFillColor: 'transparent',
                   fontWeight: 900
                 }}>
-                  Клуб успешно создан!
+                  {t('register.success_title')}
                 </h2>
                 
                 <p className="text-secondary mb-8" style={{ fontSize: '16px', lineHeight: '1.6' }}>
-                  Мы подготовили вашу панель управления. Логин и пароль отправлены вам в Telegram для безопасности.
+                  {t('register.success_text')}
                 </p>
 
                 {successData?.credentials?.tgCode && (
@@ -322,7 +324,7 @@ export const RegisterClub = () => {
                       onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
                       <Send size={22} color="white" />
-                      Получить доступы в Telegram
+                      {t('register.tg_btn')}
                     </a>
                     <div style={{ 
                       marginTop: '16px', 
@@ -337,7 +339,7 @@ export const RegisterClub = () => {
                       gap: '8px'
                     }}>
                       <span>ℹ️</span>
-                      Нажмите кнопку и выберите "Запустить" в боте
+                      {t('register.tg_hint')}
                     </div>
                   </div>
                 )}
@@ -353,7 +355,7 @@ export const RegisterClub = () => {
                       borderRadius: '16px'
                     }}
                   >
-                    Перейти к Входу
+                    {t('register.login_btn')}
                     <ArrowRight size={18} style={{ marginLeft: '8px' }} />
                   </Button>
                 </div>
@@ -369,8 +371,8 @@ export const RegisterClub = () => {
             ) : (
               <>
                 <div className="mb-8 text-center">
-                  <h2 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>Регистрация клуба</h2>
-                  <p className="text-secondary text-sm font-medium">Шаг {step} из 3</p>
+                  <h2 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>{t('register.title')}</h2>
+                  <p className="text-secondary text-sm font-medium">{t('register.step', { step })}</p>
                   
                   {/* Progress Bar */}
                   <div style={{ display: 'flex', gap: '4px', marginTop: 'var(--space-4)' }}>
@@ -398,21 +400,21 @@ export const RegisterClub = () => {
                         <div className="flex gap-4 responsive-row">
                           <div className="flex-1">
                             <Input 
-                              label="Имя владельца" placeholder="Иван" 
+                              label={t('register.owner_name')} placeholder="Иван" 
                               value={formData.firstName} onChange={(e) => handleInputChange('firstName', e.target.value)} 
                               error={errors.firstName}
                             />
                           </div>
                           <div className="flex-1">
                             <Input 
-                              label="Фамилия" placeholder="Иванов" 
+                              label={t('register.owner_last_name')} placeholder="Иванов" 
                               value={formData.lastName} onChange={(e) => handleInputChange('lastName', e.target.value)} 
                               error={errors.lastName}
                             />
                           </div>
                         </div>
                         <Input 
-                          label="Телефон" 
+                          label={t('register.owner_phone')} 
                           type="tel"
                           placeholder="+7 (777) 000 00 00" 
                           value={formData.phone} 
@@ -420,7 +422,7 @@ export const RegisterClub = () => {
                           error={errors.phone}
                         />
                         <p style={{ fontSize: '11px', color: 'var(--color-primary)', marginTop: '-12px', marginBottom: '0', fontWeight: 500 }}>
-                          ☝️ Используйте номер с Telegram — туда придут доступы
+                          {t('register.phone_hint')}
                         </p>
                         <Input 
                           label="Email" 
@@ -436,7 +438,7 @@ export const RegisterClub = () => {
                     {step === 2 && (
                       <div className="flex flex-col gap-5" style={{ position: 'relative', zIndex: 20 }}>
                         <Input 
-                          label="Название клуба" 
+                          label={t('register.club_name')} 
                           placeholder="Fight Club Almaty" 
                           value={formData.clubName} 
                           onChange={(e) => handleInputChange('clubName', e.target.value)} 
@@ -444,8 +446,8 @@ export const RegisterClub = () => {
                         />
                         
                         <Autocomplete 
-                          label="Город"
-                          placeholder="Начните вводить город..."
+                          label={t('register.city')}
+                          placeholder={t('register.city_placeholder')}
                           options={KAZAKHSTAN_CITIES}
                           value={formData.city}
                           onChange={(val) => handleInputChange('city', val)}
@@ -453,8 +455,8 @@ export const RegisterClub = () => {
                         />
 
                         <Input 
-                          label="Адрес" 
-                          placeholder={formData.city ? "Введите адрес клуба" : "Сначала выберите город"} 
+                          label={t('register.address')} 
+                          placeholder={formData.city ? t('register.address_placeholder') : t('register.address_city_first')} 
                           value={formData.address} 
                           onChange={(e) => handleInputChange('address', e.target.value)} 
                           disabled={!formData.city}
@@ -466,7 +468,7 @@ export const RegisterClub = () => {
                     {step === 3 && (
                       <div className="flex flex-col gap-6">
                         <div>
-                          <label className="text-sm font-medium mb-3 block">Направления (выберите одно или несколько)</label>
+                          <label className="text-sm font-medium mb-3 block">{t('register.martial_arts')}</label>
                           <div style={{ border: errors.martialArts ? '1px solid var(--color-danger)' : 'none', borderRadius: 'var(--radius-sm)', padding: errors.martialArts ? '2px' : '0' }}>
                             <MartialArtsSelector 
                               selected={formData.martialArts} 
@@ -477,8 +479,8 @@ export const RegisterClub = () => {
                         </div>
 
                         <Input 
-                          label="Примерное количество учеников" 
-                          placeholder="Например: 120" 
+                          label={t('register.students_count')} 
+                          placeholder={t('register.students_placeholder')} 
                           type="number" 
                           value={formData.studentsCount}
                           onChange={(e) => handleInputChange('studentsCount', e.target.value)}
@@ -486,10 +488,10 @@ export const RegisterClub = () => {
                         />
                         
                         <div style={{ backgroundColor: 'var(--color-primary-soft)', padding: 'var(--space-4)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-primary)' }}>
-                          <p className="text-sm" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family-display)', fontWeight: 900 }}>Готовы к запуску!</p>
+                          <p className="text-sm" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-family-display)', fontWeight: 900 }}>{t('register.ready_title')}</p>
                           <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)', fontWeight: 500 }}>
-                            Почти готово! После нажатия мы создадим клуб.<br/>
-                            <strong style={{ color: 'var(--color-primary)' }}>Доступы (логин и пароль) придут в ваш Telegram.</strong>
+                            {t('register.ready_text')}<br/>
+                            <strong style={{ color: 'var(--color-primary)' }}>{t('register.tg_access_info')}</strong>
                           </p>
                         </div>
                       </div>
@@ -498,10 +500,10 @@ export const RegisterClub = () => {
 
                 <div className="flex justify-between mt-8 pt-4" style={{ borderTop: '1px solid var(--color-border)', position: 'relative', zIndex: 1 }}>
                   <Button variant="ghost" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1 || isLoading}>
-                    Назад
+                    {t('common.back')}
                   </Button>
                   <Button variant="primary" onClick={handleNext} disabled={isLoading} style={{ minWidth: '140px' }}>
-                    {isLoading ? 'Загрузка...' : (step === 3 ? 'Создать клуб' : 'Далее')}
+                    {isLoading ? t('common.loading') : (step === 3 ? t('register.create_btn') : t('register.next'))}
                   </Button>
                 </div>
                 
@@ -516,24 +518,24 @@ export const RegisterClub = () => {
 
           {pendingTariff && !isSuccess && (
             <Card style={{ width: '320px', padding: 'var(--space-6)', backgroundColor: 'var(--color-bg-secondary)', border: '1px solid var(--color-primary)' }} className="animate-fade-in hide-on-mobile">
-               <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">Starter бесплатно</h3>
+               <h3 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">{t('register.summary.starter_free')}</h3>
                <div className="flex flex-col gap-3 mb-6">
                  <div className="flex justify-between text-xs font-bold">
-                   <span>1 филиал · 15 учеников · 3 тренера</span>
-                   <span>Включено</span>
+                   <span>{t('register.summary.limits')}</span>
+                   <span>{t('register.summary.included')}</span>
                  </div>
                  {pendingTariff.selectedFeatures.filter(f => f !== 'core').map(f => (
                    <div key={f} className="flex justify-between text-xs font-medium text-secondary">
                      <span className="capitalize">{f === 'league' ? 'RPG Лига' : f === 'store' ? 'Магазин' : f === 'schedule' ? 'Расписание' : 'Родители'}</span>
-                     <span>Активно</span>
+                     <span>{t('register.summary.active')}</span>
                    </div>
                  ))}
                </div>
                <div className="pt-4 border-t border-slate-200">
-                  <p className="text-[10px] font-bold text-muted uppercase mb-1">Итого в месяц</p>
+                  <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('register.summary.total_monthly')}</p>
                   <p className="h3 text-slate-900">{pendingTariff.totalPrice.toLocaleString()} ₸</p>
                </div>
-               <p className="text-[9px] text-muted mt-4">Growth от 9 000 ₸ подключается в настройках, когда лимитов Starter станет мало.</p>
+               <p className="text-[9px] text-muted mt-4">{t('register.summary.growth_hint')}</p>
             </Card>
           )}
 

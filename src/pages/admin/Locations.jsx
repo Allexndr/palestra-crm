@@ -9,6 +9,7 @@ import { Plus, MapPin, Edit2, Trash2, ArrowRight, Phone, Navigation } from 'luci
 export const Locations = () => {
   const navigate = useNavigate();
   const { locations, removeLocation, user } = useAdmin();
+  const { t } = useTranslation();
   const isAdmin = user?.role === 'admin';
   const [locationToDelete, setLocationToDelete] = useState(null);
 
@@ -16,13 +17,13 @@ export const Locations = () => {
     <div className="animate-fade-in pb-12">
       <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h2">Филиалы и залы</h1>
-          <p className="text-secondary text-lg">Управление сетью спортивных клубов и локациями</p>
+          <h1 className="h2">{t('settings.locations.title')}</h1>
+          <p className="text-secondary text-lg">{t('settings.locations.subtitle')}</p>
         </div>
         {isAdmin && (
           <Link to="/admin/locations/new">
             <Button variant="primary">
-              <Plus size={18} /> Добавить филиал
+              <Plus size={18} /> {t('settings.locations.add_btn')}
             </Button>
           </Link>
         )}
@@ -58,7 +59,7 @@ export const Locations = () => {
             <div className="flex flex-col gap-3 mb-6">
               <div className="flex items-start gap-2 text-xs font-bold text-slate-500">
                 <Navigation size={14} className="shrink-0 mt-0.5" />
-                <span className="leading-relaxed">{location.address || 'Адрес не указан'}</span>
+                <span className="leading-relaxed">{location.address || t('settings.locations.address_not_specified')}</span>
               </div>
               {location.phone && (
                 <div className="flex items-center gap-2 text-xs font-black text-slate-900">
@@ -72,7 +73,7 @@ export const Locations = () => {
               <div className="flex items-center gap-2">
                 <div className={`w-1.5 h-1.5 rounded-full ${location.isActive ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                 <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                  {location.isActive ? 'Активен' : 'Закрыт'}
+                  {location.isActive ? t('settings.locations.active') : t('settings.locations.inactive')}
                 </span>
               </div>
               <button 
@@ -90,10 +91,10 @@ export const Locations = () => {
             <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
               <MapPin size={40} />
             </div>
-            <h3 className="h3 mb-2">Филиалы не найдены</h3>
-            <p className="text-secondary mb-8 max-w-md mx-auto">Добавьте ваш первый филиал, чтобы начать зачислять туда учеников и проводить тренировки.</p>
+            <h3 className="h3 mb-2">{t('settings.locations.no_locations')}</h3>
+            <p className="text-secondary mb-8 max-w-md mx-auto">{t('settings.locations.no_locations_desc')}</p>
             <Link to="/admin/locations/new">
-              <Button variant="primary" size="lg">Добавить первый филиал</Button>
+              <Button variant="primary" size="lg">{t('settings.locations.add_btn')}</Button>
             </Link>
           </div>
         )}
@@ -106,9 +107,9 @@ export const Locations = () => {
           if (locationToDelete) removeLocation(locationToDelete.id);
           setLocationToDelete(null);
         }}
-        title="Удалить филиал"
-        message={`Вы уверены, что хотите удалить филиал "${locationToDelete?.name}"? Группы и ученики, привязанные к этому филиалу, потребуют переназначения.`}
-        confirmText="Удалить филиал"
+        title={t('settings.locations.delete_title')}
+        message={t('settings.locations.delete_confirm', { name: locationToDelete?.name })}
+        confirmText={t('settings.locations.delete_btn')}
         variant="danger"
       />
     </div>

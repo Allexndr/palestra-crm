@@ -1,6 +1,7 @@
 import { Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Calendar, Home, LogOut, Trophy, User, Zap } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { BottomNav } from '../layout/BottomNav';
 import { ClubLogo } from '../ui/ClubLogo';
 import { PageLoader } from '../ui/PageLoader';
@@ -21,17 +22,25 @@ export function RequireAuth() {
 /** Лента, расписание, лига, профиль: нижняя навигация одним блоком. */
 export function MemberLayout() {
   const { user, logout, clubInfo, members, activeChildId, setActiveChildId } = useAdmin();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const children = user?.role === 'parent' ? members.filter(m => m.parentId === user.id) : [];
   
   const links = [
-    { to: '/feed', icon: Home, label: 'Лента' },
-    { to: '/schedule', icon: Calendar, label: 'Расписание' },
-    { to: '/quests', icon: Zap, label: 'Квесты' },
-    { to: '/league', icon: Trophy, label: 'Лига' },
-    { to: '/profile', icon: User, label: 'Профиль' },
+    { to: '/feed', icon: Home, label: t('nav.feed') },
+    { to: '/schedule', icon: Calendar, label: t('nav.schedule') },
+    { to: '/quests', icon: Zap, label: t('nav.quests') },
+    { to: '/league', icon: Trophy, label: t('nav.league') },
+    { to: '/profile', icon: User, label: t('nav.profile') },
   ];
-  const roleLabel = user?.role === 'parent' ? 'Родитель' : 'Ученик';
+  
+  const getRoleLabel = (role) => {
+    if (role === 'parent') return t('roles.parent');
+    if (role === 'student') return t('roles.student');
+    return role;
+  };
+
+  const roleLabel = getRoleLabel(user?.role);
 
   const handleLogout = () => {
     logout();
@@ -59,7 +68,7 @@ export function MemberLayout() {
           </div>
         </div>
 
-        <nav className="member-desktop-nav" aria-label="Навигация личного кабинета">
+        <nav className="member-desktop-nav" aria-label={t('nav.cabinet')}>
           {links.map((link) => {
             const Icon = link.icon;
             return (
@@ -79,14 +88,14 @@ export function MemberLayout() {
 
         <button type="button" className="member-logout" onClick={handleLogout}>
           <LogOut size={18} />
-          Выйти
+          {t('nav.logout')}
         </button>
       </aside>
 
       <section className="member-main-region">
         <header className="member-desktop-header">
           <div>
-            <p className="member-kicker">Личный кабинет</p>
+            <p className="member-kicker">{t('nav.cabinet')}</p>
             <h1 className="desktop-only">{roleLabel}</h1>
             
             {user?.role === 'parent' && children.length > 0 && (
@@ -111,7 +120,7 @@ export function MemberLayout() {
             <span>{user?.email || `${user?.role || 'user'}@palestra.fit`}</span>
           </div>
         </header>
-        <div className="member-page-frame" style={{ paddingTop: user?.role === 'parent' ? '16px' : '0' }}>
+        <div className="member-page-frame" style={{ paddingTop: (user?.role === 'parent' && children.length > 0) ? '16px' : '0' }}>
           <Outlet />
         </div>
       </section>

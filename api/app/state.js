@@ -27,6 +27,7 @@ export default async function handler(req, res) {
 
     return sendJson(res, 405, { error: 'Method not allowed' });
   } catch (error) {
+    console.error('[API/app/state] Error:', error);
     if (error.statusCode) return sendJson(res, error.statusCode, { error: error.message });
     return safeError(res, error, 'Unable to process app state');
   }

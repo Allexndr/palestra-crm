@@ -15,11 +15,11 @@ export const LanguageSwitcher = ({ variant = 'default' }) => {
         display: 'flex',
         alignItems: 'center',
         background: isDark ? 'rgba(0,0,0,0.2)' : 'var(--color-ice-200)',
-        borderRadius: '12px',
+        borderRadius: '10px',
         padding: '2px',
         cursor: 'pointer',
-        width: '64px',
-        height: '32px',
+        width: '52px',
+        height: '26px',
         position: 'relative',
         transition: 'all 0.3s ease',
         border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1.5px solid var(--color-border)',
@@ -30,12 +30,12 @@ export const LanguageSwitcher = ({ variant = 'default' }) => {
       <div 
         className="lang-switcher-handle"
         style={{
-          width: '32px',
-          height: '28px',
+          width: '26px',
+          height: '22px',
           backgroundColor: isDark ? 'rgba(255,255,255,0.9)' : 'white',
-          borderRadius: '10px',
+          borderRadius: '8px',
           position: 'absolute',
-          left: lang === 'ru' ? '2px' : '30px',
+          left: lang === 'ru' ? '2px' : '24px',
           transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           zIndex: 1
@@ -44,7 +44,7 @@ export const LanguageSwitcher = ({ variant = 'default' }) => {
       <div style={{ 
         flex: 1, 
         textAlign: 'center', 
-        fontSize: '10px', 
+        fontSize: '9px', 
         fontWeight: 900, 
         zIndex: 2, 
         transition: 'color 0.3s',
@@ -53,7 +53,7 @@ export const LanguageSwitcher = ({ variant = 'default' }) => {
       <div style={{ 
         flex: 1, 
         textAlign: 'center', 
-        fontSize: '10px', 
+        fontSize: '9px', 
         fontWeight: 900, 
         zIndex: 2, 
         transition: 'color 0.3s',

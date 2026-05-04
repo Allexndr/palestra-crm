@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DEFAULT_SUBSCRIPTION, normalizeSubscription } from '../lib/tariff';
+import { useTranslation } from './LanguageContext';
 
 const AdminContext = createContext();
 
@@ -122,9 +123,10 @@ export const AdminProvider = ({ children }) => {
   const [locations, setLocations] = useState([]);
   const [groups, setGroups] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [sports] = useState([
+  const { t } = useTranslation();
+  const sports = t('common.sports', { returnObjects: true }) || [
     'Бокс', 'ММА', 'Бразильское джиу-джитсу', 'Каратэ', 'Дзюдо', 'Кикбоксинг', 'Грэпплинг', 'Тайский бокс'
-  ]);
+  ];
   const [leagues, setLeagues] = useState([]);
   const [plans, setPlans] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -163,60 +165,77 @@ export const AdminProvider = ({ children }) => {
           fetch('/api/auth/me', { credentials: 'include', headers }),
           fetch('/api/app/state', { credentials: 'include', headers }),
         ]);
-        const meData = meResponse.ok ? await meResponse.json() : {};
-        const stateData = stateResponse.ok ? await stateResponse.json() : {};
-        const remote = stateData.state || {};
 
         if (cancelled) return;
 
-        setMembers(Array.isArray(remote.members) ? remote.members : []);
-        setLeads(Array.isArray(remote.leads) ? remote.leads : []);
-        setSchedule(normalizeScheduleList(Array.isArray(remote.schedule) ? remote.schedule : []));
-        setLocations(Array.isArray(remote.locations) ? remote.locations : []);
-        setGroups(Array.isArray(remote.groups) ? remote.groups : []);
-        setActivities(Array.isArray(remote.activities) ? remote.activities : []);
-        setLeagues(Array.isArray(remote.leagues) ? remote.leagues : []);
-        setPlans(Array.isArray(remote.plans) ? remote.plans : []);
-        setPosts(Array.isArray(remote.posts) ? remote.posts : []);
-        setCoaches(Array.isArray(remote.coaches) ? remote.coaches : []);
-        setEvents(Array.isArray(remote.events) ? remote.events : []);
-        setAttendance(Array.isArray(remote.attendance) ? remote.attendance : []);
-        setFinances(normalizeFinances(remote.finances));
-        setAchievements(Array.isArray(remote.achievements) ? remote.achievements : []);
-        setQuests(Array.isArray(remote.quests) ? remote.quests : []);
-        setFeedbacks(Array.isArray(remote.feedbacks) ? remote.feedbacks : []);
-        setAutomations(remote.automations || { fired: [] });
-        setMessages(Array.isArray(remote.messages) ? remote.messages : []);
-        setPartners(Array.isArray(remote.partners) ? remote.partners : []);
-        setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
-        setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
-        setClubInfo(normalizeClubInfo(remote.clubInfo));
-        let loadedSubscription = normalizeSubscription(remote.subscription);
-        if (loadedSubscription.plan === 'starter') {
-          try {
-            const localSub = localStorage.getItem('palestra_demo_subscription');
-            if (localSub) {
-              loadedSubscription = normalizeSubscription(JSON.parse(localSub));
-            }
-          } catch (e) {
-            console.error('Failed to parse local subscription', e);
+        if (meResponse.ok) {
+          const meData = await meResponse.json();
+          setUser(meData.user || null);
+          
+          // Auto-select first child for parents on load
+          if (meData.user?.role === 'parent') {
+            // We'll handle this after members are set below
           }
+        } else {
+          console.error(`Failed to fetch user info: ${meResponse.status} ${meResponse.statusText}`);
         }
-        setSubscription(loadedSubscription);
-        setDashboardLayout(Array.isArray(remote.dashboardLayout) ? remote.dashboardLayout : DEFAULT_DASHBOARD_LAYOUT);
-        setStudentDashboardPool(Array.isArray(remote.studentDashboardPool) ? remote.studentDashboardPool : DEFAULT_STUDENT_POOL);
-        setStudentDashboardLayout(Array.isArray(remote.studentDashboardLayout) ? remote.studentDashboardLayout : DEFAULT_STUDENT_LAYOUT);
-        setUser(meData.user || null);
-        
-        // Auto-select first child for parents on load
-        if (meData.user?.role === 'parent' && Array.isArray(remote.members)) {
-          const children = remote.members.filter(m => m.parentId === meData.user.id);
-          if (children.length > 0) {
-            setActiveChildId(children[0].id);
+
+        if (stateResponse.ok) {
+          const stateData = await stateResponse.json();
+          const remote = stateData.state || {};
+
+          setMembers(Array.isArray(remote.members) ? remote.members : []);
+          setLeads(Array.isArray(remote.leads) ? remote.leads : []);
+          setSchedule(normalizeScheduleList(Array.isArray(remote.schedule) ? remote.schedule : []));
+          setLocations(Array.isArray(remote.locations) ? remote.locations : []);
+          setGroups(Array.isArray(remote.groups) ? remote.groups : []);
+          setActivities(Array.isArray(remote.activities) ? remote.activities : []);
+          setLeagues(Array.isArray(remote.leagues) ? remote.leagues : []);
+          setPlans(Array.isArray(remote.plans) ? remote.plans : []);
+          setPosts(Array.isArray(remote.posts) ? remote.posts : []);
+          setCoaches(Array.isArray(remote.coaches) ? remote.coaches : []);
+          setEvents(Array.isArray(remote.events) ? remote.events : []);
+          setAttendance(Array.isArray(remote.attendance) ? remote.attendance : []);
+          setFinances(normalizeFinances(remote.finances));
+          setAchievements(Array.isArray(remote.achievements) ? remote.achievements : []);
+          setQuests(Array.isArray(remote.quests) ? remote.quests : []);
+          setFeedbacks(Array.isArray(remote.feedbacks) ? remote.feedbacks : []);
+          setAutomations(remote.automations || { fired: [] });
+          setMessages(Array.isArray(remote.messages) ? remote.messages : []);
+          setPartners(Array.isArray(remote.partners) ? remote.partners : []);
+          setMonthlyAward(normalizeMonthlyAward(remote.monthlyAward));
+          setSelectedLocationId(typeof remote.selectedLocationId === 'string' ? remote.selectedLocationId : 'all');
+          setClubInfo(normalizeClubInfo(remote.clubInfo));
+          
+          let loadedSubscription = normalizeSubscription(remote.subscription);
+          if (loadedSubscription.plan === 'starter') {
+            try {
+              const localSub = localStorage.getItem('palestra_demo_subscription');
+              if (localSub) {
+                loadedSubscription = normalizeSubscription(JSON.parse(localSub));
+              }
+            } catch (e) {}
           }
+          setSubscription(loadedSubscription);
+          setDashboardLayout(Array.isArray(remote.dashboardLayout) ? remote.dashboardLayout : DEFAULT_DASHBOARD_LAYOUT);
+          setStudentDashboardPool(Array.isArray(remote.studentDashboardPool) ? remote.studentDashboardPool : DEFAULT_STUDENT_POOL);
+          setStudentDashboardLayout(Array.isArray(remote.studentDashboardLayout) ? remote.studentDashboardLayout : DEFAULT_STUDENT_LAYOUT);
+
+          // Parent child auto-selection
+          const meData = meResponse.ok ? await meResponse.clone().json().catch(() => ({})) : {};
+          if (meData.user?.role === 'parent' && Array.isArray(remote.members)) {
+            const children = remote.members.filter(m => m.parentId === meData.user.id);
+            if (children.length > 0) {
+              setActiveChildId(children[0].id);
+            }
+          }
+        } else {
+          console.error(`Failed to fetch state: ${stateResponse.status} ${stateResponse.statusText}`);
+          // If 401, we might want to redirect to login, but usually RequireAuth handles it.
+          // If 500, we definitely shouldn't reset the state to empty.
         }
       } catch (error) {
-        console.error('Failed to hydrate Palestra state', error);
+        console.error('Critical failure in hydrate Palestra state', error);
       } finally {
         if (!cancelled) setIsStateReady(true);
       }
@@ -255,7 +274,7 @@ export const AdminProvider = ({ children }) => {
       credentials: 'include',
       headers,
       body: JSON.stringify({ state }),
-      signal: controller.signal,
+      ...(process.env.NODE_ENV !== 'test' ? { signal: controller.signal } : {}),
     }).catch((error) => {
       if (error.name !== 'AbortError') console.error('Failed to persist Palestra state', error);
     });

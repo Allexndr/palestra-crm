@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -41,7 +42,7 @@ export const Coaches = () => {
     lastName: '',
     phone: '',
     email: '',
-    specialization: sports[0] || 'Бокс',
+    specialization: sports[0] || '',
     experience: '',
     locationId: locations[0]?.id || '',
     bio: '',
@@ -110,7 +111,7 @@ export const Coaches = () => {
       const url = await uploadBlobFile(file, 'coach-avatars');
       setFormData((prev) => ({ ...prev, avatar: url }));
     } catch (error) {
-      alert(error.message || 'Не удалось загрузить фото тренера');
+      alert(error.message || t('coaches.form.photo_error'));
     } finally {
       setIsUploadingAvatar(false);
       event.target.value = '';
@@ -144,82 +145,82 @@ export const Coaches = () => {
 
       {isAdding && (
         <Card className="admin-section-card animate-up" style={{ border: '1px solid var(--color-primary)' }}>
-          <h3 className="h4 mb-8">{editingCoachId ? 'Редактировать профиль тренера' : 'Новый тренер'}</h3>
+          <h3 className="h4 mb-8">{editingCoachId ? t('coaches.form.edit_title') : t('coaches.form.new_title')}</h3>
           <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             {/* Basic Info */}
             <div className="admin-form-grid">
-              <Input label="Имя" required value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
-              <Input label="Фамилия" required value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
-              <Input label="Телефон" type="tel" placeholder="7 777 000 00 00" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
-              <Input label="Email" type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+              <Input label={t('coaches.form.first_name')} required value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
+              <Input label={t('coaches.form.last_name')} required value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
+              <Input label={t('coaches.form.phone')} type="tel" placeholder={t('common.phone_placeholder')} value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+              <Input label={t('coaches.form.email')} type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
             </div>
 
             <div className="admin-form-grid" style={{ backgroundColor: 'var(--color-primary-soft)', padding: '24px', borderRadius: '20px' }}>
               <div className="relative">
-                <Input label="Логин для входа" placeholder="Создается автоматически" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
+                <Input label={t('coaches.form.login')} placeholder={t('coaches.form.login_auto')} value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
                 <button 
                   type="button"
                   onClick={() => copyToClipboard(`${formData.login} ${formData.password}`)}
                   className="absolute right-4 top-[42px] p-2 text-slate-400 hover:text-primary transition-colors bg-white/80 rounded-lg border border-slate-100 shadow-sm"
-                  title="Скопировать логин и пароль"
+                  title={t('coaches.form.copy_creds')}
                 >
                   <Copy size={16} />
                 </button>
               </div>
-              <Input label="Пароль" placeholder="Создается автоматически" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+              <Input label={t('coaches.form.password')} placeholder={t('coaches.form.login_auto')} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
             </div>
 
             {/* Professional Info */}
             <div className="admin-form-grid">
               <div className="input-group">
-                <label className="input-label">Специализация</label>
+                <label className="input-label">{t('coaches.form.spec')}</label>
                 <select className="input-field" value={formData.specialization} onChange={e => setFormData({...formData, specialization: e.target.value})}>
                   {sports.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
-              <Input label="Стаж (лет)" type="number" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} />
+              <Input label={t('coaches.form.exp')} type="number" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} />
               <div className="input-group">
-                <label className="input-label">Филиал</label>
+                <label className="input-label">{t('coaches.form.location')}</label>
                 <select className="input-field" value={formData.locationId} onChange={e => setFormData({...formData, locationId: e.target.value})}>
-                  <option value="">Все филиалы</option>
+                  <option value="">{t('coaches.form.all_locations')}</option>
                   {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                 </select>
               </div>
             </div>
 
             <div className="admin-form-grid">
-              <Input label="Ставка (₸)" type="number" value={formData.salaryRate} onChange={e => setFormData({...formData, salaryRate: e.target.value})} />
+              <Input label={t('coaches.form.salary')} type="number" value={formData.salaryRate} onChange={e => setFormData({...formData, salaryRate: e.target.value})} />
               <div className="input-group">
-                <label className="input-label">Тип оплаты</label>
+                <label className="input-label">{t('coaches.form.salary_type')}</label>
                 <select className="input-field" value={formData.salaryType} onChange={e => setFormData({...formData, salaryType: e.target.value})}>
-                  <option value="per_session">За тренировку</option>
-                  <option value="per_student">За каждого ученика</option>
-                  <option value="monthly">Фикс в месяц</option>
+                  <option value="per_session">{t('coaches.form.salary_session')}</option>
+                  <option value="per_student">{t('coaches.form.salary_student')}</option>
+                  <option value="monthly">{t('coaches.form.salary_monthly')}</option>
                 </select>
               </div>
             </div>
 
             <div className="input-group">
-              <label className="input-label">О себе / Регалии</label>
+              <label className="input-label">{t('coaches.form.bio')}</label>
               <textarea 
                 className="input-field" rows="3" 
                 value={formData.bio} onChange={e => setFormData({...formData, bio: e.target.value})}
-                placeholder="Мастер спорта, черный пояс..."
+                placeholder={t('coaches.form.bio_placeholder')}
                 style={{ resize: 'none' }}
               />
             </div>
 
             <div className="input-group">
-              <label className="input-label">Фото тренера</label>
+              <label className="input-label">{t('coaches.form.photo')}</label>
               <input className="input-field" type="file" accept="image/*" onChange={handleAvatarUpload} />
-              {isUploadingAvatar && <p className="text-xs text-muted mt-2">Загрузка в Blob...</p>}
-              {formData.avatar && <p className="text-xs text-primary mt-2">Фото загружено</p>}
+              {isUploadingAvatar && <p className="text-xs text-muted mt-2">{t('coaches.form.photo_uploading')}</p>}
+              {formData.avatar && <p className="text-xs text-primary mt-2">{t('coaches.form.photo_uploaded')}</p>}
             </div>
 
             <div className="flex justify-end gap-4 border-t pt-8">
-              <Button variant="ghost" type="button" onClick={() => { setIsAdding(false); setEditingCoachId(null); }}>Отмена</Button>
+              <Button variant="ghost" type="button" onClick={() => { setIsAdding(false); setEditingCoachId(null); }}>{t('common.cancel')}</Button>
               <Button variant="primary" type="submit" style={{ minWidth: '180px' }}>
-                {editingCoachId ? 'Сохранить изменения' : 'Создать профиль'}
+                {editingCoachId ? t('common.save') : t('common.create')}
               </Button>
             </div>
           </form>
@@ -230,7 +231,7 @@ export const Coaches = () => {
         <div className="mb-8 relative">
           <input 
             type="text" 
-            placeholder="Поиск по имени или специализации..."
+            placeholder={t('coaches.list.search_placeholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ 
@@ -246,7 +247,7 @@ export const Coaches = () => {
         <div className="admin-card-grid">
           {filteredCoaches.length === 0 ? (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }} className="text-muted">
-              <p className="text-secondary">{t('coaches.empty_list')}</p>
+              <p className="text-secondary">{t('coaches.list.empty')}</p>
             </div>
           ) : filteredCoaches.map(coach => (
             <Card key={coach.id} className="card-hover" style={{ padding: '24px', position: 'relative' }}>
@@ -280,10 +281,10 @@ export const Coaches = () => {
 
               <div className="flex flex-col gap-3 mb-6">
                 <div className="flex items-center gap-2 text-sm text-secondary">
-                  <Award size={14} className="text-muted" /> <span>Опыт: {coach.experience} лет</span>
+                  <Award size={14} className="text-muted" /> <span>{t('coaches.list.exp_years', { count: coach.experience })}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-secondary">
-                  <MapPin size={14} className="text-muted" /> <span>{locations.find(l => l.id === coach.locationId)?.name || 'Все филиалы'}</span>
+                  <MapPin size={14} className="text-muted" /> <span>{locations.find(l => l.id === coach.locationId)?.name || t('coaches.form.all_locations')}</span>
                 </div>
                 {coach.phone && (
                   <div className="flex items-center gap-2 text-sm text-secondary">

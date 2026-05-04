@@ -1835,8 +1835,8 @@ a:focus:not(:focus-visible) {
 .navbar-landing-bar.glass {
   position: relative;
   overflow: visible;
-  /* ≥48px: запас к полукругу 40px; иначе «PAL…» визуально «съедается» слева */
-  padding: 0 clamp(3rem, 4.5vw, 3.5rem) !important;
+  /* ≥40px: запас к полукругу 40px; иначе «PAL…» визуально «съедается» слева */
+  padding: 0 clamp(2.5rem, 4vw, 3rem) !important;
   min-height: 80px;
   box-sizing: border-box;
 }

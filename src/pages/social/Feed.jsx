@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { MessageSquare, Heart, Share2, Send, Plus, Image as ImageIcon, X, SendHorizonal, MoreHorizontal } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Feed = () => {
   const { posts, addPost, likePost, addComment, user } = useAdmin();
+  const { t, language } = useTranslation();
   const [newPostText, setNewPostText] = useState('');
   const [newPostImage, setNewPostImage] = useState('');
   const [isPosting, setIsPosting] = useState(false);
@@ -39,7 +41,7 @@ export const Feed = () => {
       const url = await uploadBlobFile(file, 'posts');
       setNewPostImage(url);
     } catch (error) {
-      alert(error.message || 'Не удалось загрузить фото');
+      alert(error.message || (language === 'ru' ? 'Не удалось загрузить фото' : 'Фото жүктеу мүмкін болмады'));
     } finally {
       setIsUploadingImage(false);
       event.target.value = '';
@@ -47,7 +49,7 @@ export const Feed = () => {
   };
 
   const shareToSocial = (platform, post) => {
-    const text = `Посмотрите новости Palestra: ${post.text.substring(0, 50)}...`;
+    const text = `${t('social.feed')}: ${post.text.substring(0, 50)}...`;
     const url = window.location.href;
     const shareUrl = platform === 'wa' 
       ? `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`
@@ -60,7 +62,7 @@ export const Feed = () => {
   return (
     <div className="animate-fade-in max-w-[680px] mx-auto">
       <div className="flex justify-between items-center mb-12">
-        <h1 className="h2 m-0">Лента</h1>
+        <h1 className="h2 m-0">{t('social.feed')}</h1>
         {canPost && (
           <button 
             onClick={() => setIsPosting(true)} 
@@ -77,12 +79,12 @@ export const Feed = () => {
           <Card className="mb-10 animate-up shadow-2xl border-2 border-primary overflow-hidden p-0">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                 <h4 className="font-bold">Новая публикация</h4>
+                 <h4 className="font-bold">{t('social.new_post')}</h4>
                  <button onClick={() => setIsPosting(false)} className="p-2 hover:bg-slate-100 rounded-full border-none bg-transparent cursor-pointer"><X size={20}/></button>
               </div>
               <textarea 
                 className="w-full bg-slate-50 border-none rounded-2xl p-6 text-lg outline-none focus:ring-2 ring-indigo-100 transition-all mb-4" 
-                placeholder="Что нового в клубе?" 
+                placeholder={t('social.placeholder')} 
                 rows={4} 
                 value={newPostText}
                 onChange={(e) => setNewPostText(e.target.value)}
@@ -98,13 +100,13 @@ export const Feed = () => {
                      onChange={handlePostImageUpload}
                    />
                 </div>
-                {isUploadingImage && <p className="text-xs text-muted">Загрузка фото в Blob...</p>}
-                {newPostImage && <p className="text-xs text-primary">Фото загружено</p>}
+                {isUploadingImage && <p className="text-xs text-muted">{t('social.upload_photo')}</p>}
+                {newPostImage && <p className="text-xs text-primary">{t('social.photo_uploaded')}</p>}
               </div>
             </div>
             <div className="px-6 py-4 bg-slate-50 flex justify-end">
                <Button variant="primary" onClick={handlePost} disabled={!newPostText.trim()} style={{ borderRadius: '14px', padding: '12px 32px' }}>
-                 Опубликовать
+                 {t('social.publish')}
                </Button>
             </div>
           </Card>
@@ -128,9 +130,9 @@ export const Feed = () => {
                     <p className="font-bold text-slate-900 leading-tight">{post.author}</p>
                     <div className="flex items-center gap-2">
                       <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-indigo-50 px-2 py-0.5 rounded">
-                        {post.authorRole === 'admin' ? 'Админ' : 'Тренер'}
+                        {post.authorRole === 'admin' ? t('roles.admin') : t('roles.coach')}
                       </span>
-                      <span className="text-[10px] text-muted font-medium">{new Date(post.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}</span>
+                      <span className="text-[10px] text-muted font-medium">{new Date(post.date).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ', { day: 'numeric', month: 'short' })}</span>
                     </div>
                   </div>
                 </div>
@@ -171,12 +173,14 @@ export const Feed = () => {
                    <button 
                     onClick={() => shareToSocial('wa', post)}
                     className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-all border-none cursor-pointer"
+                    title={t('social.share_wa')}
                    >
                      <Send size={18} />
                    </button>
                    <button 
                     onClick={() => shareToSocial('tg', post)}
                     className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center hover:bg-sky-100 transition-all border-none cursor-pointer"
+                    title={t('social.share_tg')}
                    >
                      <Share2 size={18} />
                    </button>
@@ -195,7 +199,7 @@ export const Feed = () => {
                          <div className="flex-1 bg-white p-3 rounded-2xl shadow-sm">
                             <div className="flex justify-between items-center mb-1">
                                <p className="text-xs font-bold text-slate-900">{comment.author}</p>
-                               <span className="text-[9px] text-muted">{new Date(comment.date).toLocaleDateString()}</span>
+                               <span className="text-[9px] text-muted">{new Date(comment.date).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ')}</span>
                             </div>
                             <p className="text-sm text-slate-700">{comment.text}</p>
                          </div>
@@ -206,7 +210,7 @@ export const Feed = () => {
                    <div className="flex items-center gap-3">
                      <input 
                         type="text" 
-                        placeholder="Напишите комментарий..." 
+                        placeholder={t('social.comment_placeholder')} 
                         className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary transition-all"
                         value={commentText[post.id] || ''}
                         onChange={(e) => setCommentText(prev => ({ ...prev, [post.id]: e.target.value }))}
@@ -227,7 +231,7 @@ export const Feed = () => {
           {posts.length === 0 && (
             <div className="py-20 text-center">
                <ImageIcon size={64} className="mx-auto text-slate-100 mb-6" />
-               <p className="text-slate-400 font-bold">Лента пока пуста</p>
+               <p className="text-slate-400 font-bold">{t('social.no_posts')}</p>
             </div>
           )}
         </div>

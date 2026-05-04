@@ -5,7 +5,7 @@ import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
-import { Plus, Trash2, Edit2, Eye } from 'lucide-react';
+import { Plus, Trash2, Edit2, Eye, Copy } from 'lucide-react';
 
 export const Members = () => {
   const navigate = useNavigate();
@@ -36,10 +36,10 @@ export const Members = () => {
       <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
           <h1 className="h2 mb-2" style={{ fontFamily: 'var(--font-family-display)' }}>
-            {isAdmin ? t('members.title') : 'Мои ученики'}
+            {isAdmin ? t('members.title') : t('members.coach_title')}
           </h1>
           <p className="text-secondary text-lg">
-            {isAdmin ? t('members.subtitle') : 'Список учеников в ваших группах'}
+            {isAdmin ? t('members.subtitle') : t('members.coach_subtitle')}
           </p>
         </div>
         <Link to="/admin/members/new">
@@ -99,26 +99,37 @@ export const Members = () => {
                   <td className="py-5 px-6 border-y border-slate-50">
                     <div className="flex items-center gap-3">
                       <span style={{ padding: '6px 12px', borderRadius: '10px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', fontSize: '11px', fontWeight: '800' }}>
-                        {groups.find(g => g.id === member.groupId)?.name || 'Нет группы'}
+                        {groups.find(g => g.id === member.groupId)?.name || t('members.no_group')}
                       </span>
                       <span className="text-slate-400 font-medium">/</span>
                       <span style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--color-text-secondary)' }}>
-                        {member.plan || 'Не выбран'}
+                        {member.plan || t('members.no_plan')}
                       </span>
                     </div>
                   </td>
                   <td className="py-5 px-6 text-right rounded-r-2xl border-y border-r border-slate-50">
                     <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="action-btn-pill" title="Смотреть профиль" onClick={() => navigate(`/admin/members/${member.id}`)}>
+                      <button 
+                        className="action-btn-pill" 
+                        title={t('coaches.form.copy_creds')} 
+                        onClick={() => {
+                          const text = `Login: ${member.login || member.email}\nPassword: ${member.password || '123456'}`;
+                          navigator.clipboard.writeText(text);
+                          alert(t('common.success'));
+                        }}
+                      >
+                        <Copy size={18} />
+                      </button>
+                      <button className="action-btn-pill" title={t('members.view_profile')} onClick={() => navigate(`/admin/members/${member.id}`)}>
                         <Eye size={18} />
                       </button>
                       {isAdmin && (
-                        <button className="action-btn-pill" title="Редактировать" onClick={() => navigate(`/admin/members/${member.id}/edit`)}>
+                        <button className="action-btn-pill" title={t('common.edit')} onClick={() => navigate(`/admin/members/${member.id}/edit`)}>
                           <Edit2 size={18} />
                         </button>
                       )}
                       {isAdmin && (
-                        <button className="action-btn-pill action-btn-pill--danger" title="Удалить" onClick={() => setMemberToDelete(member)}>
+                        <button className="action-btn-pill action-btn-pill--danger" title={t('common.delete')} onClick={() => setMemberToDelete(member)}>
                           <Trash2 size={18} />
                         </button>
                       )}
@@ -142,9 +153,9 @@ export const Members = () => {
         onConfirm={() => {
           if (memberToDelete) removeMember(memberToDelete.id);
         }}
-        title="Удалить ученика"
-        message={`Вы действительно хотите удалить ученика "${memberToDelete?.firstName} ${memberToDelete?.lastName}"? Все связанные с ним данные будут потеряны.`}
-        confirmText="Удалить навсегда"
+        title={t('members.delete_title')}
+        message={t('members.delete_confirm', { name: `${memberToDelete?.firstName} ${memberToDelete?.lastName}` })}
+        confirmText={t('members.delete_btn')}
         variant="danger"
       />
     </div>

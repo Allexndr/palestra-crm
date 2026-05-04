@@ -165,13 +165,13 @@ export const AdminLayout = () => {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' }}>
               <Shield size={18} />
-              <span>Режим Супер Админа: вы просматриваете клуб {clubInfo?.name}</span>
+              <span>{t('superadmin.impersonation_mode', { name: clubInfo?.name })}</span>
             </div>
             <button onClick={handleExitImpersonation} style={{
               backgroundColor: 'rgba(255,255,255,0.2)', color: 'white', border: 'none',
               padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold'
             }}>
-              Выйти в Дашборд
+              {t('superadmin.exit_impersonation')}
             </button>
           </div>
         )}

@@ -4,12 +4,14 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { useTranslation } from '../../context/LanguageContext';
 import { ArrowLeft, Save, MapPin, Building, Phone, Globe } from 'lucide-react';
 
 export const LocationForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { locations, addLocation, updateLocation } = useAdmin();
+  const { t } = useTranslation();
 
   const isEditing = !!id;
   const existingLocation = isEditing ? locations.find(l => l.id === id) : null;
@@ -30,7 +32,7 @@ export const LocationForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.address) {
-      alert('Пожалуйста, заполните основные поля');
+      alert(t('settings.locations.form.alert_fill'));
       return;
     }
 
@@ -54,9 +56,9 @@ export const LocationForm = () => {
           </button>
           <div>
             <h1 className="h2 mb-1">
-              {isEditing ? 'Настройки филиала' : 'Новый филиал'}
+              {isEditing ? t('settings.locations.form.edit_title') : t('settings.locations.form.new_title')}
             </h1>
-            <p className="text-secondary font-medium">Конфигурация тренировочной локации</p>
+            <p className="text-secondary font-medium">{t('settings.locations.form.subtitle')}</p>
           </div>
         </div>
       </div>
@@ -67,20 +69,20 @@ export const LocationForm = () => {
             {/* Basic Info */}
             <div>
               <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-3">
-                <span className="w-8 h-[2px] bg-primary"></span> Основная информация
+                <span className="w-8 h-[2px] bg-primary"></span> {t('settings.locations.form.basic_info')}
               </h3>
               <div className="admin-form-grid">
                 <Input 
-                  label="Название филиала" 
-                  placeholder="Центральный зал / ТРЦ Арена" 
+                  label={t('settings.locations.form.name_label')} 
+                  placeholder={t('settings.locations.form.name_placeholder')} 
                   required 
                   value={formData.name} 
                   onChange={e => setFormData({...formData, name: e.target.value})} 
                 />
                 <Input 
-                  label="Контактный телефон" 
+                  label={t('settings.locations.form.phone_label')} 
                   type="tel" 
-                  placeholder="+7 (777) 000 00 00" 
+                  placeholder={t('common.phone_placeholder')} 
                   value={formData.phone} 
                   onChange={e => setFormData({...formData, phone: e.target.value})} 
                 />
@@ -90,12 +92,12 @@ export const LocationForm = () => {
             {/* Location Info */}
             <div>
               <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-8 flex items-center gap-3">
-                <span className="w-8 h-[2px] bg-primary"></span> Адрес и геопозиция
+                <span className="w-8 h-[2px] bg-primary"></span> {t('settings.locations.form.address_info')}
               </h3>
               <div className="flex flex-col gap-6">
                 <Input 
-                  label="Полный адрес" 
-                  placeholder="г. Алматы, ул. Абая 10, блок Б, 3 этаж" 
+                  label={t('settings.locations.form.address_label')} 
+                  placeholder={t('settings.locations.form.address_placeholder')} 
                   required 
                   value={formData.address} 
                   onChange={e => setFormData({...formData, address: e.target.value})} 
@@ -107,8 +109,8 @@ export const LocationForm = () => {
             <div className="p-8 bg-slate-50 rounded-3xl border border-slate-100">
                <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-bold text-slate-800 mb-1">Статус локации</h4>
-                    <p className="text-xs text-slate-500">Активные филиалы доступны для записи и расписания</p>
+                    <h4 className="font-bold text-slate-800 mb-1">{t('settings.locations.form.status_label')}</h4>
+                    <p className="text-xs text-slate-500">{t('settings.locations.form.status_desc')}</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input 
@@ -129,10 +131,10 @@ export const LocationForm = () => {
               onClick={() => navigate('/admin/locations')} 
               className="text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors border-none bg-transparent cursor-pointer"
             >
-              Отмена
+              {t('common.cancel')}
             </button>
             <Button variant="primary" type="submit" className="gap-3 px-12 h-14 shadow-lg shadow-primary/20">
-              <Save size={20} /> {isEditing ? 'Сохранить изменения' : 'Создать локацию'}
+              <Save size={20} /> {isEditing ? t('settings.locations.form.save_btn') : t('settings.locations.form.create_btn')}
             </Button>
           </div>
         </Card>

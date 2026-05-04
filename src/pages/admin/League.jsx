@@ -12,6 +12,7 @@ import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 
 export const League = () => {
   const { members, user, leagues, addLeague, removeLeague, updateLeague, sports, achievements, addAchievement, removeAchievement, monthlyAward, groups, updateMember, canUseFeature, getUpgradeMessage, activeChildId, clubInfo, updateClubInfo } = useAdmin();
+  const { t, language } = useTranslation();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   const isParent = user?.role === 'parent';
@@ -36,8 +37,8 @@ export const League = () => {
   if (!canUseFeature('league')) {
     return (
       <LockedFeature
-        title="Лига и RPG-мотивация доступны как модуль роста"
-        description={getUpgradeMessage('feature', 'Лига и RPG-геймификация')}
+        title={t('league.locked_title')}
+        description={getUpgradeMessage('feature', t('league.title'))}
         onConfigure={() => navigate('/admin/settings')}
       />
     );
@@ -82,7 +83,7 @@ export const League = () => {
     });
     setResultPoints({});
     setResultDesc('');
-    alert('Баллы успешно начислены!');
+    alert(t('league.award_success'));
   };
 
   const toggleGroup = (groupId) => {
@@ -109,8 +110,8 @@ export const League = () => {
     <div className="animate-fade-in pb-12">
       <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h1">Лига</h1>
-          <p className="text-secondary font-medium uppercase tracking-widest text-[10px] opacity-60">Рейтинг и Геймификация</p>
+          <h1 className="h1">{t('league.title')}</h1>
+          <p className="text-secondary font-medium uppercase tracking-widest text-[10px] opacity-60">{t('league.subtitle')}</p>
         </div>
         {isAdmin && (
           <div className="admin-page-actions">
@@ -130,9 +131,9 @@ export const League = () => {
               value={clubInfo?.activeLeagueTemplate || 'martial_arts'}
               onChange={(e) => updateClubInfo({ activeLeagueTemplate: e.target.value })}
             >
-              <optgroup label="Глобальный шаблон метрик">
-                {Object.entries(LEAGUE_TEMPLATES).map(([id, t]) => (
-                  <option key={id} value={id}>{t.name}</option>
+              <optgroup label={t('league.template_group_label')}>
+                {Object.entries(LEAGUE_TEMPLATES).map(([id, template]) => (
+                  <option key={id} value={id}>{t(template.name)}</option>
                 ))}
               </optgroup>
             </select>
@@ -141,7 +142,7 @@ export const League = () => {
               setIsEditing(false);
               setNewLeague({ name: '', sport: sports[0], startDate: '', endDate: '', participantIds: [], groupIds: [] });
             }} style={{ borderRadius: '14px' }}>
-              <Plus size={18} /> {isAdding ? 'Отмена' : 'Создать сезон'}
+              <Plus size={18} /> {isAdding ? t('common.cancel') : t('league.start_season_btn')}
             </Button>
           </div>
         )}
@@ -150,28 +151,28 @@ export const League = () => {
       {isAdding && isAdmin && (
         <Card className="admin-section-card animate-up shadow-2xl shadow-indigo-100 border-none overflow-hidden p-0">
           <div className="p-8 border-b border-slate-50">
-             <h4 className="h4">{isEditing ? 'Редактировать параметры лиги' : 'Параметры новой лиги'}</h4>
+             <h4 className="h4">{isEditing ? t('league.season_edit_title') : t('league.season_new_title')}</h4>
           </div>
           <form onSubmit={handleCreateLeague} className="p-8 flex flex-col gap-8">
             <div className="admin-form-grid">
-              <Input label="Название сезона" placeholder="Летний кубок 2026" required value={newLeague.name} onChange={e => setNewLeague({...newLeague, name: e.target.value})} />
+              <Input label={t('league.season_name')} placeholder={t('league.season_placeholder')} required value={newLeague.name} onChange={e => setNewLeague({...newLeague, name: e.target.value})} />
               <div className="input-group">
-                <label className="input-label">Дисциплина</label>
+                <label className="input-label">{t('league.sport_label')}</label>
                 <select className="input-field" value={newLeague.sport} onChange={e => setNewLeague({...newLeague, sport: e.target.value})}>
-                  <option>Все виды</option>
+                  <option>{t('common.all_types')}</option>
                   {sports.map(s => <option key={s}>{s}</option>)}
                 </select>
               </div>
-              <Input label="Начало" type="date" required value={newLeague.startDate} onChange={e => setNewLeague({...newLeague, startDate: e.target.value})} />
-              <Input label="Конец" type="date" required value={newLeague.endDate} onChange={e => setNewLeague({...newLeague, endDate: e.target.value})} />
+              <Input label={t('league.start_date')} type="date" required value={newLeague.startDate} onChange={e => setNewLeague({...newLeague, startDate: e.target.value})} />
+              <Input label={t('league.end_date')} type="date" required value={newLeague.endDate} onChange={e => setNewLeague({...newLeague, endDate: e.target.value})} />
             </div>
 
             <div className="admin-two-column">
               <div>
-                <label className="text-[10px] font-black uppercase text-muted tracking-widest mb-4 block">Группы-участники</label>
+                <label className="text-[10px] font-black uppercase text-muted tracking-widest mb-4 block">{t('league.groups_participants')}</label>
                 <div className="flex flex-wrap gap-2">
                   {groups.length === 0 ? (
-                    <p className="text-xs text-muted">Нет созданных групп</p>
+                    <p className="text-xs text-muted">{t('league.no_groups')}</p>
                   ) : groups.map(g => (
                     <button 
                       key={g.id} type="button" onClick={() => toggleGroup(g.id)}
@@ -187,7 +188,7 @@ export const League = () => {
                 </div>
               </div>
               <div>
-                <label className="text-[10px] font-black uppercase text-muted tracking-widest mb-4 block">Индивидуально ({newLeague.participantIds.length})</label>
+                <label className="text-[10px] font-black uppercase text-muted tracking-widest mb-4 block">{t('league.individual_participants', { count: newLeague.participantIds.length })}</label>
                 <div className="bg-slate-50 rounded-2xl p-4 max-h-40 overflow-y-auto scrollbar-hide">
                    {members.map(m => (
                      <div 
@@ -213,7 +214,7 @@ export const League = () => {
             </div>
 
             <div className="flex justify-end gap-4 border-t border-slate-50 pt-8">
-              <Button variant="primary" type="submit" style={{ borderRadius: '14px', padding: '12px 32px' }}>{isEditing ? 'Сохранить изменения' : 'Запустить сезон'}</Button>
+              <Button variant="primary" type="submit" style={{ borderRadius: '14px', padding: '12px 32px' }}>{isEditing ? t('league.save_changes') : t('league.start_season_btn')}</Button>
             </div>
           </form>
         </Card>
@@ -228,7 +229,7 @@ export const League = () => {
               : 'bg-white text-secondary border-slate-200 hover:border-slate-300'
           }`}
         >
-          Общий рейтинг
+          {t('league.general_ranking')}
         </button>
         {leagues.map(l => (
           <button 
@@ -247,9 +248,9 @@ export const League = () => {
 
       {selectedLeagueId !== 'all' && (
         <div className="flex gap-8 border-b border-slate-100 mb-10">
-            <button onClick={() => setActiveTab('ranking')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'ranking' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Рейтинг</button>
-            <button onClick={() => setActiveTab('table')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'table' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Таблица Лиги</button>
-            {isAdmin && <button onClick={() => setActiveTab('results')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'results' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>Внести результаты</button>}
+            <button onClick={() => setActiveTab('ranking')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'ranking' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>{t('league.tab_ranking')}</button>
+            <button onClick={() => setActiveTab('table')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'table' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>{t('league.tab_table')}</button>
+            {isAdmin && <button onClick={() => setActiveTab('results')} className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'results' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}>{t('league.tab_results')}</button>}
         </div>
       )}
 
@@ -259,14 +260,14 @@ export const League = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-16">№</th>
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-24">Возраст</th>
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Боец (ФИО)</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-16">{t('league.table_rank')}</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 w-24">{t('league.table_age')}</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">{t('league.table_member')}</th>
                   {currentTemplate.metrics.map(m => (
-                    <th key={m.id} className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">{m.label}</th>
+                    <th key={m.id} className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">{t(m.label)}</th>
                   ))}
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Итого</th>
-                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">Прогресс</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">{t('league.table_total')}</th>
+                  <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-center">{t('league.table_progress')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -329,7 +330,7 @@ export const League = () => {
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-accent animate-bounce"><Trophy size={48} fill="currentColor" fillOpacity={0.1} /></div>
                 <div className="relative w-32 h-32 mx-auto mb-8">
                   <img src={top3[0].avatar} alt="" className="w-full h-full rounded-[40px] object-cover border-4 border-white shadow-2xl" />
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-accent text-white px-6 py-1.5 rounded-2xl text-sm font-black shadow-lg shadow-orange-200">WINNER</div>
+                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-accent text-white px-6 py-1.5 rounded-2xl text-sm font-black shadow-lg shadow-orange-200">{t('league.winner_badge')}</div>
                 </div>
                 <p className="font-black text-slate-900 text-xl mb-1">{top3[0].firstName} {top3[0].lastName}</p>
                 <p className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">{top3[0].points} XP</p>
@@ -352,12 +353,12 @@ export const League = () => {
             <div>
               <Card style={{ padding: 0 }} className="card-hover border-none shadow-xl shadow-slate-100 overflow-hidden bg-white">
                 <div className="p-8 border-b border-slate-50 flex justify-between items-center">
-                   <h3 className="h4">{selectedLeagueId === 'all' ? 'Мировой рейтинг' : `Результаты: ${currentLeague?.name}`}</h3>
+                   <h3 className="h4">{selectedLeagueId === 'all' ? t('league.world_ranking') : t('league.results_title', { name: currentLeague?.name })}</h3>
                    <div className="p-2 bg-indigo-50 text-primary rounded-xl"><TrendingUp size={24} /></div>
                 </div>
                 <div className="p-4">
                   {sortedMembers.length === 0 ? (
-                    <p className="text-center py-20 text-muted font-bold opacity-30 uppercase tracking-widest">Нет участников</p>
+                    <p className="text-center py-20 text-muted font-bold opacity-30 uppercase tracking-widest">{t('league.no_members')}</p>
                   ) : sortedMembers.map((member, idx) => {
                     const isMe = (isParent && member.id === activeChildId) || (isStudent && member.id === user?.id);
                     return (
@@ -366,11 +367,11 @@ export const League = () => {
                       <img src={member.avatar} alt="" className="w-14 h-14 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-all" />
                       <div className="flex-1">
                         <p className="font-black text-slate-900 mb-0.5">{member.firstName} {member.lastName}</p>
-                        <p className="text-[10px] font-black text-muted uppercase tracking-widest">{member.level || 'Новичок'}</p>
+                        <p className="text-[10px] font-black text-muted uppercase tracking-widest">{member.level || t('common.beginner')}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-black text-primary text-xl">{member.points || 0}</p>
-                        <p className="text-[9px] font-black text-muted uppercase tracking-widest">баллов XP</p>
+                        <p className="text-[9px] font-black text-muted uppercase tracking-widest">{t('league.xp_label')}</p>
                       </div>
                     </div>
                     );
@@ -387,20 +388,20 @@ export const League = () => {
                   <h4 className="text-2xl font-black mb-4" style={{ fontFamily: 'var(--font-family-display)' }}>{monthlyAward.title}</h4>
                   <p className="text-sm opacity-90 leading-relaxed mb-10">{monthlyAward.description}</p>
                   <div className="p-4 bg-white/10 rounded-2xl font-black text-xs uppercase tracking-widest border border-white/10 flex justify-between items-center">
-                    <span>Финал через:</span>
-                    <span className="text-lg">{monthlyAward.daysLeft} дн.</span>
+                    <span>{t('league.ends_in')}</span>
+                    <span className="text-lg">{monthlyAward.daysLeft} {t('league.days_left')}</span>
                   </div>
                 </Card>
               )}
 
               <Card className="border-none shadow-xl shadow-slate-100">
                 <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-[10px] font-black uppercase text-muted tracking-widest">Коллекция наград</h3>
+                  <h3 className="text-[10px] font-black uppercase text-muted tracking-widest">{t('league.collection_title')}</h3>
                   {isAdmin && (
                     <button 
                       onClick={() => {
-                        const title = prompt('Название достижения:');
-                        const desc = prompt('Описание достижения:');
+                        const title = prompt(t('league.achievement_title_prompt'));
+                        const desc = prompt(t('league.achievement_desc_prompt'));
                         if (title && desc) {
                           addAchievement({ title, desc });
                         }
@@ -439,18 +440,18 @@ export const League = () => {
         <Card className="animate-up shadow-2xl shadow-slate-100 border-none overflow-hidden p-0">
           <div className="p-8 border-b border-slate-50 flex justify-between items-center">
              <div>
-                <h4 className="h4 mb-1">Начисление баллов (XP)</h4>
-                <p className="text-xs font-bold text-muted uppercase tracking-widest">За спортивные успехи и дисциплину</p>
+                <h4 className="h4 mb-1">{t('league.award_xp_title')}</h4>
+                <p className="text-xs font-bold text-muted uppercase tracking-widest">{t('league.award_xp_subtitle')}</p>
              </div>
              <Button variant="primary" onClick={handleAwardPoints} disabled={Object.keys(resultPoints).length === 0} style={{ borderRadius: '12px' }}>
-               Подтвердить и начислить
+               {t('league.confirm_award_btn')}
              </Button>
           </div>
           <div className="p-8">
              <div className="mb-8">
                 <Input 
-                  label="Повод / Событие" 
-                  placeholder="Напр: Внутриклубный спарринг 15.04" 
+                  label={t('league.event_label')} 
+                  placeholder={t('league.event_placeholder')} 
                   value={resultDesc} 
                   onChange={e => setResultDesc(e.target.value)} 
                 />
@@ -462,18 +463,18 @@ export const League = () => {
                         <img src={m.avatar || '/placeholder-avatar.png'} alt="" className="w-12 h-12 rounded-2xl object-cover shadow-sm" />
                         <div className="flex-1">
                            <p className="text-base font-black text-slate-900">{m.firstName} {m.lastName}</p>
-                           <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">Текущий уровень: {m.points || 0} XP</p>
+                           <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em]">{t('league.current_level', { points: m.points || 0 })}</p>
                         </div>
                      </div>
                      
                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        {currentTemplate.metrics.map(m => (
-                          <div key={m.id} className="flex flex-col gap-2">
-                             <label className={`text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2`}>{m.label}</label>
+                        {currentTemplate.metrics.map(metric => (
+                          <div key={metric.id} className="flex flex-col gap-2">
+                             <label className={`text-[9px] font-black uppercase text-slate-400 tracking-widest ml-2`}>{t(metric.label)}</label>
                              <input 
-                                type="number" className={`w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-${m.color}-100 text-${m.color}-500 shadow-sm`}
-                                value={formData[m.id] || member[m.id] || 0}
-                                onChange={e => updateMember(member.id, { [m.id]: parseInt(e.target.value) || 0 })}
+                                type="number" className={`w-full h-12 text-center font-black bg-white border border-slate-100 rounded-xl outline-none focus:ring-4 focus:ring-${metric.color}-100 text-${metric.color}-500 shadow-sm`}
+                                value={m[metric.id] || 0}
+                                onChange={e => updateMember(m.id, { [metric.id]: parseInt(e.target.value) || 0 })}
                              />
                           </div>
                         ))}
@@ -481,7 +482,7 @@ export const League = () => {
 
                      <div className="flex items-center gap-4 pt-4 border-t border-slate-100/50">
                         <Input 
-                          placeholder="Добавить XP" 
+                          placeholder={t('league.add_xp_placeholder')} 
                           type="number"
                           value={resultPoints[m.id] || ''}
                           onChange={e => setResultPoints(prev => ({ ...prev, [m.id]: e.target.value }))}
@@ -498,8 +499,8 @@ export const League = () => {
       <ConfirmModal 
         isOpen={!!leagueToDelete} onClose={() => setLeagueToDelete(null)}
         onConfirm={() => { removeLeague(leagueToDelete.id); setLeagueToDelete(null); setSelectedLeagueId('all'); }}
-        title="Удалить сезон" message={`Вы действительно хотите удалить лигу "${leagueToDelete?.name}"?`}
-        confirmText="Удалить" variant="danger"
+        title={t('league.delete_title')} message={t('league.delete_confirm', { name: leagueToDelete?.name })}
+        confirmText={t('common.delete')} variant="danger"
       />
     </div>
   );

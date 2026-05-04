@@ -49,8 +49,8 @@ export const MemberForm = () => {
     birthDate: '',
     weight: '',
     height: '',
-    skillLevel: 'Начинающий',
-    beltColor: 'Белый',
+    skillLevel: 'beginner',
+    beltColor: 'none',
     groupId: (groups && groups.length > 0) ? groups[0].id : '',
     plan: (plans && plans.length > 0) ? plans[0].name : '',
     locationId: (selectedLocationId && selectedLocationId !== 'all') ? selectedLocationId : ((locations && locations.length > 0) ? locations[0].id : '1'),
@@ -135,7 +135,7 @@ export const MemberForm = () => {
       const url = await uploadBlobFile(file, 'avatars');
       setFormData((prev) => ({ ...prev, avatar: url }));
     } catch (error) {
-      alert(error.message || 'Не удалось загрузить аватар');
+      alert(error.message || t('members.upload_error'));
     } finally {
       setIsUploadingAvatar(false);
       event.target.value = '';
@@ -156,7 +156,7 @@ export const MemberForm = () => {
 
   const handleCreateParent = () => {
     if (!formData.parentName) {
-      alert('Сначала введите ФИО родителя');
+      alert(t('members.parent_name_required'));
       return;
     }
     const names = formData.parentName.split(' ');
@@ -174,7 +174,7 @@ export const MemberForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.firstName.length < 2 || formData.lastName.length < 2) {
-      alert('Имя и Фамилия должны содержать минимум 2 буквы.');
+      alert(t('members.name_min_length'));
       return;
     }
     
@@ -217,7 +217,7 @@ export const MemberForm = () => {
                 {isEditing ? t('members.edit_member') : t('members.new_member')}
               </h1>
             </div>
-            <p className="text-secondary text-lg font-medium opacity-60">Заполните данные для зачисления в {clubInfo?.name || 'Palestra'}</p>
+            <p className="text-secondary text-lg font-medium opacity-60">{t('members.registration_subtitle', { club: clubInfo?.name || 'Palestra' })}</p>
           </div>
         </div>
       </div>
@@ -252,15 +252,15 @@ export const MemberForm = () => {
                 </div>
                 <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
                   <div className="admin-form-grid">
-                    <Input label={t('members.first_name')} required minLength={2} placeholder="Имя ученика" value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
-                    <Input label={t('members.last_name')} required minLength={2} placeholder="Фамилия ученика" value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
+                    <Input label={t('members.first_name')} required minLength={2} placeholder={t('members.first_name')} value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
+                    <Input label={t('members.last_name')} required minLength={2} placeholder={t('members.last_name')} value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
                     <Input label={t('members.birth_date')} type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
                     <Input label={t('members.phone')} type="tel" placeholder="+7 (777) 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
                     
                     <div className="input-group">
                       <label className="input-label">{t('members.branch')}</label>
                       <select className="input-field" style={{ height: '58px' }} value={formData.locationId} onChange={e => handleInputChange('locationId', e.target.value)}>
-                        {locations.length === 0 && <option value="1">Основной зал</option>}
+                        {locations.length === 0 && <option value="1">{t('settings.locations.main_hall')}</option>}
                         {locations.map(loc => (
                           <option key={loc.id} value={loc.id}>{loc.name}</option>
                         ))}
@@ -268,7 +268,7 @@ export const MemberForm = () => {
                     </div>
 
                     <div className="input-group">
-                      <label className="input-label">Фото профиля</label>
+                      <label className="input-label">{t('members.avatar')}</label>
                       <div className="flex items-center gap-6 p-2 pr-6 bg-slate-50 rounded-3xl border border-slate-100">
                         <div className="w-14 h-14 rounded-3xl bg-white flex items-center justify-center overflow-hidden border border-slate-200 shadow-sm shrink-0">
                            {formData.avatar ? <img src={fixBlobUrl(formData.avatar)} className="w-full h-full object-cover" /> : <Camera size={22} className="text-slate-300" />}
@@ -276,7 +276,7 @@ export const MemberForm = () => {
                         <div className="flex-1">
                           <input className="hidden" id="avatar-input" type="file" accept="image/*" onChange={handleAvatarUpload} />
                           <label htmlFor="avatar-input" className="text-xs font-black text-primary hover:underline cursor-pointer">
-                            {isUploadingAvatar ? 'Загрузка...' : 'Загрузить новое фото'}
+                            {isUploadingAvatar ? t('common.loading') : t('members.upload_new')}
                           </label>
                         </div>
                       </div>
@@ -285,13 +285,13 @@ export const MemberForm = () => {
                   
                   <div className="mt-12">
                     <div className="input-group">
-                      <label className="input-label text-rose-600 font-black">Медицинские особенности / Аллергии</label>
+                      <label className="input-label text-rose-600 font-black">{t('members.medical_notes')}</label>
                       <textarea 
                         className="input-field min-h-[100px] border-rose-100 focus:border-rose-300 bg-rose-50/10" 
                         style={{ padding: '20px' }}
                         value={formData.medicalNotes} 
                         onChange={e => setFormData({...formData, medicalNotes: e.target.value})}
-                        placeholder="Например: аллергия на цитрусовые, проблемы с коленями, астма... Если особенностей нет, оставьте поле пустым."
+                        placeholder={t('members.medical_placeholder')}
                       />
                     </div>
                   </div>
@@ -301,33 +301,33 @@ export const MemberForm = () => {
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                 <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
-                    <div className="w-10 h-[3px] bg-primary rounded-full"></div> Спортивный профиль
+                    <div className="w-10 h-[3px] bg-primary rounded-full"></div> {t('members.sport_profile')}
                   </h3>
                 </div>
                 <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
                   <div className="admin-form-grid admin-form-grid--compact">
-                    <Input label="Вес (кг)" type="number" placeholder="0" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
-                    <Input label="Рост (см)" type="number" placeholder="0" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
+                    <Input label={t('members.weight')} type="number" placeholder="0" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
+                    <Input label={t('members.height')} type="number" placeholder="0" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
                     
                     <div className="input-group">
-                      <label className="input-label">Уровень мастерства</label>
+                      <label className="input-label">{t('members.skill_level')}</label>
                       <select className="input-field" style={{ height: '58px' }} value={formData.skillLevel} onChange={e => setFormData({...formData, skillLevel: e.target.value})}>
-                        <option>Начинающий</option>
-                        <option>Средний</option>
-                        <option>Продвинутый</option>
-                        <option>Профессионал</option>
+                        <option value="beginner">{t('members.skills.beginner')}</option>
+                        <option value="intermediate">{t('members.skills.intermediate')}</option>
+                        <option value="advanced">{t('members.skills.advanced')}</option>
+                        <option value="pro">{t('members.skills.pro')}</option>
                       </select>
                     </div>
 
                     <div className="input-group">
-                      <label className="input-label">Пояс / Ранг</label>
+                      <label className="input-label">{t('members.belt')}</label>
                       <select className="input-field" style={{ height: '58px' }} value={formData.beltColor} onChange={e => setFormData({...formData, beltColor: e.target.value})}>
-                        <option value="Отсутствует">Отсутствует</option>
-                        <option>Белый</option>
-                        <option>Синий</option>
-                        <option>Пурпурный</option>
-                        <option>Коричневый</option>
-                        <option>Черный</option>
+                        <option value="none">{t('members.skills.none')}</option>
+                        <option value="white">{t('members.skills.white')}</option>
+                        <option value="blue">{t('members.skills.blue')}</option>
+                        <option value="purple">{t('members.skills.purple')}</option>
+                        <option value="brown">{t('members.skills.brown')}</option>
+                        <option value="black">{t('members.skills.black')}</option>
                       </select>
                     </div>
                   </div>
@@ -343,7 +343,7 @@ export const MemberForm = () => {
                 <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
                   <div className="admin-form-grid">
                     <div className="relative">
-                      <Input label={t('members.login')} placeholder="Создается автоматически" value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
+                      <Input label={t('members.login')} placeholder={t('members.login_auto')} value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
                       <button 
                         type="button"
                         onClick={() => copyToClipboard(`${formData.login} ${formData.password}`)}
@@ -353,7 +353,7 @@ export const MemberForm = () => {
                         <Copy size={16} />
                       </button>
                     </div>
-                    <Input label={t('members.password')} type="text" placeholder="Создается автоматически" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+                    <Input label={t('members.password')} type="text" placeholder={t('members.login_auto')} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                   </div>
                   <p className="text-[10px] text-slate-400 font-bold mt-12 uppercase tracking-widest border-t border-slate-100 pt-8">{t('members.access_ready')}</p>
                 </div>
@@ -426,8 +426,8 @@ export const MemberForm = () => {
                             className="custom-range w-full h-3 bg-slate-200/60 rounded-full appearance-none cursor-pointer"
                           />
                           <div className="flex justify-between px-1 text-[10px] font-black text-slate-400 tracking-widest uppercase">
-                            <span>{stat.id === 'points' || stat.id === 'level' ? 'Min' : 'Новичок'}</span>
-                            <span>{stat.id === 'points' || stat.id === 'level' ? 'Max' : 'Мастер'}</span>
+                            <span>{stat.id === 'points' || stat.id === 'level' ? 'Min' : t('members.skills.beginner')}</span>
+                            <span>{stat.id === 'points' || stat.id === 'level' ? 'Max' : t('members.skills.pro')}</span>
                           </div>
                         </div>
                       </div>
@@ -470,12 +470,12 @@ export const MemberForm = () => {
                  
                  <div className="p-8 bg-white border border-slate-200 rounded-3xl shadow-sm">
                     <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 flex items-center gap-3">
-                      <Star size={16} fill="var(--color-primary)" fillOpacity={0.1} /> Анализ потенциала
+                      <Star size={16} fill="var(--color-primary)" fillOpacity={0.1} /> {t('members.potential_analysis')}
                     </p>
                     <p className="text-sm text-slate-600 font-bold leading-relaxed">
-                      {avgStats < 40 ? 'Ученик на стадии «Белого листа». Требуется интенсивная база ОФП и дисциплина.' : 
-                       avgStats < 70 ? 'Стабильный ученик. Рекомендуется участие в турнирах для повышения стрессоустойчивости.' : 
-                       'Потенциальный чемпион. Индивидуальный план подготовки к профессиональным лигам.'}
+                      {avgStats < 40 ? t('members.potential.low') : 
+                       avgStats < 70 ? t('members.potential.mid') : 
+                       t('members.potential.high')}
                     </p>
                  </div>
               </div>
@@ -485,26 +485,26 @@ export const MemberForm = () => {
           {activeTab === 'finances' && (
             <Card className="animate-fade-in border border-slate-100 shadow-sm p-12" style={{ borderRadius: '40px' }}>
               <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-12 flex items-center gap-4">
-                <div className="w-10 h-[3px] bg-primary rounded-full"></div> Финансовые настройки
+                <div className="w-10 h-[3px] bg-primary rounded-full"></div> {t('members.finance_settings')}
               </h3>
               <div className="admin-form-grid">
                 <div className="input-group">
-                  <label className="input-label">Выбор тарифа</label>
+                  <label className="input-label">{t('members.plan_select')}</label>
                   <select className="input-field" style={{ height: '58px' }} value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})}>
-                    <option value="">Не выбран</option>
+                    <option value="">{t('members.no_plan')}</option>
                     {plans.map(p => (
                       <option key={p.id} value={p.name}>{p.name} ({p.price.toLocaleString()} ₸)</option>
                     ))}
                   </select>
                 </div>
-                <Input label="К оплате сейчас (₸)" isCurrency value={formData.paidAmount} onChange={e => setFormData({...formData, paidAmount: e.target.value})} />
-                <Input label="Баланс депозита (₸)" isCurrency value={formData.balance} onChange={e => setFormData({...formData, balance: e.target.value})} />
-                <Input label="Абонемент до" type="date" value={formData.subscriptionEndDate} onChange={e => setFormData({...formData, subscriptionEndDate: e.target.value})} />
+                <Input label={t('members.to_pay_now')} isCurrency value={formData.paidAmount} onChange={e => setFormData({...formData, paidAmount: e.target.value})} />
+                <Input label={t('members.deposit_balance')} isCurrency value={formData.balance} onChange={e => setFormData({...formData, balance: e.target.value})} />
+                <Input label={t('members.sub_end_date')} type="date" value={formData.subscriptionEndDate} onChange={e => setFormData({...formData, subscriptionEndDate: e.target.value})} />
               </div>
               <div className="mt-12 p-8 bg-slate-50 rounded-3xl border border-slate-100 flex gap-5 items-start">
                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0">💳</div>
                 <p className="text-xs text-slate-500 font-bold leading-relaxed">
-                  При выборе тарифа сумма подставится автоматически. Депозит можно использовать для покупки товаров в магазине клуба или оплаты доп. тренировок.
+                  {t('members.finance_info')}
                 </p>
               </div>
             </Card>
@@ -515,12 +515,12 @@ export const MemberForm = () => {
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
                  <div className="p-10 border-b border-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                    <div>
-                     <h3 className="h4 mb-1">Представитель (Родитель)</h3>
-                     <p className="text-xs text-secondary font-black uppercase tracking-widest opacity-60">Для учеников до 18 лет</p>
+                     <h3 className="h4 mb-1">{t('members.parent_rep')}</h3>
+                     <p className="text-xs text-secondary font-black uppercase tracking-widest opacity-60">{t('members.parent_minor')}</p>
                    </div>
                    {!formData.parentLogin && (
                      <Button type="button" variant="secondary" className="gap-3 h-12 px-8 rounded-2xl shadow-sm border-slate-200" onClick={handleCreateParent}>
-                       <Plus size={20} /> Создать доступ родителю
+                       <Plus size={20} /> {t('members.parent_create_btn')}
                      </Button>
                    )}
                  </div>
@@ -543,21 +543,21 @@ export const MemberForm = () => {
                   {(formData.hasParent || formData.parentLogin) && (
                     <div className="mt-12 p-10 bg-emerald-50/50 rounded-3xl border border-emerald-100 animate-up">
                       <h4 className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.4em] mb-10 flex items-center gap-3">
-                        <Shield size={18} /> Кабинет родителя активирован
+                        <Shield size={18} /> {t('members.parent_active')}
                       </h4>
                       <div className="admin-form-grid">
                         <div className="relative">
-                          <Input label="Логин (Email)" value={formData.parentLogin} onChange={e => setFormData({...formData, parentLogin: e.target.value})} />
+                          <Input label={t('members.login')} value={formData.parentLogin} onChange={e => setFormData({...formData, parentLogin: e.target.value})} />
                           <button 
                             type="button"
                             onClick={() => copyToClipboard(`${formData.parentLogin} ${formData.parentPassword}`)}
                             className="absolute right-4 top-[42px] p-2 text-slate-400 hover:text-primary transition-colors bg-white/80 rounded-lg border border-slate-100 shadow-sm"
-                            title="Скопировать логин и пароль"
+                            title={t('common.copy')}
                           >
                             <Copy size={16} />
                           </button>
                         </div>
-                        <Input label="Пароль" value={formData.parentPassword} onChange={e => setFormData({...formData, parentPassword: e.target.value})} />
+                        <Input label={t('members.password')} value={formData.parentPassword} onChange={e => setFormData({...formData, parentPassword: e.target.value})} />
                       </div>
                     </div>
                   )}
@@ -573,10 +573,10 @@ export const MemberForm = () => {
             onClick={() => navigate('/admin/members')} 
             className="text-sm font-black text-slate-400 hover:text-rose-600 transition-colors border-none bg-transparent cursor-pointer uppercase tracking-widest px-6"
           >
-            Отменить и выйти
+            {t('members.save_and_exit')}
           </button>
           <Button variant="primary" type="submit" className="gap-4 px-16 h-16 text-lg shadow-2xl shadow-primary/30 rounded-3xl w-full sm:w-auto">
-            <Save size={24} /> {isEditing ? 'Сохранить изменения' : 'Зачислить ученика в клуб'}
+            <Save size={24} /> {isEditing ? t('common.save') : t('members.enroll_btn')}
           </Button>
         </Card>
       </form>

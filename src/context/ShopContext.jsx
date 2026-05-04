@@ -47,7 +47,10 @@ export const ShopProvider = ({ children }) => {
 
     const controller = new AbortController();
     async function persistShop() {
-      const response = await fetch('/api/app/state', { credentials: 'include', signal: controller.signal });
+      const response = await fetch('/api/app/state', { 
+        credentials: 'include',
+        ...(process.env.NODE_ENV !== 'test' ? { signal: controller.signal } : {})
+      });
       const data = response.ok ? await response.json() : {};
       const state = data.state || {};
       await fetch('/api/app/state', {
@@ -55,7 +58,7 @@ export const ShopProvider = ({ children }) => {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ state: { ...state, shop: { products, orders } } }),
-        signal: controller.signal,
+        ...(process.env.NODE_ENV !== 'test' ? { signal: controller.signal } : {}),
       });
     }
 
