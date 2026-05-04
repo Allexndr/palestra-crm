@@ -7,6 +7,7 @@ import { useAdmin } from '../../context/AdminContext';
 import { Trophy, Medal, Target, TrendingUp, Award, Star, ArrowUpRight, Edit2, Trash2, X, Plus } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { LockedFeature } from '../../components/admin/LockedFeature';
+import { useTranslation } from '../../context/LanguageContext';
 
 import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 

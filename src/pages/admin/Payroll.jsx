@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -150,10 +151,10 @@ export const Payroll = () => {
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
               <div className="flex items-center gap-6">
                  <div className="w-16 h-16 rounded-2xl bg-slate-100 overflow-hidden flex-shrink-0 group-hover:scale-110 transition-transform">
-                   {coach.avatar ? <img src={coach.avatar} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-bold text-slate-400">{coach.firstName[0]}</div>}
+                   {coach.avatar ? <img src={coach.avatar} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-bold text-slate-400">{(coach.firstName || coach.name || '?')[0]}</div>}
                  </div>
                  <div>
-                    <h4 className="font-bold text-xl text-slate-900 mb-1">{coach.firstName} {coach.lastName}</h4>
+                    <h4 className="font-bold text-xl text-slate-900 mb-1">{coach.firstName ? `${coach.firstName} ${coach.lastName || ''}` : coach.name}</h4>
                     <div className="flex items-center gap-3">
                       <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px] font-bold uppercase tracking-wider">{coach.specialization}</span>
                       <span className="text-xs text-muted font-medium">{t('payroll.rate_label')}: {formatKzt(coach.salaryRate)} / {coach.salaryType === 'per_session' ? t('payroll.per_session') : coach.salaryType === 'per_student' ? t('payroll.per_student') : t('payroll.per_month')}</span>

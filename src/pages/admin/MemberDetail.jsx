@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { ArrowLeft, User, Phone, MapPin, Target, Calendar, Trophy, Zap, Shield, HeartPulse, Wallet, Copy } from 'lucide-react';
@@ -9,6 +10,7 @@ export const MemberDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { members, groups, locations, plans, fixBlobUrl } = useAdmin();
+  const { t, language } = useTranslation();
   const [activeTab, setActiveTab] = React.useState('overview');
   
   const member = members.find(m => m.id === id);
@@ -16,22 +18,22 @@ export const MemberDetail = () => {
   if (!member) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh]">
-        <h2 className="h3 mb-4">Ученик не найден</h2>
-        <Button variant="primary" onClick={() => navigate('/admin/members')}>Вернуться к списку</Button>
+        <h2 className="h3 mb-4">{t('member_detail.not_found')}</h2>
+        <Button variant="primary" onClick={() => navigate('/admin/members')}>{t('member_detail.back_btn')}</Button>
       </div>
     );
   }
 
-  const groupName = groups.find(g => g.id === member.groupId)?.name || 'Без группы';
-  const locationName = locations.find(l => l.id === member.locationId)?.name || 'Основной филиал';
+  const groupName = groups.find(g => g.id === member.groupId)?.name || t('member_detail.without_group');
+  const locationName = locations.find(l => l.id === member.locationId)?.name || t('member_detail.main_branch');
   const planInfo = plans.find(p => p.name === member.plan);
 
   const stats = [
-    { id: 'strength', label: 'Сила', value: member.strength || 50, icon: '💪', color: 'bg-red-500' },
-    { id: 'speed', label: 'Скорость', value: member.speed || 50, icon: '⚡', color: 'bg-yellow-500' },
-    { id: 'reaction', label: 'Реакция', value: member.reaction || 50, icon: '👁️', color: 'bg-blue-500' },
-    { id: 'endurance', label: 'Выносливость', value: member.endurance || 50, icon: '🫁', color: 'bg-green-500' },
-    { id: 'technique', label: 'Техника', value: member.technique || 50, icon: '🥋', color: 'bg-purple-500' }
+    { id: 'strength', label: t('member_detail.stats_strength'), value: member.strength || 50, icon: '💪', color: 'bg-red-500' },
+    { id: 'speed', label: t('member_detail.stats_speed'), value: member.speed || 50, icon: '⚡', color: 'bg-yellow-500' },
+    { id: 'reaction', label: t('member_detail.stats_reaction'), value: member.reaction || 50, icon: '👁️', color: 'bg-blue-500' },
+    { id: 'endurance', label: t('member_detail.stats_endurance'), value: member.endurance || 50, icon: '🫁', color: 'bg-green-500' },
+    { id: 'technique', label: t('member_detail.stats_technique'), value: member.technique || 50, icon: '🥋', color: 'bg-purple-500' }
   ];
 
   return (
@@ -43,13 +45,13 @@ export const MemberDetail = () => {
           </button>
           <div className="page-title-block page-title-block--row">
             <h1 className="h2">
-              Профиль ученика
+              {t('member_detail.title')}
             </h1>
           </div>
         </div>
         <Link to={`/admin/members/${id}/edit`}>
           <Button variant="primary" style={{ borderRadius: '14px', gap: '8px' }}>
-             <Zap size={16} fill="white" /> Редактировать
+             <Zap size={16} fill="white" /> {t('member_detail.edit')}
           </Button>
         </Link>
       </div>
@@ -79,12 +81,12 @@ export const MemberDetail = () => {
                     <h2 className="h2 mb-2">{member.firstName} {member.lastName}</h2>
                     <div className="flex flex-wrap gap-2 mb-6">
                       <span className="px-3 py-1 bg-indigo-50 text-primary text-[10px] font-bold uppercase tracking-wider rounded-lg border border-indigo-100">{member.skillLevel}</span>
-                      <span className="px-3 py-1 bg-slate-50 text-slate-700 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-slate-200">{member.beltColor} пояс</span>
+                      <span className="px-3 py-1 bg-slate-50 text-slate-700 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-slate-200">{member.beltColor}</span>
                       <span className="px-3 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-amber-100">{groupName}</span>
                     </div>
                  </div>
                  <div style={{ textAlign: 'right' }}>
-                    <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">Уровень опыта</p>
+                    <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">{t('member_detail.level')}</p>
                     <p className="h3 text-primary">{Math.floor((member.points || 0) / 100) + 1}</p>
                  </div>
                </div>
@@ -94,9 +96,9 @@ export const MemberDetail = () => {
           {/* Navigation Tabs */}
           <div className="flex gap-4 border-b pb-1 mb-2">
             {[
-              { id: 'overview', label: 'Обзор' },
-              { id: 'stats', label: 'Характеристики' },
-              { id: 'achievements', label: 'Достижения' }
+              { id: 'overview', label: t('member_detail.tab_overview') },
+              { id: 'stats', label: t('member_detail.tab_stats') },
+              { id: 'achievements', label: t('member_detail.tab_achievements') }
             ].map(tab => (
               <button 
                 key={tab.id}
@@ -117,57 +119,57 @@ export const MemberDetail = () => {
             <div className="flex flex-col gap-6 animate-fade-in">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
                 <Card style={{ padding: '24px', textAlign: 'center' }} className="card-hover">
-                   <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-2">Возраст</p>
+                   <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-2">{t('member_detail.age')}</p>
                    <p className="h3">{member.birthDate ? `${new Date().getFullYear() - new Date(member.birthDate).getFullYear()}` : '-'}</p>
                 </Card>
                 <Card style={{ padding: '24px', textAlign: 'center' }} className="card-hover">
-                   <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-2">Вес (кг)</p>
+                   <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-2">{t('member_detail.weight')}</p>
                    <p className="h3">{member.weight || '-'}</p>
                 </Card>
                 <Card style={{ padding: '24px', textAlign: 'center' }} className="card-hover">
-                   <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-2">Рост (см)</p>
+                   <p className="text-[10px] font-bold text-muted uppercase tracking-wider mb-2">{t('member_detail.height')}</p>
                    <p className="h3">{member.height || '-'}</p>
                 </Card>
               </div>
 
               <Card style={{ padding: '30px' }}>
-                <h3 className="h5 mb-6 border-b pb-4">Контактная информация</h3>
+                <h3 className="h5 mb-6 border-b pb-4">{t('member_detail.contacts')}</h3>
                 <div className="admin-form-grid">
                   <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-3">
                        <div className="p-2 bg-slate-100 rounded-lg text-slate-500"><Phone size={18} /></div>
                        <div>
-                         <p className="text-[10px] font-bold text-muted uppercase">Телефон</p>
-                         <p className="text-sm font-medium">{member.phone || 'Не указан'}</p>
+                         <p className="text-[10px] font-bold text-muted uppercase">{t('member_detail.phone')}</p>
+                         <p className="text-sm font-medium">{member.phone || t('member_detail.not_specified')}</p>
                        </div>
                     </div>
                     <div className="flex items-center gap-3">
                        <div className="p-2 bg-slate-100 rounded-lg text-slate-500"><MapPin size={18} /></div>
                        <div>
-                         <p className="text-[10px] font-bold text-muted uppercase">Филиал</p>
+                         <p className="text-[10px] font-bold text-muted uppercase">{t('member_detail.branch')}</p>
                          <p className="text-sm font-medium">{locationName}</p>
                        </div>
                     </div>
                   </div>
                   {member.hasParent && (
                     <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100">
-                      <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-3 flex items-center gap-2"><Shield size={14} /> Родитель / Представитель</p>
+                      <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest mb-3 flex items-center gap-2"><Shield size={14} /> {t('member_detail.parent')}</p>
                       <p className="text-sm font-bold mb-1">{member.parentName}</p>
                       <p className="text-sm text-secondary mb-3">{member.parentPhone}</p>
                       
                       {member.parentLogin && (
                         <div className="pt-3 border-t border-emerald-100 flex flex-col gap-2">
-                          <p className="text-[10px] font-bold text-emerald-600 uppercase">Доступ родителя</p>
+                          <p className="text-[10px] font-bold text-emerald-600 uppercase">{t('member_detail.parent_access')}</p>
                           <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-emerald-100 relative group/copy">
                             <span className="text-xs font-mono text-emerald-700">{member.parentLogin}</span>
                             <button 
                               onClick={() => navigator.clipboard.writeText(`${member.parentLogin} ${member.parentPassword}`)}
                               className="p-1 hover:text-primary transition-colors text-slate-300"
-                              title="Копировать логин и пароль"
+                              title={t('member_detail.copy_credentials')}
                             >
                               <Copy size={14} />
                             </button>
-                            <span className="text-[10px] font-bold text-emerald-400 uppercase">Логин</span>
+                            <span className="text-[10px] font-bold text-emerald-400 uppercase">{t('member_detail.login_label')}</span>
                           </div>
                         </div>
                       )}
@@ -183,9 +185,9 @@ export const MemberDetail = () => {
           {activeTab === 'stats' && (
             <Card style={{ padding: '40px' }} className="animate-fade-in">
               <div className="flex justify-between items-center mb-10 border-b pb-4">
-                <h3 className="h5">Анализ характеристик</h3>
+                <h3 className="h5">{t('member_detail.stats_analysis')}</h3>
                 <div className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest">
-                  Уровень: {Math.floor((member.points || 0) / 100) + 1}
+                  {t('member_detail.level_prefix')} {Math.floor((member.points || 0) / 100) + 1}
                 </div>
               </div>
               <div className="flex flex-col gap-8">
@@ -213,7 +215,7 @@ export const MemberDetail = () => {
             <div className="flex flex-col gap-4 animate-fade-in">
                <Card style={{ padding: '60px', textAlign: 'center' }} className="bg-slate-50 border-2 border-dashed border-slate-200">
                  <Trophy size={48} className="mx-auto mb-4 text-slate-300" />
-                 <p className="text-secondary font-medium">Здесь будут отображаться личные награды и кубки ученика.</p>
+                 <p className="text-secondary font-medium">{t('member_detail.achievements_empty')}</p>
                </Card>
             </div>
           )}
@@ -221,55 +223,55 @@ export const MemberDetail = () => {
 
         <div className="flex flex-col gap-6">
             <div className="p-5 bg-indigo-50/50 rounded-2xl mb-6 border border-indigo-100">
-               <p className="text-[10px] font-bold text-indigo-700 uppercase mb-2 flex items-center gap-2"><Wallet size={12}/> Баланс счета</p>
+               <p className="text-[10px] font-bold text-indigo-700 uppercase mb-2 flex items-center gap-2"><Wallet size={12}/> {t('member_detail.balance')}</p>
                <p className="text-2xl font-black text-indigo-900 mb-1">{member.balance ? `${Number(member.balance).toLocaleString()} ₸` : '0 ₸'}</p>
-               <p className="text-[10px] text-indigo-600 font-medium">Для безналичных покупок в баре</p>
+               <p className="text-[10px] text-indigo-600 font-medium">{t('member_detail.bar_purchases')}</p>
             </div>
             {member.subscriptionEndDate && (
               <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 mb-6">
-                <p className="text-[10px] font-bold text-muted uppercase mb-1">Абонемент до</p>
+                <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('member_detail.sub_until')}</p>
                 <p className={`font-bold ${new Date(member.subscriptionEndDate) < new Date() ? 'text-rose-500' : 'text-slate-700'}`}>
-                  {new Date(member.subscriptionEndDate).toLocaleDateString('ru-RU')}
+                  {new Date(member.subscriptionEndDate).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ')}
                 </p>
               </div>
             )}
-            <Button variant="ghost" className="w-full text-xs font-bold" style={{ border: '1px solid var(--color-border)' }}>История платежей</Button>
+            <Button variant="ghost" className="w-full text-xs font-bold" style={{ border: '1px solid var(--color-border)' }}>{t('member_detail.payment_history')}</Button>
 
           <Card style={{ padding: '24px' }} className={member.medicalNotes ? 'border-rose-200 bg-rose-50/30' : ''}>
             <h3 className="h5 mb-6 flex items-center gap-2">
               <HeartPulse size={20} className={member.medicalNotes ? 'text-rose-500' : 'text-slate-400'} /> 
-              Медкарта
+              {t('member_detail.medcard')}
             </h3>
             {member.medicalNotes ? (
               <div className="p-4 bg-white rounded-2xl border border-rose-100 shadow-sm">
-                <p className="text-sm font-bold text-rose-700 mb-2">Особые указания:</p>
+                <p className="text-sm font-bold text-rose-700 mb-2">{t('member_detail.medcard_notes')}</p>
                 <p className="text-sm text-slate-700 leading-relaxed italic">"{member.medicalNotes}"</p>
               </div>
             ) : (
               <div className="py-6 text-center text-slate-400 text-xs font-medium bg-slate-50 rounded-2xl border border-dashed">
-                Медицинских заметок нет
+                {t('member_detail.medcard_empty')}
               </div>
             )}
           </Card>
 
           <Card style={{ padding: '24px' }}>
-            <h3 className="h5 mb-6">Доступы</h3>
+            <h3 className="h5 mb-6">{t('member_detail.access')}</h3>
             <div className="flex flex-col gap-4">
               <div className="p-4 bg-slate-50 rounded-2xl flex justify-between items-center group/copy">
                  <div className="flex-1">
-                    <p className="text-[10px] font-bold text-muted uppercase mb-1">Логин ученика</p>
+                    <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('member_detail.student_login')}</p>
                     <code className="text-sm font-bold text-primary">{member.login || '—'}</code>
                  </div>
                  <button 
                     onClick={() => navigator.clipboard.writeText(`${member.login} ${member.password}`)}
                     className="p-2 hover:text-primary transition-colors text-slate-300"
-                    title="Копировать логин и пароль"
+                    title={t('member_detail.copy_credentials')}
                  >
                     <Copy size={16} />
                  </button>
               </div>
               <div className="p-4 bg-slate-50 rounded-2xl">
-                 <p className="text-[10px] font-bold text-muted uppercase mb-1">Пароль</p>
+                 <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('member_detail.password')}</p>
                  <code className="text-sm font-bold text-primary">{member.password || '—'}</code>
               </div>
             </div>

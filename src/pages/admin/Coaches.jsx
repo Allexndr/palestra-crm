@@ -261,11 +261,11 @@ export const Coaches = () => {
                   {coach.avatar ? (
                     <img src={fixBlobUrl(coach.avatar)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 20 }} />
                   ) : (
-                    coach.firstName[0]
+                    (coach.firstName || coach.name || '?')[0]
                   )}
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg">{coach.firstName} {coach.lastName}</h4>
+                  <h4 className="font-bold text-lg">{coach.firstName ? `${coach.firstName} ${coach.lastName || ''}` : coach.name}</h4>
                   <div className="flex gap-2 items-center">
                     <span style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', color: 'var(--color-primary)', backgroundColor: 'var(--color-primary-soft)', padding: '2px 8px', borderRadius: '4px' }}>
                       {coach.specialization}

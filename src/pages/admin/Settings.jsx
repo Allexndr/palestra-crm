@@ -26,7 +26,6 @@ export const Settings = () => {
   const { t, language } = useTranslation();
   const navigate = useNavigate();
   
-  if (!isStateReady) return <PageLoader />;
   const [activeTab, setActiveTab] = useState('palestra-tariff');
   
   const [isAddingLoc, setIsAddingLoc] = useState(false);
@@ -46,6 +45,8 @@ export const Settings = () => {
   React.useEffect(() => {
     setTempClubInfo(clubInfo);
   }, [clubInfo]);
+
+  if (!isStateReady) return <PageLoader />;
 
   const handleUpdateClubInfo = (e) => {
     e.preventDefault();

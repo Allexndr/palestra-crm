@@ -6,7 +6,7 @@ import { Card } from '../../components/ui/Card';
 import { Navbar } from '../../components/layout/Navbar';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
-import { Shield, Users, User, ArrowRight, Info, PlusCircle, HelpCircle, ShieldCheck } from 'lucide-react';
+import { Shield, PlusCircle, HelpCircle } from 'lucide-react';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -114,17 +114,17 @@ export const Login = () => {
               <div style={{ padding: '10px', background: 'white', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', color: 'var(--color-primary)' }}>
                 <PlusCircle size={24} />
               </div>
-              <h4 className="text-sm font-bold text-slate-800">У вас еще нет клуба?</h4>
+              <h4 className="text-sm font-bold text-slate-800">{t('promo.no_club')}</h4>
             </div>
             
             <div className="text-xs text-secondary leading-relaxed">
-              <p className="font-bold text-slate-800 mb-2">Palestra — CRM для школ единоборств</p>
+              <p className="font-bold text-slate-800 mb-2">{t('promo.desc')}</p>
               <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px 0', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <li>✅ <strong>Starter:</strong> 1 филиал, 15 учеников — <strong>Бесплатно</strong></li>
-                <li>🚀 <strong>Growth:</strong> Подключите, когда клуб вырастет</li>
+                <li>✅ <strong>Starter:</strong> {t('promo.starter')} <strong>{t('promo.free')}</strong></li>
+                <li>🚀 <strong>Growth:</strong> {t('promo.growth')}</li>
               </ul>
               <Link to="/auth/register" className="text-primary font-bold hover:underline">
-                Зарегистрировать клуб за 2 минуты →
+                {t('promo.register')}
               </Link>
             </div>
 
@@ -134,7 +134,7 @@ export const Login = () => {
             }}>
               <HelpCircle size={16} className="text-muted" />
               <p className="text-[10px] text-muted font-medium leading-relaxed">
-                Тренерам и ученикам: попросите доступ у вашего администратора.
+                {t('promo.ask_admin')}
               </p>
             </div>
           </div>

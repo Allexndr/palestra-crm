@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { CheckCircle2, SlidersHorizontal, Zap } from 'lucide-react';
 import { FEATURE_OPTIONS, PAID_BASE_PRICE, RESOURCE_OPTIONS, DEFAULT_SUBSCRIPTION, calculateTariff, formatLimit } from '../../lib/tariff';
 import { useTranslation } from '../../context/LanguageContext';
+import { Button } from '../ui/Button';
 
 const getFeatureNames = (t) => ({
   crm: t('settings.tabs.club_profile'),
@@ -86,6 +87,9 @@ const ResourceCard = ({ option, status, selected, usage, updateLimit }) => {
 };
 
 export const AdminTariffConstructor = ({
+  subscription,
+  usage,
+  getLimitStatus,
   updateSubscription,
   clubInfo
 }) => {

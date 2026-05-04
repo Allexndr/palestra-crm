@@ -431,7 +431,11 @@ export const AdminProvider = ({ children }) => {
     const group = groups.find(g => g.id === id);
     setGroups(groups.filter(g => g.id !== id));
     setMembers(members.map(m => m.groupId === id ? { ...m, groupId: '' } : m));
-    if (group) logActivity(`Удалена группа: ${group.name}`, 'warning');
+    // Cascade: remove schedule entries for this group
+    if (group) {
+      setSchedule(prev => prev.filter(s => s.groupName !== group.name));
+      logActivity(`Удалена группа: ${group.name}`, 'warning');
+    }
   };
 
   const addLeague = (leagueData) => {
@@ -557,6 +561,10 @@ export const AdminProvider = ({ children }) => {
   const removeLocation = (id) => {
     const loc = locations.find(l => l.id === id);
     setLocations(prev => prev.filter(l => l.id !== id));
+    // Cascade: clear locationId from groups, members, and schedule
+    setGroups(prev => prev.map(g => g.locationId === id ? { ...g, locationId: '' } : g));
+    setMembers(prev => prev.map(m => m.locationId === id ? { ...m, locationId: '' } : m));
+    setSchedule(prev => prev.map(s => s.locationId === id ? { ...s, locationId: '' } : s));
     if (loc) logActivity(`Удален филиал: ${loc.name}`, 'warning');
   };
 
@@ -701,7 +709,13 @@ export const AdminProvider = ({ children }) => {
     return true;
   };
 
-  const removeCoach = (id) => setCoaches(prev => prev.filter(c => c.id !== id));
+  const removeCoach = (id) => {
+    const coach = coaches.find(c => c.id === id);
+    setCoaches(prev => prev.filter(c => c.id !== id));
+    // Cascade: unassign coach from groups
+    setGroups(prev => prev.map(g => g.coachId === id ? { ...g, coachId: '' } : g));
+    if (coach) logActivity(`Удалён тренер: ${coach.name}`, 'warning');
+  };
 
   const updateCoach = (id, updatedData) => {
     setCoaches(prev => prev.map(c => c.id === id ? { ...c, ...updatedData } : c));

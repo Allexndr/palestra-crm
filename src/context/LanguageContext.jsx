@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { ru } from '../locales/ru';
 import { kk } from '../locales/kk';
 
@@ -9,13 +9,22 @@ const LanguageContext = createContext();
 export const LanguageProvider = ({ children }) => {
   const [lang, setLang] = useState(localStorage.getItem('palestra_lang') || 'ru');
   
-  const t = (key) => {
+  const t = (key, options = {}) => {
     const keys = key.split('.');
     let result = translations[lang];
     for (const k of keys) {
       result = result?.[k];
     }
-    return result || key;
+    
+    if (result && typeof result === 'string') {
+      Object.entries(options).forEach(([k, v]) => {
+        result = result.replace(`{${k}}`, v);
+      });
+      return result;
+    }
+    
+    if (options.returnObjects) return result;
+    return typeof result === 'string' ? result : key;
   };
 
   const toggleLanguage = () => {

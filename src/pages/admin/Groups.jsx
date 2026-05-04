@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
+import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
-import { Plus, Users, Target, MapPin, User, ArrowRight, Edit2, Trash2 } from 'lucide-react';
+import { Plus, MapPin, User, ArrowRight, Edit2, Trash2 } from 'lucide-react';
 
 export const Groups = () => {
   const navigate = useNavigate();
