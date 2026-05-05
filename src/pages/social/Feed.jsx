@@ -3,12 +3,14 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
-import { MessageSquare, Heart, Share2, Send, Plus, Image as ImageIcon, X, SendHorizonal, MoreHorizontal, Repeat2 } from 'lucide-react';
+import { MessageSquare, Heart, Share2, Send, Plus, Image as ImageIcon, X, SendHorizonal, MoreHorizontal, Repeat2, Search, Trash2 } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Feed = () => {
-  const { posts, addPost, likePost, addComment, likeComment, user } = useAdmin();
+  const { posts, addPost, removePost, likePost, addComment, likeComment, user } = useAdmin();
   const { t, language } = useTranslation();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeMenuId, setActiveMenuId] = useState(null);
   const [newPostText, setNewPostText] = useState('');
   const [newPostImage, setNewPostImage] = useState('');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -59,10 +61,22 @@ export const Feed = () => {
 
   return (
     <div className="animate-fade-in max-w-[640px] mx-auto px-4 pb-24">
-      <header className="flex justify-between items-center py-6 mb-2">
-        <h1 className="h3 m-0 font-black tracking-tight">{t('social.feed')}</h1>
-        <div className="flex items-center gap-2">
-           <button className="p-2 hover:bg-slate-100 rounded-full transition-colors"><MoreHorizontal size={20} /></button>
+      <header className="flex flex-col gap-4 py-6 mb-2">
+        <div className="flex justify-between items-center">
+          <h1 className="h3 m-0 font-black tracking-tight">{t('social.feed')}</h1>
+          <div className="flex items-center gap-2">
+            <button className="p-2 hover:bg-slate-100 rounded-full transition-colors"><MoreHorizontal size={20} /></button>
+          </div>
+        </div>
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <input 
+            type="text" 
+            placeholder={language === 'ru' ? 'Поиск по ленте...' : 'Желіден іздеу...'}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-4 py-3 text-sm focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+          />
         </div>
       </header>
 
@@ -130,9 +144,9 @@ export const Feed = () => {
 
       {/* Posts List */}
       <div className="flex flex-col">
-        {posts.map((post) => (
+        {posts.filter(p => !searchQuery || (p.text?.toLowerCase().includes(searchQuery.toLowerCase()) || p.author?.toLowerCase().includes(searchQuery.toLowerCase()))).map((post) => (
           <div key={post.id} className="social-post-card">
-            <div className="social-post-container">
+            <div className="social-post-container relative">
               <div className="social-thread-column">
                 <div className="social-avatar">
                   {post.author[0]}
@@ -142,11 +156,42 @@ export const Feed = () => {
               
               <div className="social-post-content">
                 <div className="social-post-header">
-                  <div className="social-post-author">
-                    {post.author}
-                    {post.authorRole === 'admin' && <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center"><Plus size={8} className="text-white" /></div>}
+                  <div className="social-post-author flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                    <div className="flex items-center gap-1">
+                      {post.author}
+                      {post.authorRole === 'admin' && <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center"><Plus size={8} className="text-white" /></div>}
+                    </div>
+                    {post.clubName && (
+                      <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                        {post.clubName}
+                      </span>
+                    )}
                   </div>
-                  <span className="social-post-time">{new Date(post.date).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ', { day: 'numeric', month: 'short' })}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="social-post-time">{new Date(post.date).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ', { day: 'numeric', month: 'short' })}</span>
+                    {(post.authorId === user?.id || user?.role === 'admin') && (
+                      <div className="relative">
+                        <button onClick={() => setActiveMenuId(activeMenuId === post.id ? null : post.id)} className="p-1 hover:bg-slate-100 rounded-full text-slate-400">
+                          <MoreHorizontal size={16} />
+                        </button>
+                        {activeMenuId === post.id && (
+                          <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-20">
+                            <button 
+                              onClick={() => {
+                                if(window.confirm('Удалить этот пост?')) {
+                                  removePost(post.id);
+                                  setActiveMenuId(null);
+                                }
+                              }}
+                              className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 font-medium border-none cursor-pointer"
+                            >
+                              <Trash2 size={16} /> Удалить
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
                 <p className="social-post-text">{post.text}</p>

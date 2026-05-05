@@ -379,6 +379,10 @@ export const Profile = () => {
                     <label className="input-label">{t('settings.profile.login_email')}</label>
                     <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 font-bold text-slate-800">{user?.email || user?.login}</div>
                   </div>
+                  <div className="input-group">
+                    <label className="input-label">Номер телефона</label>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 font-bold text-slate-800">{user?.phone || '+7 (___) ___-__-__'}</div>
+                  </div>
                   <p className="text-[10px] text-muted">{t('settings.security.readonly_notice')}</p>
                 </div>
               </Card>

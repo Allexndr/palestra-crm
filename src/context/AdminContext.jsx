@@ -591,10 +591,15 @@ export const AdminProvider = ({ children }) => {
       comments: [],
       author: user?.name || 'Админ', 
       authorRole: user?.role || 'admin', 
+      clubName: clubInfo?.name || 'Palestra Fight Club',
       ...postData 
     };
     setPosts(prev => [newPost, ...prev]);
     logActivity(`Новая публикация в ленте: ${postData.title || postData.text?.substring(0, 30) || 'Новость'}`, 'info');
+  };
+
+  const removePost = (postId) => {
+    setPosts(prev => prev.filter(p => p.id !== postId));
   };
 
   const likePost = (id) => {
@@ -959,7 +964,7 @@ export const AdminProvider = ({ children }) => {
       logActivity('Обновлены настройки клуба', 'success');
     },
     plans, addPlan, removePlan,
-    posts, addPost, likePost, addComment,
+    posts, addPost, removePost, likePost, addComment,
     quests, addQuest, removeQuest, completeQuest, approveQuest,
     feedbacks, sendFeedback,
     coaches, addCoach, removeCoach, updateCoach,

@@ -447,7 +447,8 @@ export const Settings = () => {
                   <div className="flex flex-col gap-4 mb-10">
                     <Input label={t('settings.profile.name')} value={user?.name || ''} disabled />
                     <Input label={t('settings.profile.login_email')} value={user?.email || ''} disabled />
-                    <p className="text-[10px] text-muted">{t('settings.security.readonly_notice')}</p>
+                    <Input label={language === 'ru' ? 'Номер телефона' : 'Телефон нөмірі'} value={user?.phone || '+7 (___) ___-__-__'} disabled />
+                    <p className="text-[10px] text-muted mt-2">{t('settings.security.readonly_notice')}</p>
                   </div>
 
                   <h5 className="font-bold mb-6">{t('settings.security.change_pass')}</h5>
