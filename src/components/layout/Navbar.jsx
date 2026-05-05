@@ -28,8 +28,8 @@ export const Navbar = () => {
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 'var(--space-4)',
+            gap: 'var(--space-8)',
+            padding: '0 var(--space-10)',
             minHeight: '140px',
             borderRadius: 'var(--radius-full)',
             boxShadow: 'var(--shadow-md)',
@@ -37,7 +37,7 @@ export const Navbar = () => {
             overflow: 'visible',
           }}
         >
-          <div className="navbar-logo-wrap">
+          <div className="navbar-logo-wrap" style={{ flexShrink: 0 }}>
             <Link to="/" className="navbar-logo-link" aria-label="Palestra — на главную" onClick={closeMenu}>
               <img
                 src="/palestra-logo-nav-full.png"
@@ -49,7 +49,7 @@ export const Navbar = () => {
             </Link>
           </div>
 
-          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-4)' }}>
+          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-6)', flex: 1, justifyContent: 'center' }}>
             {NAV_LINKS.map((link) => (
               <a 
                 key={link.label}
@@ -71,7 +71,7 @@ export const Navbar = () => {
             ))}
           </nav>
           
-          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', flexShrink: 0 }}>
             <div className="mobile-hidden">
               <LanguageSwitcher />
             </div>
