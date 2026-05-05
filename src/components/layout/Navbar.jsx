@@ -82,7 +82,7 @@ export const Navbar = () => {
             
             <Link to="/auth/register" style={{ textDecoration: 'none' }} onClick={closeMenu}>
               <Button variant="primary" size="sm" className="font-display" style={{ paddingLeft: 'var(--space-5)', paddingRight: 'var(--space-5)', fontWeight: 800, fontSize: '0.8rem' }}>
-                {t('nav.register_free') || 'Подключить бесплатно'}
+                {t('nav.register_free') || 'Подключить'}
               </Button>
             </Link>
             <button
@@ -163,7 +163,7 @@ export const Navbar = () => {
           </Link>
           <Link to="/auth/register" onClick={closeMenu} style={{ textDecoration: 'none' }}>
             <Button variant="primary" className="w-full h-14 font-display" style={{ fontSize: '1.25rem', fontWeight: 700 }}>
-              {t('nav.register_free') || 'Подключить бесплатно'}
+              {t('nav.register_free') || 'Подключить'}
             </Button>
           </Link>
         </div>

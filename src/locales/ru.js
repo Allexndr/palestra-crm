@@ -250,7 +250,7 @@ export const ru = {
     pricing: "Тариф",
     faq: "FAQ",
     login: "Войти",
-    register_free: "Подключить бесплатно",
+    register_free: "Подключить",
     cabinet: "Личный кабинет",
     feed: "Лента",
     schedule: "Расписание",
@@ -413,7 +413,7 @@ export const ru = {
       check2: "Бесплатный старт",
       check3: "Контур для родителей",
       check4: "Лига и достижения",
-      cta_free: "Подключить бесплатно",
+      cta_free: "Подключить",
       cta_features: "Возможности"
     },
     mock: {

@@ -4,7 +4,6 @@ import { Send, ArrowRight } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
-import { Navbar } from '../../components/layout/Navbar';
 import { Autocomplete } from '../../components/ui/Autocomplete';
 import { MartialArtsSelector } from '../../components/ui/MartialArtsSelector';
 import { useAdmin } from '../../context/AdminContext';
@@ -263,7 +262,6 @@ export const RegisterClub = () => {
 
   return (
     <>
-      <Navbar />
       <main id="main-content" tabIndex={-1} className="auth-page">
         <div className="auth-page__inner">
           

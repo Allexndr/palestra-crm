@@ -3,7 +3,6 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
-import { Navbar } from '../../components/layout/Navbar';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
 import { Shield, PlusCircle, HelpCircle } from 'lucide-react';
@@ -54,7 +53,6 @@ export const Login = () => {
 
   return (
     <>
-      <Navbar />
       <main id="main-content" tabIndex={-1} className="auth-page">
         <div className="auth-page__inner">
           <Card style={{ padding: 'var(--space-12)', boxShadow: 'var(--shadow-lg)' }}>
