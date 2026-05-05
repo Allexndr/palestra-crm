@@ -27,29 +27,28 @@ export const Navbar = () => {
           className="glass navbar-landing-bar"
           style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-8)',
-            padding: '0 var(--space-10)',
-            minHeight: '140px',
+            justifyContent: 'space-between',
+            gap: 'var(--space-4)',
+            minHeight: '90px',
             borderRadius: 'var(--radius-full)',
             boxShadow: 'var(--shadow-md)',
             border: '1px solid rgba(255,255,255,0.4)',
             overflow: 'visible',
           }}
         >
-          <div className="navbar-logo-wrap" style={{ flexShrink: 0 }}>
+          <div className="navbar-logo-wrap">
             <Link to="/" className="navbar-logo-link" aria-label="Palestra — на главную" onClick={closeMenu}>
               <img
                 src="/palestra-logo-nav-full.png"
                 alt=""
                 className="navbar-brand-logo"
-                style={{ height: '90px', width: 'auto' }}
+                style={{ height: '50px', width: 'auto' }}
                 decoding="async"
               />
             </Link>
           </div>
 
-          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-6)', flex: 1, justifyContent: 'center' }}>
+          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-4)' }}>
             {NAV_LINKS.map((link) => (
               <a 
                 key={link.label}
@@ -57,7 +56,7 @@ export const Navbar = () => {
                 className="nav-link"
                 style={{ 
                   textDecoration: 'none',
-                  fontSize: '1rem',
+                  fontSize: '0.875rem',
                   fontWeight: 900,
                   textTransform: 'uppercase',
                   letterSpacing: '0.12em',
@@ -71,7 +70,7 @@ export const Navbar = () => {
             ))}
           </nav>
           
-          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)', flexShrink: 0 }}>
+          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
             <div className="mobile-hidden">
               <LanguageSwitcher />
             </div>
