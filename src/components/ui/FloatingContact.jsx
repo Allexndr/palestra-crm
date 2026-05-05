@@ -1,5 +1,6 @@
 import React from 'react';
 import { Phone, MessageCircle } from 'lucide-react';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export const FloatingContact = () => {
   return (
@@ -15,6 +16,9 @@ export const FloatingContact = () => {
         zIndex: 9999
       }}
     >
+      <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
+        <LanguageSwitcher />
+      </div>
       <a 
         href="tel:+77002579004" 
         className="floating-btn floating-btn--phone"

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Menu, X, Phone, MessageCircle } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useTranslation } from '../../context/LanguageContext';
-import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 
 const getNavLinks = (t) => [
   { label: t('nav.features') || 'Возможности', href: '#features' },
@@ -37,7 +36,7 @@ export const Navbar = () => {
             overflow: 'visible',
           }}
         >
-          <div className="navbar-logo-wrap" style={{ flexShrink: 0, marginLeft: '-20px', marginRight: '40px' }}>
+          <div className="navbar-logo-wrap">
             <Link to="/" className="navbar-logo-link" aria-label="Palestra — на главную" onClick={closeMenu}>
               <img
                 src="/palestra-logo-nav-full.png"
@@ -49,35 +48,30 @@ export const Navbar = () => {
             </Link>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '80px', flex: 1, justifyContent: 'flex-end', minWidth: 0 }}>
-            <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-4)' }}>
-              {NAV_LINKS.map((link) => (
-                <a 
-                  key={link.label}
-                  href={link.href} 
-                  className="nav-link"
-                  style={{ 
-                    textDecoration: 'none',
-                    fontSize: '0.875rem',
-                    fontWeight: 900,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em',
-                    color: 'var(--color-text-secondary)',
-                    fontFamily: 'var(--font-family-display)',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-
-            <div className="mobile-hidden">
-              <LanguageSwitcher />
-            </div>
-          </div>
+          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-4)' }}>
+            {NAV_LINKS.map((link) => (
+              <a 
+                key={link.label}
+                href={link.href} 
+                className="nav-link"
+                style={{ 
+                  textDecoration: 'none',
+                  fontSize: '0.875rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  color: 'var(--color-text-secondary)',
+                  fontFamily: 'var(--font-family-display)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
           
-          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+
             <Link to="/auth/login" style={{ textDecoration: 'none' }} className="mobile-hidden">
               <Button variant="ghost" className="font-display" style={{ fontWeight: 700, fontSize: '0.8rem' }}>{t('nav.login') || 'Войти'}</Button>
             </Link>

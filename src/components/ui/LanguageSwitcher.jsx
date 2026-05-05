@@ -1,64 +1,66 @@
 import React from 'react';
 import { useTranslation } from '../../context/LanguageContext';
 
-export const LanguageSwitcher = ({ variant = 'default' }) => {
+export const LanguageSwitcher = () => {
   const { lang, toggleLanguage } = useTranslation();
-
-  const isDark = variant === 'dark';
 
   return (
     <div 
-      className={`lang-switcher lang-switcher--${variant}`} 
+      className="lang-switcher-circle" 
       onClick={toggleLanguage}
       title={lang === 'ru' ? 'Қазақ тіліне ауысу' : 'Переключить на русский'}
       style={{
+        width: '56px',
+        height: '56px',
+        borderRadius: '50%',
+        background: 'white',
         display: 'flex',
         alignItems: 'center',
-        background: isDark ? 'rgba(0,0,0,0.2)' : 'var(--color-ice-200)',
-        borderRadius: '10px',
-        padding: '2px',
+        justifyContent: 'center',
         cursor: 'pointer',
-        width: '52px',
-        height: '26px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+        border: '1px solid var(--color-border)',
+        transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        userSelect: 'none',
         position: 'relative',
-        transition: 'all 0.3s ease',
-        border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1.5px solid var(--color-border)',
-        boxSizing: 'content-box',
-        userSelect: 'none'
+        overflow: 'hidden'
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = 'scale(1.05) translateY(-2px)';
+        e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.18)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'scale(1) translateY(0)';
+        e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.12)';
       }}
     >
-      <div 
-        className="lang-switcher-handle"
-        style={{
-          width: '26px',
-          height: '22px',
-          backgroundColor: isDark ? 'rgba(255,255,255,0.9)' : 'white',
-          borderRadius: '8px',
+      <div style={{
+        fontSize: '14px',
+        fontWeight: 900,
+        color: 'var(--color-primary)',
+        fontFamily: 'var(--font-family-display)',
+        position: 'relative',
+        width: '100%',
+        height: '24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <span style={{ 
           position: 'absolute',
-          left: lang === 'ru' ? '2px' : '24px',
-          transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          zIndex: 1
-        }}
-      />
-      <div style={{ 
-        flex: 1, 
-        textAlign: 'center', 
-        fontSize: '9px', 
-        fontWeight: 900, 
-        zIndex: 2, 
-        transition: 'color 0.3s',
-        color: lang === 'ru' ? 'var(--color-primary)' : (isDark ? 'rgba(255,255,255,0.4)' : 'var(--color-muted)') 
-      }}>RU</div>
-      <div style={{ 
-        flex: 1, 
-        textAlign: 'center', 
-        fontSize: '9px', 
-        fontWeight: 900, 
-        zIndex: 2, 
-        transition: 'color 0.3s',
-        color: lang === 'kk' ? 'var(--color-primary)' : (isDark ? 'rgba(255,255,255,0.4)' : 'var(--color-muted)') 
-      }}>KK</div>
+          transition: 'all 0.3s ease',
+          opacity: lang === 'ru' ? 1 : 0,
+          transform: lang === 'ru' ? 'scale(1)' : 'scale(0.8)',
+          pointerEvents: lang === 'ru' ? 'auto' : 'none'
+        }}>RU</span>
+        <span style={{ 
+          position: 'absolute',
+          transition: 'all 0.3s ease',
+          opacity: lang === 'kk' ? 1 : 0,
+          transform: lang === 'kk' ? 'scale(1)' : 'scale(0.8)',
+          pointerEvents: lang === 'kk' ? 'auto' : 'none'
+        }}>KZ</span>
+      </div>
     </div>
   );
 };
