@@ -875,8 +875,15 @@ export const AdminProvider = ({ children }) => {
       const idx = prev.findIndex(w => w.id === id);
       if (idx === -1) return prev;
       const newLayout = [...prev];
-      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
-      if (targetIdx < 0 || targetIdx >= newLayout.length) return prev;
+      let targetIdx = idx;
+      
+      if (direction === 'up') targetIdx = idx - 2;
+      else if (direction === 'down') targetIdx = idx + 2;
+      else if (direction === 'left' && idx % 2 !== 0) targetIdx = idx - 1;
+      else if (direction === 'right' && idx % 2 === 0) targetIdx = idx + 1;
+      
+      if (targetIdx < 0 || targetIdx >= newLayout.length || targetIdx === idx) return prev;
+      
       [newLayout[idx], newLayout[targetIdx]] = [newLayout[targetIdx], newLayout[idx]];
       return newLayout;
     });
@@ -982,6 +989,13 @@ export const AdminProvider = ({ children }) => {
     activeChildId, setActiveChildId,
     dashboardLayout, setDashboardLayout, toggleWidget, moveWidget,
     studentDashboardPool, studentDashboardLayout, toggleStudentPoolWidget, moveStudentWidget, toggleStudentWidget,
+    automations,
+    updateAutomationConfig: (key, value) => {
+      setAutomations(prev => ({
+        ...prev,
+        config: { ...(prev.config || { n1: true, n2: true, n3: false, n4: true }), [key]: value }
+      }));
+    },
     isStateReady,
     resetData, fetchClubState: async () => {
       try {

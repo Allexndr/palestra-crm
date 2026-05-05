@@ -5,7 +5,7 @@ import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, LayoutList, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowUp, ArrowDown, Eye, EyeOff, MessageSquare } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, LayoutList, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Eye, EyeOff, MessageSquare } from 'lucide-react';
 import { STUDENT_WIDGET_CATALOG } from '../../context/AdminContext';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
@@ -21,7 +21,8 @@ export const Settings = () => {
     dashboardLayout, toggleWidget, moveWidget, clubInfo, setClubInfo,
     addLocation, removeLocation, updateLocation, locations,
     addPlan, removePlan, plans, isStateReady,
-    studentDashboardPool, studentDashboardLayout, toggleStudentPoolWidget, moveStudentWidget, toggleStudentWidget, user
+    studentDashboardPool, studentDashboardLayout, toggleStudentPoolWidget, moveStudentWidget, toggleStudentWidget, user,
+    automations, updateAutomationConfig
   } = useAdmin();
   const { t, language } = useTranslation();
   const navigate = useNavigate();
@@ -400,24 +401,28 @@ export const Settings = () => {
               <h3 className="h4 mb-8 flex items-center gap-3"><Bell className="text-primary" /> {t('settings.notifications.title')}</h3>
               <div className="flex flex-col gap-4">
                 {[
-                  { id: 'n1', title: t('settings.notifications.leads_title'), desc: t('settings.notifications.leads_desc'), checked: true },
-                  { id: 'n2', title: t('settings.notifications.billing_title'), desc: t('settings.notifications.billing_desc'), checked: true },
-                  { id: 'n3', title: t('settings.notifications.trial_title'), desc: t('settings.notifications.trial_desc'), checked: false },
-                  { id: 'n4', title: t('settings.notifications.reports_title'), desc: t('settings.notifications.reports_desc'), checked: true },
-                ].map(item => (
+                  { id: 'birthday', title: t('settings.notifications.leads_title'), desc: t('settings.notifications.leads_desc') },
+                  { id: 'billing', title: t('settings.notifications.billing_title'), desc: t('settings.notifications.billing_desc') },
+                  { id: 'trial', title: t('settings.notifications.trial_title'), desc: t('settings.notifications.trial_desc') },
+                  { id: 'reports', title: t('settings.notifications.reports_title'), desc: t('settings.notifications.reports_desc') },
+                ].map(item => {
+                  const configObj = automations?.config || { birthday: true, billing: true, trial: false, reports: true };
+                  const isChecked = configObj[item.id] !== false;
+                  return (
                   <label key={item.id} className="flex items-center justify-between p-6 bg-white rounded-[24px] border border-slate-100 hover:border-primary/30 hover:shadow-xl hover:shadow-slate-100 transition-all cursor-pointer group">
                     <div className="flex-1">
                       <p className="font-bold text-slate-800 mb-1 group-hover:text-primary transition-colors">{item.title}</p>
                       <p className="text-xs text-secondary">{item.desc}</p>
                     </div>
-                    <div className={`w-14 h-7 rounded-full p-1 transition-all duration-500 ${item.checked ? 'bg-primary shadow-lg shadow-indigo-100' : 'bg-slate-100'}`}>
-                      <div className={`w-5 h-5 bg-white rounded-full transition-transform duration-500 shadow-md flex items-center justify-center ${item.checked ? 'translate-x-7' : 'translate-x-0'}`}>
-                        {item.checked && <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />}
+                    <div className={`w-14 h-7 rounded-full p-1 transition-all duration-500 ${isChecked ? 'bg-primary shadow-lg shadow-indigo-100' : 'bg-slate-100'}`}>
+                      <div className={`w-5 h-5 bg-white rounded-full transition-transform duration-500 shadow-md flex items-center justify-center ${isChecked ? 'translate-x-7' : 'translate-x-0'}`}>
+                        {isChecked && <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />}
                       </div>
                     </div>
-                    <input type="checkbox" className="hidden" defaultChecked={item.checked} />
+                    <input type="checkbox" className="hidden" checked={isChecked} onChange={(e) => updateAutomationConfig(item.id, e.target.checked)} />
                   </label>
-                ))}
+                  );
+                })}
               </div>
               <div className="mt-16 p-8 bg-slate-900 text-white rounded-[32px] border-none flex items-center justify-between overflow-hidden relative group">
                 <div className="absolute top-[-20px] right-[-20px] opacity-10 rotate-12 transition-transform group-hover:rotate-45 duration-700">
@@ -589,20 +594,36 @@ export const Settings = () => {
                 {dashboardLayout.map((widget, index) => (
                   <div key={widget.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${widget.visible ? 'bg-white border-slate-100 shadow-sm' : 'bg-slate-50 border-dashed border-slate-200 opacity-60'}`}>
                     <div className="flex items-center gap-5">
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col items-center gap-0.5 bg-slate-50/80 p-1.5 rounded-[16px] border border-slate-100 shadow-inner">
                         <button 
-                          disabled={index === 0}
+                          disabled={index < 2}
                           onClick={() => moveWidget(widget.id, 'up')}
-                          className="p-1 hover:bg-slate-100 rounded text-slate-400 disabled:opacity-20 border-none bg-transparent cursor-pointer"
+                          className="p-1 hover:bg-white rounded shadow-sm text-slate-500 disabled:opacity-20 disabled:shadow-none border-none bg-transparent cursor-pointer transition-all"
                         >
-                          <Plus size={14} className="rotate-0" />
+                          <ArrowUp size={14} />
                         </button>
+                        <div className="flex gap-4">
+                          <button 
+                            disabled={index % 2 === 0}
+                            onClick={() => moveWidget(widget.id, 'left')}
+                            className="p-1 hover:bg-white rounded shadow-sm text-slate-500 disabled:opacity-20 disabled:shadow-none border-none bg-transparent cursor-pointer transition-all"
+                          >
+                            <ArrowLeft size={14} />
+                          </button>
+                          <button 
+                            disabled={index % 2 !== 0 || index === dashboardLayout.length - 1}
+                            onClick={() => moveWidget(widget.id, 'right')}
+                            className="p-1 hover:bg-white rounded shadow-sm text-slate-500 disabled:opacity-20 disabled:shadow-none border-none bg-transparent cursor-pointer transition-all"
+                          >
+                            <ArrowRight size={14} />
+                          </button>
+                        </div>
                         <button 
-                          disabled={index === dashboardLayout.length - 1}
+                          disabled={index >= dashboardLayout.length - 2}
                           onClick={() => moveWidget(widget.id, 'down')}
-                          className="p-1 hover:bg-slate-100 rounded text-slate-400 disabled:opacity-20 border-none bg-transparent cursor-pointer"
+                          className="p-1 hover:bg-white rounded shadow-sm text-slate-500 disabled:opacity-20 disabled:shadow-none border-none bg-transparent cursor-pointer transition-all"
                         >
-                          <Plus size={14} className="rotate-180" />
+                          <ArrowDown size={14} />
                         </button>
                       </div>
                       <div>

@@ -15,30 +15,50 @@ import { AdminRoleGuard, SuperAdminRoleGuard, RequireAuth, MemberLayout } from '
 import { ScheduleEntry } from './routes/ScheduleEntry';
 import { LeagueEntry } from './routes/LeagueEntry';
 
-const AdminLayout = lazy(() => import('./components/layout/AdminLayout').then((m) => ({ default: m.AdminLayout })));
-const SuperDashboard = lazy(() => import('./pages/superadmin/SuperDashboard').then((m) => ({ default: m.SuperDashboard })));
-const ClubDetail = lazy(() => import('./pages/superadmin/ClubDetail').then((m) => ({ default: m.ClubDetail })));
-const Dashboard = lazy(() => import('./pages/admin/Dashboard').then((m) => ({ default: m.Dashboard })));
-const Members = lazy(() => import('./pages/admin/Members').then((m) => ({ default: m.Members })));
-const Leads = lazy(() => import('./pages/admin/Leads').then((m) => ({ default: m.Leads })));
-const Quests = lazy(() => import('./pages/admin/Quests').then((m) => ({ default: m.Quests })));
+const lazyWithRetry = (componentImport) =>
+  lazy(async () => {
+    const pageHasAlreadyBeenForceRefreshed = JSON.parse(
+      window.sessionStorage.getItem('page-has-been-force-refreshed') || 'false'
+    );
+    try {
+      const component = await componentImport();
+      window.sessionStorage.setItem('page-has-been-force-refreshed', 'false');
+      return component;
+    } catch (error) {
+      if (!pageHasAlreadyBeenForceRefreshed) {
+        window.sessionStorage.setItem('page-has-been-force-refreshed', 'true');
+        window.location.reload();
+        // Return an empty component while reloading
+        return { default: () => null };
+      }
+      throw error;
+    }
+  });
+
+const AdminLayout = lazyWithRetry(() => import('./components/layout/AdminLayout').then((m) => ({ default: m.AdminLayout })));
+const SuperDashboard = lazyWithRetry(() => import('./pages/superadmin/SuperDashboard').then((m) => ({ default: m.SuperDashboard })));
+const ClubDetail = lazyWithRetry(() => import('./pages/superadmin/ClubDetail').then((m) => ({ default: m.ClubDetail })));
+const Dashboard = lazyWithRetry(() => import('./pages/admin/Dashboard').then((m) => ({ default: m.Dashboard })));
+const Members = lazyWithRetry(() => import('./pages/admin/Members').then((m) => ({ default: m.Members })));
+const Leads = lazyWithRetry(() => import('./pages/admin/Leads').then((m) => ({ default: m.Leads })));
+const Quests = lazyWithRetry(() => import('./pages/admin/Quests').then((m) => ({ default: m.Quests })));
 import { SchedulePage, LeaguePage } from './pages/admin/lazyAdminPages';
-const Events = lazy(() => import('./pages/admin/Events').then((m) => ({ default: m.Events })));
-const Groups = lazy(() => import('./pages/admin/Groups').then((m) => ({ default: m.Groups })));
-const Billing = lazy(() => import('./pages/admin/Billing').then((m) => ({ default: m.Billing })));
-const Settings = lazy(() => import('./pages/admin/Settings').then((m) => ({ default: m.Settings })));
-const Coaches = lazy(() => import('./pages/admin/Coaches').then((m) => ({ default: m.Coaches })));
-const Payroll = lazy(() => import('./pages/admin/Payroll').then((m) => ({ default: m.Payroll })));
-const Locations = lazy(() => import('./pages/admin/Locations').then((m) => ({ default: m.Locations })));
-const LocationForm = lazy(() => import('./pages/admin/LocationForm').then((m) => ({ default: m.LocationForm })));
-const MemberForm = lazy(() => import('./pages/admin/MemberForm').then((m) => ({ default: m.MemberForm })));
-const MemberDetail = lazy(() => import('./pages/admin/MemberDetail').then((m) => ({ default: m.MemberDetail })));
-const GroupForm = lazy(() => import('./pages/admin/GroupForm').then((m) => ({ default: m.GroupForm })));
-const GroupDetail = lazy(() => import('./pages/admin/GroupDetail').then((m) => ({ default: m.GroupDetail })));
-const Chats = lazy(() => import('./pages/admin/Chats').then((m) => ({ default: m.Chats })));
-const Shop = lazy(() => import('./pages/admin/Shop').then((m) => ({ default: m.Shop })));
-const BillingSuccess = lazy(() => import('./pages/admin/BillingSuccess').then((m) => ({ default: m.BillingSuccess })));
-const BillingFailure = lazy(() => import('./pages/admin/BillingFailure').then((m) => ({ default: m.BillingFailure })));
+const Events = lazyWithRetry(() => import('./pages/admin/Events').then((m) => ({ default: m.Events })));
+const Groups = lazyWithRetry(() => import('./pages/admin/Groups').then((m) => ({ default: m.Groups })));
+const Billing = lazyWithRetry(() => import('./pages/admin/Billing').then((m) => ({ default: m.Billing })));
+const Settings = lazyWithRetry(() => import('./pages/admin/Settings').then((m) => ({ default: m.Settings })));
+const Coaches = lazyWithRetry(() => import('./pages/admin/Coaches').then((m) => ({ default: m.Coaches })));
+const Payroll = lazyWithRetry(() => import('./pages/admin/Payroll').then((m) => ({ default: m.Payroll })));
+const Locations = lazyWithRetry(() => import('./pages/admin/Locations').then((m) => ({ default: m.Locations })));
+const LocationForm = lazyWithRetry(() => import('./pages/admin/LocationForm').then((m) => ({ default: m.LocationForm })));
+const MemberForm = lazyWithRetry(() => import('./pages/admin/MemberForm').then((m) => ({ default: m.MemberForm })));
+const MemberDetail = lazyWithRetry(() => import('./pages/admin/MemberDetail').then((m) => ({ default: m.MemberDetail })));
+const GroupForm = lazyWithRetry(() => import('./pages/admin/GroupForm').then((m) => ({ default: m.GroupForm })));
+const GroupDetail = lazyWithRetry(() => import('./pages/admin/GroupDetail').then((m) => ({ default: m.GroupDetail })));
+const Chats = lazyWithRetry(() => import('./pages/admin/Chats').then((m) => ({ default: m.Chats })));
+const Shop = lazyWithRetry(() => import('./pages/admin/Shop').then((m) => ({ default: m.Shop })));
+const BillingSuccess = lazyWithRetry(() => import('./pages/admin/BillingSuccess').then((m) => ({ default: m.BillingSuccess })));
+const BillingFailure = lazyWithRetry(() => import('./pages/admin/BillingFailure').then((m) => ({ default: m.BillingFailure })));
 
 const FeedRedirect = () => {
   const { user } = useAdmin();

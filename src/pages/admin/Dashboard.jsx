@@ -13,7 +13,7 @@ export const Dashboard = () => {
   const { 
     members, leads, schedule, finances, user, events, selectedLocationId, 
     achievements, monthlyAward, activities, markAttendance, groups, 
-    removeActivity, sendFeedback, dashboardLayout, clubInfo, subscription 
+    removeActivity, sendFeedback, dashboardLayout, clubInfo, subscription, automations
   } = useAdmin();
   const { t, language } = useTranslation();
   const isAdmin = user?.role === 'admin';
@@ -247,11 +247,19 @@ export const Dashboard = () => {
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                          <span className="text-xs font-medium opacity-80">{t('dashboard.autopilot_birthday')}</span>
-                         <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">{t('dashboard.autopilot_active')}</Badge>
+                         {automations?.config?.birthday !== false ? (
+                           <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">{t('dashboard.autopilot_active')}</Badge>
+                         ) : (
+                           <Badge variant="danger" className="text-[9px] bg-red-500/20 text-red-400 border-none">ВЫКЛЮЧЕН</Badge>
+                         )}
                       </div>
                       <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                          <span className="text-xs font-medium opacity-80">{t('dashboard.autopilot_subscription')}</span>
-                         <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">{t('dashboard.autopilot_active')}</Badge>
+                         {automations?.config?.billing !== false ? (
+                           <Badge variant="success" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-none">{t('dashboard.autopilot_active')}</Badge>
+                         ) : (
+                           <Badge variant="danger" className="text-[9px] bg-red-500/20 text-red-400 border-none">ВЫКЛЮЧЕН</Badge>
+                         )}
                       </div>
                     </div>
                     <div className="mt-6 pt-6 border-t border-white/10">
