@@ -30,7 +30,7 @@ export const Navbar = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 'var(--space-4)',
-            minHeight: '110px',
+            minHeight: '140px',
             borderRadius: 'var(--radius-full)',
             boxShadow: 'var(--shadow-md)',
             border: '1px solid rgba(255,255,255,0.4)',
@@ -43,7 +43,7 @@ export const Navbar = () => {
                 src="/palestra-logo-nav-full.png"
                 alt=""
                 className="navbar-brand-logo"
-                style={{ height: '72px', width: 'auto' }}
+                style={{ height: '90px', width: 'auto' }}
                 decoding="async"
               />
             </Link>
@@ -57,7 +57,7 @@ export const Navbar = () => {
                 className="nav-link"
                 style={{ 
                   textDecoration: 'none',
-                  fontSize: '0.85rem',
+                  fontSize: '1rem',
                   fontWeight: 900,
                   textTransform: 'uppercase',
                   letterSpacing: '0.12em',

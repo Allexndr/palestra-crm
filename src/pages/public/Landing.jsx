@@ -494,7 +494,7 @@ export const Landing = () => {
           <div className="landing-footer__grid">
             <section className="landing-footer__brand" aria-label="О продукте Palestra">
               <Link to="/" className="landing-footer__logo" aria-label="Palestra — на главную" style={{ display: 'block', marginBottom: '24px' }}>
-                <img src="/assets/logo-white.png" alt="Palestra Logo" style={{ height: '120px', width: 'auto', objectFit: 'contain' }} decoding="async" />
+                <img src="/assets/logo-white.png" alt="Palestra Logo" style={{ height: '150px', width: 'auto', objectFit: 'contain' }} decoding="async" />
               </Link>
               <p>
                 {t('landing.footer.cta_text')}
