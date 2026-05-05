@@ -1,4 +1,4 @@
-import { Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, NavLink, Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
 import { Calendar, Home, LogOut, Trophy, User, Zap } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
@@ -120,9 +120,9 @@ export function MemberLayout() {
               </div>
             )}
           </div>
-          <div className="member-header-pill desktop-only">
+          <Link to="/profile" className="member-header-pill desktop-only" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <span>{user?.email || `${user?.role || 'user'}@palestra.fit`}</span>
-          </div>
+          </Link>
         </header>
         <div className="member-page-frame" style={{ paddingTop: (user?.role === 'parent' && children.length > 0) ? '16px' : '0' }}>
           <Outlet />

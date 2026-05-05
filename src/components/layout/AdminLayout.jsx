@@ -187,9 +187,9 @@ export const AdminLayout = () => {
               <h1 className="mobile-only" style={{ fontSize: '1.1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 800 }}>{pageTitle}</h1>
             </div>
           </div>
-          <div className="member-header-pill desktop-only">
+          <Link to="/admin/settings" className="member-header-pill desktop-only" style={{ textDecoration: 'none', cursor: 'pointer' }}>
             <span>{user?.email || `${user?.role || 'admin'}@palestra.fit`}</span>
-          </div>
+          </Link>
         </header>
 
         <main
