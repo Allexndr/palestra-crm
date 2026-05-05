@@ -5,6 +5,7 @@ import { useTranslation } from '../../context/LanguageContext';
 import { BottomNav } from '../layout/BottomNav';
 import { ClubLogo } from '../ui/ClubLogo';
 import { PageLoader } from '../ui/PageLoader';
+import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 
 /** Только авторизованные пользователи (любая роль). */
 export function RequireAuth() {
@@ -60,13 +61,13 @@ export function MemberLayout() {
           <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={44} />
         </NavLink>
 
-        <div className="member-user-card">
+        <NavLink to="/profile" className="member-user-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
           <div className="member-user-avatar">{user?.name?.charAt(0) || 'U'}</div>
           <div>
             <p>{user?.name || roleLabel}</p>
             <span>{roleLabel}</span>
           </div>
-        </div>
+        </NavLink>
 
         <nav className="member-desktop-nav" aria-label={t('nav.cabinet')}>
           {links.map((link) => {
@@ -86,10 +87,13 @@ export function MemberLayout() {
           })}
         </nav>
 
-        <button type="button" className="member-logout" onClick={handleLogout}>
-          <LogOut size={18} />
-          {t('nav.logout')}
-        </button>
+        <div style={{ marginTop: 'auto', paddingTop: 'var(--space-4)' }}>
+          <LanguageSwitcher variant="sidebar" />
+          <button type="button" className="member-logout" onClick={handleLogout}>
+            <LogOut size={18} />
+            {t('nav.logout')}
+          </button>
+        </div>
       </aside>
 
       <section className="member-main-region">

@@ -20,15 +20,38 @@ export const ru = {
     select: "Выбрать...",
     branch: "Филиал",
     phone_placeholder: "7 777 000 00 00",
-    sports: ["Бокс", "ММА", "Бразильское джиу-джитсу", "Каратэ", "Дзюдо", "Кикбоксинг", "Грэпплинг", "Тайский бокс"],
-    months: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+    sports: {
+      0: "Бокс",
+      1: "ММА",
+      2: "Бразильское джиу-джитсу",
+      3: "Каратэ",
+      4: "Дзюдо",
+      5: "Кикбоксинг",
+      6: "Грэпплинг",
+      7: "Тайский бокс"
+    },
+    months: {
+      0: "Январь",
+      1: "Февраль",
+      2: "Март",
+      3: "Апрель",
+      4: "Май",
+      5: "Июнь",
+      6: "Июль",
+      7: "Август",
+      8: "Сентябрь",
+      9: "Октябрь",
+      10: "Ноябрь",
+      11: "Декабрь"
+    },
     beginner: "Новичок",
     all_types: "Все типы",
     res_members: "Ученики",
     res_coaches: "Тренеры",
     res_locations: "Филиалы",
     res_groups: "Группы",
-    create: "Создать"
+    create: "Создать",
+    free: "Бесплатно"
   },
   roles: {
     admin: "Администратор",
@@ -97,7 +120,22 @@ export const ru = {
       discipline_desc: "Образцовое выполнение всех указаний тренера.",
       technique: "Техника",
       technique_desc: "Великолепное исполнение приемов и техники."
-    }
+    },
+    attendance_success_title: "Тренировка завершена!",
+    attendance_success_text: "Статистика обновлена, опыт ученикам начислен.",
+    class_details: "Детали занятия",
+    check_in: "Чек-ин",
+    who_is_present: "Кто присутствует?",
+    select_all: "Выбрать всех",
+    mark_attendance_btn: "Отметить посещаемость",
+    praise_title: "Похвалить {name}",
+    praise_subtitle: "Выберите тип награды, которая отобразится в ленте и принесет ученику +20 XP.",
+    fire_praise: "Огонь на тренировке",
+    fire_desc: "За волю и энергию",
+    discipline_praise: "Дисциплина",
+    discipline_desc: "За порядок и внимание",
+    technique_praise: "Техника",
+    technique_desc: "За точность движений"
   },
   leads: {
     title: "Воронка лидов",
@@ -110,89 +148,6 @@ export const ru = {
       phone: "Телефон",
       sport: "Спорт",
       create_btn: "Создать лид"
-    },
-    chats: {
-      title: "Мессенджер",
-      search_placeholder: "Поиск чатов...",
-      filter_all: "Все",
-      filter_groups: "Группы",
-      filter_direct: "Личные",
-      no_chats: "Чатов не найдено",
-      online: "Онлайн",
-      start_chat: "Начните общение",
-      secure_msg: "Ваши сообщения защищены шифрованием Palestra",
-      input_placeholder: "Напишите сообщение...",
-      welcome_title: "Ваши диалоги",
-      welcome_desc: "Выберите чат из списка слева, чтобы начать общение с командой или учениками.",
-      group_feature_title: "Групповые чаты",
-      group_feature_desc: "Общайтесь со всей группой и тренером в одном месте.",
-      direct_feature_title: "Личные сообщения",
-      direct_feature_desc: "Прямая связь с тренером или администрацией.",
-      participants: "{count} участников",
-      no_coach: "Нет тренера"
-    },
-    shop: {
-      title: "Магазин клуба",
-      subtitle: "Экипировка, защита и фирменный мерч Palestra",
-      locked_title: "Магазин клуба подключается отдельно",
-      locked_feature: "Магазин клуба",
-      tab_products: "Товары",
-      tab_orders: "Заказы",
-      tab_browse: "Витрина",
-      add_btn: "Добавить товар",
-      search_placeholder: "Поиск по названию...",
-      default_category: "Защита",
-      categories: {
-        protection: "Защита",
-        equipment: "Снаряжение",
-        merch: "Мерч",
-        accessories: "Аксессуары",
-        awards: "Награды (Neks)"
-      },
-      form: {
-        edit_title: "Редактировать товар",
-        new_title: "Новый товар",
-        name_label: "Название",
-        name_placeholder: "Перчатки Boxing Pro",
-        price_label: "Цена (₸)",
-        category_label: "Категория",
-        image_label: "Изображение товара",
-        image_uploading: "Загрузка...",
-        image_uploaded: "Загружено",
-        stock_label: "Остаток на складе",
-        points_only: "Продажа за Neks (баллы)",
-        desc_label: "Описание",
-        desc_placeholder: "Краткое описание товара...",
-        create_btn: "Создать товар"
-      },
-      product: {
-        stock: "Склад: {count} шт",
-        no_desc: "Нет описания",
-        browse_desc_placeholder: "Уточните характеристики у администратора вашего филиала.",
-        price_points: "Стоимость в Neks",
-        price_kzt: "Стоимость",
-        order_btn: "Заказать"
-      },
-      orders: {
-        status_pending: "В обработке",
-        status_completed: "Завершен",
-        status_cancelled: "Отменен",
-        empty: "Заказов пока нет",
-        issued_btn: "Выдано",
-        cancel_btn: "Отменить"
-      },
-      alerts: {
-        image_error: "Не удалось загрузить изображение",
-        points_select: "Выберите ученика для покупки за баллы",
-        points_insufficient: "Недостаточно Neks! У вас {xp}, а нужно {price}",
-        points_success: "Покупка за Neks успешна! Заберите товар у администратора.",
-        order_success: "Заказ успешно оформлен! Админ свяжется с вами для уточнения деталей."
-      },
-      delete: {
-        title: "Удалить товар?",
-        confirm: "Вы уверены, что хотите навсегда удалить \"{name}\" из магазина?",
-        btn: "Удалить"
-      }
     },
     location_form: {
       edit_title: "Параметры филиала",
@@ -252,12 +207,7 @@ export const ru = {
     login: "Войти",
     register_free: "Подключить",
     cabinet: "Личный кабинет",
-    feed: "Лента",
-    schedule: "Расписание",
-    quests: "Квесты",
-    league: "Лига",
-    profile: "Профиль",
-    logout: "Выйти"
+    profile: "Профиль"
   },
   auth: {
     login_title: "Вход в Palestra",
@@ -402,7 +352,39 @@ export const ru = {
     salary_type: "Тип оплаты",
     bio: "О себе / Регалии",
     photo: "Фото тренера",
-    empty_list: "Список тренеров пуст."
+    empty_list: "Список тренеров пуст.",
+    form: {
+      edit_title: "Редактировать профиль тренера",
+      new_title: "Новый тренер",
+      first_name: "Имя",
+      last_name: "Фамилия",
+      phone: "Телефон",
+      email: "Email",
+      login: "Логин для входа",
+      login_auto: "Создается автоматически",
+      password: "Пароль",
+      copy_creds: "Скопировать логин и пароль",
+      spec: "Специализация",
+      exp: "Стаж (лет)",
+      location: "Филиал",
+      all_locations: "Все филиалы",
+      salary: "Ставка (₸)",
+      salary_type: "Тип оплаты",
+      salary_session: "За тренировку",
+      salary_student: "За каждого ученика",
+      salary_monthly: "Фикс в месяц",
+      bio: "О себе / Регалии",
+      bio_placeholder: "Мастер спорта, черный пояс...",
+      photo: "Фото тренера",
+      photo_uploading: "Загрузка...",
+      photo_uploaded: "Фото загружено",
+      photo_error: "Не удалось загрузить фото тренера"
+    },
+    list: {
+      search_placeholder: "Поиск по имени или специализации...",
+      empty: "Тренеры не найдены",
+      exp_years: "Опыт: {count} лет"
+    }
   },
   landing: {
     hero: {
@@ -563,59 +545,6 @@ export const ru = {
       growth_hint: "Growth от 9 000 ₸ подключается в настройках, когда лимитов Starter станет мало."
     }
   },
-  dashboard: {
-    admin_title: "Дашборд клуба",
-    coach_title: "Привет, {name}!",
-    admin_subtitle: "Обзор ключевых показателей работы вашего клуба",
-    coach_subtitle: "Ваше расписание и прогресс учеников на сегодня",
-    members_stat: "Ученики",
-    revenue_stat: "Выручка (всего)",
-    rating_stat: "Мой рейтинг",
-    schedule_stat_coach: "В расписании",
-    schedule_stat_admin: "Все тренировки",
-    leads_stat: "Новые лиды",
-    my_classes: "Мои занятия на сегодня",
-    club_schedule: "Расписание клуба",
-    open_calendar: "Открыть календарь",
-    no_classes: "Нет запланированных тренировок",
-    table_time: "Время",
-    table_group: "Группа / дисциплина",
-    table_coach: "Тренер",
-    autopilot_title: "Автопилот TG",
-    autopilot_birthday: "День рождения (XP)",
-    autopilot_subscription: "Продление абонемента",
-    last_run: "Последний запуск",
-    quick_actions: "Быстрые действия",
-    enroll_student: "Зачислить ученика",
-    calendar_classes: "Календарь и занятия",
-    club_shop: "Магазин клуба",
-    league_rating: "Лига и рейтинг",
-    live_feed: "Живая лента событий",
-    no_events: "Событий пока нет",
-    achievements_title: "Достижения клуба",
-    no_achievements: "Достижения пока не добавлены",
-    monthly_award_title: "Награда месяца",
-    final_countdown: "До финала:",
-    days: "дн.",
-    attendance_success_title: "Тренировка завершена!",
-    attendance_success_text: "Статистика обновлена, опыт ученикам начислен.",
-    class_details: "Детали занятия",
-    check_in: "Чек-ин",
-    who_is_present: "Кто присутствует?",
-    select_all: "Выбрать всех",
-    praise: "Похвалить",
-    mark_attendance_btn: "Отметить посещаемость",
-    praise_title: "Похвалить {name}",
-    praise_subtitle: "Выберите тип награды, которая отобразится в ленте и принесет ученику +20 XP.",
-    fire_praise: "Огонь на тренировке",
-    fire_desc: "За волю и энергию",
-    discipline_praise: "Дисциплина",
-    discipline_desc: "За порядок и внимание",
-    technique_praise: "Техника",
-    technique_desc: "За точность движений",
-    starter_limit_alert: "Вы указали {count} учеников при регистрации. На бесплатном тарифе Starter лимит — 15 учеников. Чтобы добавить всех, перейдите к настройке тарифа.",
-    set_tariff_btn: "Настроить тариф"
-  },
   schedule: {
     title: "Расписание",
     discipline: "Дисциплина",
@@ -646,10 +575,15 @@ export const ru = {
     remove_confirm: "Удалить эту тренировку из расписания?",
     member_view_hint: "Просмотр расписания. Добавление занятий и отметка посещаемости доступны в панели клуба для администратора и тренера.",
     close: "Закрыть",
-    days_short: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
-    location_main: "Главный зал",
-    location_small: "Малый зал",
-    location_ring: "РИНГ"
+    days_short: {
+      0: "Пн",
+      1: "Вт",
+      2: "Ср",
+      3: "Чт",
+      4: "Пт",
+      5: "Сб",
+      6: "Вс"
+    }
   },
   league: {
     title: "Лига",
@@ -847,7 +781,14 @@ export const ru = {
       changes_applied: "Конфигурация сохранена",
       limits_notice: "Лимиты увеличатся сразу. Оплата за доп. ресурсы будет включена в ваш следующий регулярный счет.",
       cancel_subscription: "отменить подписку и вернуться на бесплатный тариф",
-      cancel_confirm: "Вы уверены, что хотите отменить подписку? Все платные функции будут отключены."
+      cancel_confirm: "Вы уверены, что хотите отменить подписку? Все платные функции будут отключены.",
+      current_plan: "Текущий план",
+      forever_free: "Бесплатно навсегда",
+      reset_confirm: "Сбросить до базового?",
+      reset_to_starter: "Вернуться на Starter",
+      scaling_subtitle: "Настройка лимитов",
+      scaling_title: "Масштабирование",
+      starter_desc: "Базовый тариф Palestra"
     },
     profile: {
       title: "Основная информация",
@@ -857,7 +798,9 @@ export const ru = {
       club_logo: "Логотип клуба",
       logo_uploading: "Загрузка...",
       logo_uploaded: "Логотип загружен",
-      logo_error: "Не удалось загрузить логотип"
+      logo_error: "Не удалось загрузить логотип",
+      login_email: "Email для входа",
+      name: "Имя профиля"
     },
     locations: {
       title: "Филиалы и залы",
@@ -892,7 +835,8 @@ export const ru = {
         save_btn: "Сохранить изменения",
         create_btn: "Создать локацию",
         alert_fill: "Пожалуйста, заполните основные поля"
-      }
+      },
+      main_hall: "Главный зал"
     },
     plans: {
       title: "Тарифные планы",
@@ -966,7 +910,9 @@ export const ru = {
       two_factor_growth: "Доступно в Growth",
       active_sessions: "Активные сессии",
       current_session: "Текущая",
-      active_status: "Активно"
+      active_status: "Активно",
+      personal_info: "Личная информация",
+      readonly_notice: "Только для чтения"
     },
     admin_constructor: {
       title: "Конструктор дашборда",
@@ -983,43 +929,6 @@ export const ru = {
       position_label: "Позиция",
       visible: "Виден",
       hidden: "Скрыт"
-    }
-  },
-  coaches: {
-    title: "Команда",
-    subtitle: "Управление тренерским составом и доступом",
-    add_btn: "+ Добавить тренера",
-    form: {
-      edit_title: "Редактировать профиль тренера",
-      new_title: "Новый тренер",
-      first_name: "Имя",
-      last_name: "Фамилия",
-      phone: "Телефон",
-      email: "Email",
-      login: "Логин для входа",
-      login_auto: "Создается автоматически",
-      password: "Пароль",
-      copy_creds: "Скопировать логин и пароль",
-      spec: "Специализация",
-      exp: "Стаж (лет)",
-      location: "Филиал",
-      all_locations: "Все филиалы",
-      salary: "Ставка (₸)",
-      salary_type: "Тип оплаты",
-      salary_session: "За тренировку",
-      salary_student: "За каждого ученика",
-      salary_monthly: "Фикс в месяц",
-      bio: "О себе / Регалии",
-      bio_placeholder: "Мастер спорта, черный пояс...",
-      photo: "Фото тренера",
-      photo_uploading: "Загрузка...",
-      photo_uploaded: "Фото загружено",
-      photo_error: "Не удалось загрузить фото тренера"
-    },
-    list: {
-      search_placeholder: "Поиск по имени или специализации...",
-      empty: "Тренеры не найдены",
-      exp_years: "Опыт: {count} лет"
     }
   },
   quests_member: {
@@ -1076,7 +985,9 @@ export const ru = {
     no_posts: "Лента пока пуста",
     comment_placeholder: "Напишите комментарий...",
     share_wa: "Поделиться в WhatsApp",
-    share_tg: "Поделиться в Telegram"
+    share_tg: "Поделиться в Telegram",
+    likes: "Нравится",
+    replies: "Ответов"
   },
   superadmin: {
     impersonation_mode: "Режим Супер Админа: вы просматриваете клуб {name}",
@@ -1162,5 +1073,95 @@ export const ru = {
     growth: "Подключите, когда клуб вырастет",
     register: "Зарегистрировать клуб за 2 минуты →",
     ask_admin: "Тренерам и ученикам: попросите доступ у вашего администратора."
+  },
+  chats: {
+    title: "Мессенджер",
+    search_placeholder: "Поиск чатов...",
+    filter_all: "Все",
+    filter_groups: "Группы",
+    filter_direct: "Личные",
+    no_chats: "Чатов не найдено",
+    online: "Онлайн",
+    start_chat: "Начните общение",
+    secure_msg: "Ваши сообщения защищены шифрованием Palestra",
+    input_placeholder: "Напишите сообщение...",
+    welcome_title: "Ваши диалоги",
+    welcome_desc: "Выберите чат из списка слева, чтобы начать общение с командой или учениками.",
+    group_feature_title: "Групповые чаты",
+    group_feature_desc: "Общайтесь со всей группой и тренером в одном месте.",
+    direct_feature_title: "Личные сообщения",
+    direct_feature_desc: "Прямая связь с тренером или администрацией.",
+    participants: "{count} участников",
+    no_coach: "Нет тренера"
+  },
+  shop: {
+    title: "Магазин клуба",
+    subtitle: "Экипировка, защита и фирменный мерч Palestra",
+    locked_title: "Магазин клуба подключается отдельно",
+    locked_feature: "Магазин клуба",
+    tab_products: "Товары",
+    tab_orders: "Заказы",
+    tab_browse: "Витрина",
+    add_btn: "Добавить товар",
+    search_placeholder: "Поиск по названию...",
+    default_category: "Защита",
+    categories: {
+      protection: "Защита",
+      equipment: "Снаряжение",
+      merch: "Мерч",
+      accessories: "Аксессуары",
+      awards: "Награды (Neks)"
+    },
+    form: {
+      edit_title: "Редактировать товар",
+      new_title: "Новый товар",
+      name_label: "Название",
+      name_placeholder: "Перчатки Boxing Pro",
+      price_label: "Цена (₸)",
+      category_label: "Категория",
+      image_label: "Изображение товара",
+      image_uploading: "Загрузка...",
+      image_uploaded: "Загружено",
+      stock_label: "Остаток на складе",
+      points_only: "Продажа за Neks (баллы)",
+      desc_label: "Описание",
+      desc_placeholder: "Краткое описание товара...",
+      create_btn: "Создать товар",
+      save_btn: "Сохранить"
+    },
+    product: {
+      stock: "Склад: {count} шт",
+      no_desc: "Нет описания",
+      browse_desc_placeholder: "Уточните характеристики у администратора вашего филиала.",
+      price_points: "Стоимость в Neks",
+      price_kzt: "Стоимость",
+      order_btn: "Заказать"
+    },
+    orders: {
+      status_pending: "В обработке",
+      status_completed: "Завершен",
+      status_cancelled: "Отменен",
+      empty: "Заказов пока нет",
+      issued_btn: "Выдано",
+      cancel_btn: "Отменить"
+    },
+    alerts: {
+      image_error: "Не удалось загрузить изображение",
+      points_select: "Выберите ученика для покупки за баллы",
+      points_insufficient: "Недостаточно Neks! У вас {xp}, а нужно {price}",
+      points_success: "Покупка за Neks успешна! Заберите товар у администратора.",
+      order_success: "Заказ успешно оформлен! Админ свяжется с вами для уточнения деталей."
+    },
+    delete: {
+      title: "Удалить товар?",
+      confirm: "Вы уверены, что хотите навсегда удалить \"{name}\" из магазина?",
+      btn: "Удалить"
+    },
+    no_products: "Товаров пока нет"
+  },
+  sidebar: {
+    feed: "Лента",
+    schedule: "Расписание",
+    status: "Статус"
   }
 };

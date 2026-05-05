@@ -25,6 +25,7 @@ import {
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
 import { ClubLogo } from '../ui/ClubLogo';
+import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 
 import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 
@@ -48,13 +49,13 @@ export const Sidebar = () => {
         <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={100} />
       </NavLink>
 
-      <div className="member-user-card">
+      <NavLink to="/admin/settings" className="member-user-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
         <div className="member-user-avatar">{user?.name?.charAt(0) || 'U'}</div>
         <div>
           <p>{user?.name || roleLabel}</p>
           <span>{roleLabel}</span>
         </div>
-      </div>
+      </NavLink>
 
       <div className="sidebar-location-switcher" style={{ margin: 'var(--space-4) 0', position: 'relative' }}>
         <div 
@@ -179,10 +180,13 @@ export const Sidebar = () => {
         })}
       </nav>
 
-      <button type="button" className="member-logout" onClick={handleLogout}>
-        <LogOut size={18} />
-        {t('nav.logout')}
-      </button>
+      <div style={{ marginTop: 'auto', paddingTop: 'var(--space-4)' }}>
+        <LanguageSwitcher variant="sidebar" />
+        <button type="button" className="member-logout" onClick={handleLogout}>
+          <LogOut size={18} />
+          {t('nav.logout')}
+        </button>
+      </div>
     </aside>
   );
 };

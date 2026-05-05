@@ -1,8 +1,60 @@
 import React from 'react';
 import { useTranslation } from '../../context/LanguageContext';
 
-export const LanguageSwitcher = () => {
+export const LanguageSwitcher = ({ variant = 'circle' }) => {
   const { lang, toggleLanguage } = useTranslation();
+
+  if (variant === 'sidebar') {
+    return (
+      <div 
+        onClick={toggleLanguage}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: 'white',
+          borderRadius: '16px',
+          padding: '4px',
+          border: '1px solid var(--color-border)',
+          cursor: 'pointer',
+          width: '100%',
+          marginBottom: 'var(--space-4)',
+          position: 'relative',
+          userSelect: 'none'
+        }}
+      >
+        <div style={{
+          position: 'absolute',
+          width: 'calc(50% - 4px)',
+          height: 'calc(100% - 8px)',
+          backgroundColor: 'var(--color-primary)',
+          borderRadius: '12px',
+          left: lang === 'ru' ? '4px' : 'calc(50%)',
+          transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          zIndex: 0
+        }} />
+        <div style={{ 
+          flex: 1, 
+          textAlign: 'center', 
+          fontSize: '11px', 
+          fontWeight: 800, 
+          zIndex: 1, 
+          color: lang === 'ru' ? 'white' : 'var(--color-text-muted)',
+          padding: '8px 0',
+          transition: 'color 0.3s'
+        }}>RU</div>
+        <div style={{ 
+          flex: 1, 
+          textAlign: 'center', 
+          fontSize: '11px', 
+          fontWeight: 800, 
+          zIndex: 1, 
+          color: lang === 'kk' ? 'white' : 'var(--color-text-muted)',
+          padding: '8px 0',
+          transition: 'color 0.3s'
+        }}>KZ</div>
+      </div>
+    );
+  }
 
   return (
     <div 

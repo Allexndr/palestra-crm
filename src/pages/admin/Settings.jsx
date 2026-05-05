@@ -503,6 +503,13 @@ export const Settings = () => {
               <h3 className="h4 mb-8 flex items-center gap-3"><Lock className="text-primary" /> {t('settings.security.title')}</h3>
               <div className="flex flex-col gap-10">
                 <Card style={{ backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+                  <h5 className="font-bold mb-6">{t('settings.security.personal_info')}</h5>
+                  <div className="flex flex-col gap-4 mb-10">
+                    <Input label={t('settings.profile.name')} value={user?.name || ''} disabled />
+                    <Input label={t('settings.profile.login_email')} value={user?.email || ''} disabled />
+                    <p className="text-[10px] text-muted">{t('settings.security.readonly_notice')}</p>
+                  </div>
+
                   <h5 className="font-bold mb-6">{t('settings.security.change_pass')}</h5>
                   <form onSubmit={handlePasswordChange} className="flex flex-col gap-4">
                     <Input label={t('settings.security.old_pass')} type="password" value={passData.old} onChange={e => setPassData({...passData, old: e.target.value})} required />

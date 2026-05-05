@@ -192,7 +192,7 @@ export const AdminProvider = ({ children }) => {
           setActivities(Array.isArray(remote.activities) ? remote.activities : []);
           setLeagues(Array.isArray(remote.leagues) ? remote.leagues : []);
           setPlans(Array.isArray(remote.plans) ? remote.plans : []);
-          setPosts(Array.isArray(remote.posts) ? remote.posts : []);
+          setPosts(Array.isArray(remote.posts) ? remote.posts : (JSON.parse(localStorage.getItem('palestra_posts') || '[]')));
           setCoaches(Array.isArray(remote.coaches) ? remote.coaches : []);
           setEvents(Array.isArray(remote.events) ? remote.events : []);
           setAttendance(Array.isArray(remote.attendance) ? remote.attendance : []);
@@ -279,6 +279,7 @@ export const AdminProvider = ({ children }) => {
       if (error.name !== 'AbortError') console.error('Failed to persist Palestra state', error);
     });
 
+    localStorage.setItem('palestra_posts', JSON.stringify(posts));
     return () => controller.abort();
   }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches, dashboardLayout, studentDashboardPool, studentDashboardLayout, messages, partners]);
 
@@ -589,7 +590,7 @@ export const AdminProvider = ({ children }) => {
       ...postData 
     };
     setPosts(prev => [newPost, ...prev]);
-    logActivity(`Новая публикация в ленте: ${postData.title || 'Новость'}`, 'info');
+    logActivity(`Новая публикация в ленте: ${postData.title || postData.text?.substring(0, 30) || 'Новость'}`, 'info');
   };
 
   const likePost = (id) => {
@@ -608,15 +609,49 @@ export const AdminProvider = ({ children }) => {
     }));
   };
 
-  const addComment = (postId, text) => {
+  const addComment = (postId, text, parentCommentId = null) => {
     if (!user) return;
     const comment = {
       id: createId(),
       author: user.name,
+      authorRole: user.role,
+      authorId: user.id || user.email,
       text,
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
+      parentCommentId, // For nested threads
+      likes: 0,
+      likedBy: []
     };
-    setPosts(prev => prev.map(p => p.id === postId ? { ...p, comments: [...(p.comments || []), comment] } : p));
+    setPosts(prev => prev.map(p => {
+      if (p.id === postId) {
+        return { ...p, comments: [...(p.comments || []), comment] };
+      }
+      return p;
+    }));
+  };
+
+  const likeComment = (postId, commentId) => {
+    if (!user) return;
+    setPosts(prev => prev.map(p => {
+      if (p.id === postId) {
+        return {
+          ...p,
+          comments: (p.comments || []).map(c => {
+            if (c.id === commentId) {
+              const likedBy = c.likedBy || [];
+              const isLiked = likedBy.includes(user.id || user.email);
+              return {
+                ...c,
+                likedBy: isLiked ? likedBy.filter(u => u !== (user.id || user.email)) : [...likedBy, (user.id || user.email)],
+                likes: isLiked ? (c.likes || 0) - 1 : (c.likes || 0) + 1
+              };
+            }
+            return c;
+          })
+        };
+      }
+      return p;
+    }));
   };
 
   const addQuest = (quest) => {

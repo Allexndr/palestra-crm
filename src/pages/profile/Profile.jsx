@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, ChevronRight, CreditCard, Medal, Shield, Trophy, TrendingUp, User, Zap, Settings, Eye, EyeOff, ArrowUp, ArrowDown, Layout, Save, X, BarChart3, Users, Sparkles } from 'lucide-react';
+import { Calendar, ChevronRight, CreditCard, Medal, Shield, Trophy, TrendingUp, User, Zap, Settings, Eye, EyeOff, ArrowUp, ArrowDown, Layout, Save, X, BarChart3, Users, Sparkles, CheckCircle } from 'lucide-react';
 import { useAdmin, STUDENT_WIDGET_CATALOG } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
 import { Button } from '../../components/ui/Button';
@@ -12,8 +12,27 @@ import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 export const Profile = () => {
   const { user, members, attendance, achievements, groups, schedule, activeChildId, clubInfo, studentDashboardPool, studentDashboardLayout, updateMemberProfile } = useAdmin();
   const { t, language } = useTranslation();
-  const [activeTab, setActiveTab] = useState('sports'); // 'sports' or 'rpg'
+  const [activeTab, setActiveTab] = useState('sports'); // 'sports', 'rpg', or 'settings'
+  const [passData, setPassData] = useState({ old: '', new: '', confirm: '' });
+  const [passLoading, setPassLoading] = useState(false);
+  const [passSuccess, setPassSuccess] = useState(false);
   const [isCustomizing, setIsCustomizing] = useState(false);
+  
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+    if (!passData.new || passData.new !== passData.confirm) {
+      alert(t('settings.security.pass_mismatch'));
+      return;
+    }
+    setPassLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setPassLoading(false);
+      setPassSuccess(true);
+      setPassData({ old: '', new: '', confirm: '' });
+      setTimeout(() => setPassSuccess(false), 3000);
+    }, 1000);
+  };
   
   const isParent = user?.role === 'parent';
   const isStudent = user?.role === 'student';
@@ -329,6 +348,12 @@ export const Profile = () => {
           >
             {t('profile_member.gamification')}
           </button>
+          <button 
+            onClick={() => setActiveTab('settings')} 
+            className={`pb-4 px-2 text-sm font-black uppercase tracking-widest transition-all border-none bg-transparent cursor-pointer ${activeTab === 'settings' ? 'text-primary border-b-2 border-primary' : 'text-muted hover:text-slate-900'}`}
+          >
+            {t('settings.tabs.security')}
+          </button>
         </div>
 
         {isCustomizing && (
@@ -341,7 +366,52 @@ export const Profile = () => {
 
       <section className="member-profile-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-8)' }}>
         <div className="member-profile-main">
-          {activeWidgets.map((widget, index) => {
+          {activeTab === 'settings' ? (
+            <div className="animate-fade-in">
+              <Card className="mb-8">
+                <h3 className="member-card-title"><User size={18} className="text-primary" /> {t('settings.security.personal_info')}</h3>
+                <div className="flex flex-col gap-4">
+                  <div className="input-group">
+                    <label className="input-label">{t('settings.profile.name')}</label>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 font-bold text-slate-800">{user?.name}</div>
+                  </div>
+                  <div className="input-group">
+                    <label className="input-label">{t('settings.profile.login_email')}</label>
+                    <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 font-bold text-slate-800">{user?.email || user?.login}</div>
+                  </div>
+                  <p className="text-[10px] text-muted">{t('settings.security.readonly_notice')}</p>
+                </div>
+              </Card>
+
+              <Card className="mb-8">
+                <h3 className="member-card-title"><Shield size={18} className="text-primary" /> {t('settings.security.change_pass')}</h3>
+                <form onSubmit={handlePasswordChange} className="flex flex-col gap-4">
+                  <div className="input-group">
+                    <label className="input-label">{t('settings.security.old_pass')}</label>
+                    <input className="input-field" type="password" value={passData.old} onChange={e => setPassData({...passData, old: e.target.value})} required />
+                  </div>
+                  <div className="input-group">
+                    <label className="input-label">{t('settings.security.new_pass')}</label>
+                    <input className="input-field" type="password" value={passData.new} onChange={e => setPassData({...passData, new: e.target.value})} required />
+                  </div>
+                  <div className="input-group">
+                    <label className="input-label">{t('settings.security.confirm_pass')}</label>
+                    <input className="input-field" type="password" value={passData.confirm} onChange={e => setPassData({...passData, confirm: e.target.value})} required />
+                  </div>
+                  <div className="mt-4 flex items-center gap-4">
+                    <Button variant="primary" type="submit" disabled={passLoading} className="px-8">
+                      {passLoading ? t('settings.security.updating') : t('settings.security.update_btn')}
+                    </Button>
+                    {passSuccess && (
+                      <span className="text-xs font-bold text-emerald-600 animate-fade-in flex items-center gap-2">
+                        <CheckCircle size={14} className="text-emerald-600" /> {t('settings.security.pass_success')}
+                      </span>
+                    )}
+                  </div>
+                </form>
+              </Card>
+            </div>
+          ) : activeWidgets.map((widget, index) => {
             if (!widget.visible && !isCustomizing) return null;
             const catalogInfo = STUDENT_WIDGET_CATALOG.find(c => c.id === widget.id);
             

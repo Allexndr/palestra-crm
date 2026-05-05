@@ -20,15 +20,38 @@ export const kk = {
     select: "Таңдау...",
     branch: "Филиал",
     phone_placeholder: "7 777 000 00 00",
-    sports: ["Бокс", "ММА", "Бразилиялық джиу-джитсу", "Каратэ", "Дзюдо", "Кикбоксинг", "Грэпплинг", "Тай боксы"],
-    months: ["Қаңтар", "Ақпан", "Наурыз", "Сәуір", "Мамыр", "Маусым", "Шілде", "Тамыз", "Қыркүйек", "Қазан", "Қараша", "Желтоқсан"],
+    sports: {
+      0: "Бокс",
+      1: "ММА",
+      2: "Бразилиялық джиу-джитсу",
+      3: "Каратэ",
+      4: "Дзюдо",
+      5: "Кикбоксинг",
+      6: "Грэпплинг",
+      7: "Тай боксы"
+    },
+    months: {
+      0: "Қаңтар",
+      1: "Ақпан",
+      2: "Наурыз",
+      3: "Сәуір",
+      4: "Мамыр",
+      5: "Маусым",
+      6: "Шілде",
+      7: "Тамыз",
+      8: "Қыркүйек",
+      9: "Қазан",
+      10: "Қараша",
+      11: "Желтоқсан"
+    },
     beginner: "Жаңадан бастаушы",
     all_types: "Барлық түрлері",
     res_members: "Оқушылар",
     res_coaches: "Жаттықтырушылар",
     res_locations: "Филиалдар",
     res_groups: "Топтар",
-    create: "Құру"
+    create: "Құру",
+    free: "Тегін"
   },
   roles: {
     admin: "Әкімші",
@@ -97,7 +120,22 @@ export const kk = {
       discipline_desc: "Жаттықтырушының барлық нұсқауларын мінсіз орындау.",
       technique: "Техника",
       technique_desc: "Әдістер мен техниканың тамаша орындалуы."
-    }
+    },
+    attendance_success_title: "Жаттығу аяқталды!",
+    attendance_success_text: "Статистика жаңартылды, оқушыларға тәжірибе есептелді.",
+    class_details: "Сабақтың егжей-тегжейі",
+    check_in: "Чек-ин",
+    who_is_present: "Кім бар?",
+    select_all: "Барлығын таңдау",
+    mark_attendance_btn: "Қатысуды белгілеу",
+    praise_title: "{name} мақтау",
+    praise_subtitle: "Таспада көрсетілетін және оқушыға +20 XP әкелетін марапат түрін таңдаңыз.",
+    fire_praise: "Жаттығудағы жалын",
+    fire_desc: "Ерік пен жігер үшін",
+    discipline_praise: "Тәртіп",
+    discipline_desc: "Тәртіп пен зейін үшін",
+    technique_praise: "Техника",
+    technique_desc: "Қозғалыс дәлдігі үшін"
   },
   leads: {
     title: "Лидтер воронкасы",
@@ -110,89 +148,6 @@ export const kk = {
       phone: "Телефон",
       sport: "Спорт",
       create_btn: "Лид құру"
-    },
-    chats: {
-      title: "Мессенджер",
-      search_placeholder: "Чаттарды іздеу...",
-      filter_all: "Барлығы",
-      filter_groups: "Топтар",
-      filter_direct: "Жеке",
-      no_chats: "Чаттар табылмады",
-      online: "Желіде",
-      start_chat: "Сөйлесуді бастаңыз",
-      secure_msg: "Сіздің хабарламаларыңыз Palestra шифрлауымен қорғалған",
-      input_placeholder: "Хабарлама жазыңыз...",
-      welcome_title: "Сіздің диалогтарыңыз",
-      welcome_desc: "Командамен немесе оқушылармен сөйлесуді бастау үшін сол жақтағы тізімнен чатты таңдаңыз.",
-      group_feature_title: "Топтық чаттар",
-      group_feature_desc: "Бір жерде бүкіл топпен және жаттықтырушымен сөйлесіңіз.",
-      direct_feature_title: "Жеке хабарламалар",
-      direct_feature_desc: "Жаттықтырушымен немесе әкімшілікпен тікелей байланыс.",
-      participants: "{count} қатысушы",
-      no_coach: "Жаттықтырушы жоқ"
-    },
-    shop: {
-      title: "Клуб дүкені",
-      subtitle: "Palestra экипировкасы, қорғаныс және фирмалық мерч",
-      locked_title: "Клуб дүкені бөлек қосылады",
-      locked_feature: "Клуб дүкені",
-      tab_products: "Тауарлар",
-      tab_orders: "Тапсырыстар",
-      tab_browse: "Витрина",
-      add_btn: "Тауар қосу",
-      search_placeholder: "Атауы бойынша іздеу...",
-      default_category: "Қорғаныс",
-      categories: {
-        protection: "Қорғаныс",
-        equipment: "Жабдықтар",
-        merch: "Мерч",
-        accessories: "Аксессуарлар",
-        awards: "Марапаттар (Neks)"
-      },
-      form: {
-        edit_title: "Тауарды өңдеу",
-        new_title: "Жаңа тауар",
-        name_label: "Атауы",
-        name_placeholder: "Boxing Pro қолғаптары",
-        price_label: "Бағасы (₸)",
-        category_label: "Санат",
-        image_label: "Тауар кескіні",
-        image_uploading: "Жүктелуде...",
-        image_uploaded: "Жүктелді",
-        stock_label: "Қоймадағы қалдық",
-        points_only: "Neks-ке сату (ұпайлар)",
-        desc_label: "Сипаттамасы",
-        desc_placeholder: "Тауардың қысқаша сипаттамасы...",
-        create_btn: "Тауарды құру"
-      },
-      product: {
-        stock: "Қойма: {count} дана",
-        no_desc: "Сипаттама жоқ",
-        browse_desc_placeholder: "Сипаттамасын филиалыңыздың әкімшісінен сұраңыз.",
-        price_points: "Neks құны",
-        price_kzt: "Құны",
-        order_btn: "Тапсырыс беру"
-      },
-      orders: {
-        status_pending: "Өңделуде",
-        status_completed: "Аяқталды",
-        status_cancelled: "Бас тартылды",
-        empty: "Тапсырыстар әлі жоқ",
-        issued_btn: "Берілді",
-        cancel_btn: "Бас тарту"
-      },
-      alerts: {
-        image_error: "Кескінді жүктеу мүмкін болмады",
-        points_select: "Ұпаймен сатып алу үшін оқушыны таңдаңыз",
-        points_insufficient: "Neks жеткіліксіз! Сізде {xp}, ал {price} қажет",
-        points_success: "Neks-ке сатып алу сәтті аяқталды! Тауарды әкімшілерден алыңыз.",
-        order_success: "Тапсырыс сәтті қабылданды! Әкімші толығырақ мәлімет алу үшін сізбен хабарласады."
-      },
-      delete: {
-        title: "Тауарды жою керек пе?",
-        confirm: "\"{name}\" тауарын дүкеннен біржола жойғыңыз келетініне сенімдісіз бе?",
-        btn: "Жою"
-      }
     },
     location_form: {
       edit_title: "Филиал параметрлері",
@@ -252,12 +207,7 @@ export const kk = {
     login: "Кіру",
     register_free: "Тегін қосылу",
     cabinet: "Жеке кабинет",
-    feed: "Таспа",
-    schedule: "Кесте",
-    quests: "Квестер",
-    league: "Лига",
-    profile: "Профиль",
-    logout: "Шығу"
+    profile: "Профиль"
   },
   auth: {
     login_title: "Palestra-ға кіру",
@@ -402,7 +352,39 @@ export const kk = {
     salary_type: "Төлем түрі",
     bio: "Өзі туралы / Регалиялар",
     photo: "Жаттықтырушы фотосы",
-    empty_list: "Жаттықтырушылар тізімі бос."
+    empty_list: "Жаттықтырушылар тізімі бос.",
+    form: {
+      edit_title: "Жаттықтырушы профилін өңдеу",
+      new_title: "Жаңа жаттықтырушы",
+      first_name: "Аты",
+      last_name: "Тегі",
+      phone: "Телефон",
+      email: "Email",
+      login: "Кіру логині",
+      login_auto: "Автоматты түрде жасалады",
+      password: "Құпия сөз",
+      copy_creds: "Логин мен құпия сөзді көшіру",
+      spec: "Мамандандыру",
+      exp: "Стаж (жыл)",
+      location: "Филиал",
+      all_locations: "Барлық филиалдар",
+      salary: "Ставка (₸)",
+      salary_type: "Төлем түрі",
+      salary_session: "Жаттығу үшін",
+      salary_student: "Әр оқушы үшін",
+      salary_monthly: "Айына фикс",
+      bio: "Өзі туралы / Марапаттар",
+      bio_placeholder: "Спорт шебері, қара белбеу...",
+      photo: "Жаттықтырушы фотосы",
+      photo_uploading: "Жүктелуде...",
+      photo_uploaded: "Фото жүктелді",
+      photo_error: "Жаттықтырушы фотосын жүктеу мүмкін болмады"
+    },
+    list: {
+      search_placeholder: "Аты немесе мамандандыру бойынша іздеу...",
+      empty: "Жаттықтырушылар табылмады",
+      exp_years: "Тәжірибе: {count} жыл"
+    }
   },
   landing: {
     hero: {
@@ -563,59 +545,6 @@ export const kk = {
       growth_hint: "Growth айына 9 000 ₸-дан басталады, Starter лимиттері аз болған кезде реттеулерде қосылады."
     }
   },
-  dashboard: {
-    admin_title: "Клуб дашборды",
-    coach_title: "Сәлем, {name}!",
-    admin_subtitle: "Клубыңыздың негізгі көрсеткіштеріне шолу",
-    coach_subtitle: "Бүгінгі кестеңіз бен оқушылардың прогресі",
-    members_stat: "Оқушылар",
-    revenue_stat: "Кіріс (барлығы)",
-    rating_stat: "Менің рейтингім",
-    schedule_stat_coach: "Кестеде",
-    schedule_stat_admin: "Барлық жаттығулар",
-    leads_stat: "Жаңа лидтер",
-    my_classes: "Бүгінгі менің сабақтарым",
-    club_schedule: "Клуб кестесі",
-    open_calendar: "Күнтізбені ашу",
-    no_classes: "Жоспарланған жаттығулар жоқ",
-    table_time: "Уақыты",
-    table_group: "Топ / бағыт",
-    table_coach: "Жаттықтырушы",
-    autopilot_title: "TG Автопилоты",
-    autopilot_birthday: "Туған күн (XP)",
-    autopilot_subscription: "Абонементті ұзарту",
-    last_run: "Соңғы іске қосу",
-    quick_actions: "Жылдам әрекеттер",
-    enroll_student: "Оқушыны қабылдау",
-    calendar_classes: "Күнтізбе және сабақтар",
-    club_shop: "Клуб дүкені",
-    league_rating: "Лига және рейтинг",
-    live_feed: "Оқиғалардың тікелей таспасы",
-    no_events: "Әзірге оқиғалар жоқ",
-    achievements_title: "Клуб жетістіктері",
-    no_achievements: "Жетістіктер әлі қосылмаған",
-    monthly_award_title: "Айдың марапаты",
-    final_countdown: "Финалға дейін:",
-    days: "күн",
-    attendance_success_title: "Жаттығу аяқталды!",
-    attendance_success_text: "Статистика жаңартылды, оқушыларға тәжірибе есептелді.",
-    class_details: "Сабақтың егжей-тегжейі",
-    check_in: "Чек-ин",
-    who_is_present: "Кім бар?",
-    select_all: "Барлығын таңдау",
-    praise: "Мақтау",
-    mark_attendance_btn: "Қатысуды белгілеу",
-    praise_title: "{name} мақтау",
-    praise_subtitle: "Таспада көрсетілетін және оқушыға +20 XP әкелетін марапат түрін таңдаңыз.",
-    fire_praise: "Жаттығудағы жалын",
-    fire_desc: "Ерік пен жігер үшін",
-    discipline_praise: "Тәртіп",
-    discipline_desc: "Тәртіп пен зейін үшін",
-    technique_praise: "Техника",
-    technique_desc: "Қозғалыс дәлдігі үшін",
-    starter_limit_alert: "Тіркелу кезінде сіз {count} оқушыны көрсеттіңіз. Starter тегін тарифінде лимит — 15 оқушы. Барлығын қосу үшін тарифті реттеуге өтіңіз.",
-    set_tariff_btn: "Тарифті реттеу"
-  },
   schedule: {
     title: "Кесте",
     discipline: "Дисциплина",
@@ -638,7 +567,15 @@ export const kk = {
     remove_confirm: "Бұл жаттығуды кестеден жою керек пе?",
     member_view_hint: "Кестені қарау. Сабақтарды қосу және қатысуды белгілеу клуб панелінде администратор мен жаттықтырушы үшін қолжетімді.",
     close: "Жабу",
-    days_short: ["Дс", "Сс", "Ср", "Бс", "Жм", "Сн", "Жс"],
+    days_short: {
+      0: "Дс",
+      1: "Сс",
+      2: "Ср",
+      3: "Бс",
+      4: "Жм",
+      5: "Сн",
+      6: "Жс"
+    },
     location_main: "Басты зал",
     location_small: "Кіші зал",
     location_ring: "РИНГ"
@@ -856,7 +793,9 @@ export const kk = {
       club_logo: "Клуб логотипі",
       logo_uploading: "Жүктелуде...",
       logo_uploaded: "Логотип жүктелді",
-      logo_error: "Логотипті жүктеу мүмкін болмады"
+      logo_error: "Логотипті жүктеу мүмкін болмады",
+      login_email: "Кіру үшін Email",
+      name: "Профиль аты"
     },
     locations: {
       title: "Филиалдар мен залдар",
@@ -891,7 +830,8 @@ export const kk = {
         save_btn: "Өзгерістерді сақтау",
         create_btn: "Локацияны құру",
         alert_fill: "Негізгі өрістерді толтырыңыз"
-      }
+      },
+      main_hall: "Негізгі зал"
     },
     plans: {
       title: "Тарифтік жоспарлар",
@@ -965,7 +905,9 @@ export const kk = {
       two_factor_growth: "Growth-та қолжетімді",
       active_sessions: "Белсенді сессиялар",
       current_session: "Ағымдағы",
-      active_status: "Белсенді"
+      active_status: "Белсенді",
+      personal_info: "Жеке ақпарат",
+      readonly_notice: "Тек оқуға арналған"
     },
     admin_constructor: {
       title: "Дашборд конструкторы",
@@ -982,43 +924,6 @@ export const kk = {
       position_label: "Позиция",
       visible: "Көрінеді",
       hidden: "Жасырын"
-    }
-  },
-  coaches: {
-    title: "Команда",
-    subtitle: "Жаттықтырушылар құрамын және қолжетімділікті басқару",
-    add_btn: "+ Жаттықтырушы қосу",
-    form: {
-      edit_title: "Жаттықтырушы профилін өңдеу",
-      new_title: "Жаңа жаттықтырушы",
-      first_name: "Аты",
-      last_name: "Тегі",
-      phone: "Телефон",
-      email: "Email",
-      login: "Кіру логині",
-      login_auto: "Автоматты түрде жасалады",
-      password: "Құпия сөз",
-      copy_creds: "Логин мен құпия сөзді көшіру",
-      spec: "Мамандандыру",
-      exp: "Стаж (жыл)",
-      location: "Филиал",
-      all_locations: "Барлық филиалдар",
-      salary: "Ставка (₸)",
-      salary_type: "Төлем түрі",
-      salary_session: "Жаттығу үшін",
-      salary_student: "Әр оқушы үшін",
-      salary_monthly: "Айына фикс",
-      bio: "Өзі туралы / Марапаттар",
-      bio_placeholder: "Спорт шебері, қара белбеу...",
-      photo: "Жаттықтырушы фотосы",
-      photo_uploading: "Жүктелуде...",
-      photo_uploaded: "Фото жүктелді",
-      photo_error: "Жаттықтырушы фотосын жүктеу мүмкін болмады"
-    },
-    list: {
-      search_placeholder: "Аты немесе мамандандыру бойынша іздеу...",
-      empty: "Жаттықтырушылар табылмады",
-      exp_years: "Тәжірибе: {count} жыл"
     }
   },
   quests_member: {
@@ -1075,7 +980,9 @@ export const kk = {
     no_posts: "Таспа әзірге бос",
     comment_placeholder: "Пікір жазыңыз...",
     share_wa: "WhatsApp-пен бөлісу",
-    share_tg: "Telegram-мен бөлісу"
+    share_tg: "Telegram-мен бөлісу",
+    likes: "Ұнайды",
+    replies: "Жауаптар"
   },
   superadmin: {
     impersonation_mode: "Супер Админ режимі: сіз {name} клубын көріп отырсыз",
@@ -1161,5 +1068,95 @@ export const kk = {
     growth: "Клуб өскен кезде қосыңыз",
     register: "Клубты 2 минутта тіркеу →",
     ask_admin: "Жаттықтырушылар мен оқушыларға: әкімшіден рұқсат сұраңыз."
+  },
+  chats: {
+    title: "Мессенджер",
+    search_placeholder: "Чаттарды іздеу...",
+    filter_all: "Барлығы",
+    filter_groups: "Топтар",
+    filter_direct: "Жеке",
+    no_chats: "Чаттар табылмады",
+    online: "Желіде",
+    start_chat: "Сөйлесуді бастаңыз",
+    secure_msg: "Сіздің хабарламаларыңыз Palestra шифрлауымен қорғалған",
+    input_placeholder: "Хабарлама жазыңыз...",
+    welcome_title: "Сіздің диалогтарыңыз",
+    welcome_desc: "Командамен немесе оқушылармен сөйлесуді бастау үшін сол жақтағы тізімнен чатты таңдаңыз.",
+    group_feature_title: "Топтық чаттар",
+    group_feature_desc: "Бір жерде бүкіл топпен және жаттықтырушымен сөйлесіңіз.",
+    direct_feature_title: "Жеке хабарламалар",
+    direct_feature_desc: "Жаттықтырушымен немесе әкімшілікпен тікелей байланыс.",
+    participants: "{count} қатысушы",
+    no_coach: "Жаттықтырушы жоқ"
+  },
+  shop: {
+    title: "Клуб дүкені",
+    subtitle: "Palestra экипировкасы, қорғаныс және фирмалық мерч",
+    locked_title: "Клуб дүкені бөлек қосылады",
+    locked_feature: "Клуб дүкені",
+    tab_products: "Тауарлар",
+    tab_orders: "Тапсырыстар",
+    tab_browse: "Витрина",
+    add_btn: "Тауар қосу",
+    search_placeholder: "Атауы бойынша іздеу...",
+    default_category: "Қорғаныс",
+    categories: {
+      protection: "Қорғаныс",
+      equipment: "Жабдықтар",
+      merch: "Мерч",
+      accessories: "Аксессуарлар",
+      awards: "Марапаттар (Neks)"
+    },
+    form: {
+      edit_title: "Тауарды өңдеу",
+      new_title: "Жаңа тауар",
+      name_label: "Атауы",
+      name_placeholder: "Boxing Pro қолғаптары",
+      price_label: "Бағасы (₸)",
+      category_label: "Санат",
+      image_label: "Тауар кескіні",
+      image_uploading: "Жүктелуде...",
+      image_uploaded: "Жүктелді",
+      stock_label: "Қоймадағы қалдық",
+      points_only: "Neks-ке сату (ұпайлар)",
+      desc_label: "Сипаттамасы",
+      desc_placeholder: "Тауардың қысқаша сипаттамасы...",
+      create_btn: "Тауарды құру",
+      save_btn: "Сақтау"
+    },
+    product: {
+      stock: "Қойма: {count} дана",
+      no_desc: "Сипаттама жоқ",
+      browse_desc_placeholder: "Сипаттамасын филиалыңыздың әкімшісінен сұраңыз.",
+      price_points: "Neks құны",
+      price_kzt: "Құны",
+      order_btn: "Тапсырыс беру"
+    },
+    orders: {
+      status_pending: "Өңделуде",
+      status_completed: "Аяқталды",
+      status_cancelled: "Бас тартылды",
+      empty: "Тапсырыстар әлі жоқ",
+      issued_btn: "Берілді",
+      cancel_btn: "Бас тарту"
+    },
+    alerts: {
+      image_error: "Кескінді жүктеу мүмкін болмады",
+      points_select: "Ұпаймен сатып алу үшін оқушыны таңдаңыз",
+      points_insufficient: "Neks жеткіліксіз! Сізде {xp}, ал {price} қажет",
+      points_success: "Neks-ке сатып алу сәтті аяқталды! Тауарды әкімшілерден алыңыз.",
+      order_success: "Тапсырыс сәтті қабылданды! Әкімші толығырақ мәлімет алу үшін сізбен хабарласады."
+    },
+    delete: {
+      title: "Тауарды жою керек пе?",
+      confirm: "\"{name}\" тауарын дүкеннен біржола жойғыңыз келетініне сенімдісіз бе?",
+      btn: "Жою"
+    },
+    no_products: "Әзірге тауарлар жоқ"
+  },
+  sidebar: {
+    feed: "Таспа",
+    schedule: "Кесте",
+    status: "Мәртебе"
   }
 };

@@ -1,38 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
-import { MessageSquare, Heart, Share2, Send, Plus, Image as ImageIcon, X, SendHorizonal, MoreHorizontal } from 'lucide-react';
+import { MessageSquare, Heart, Share2, Send, Plus, Image as ImageIcon, X, SendHorizonal, MoreHorizontal, Repeat2 } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
 
 export const Feed = () => {
-  const { posts, addPost, likePost, addComment, user } = useAdmin();
+  const { posts, addPost, likePost, addComment, likeComment, user } = useAdmin();
   const { t, language } = useTranslation();
   const [newPostText, setNewPostText] = useState('');
   const [newPostImage, setNewPostImage] = useState('');
-  const [isPosting, setIsPosting] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [activeComments, setActiveComments] = useState({}); // postId -> bool
-  const [commentText, setCommentText] = useState({}); // postId -> text
+  const [activeReplyId, setActiveReplyId] = useState(null); // postId or commentId
+  const [replyText, setReplyText] = useState('');
+  const fileInputRef = useRef(null);
 
   const handlePost = (e) => {
     e.preventDefault();
-    if (!newPostText.trim()) return;
+    if (!newPostText.trim() && !newPostImage) return;
     addPost({ text: newPostText, image: newPostImage });
     setNewPostText('');
     setNewPostImage('');
-    setIsPosting(false);
   };
 
-  const handleComment = (postId) => {
-    const text = commentText[postId];
-    if (!text?.trim()) return;
-    addComment(postId, text);
-    setCommentText(prev => ({ ...prev, [postId]: '' }));
+  const handleReply = (postId, parentCommentId = null) => {
+    if (!replyText.trim()) return;
+    addComment(postId, replyText, parentCommentId);
+    setReplyText('');
+    setActiveReplyId(null);
   };
 
-  const handlePostImageUpload = async (event) => {
+  const handleImageUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -41,15 +40,14 @@ export const Feed = () => {
       const url = await uploadBlobFile(file, 'posts');
       setNewPostImage(url);
     } catch (error) {
-      alert(error.message || (language === 'ru' ? 'Не удалось загрузить фото' : 'Фото жүктеу мүмкін болмады'));
+      alert(error.message || (language === 'ru' ? 'Ошибка загрузки' : 'Жүктеу қатесі'));
     } finally {
       setIsUploadingImage(false);
-      event.target.value = '';
     }
   };
 
   const shareToSocial = (platform, post) => {
-    const text = `${t('social.feed')}: ${post.text.substring(0, 50)}...`;
+    const text = post.text.substring(0, 50);
     const url = window.location.href;
     const shareUrl = platform === 'wa' 
       ? `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`
@@ -57,186 +55,197 @@ export const Feed = () => {
     window.open(shareUrl, '_blank');
   };
 
-  const canPost = ['admin', 'coach'].includes(user?.role);
+  const canPost = ['admin', 'coach', 'student', 'parent'].includes(user?.role);
 
   return (
-    <div className="animate-fade-in max-w-[680px] mx-auto">
-      <div className="flex justify-between items-center mb-12">
-        <h1 className="h2 m-0">{t('social.feed')}</h1>
-        {canPost && (
-          <button 
-            onClick={() => setIsPosting(true)} 
-            className="w-10 h-10 text-white rounded-full flex items-center justify-center hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--color-primary)' }}
-          >
-            <Plus size={20} />
-          </button>
-        )}
-      </div>
+    <div className="animate-fade-in max-w-[640px] mx-auto px-4 pb-24">
+      <header className="flex justify-between items-center py-6 mb-2">
+        <h1 className="h3 m-0 font-black tracking-tight">{t('social.feed')}</h1>
+        <div className="flex items-center gap-2">
+           <button className="p-2 hover:bg-slate-100 rounded-full transition-colors"><MoreHorizontal size={20} /></button>
+        </div>
+      </header>
 
-        <div className="member-feed-layout">
-          <section className="member-feed-main">
-        {isPosting && (
-          <Card className="mb-10 animate-up shadow-2xl border-2 border-primary overflow-hidden p-0">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                 <h4 className="font-bold">{t('social.new_post')}</h4>
-                 <button onClick={() => setIsPosting(false)} className="p-2 hover:bg-slate-100 rounded-full border-none bg-transparent cursor-pointer"><X size={20}/></button>
-              </div>
-              <textarea 
-                className="w-full bg-slate-50 border-none rounded-2xl p-6 text-lg outline-none focus:ring-2 ring-indigo-100 transition-all mb-4" 
-                placeholder={t('social.placeholder')} 
-                rows={4} 
-                value={newPostText}
-                onChange={(e) => setNewPostText(e.target.value)}
-                style={{ resize: 'none' }}
-              />
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                   <ImageIcon size={20} className="text-slate-400" />
-                   <input 
-                     type="file" 
-                     accept="image/*"
-                     className="bg-transparent border-none outline-none flex-1 text-sm font-medium"
-                     onChange={handlePostImageUpload}
-                   />
-                </div>
-                {isUploadingImage && <p className="text-xs text-muted">{t('social.upload_photo')}</p>}
-                {newPostImage && <p className="text-xs text-primary">{t('social.photo_uploaded')}</p>}
-              </div>
+      {/* Composer */}
+      {canPost && (
+        <div className="social-composer mb-8">
+          <div className="social-thread-column">
+            <div className="social-avatar">
+              {user?.name?.charAt(0) || 'U'}
             </div>
-            <div className="px-6 py-4 bg-slate-50 flex justify-end">
-               <Button variant="primary" onClick={handlePost} disabled={!newPostText.trim()} style={{ borderRadius: '14px', padding: '12px 32px' }}>
-                 {t('social.publish')}
-               </Button>
+            <div className="social-thread-line" style={{ opacity: newPostText ? 1 : 0 }} />
+          </div>
+          <div className="social-post-content">
+            <div className="social-post-header">
+              <span className="social-post-author">{user?.name}</span>
             </div>
-          </Card>
-        )}
+            <textarea 
+              className="social-composer-input"
+              placeholder={t('social.placeholder')}
+              rows={1}
+              value={newPostText}
+              onChange={(e) => {
+                setNewPostText(e.target.value);
+                e.target.style.height = 'auto';
+                e.target.style.height = e.target.scrollHeight + 'px';
+              }}
+            />
+            
+            {newPostImage && (
+              <div className="social-post-image-container mt-2 relative group">
+                <img src={newPostImage} className="social-post-image" alt="Preview" />
+                <button 
+                  onClick={() => setNewPostImage('')}
+                  className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors border-none"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            )}
 
-        <div className="flex flex-col gap-10">
-          {posts.map((post) => (
-            <Card key={post.id} style={{ padding: 0 }} className="card-hover border-none shadow-xl shadow-slate-200/50 overflow-hidden bg-white animate-up">
-              {/* Post Header */}
-              <div className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div style={{ 
-                    width: 48, height: 48, borderRadius: '16px', 
-                    backgroundColor: post.authorRole === 'admin' ? 'var(--color-primary)' : 'var(--color-success)',
-                    color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '18px', fontWeight: 'bold'
-                  }}>
-                    {post.author[0]}
-                  </div>
-                  <div>
-                    <p className="font-bold text-slate-900 leading-tight">{post.author}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-indigo-50 px-2 py-0.5 rounded">
-                        {post.authorRole === 'admin' ? t('roles.admin') : t('roles.coach')}
-                      </span>
-                      <span className="text-[10px] text-muted font-medium">{new Date(post.date).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ', { day: 'numeric', month: 'short' })}</span>
-                    </div>
-                  </div>
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center gap-1">
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-2 text-slate-400 hover:text-primary transition-colors border-none bg-transparent cursor-pointer"
+                  disabled={isUploadingImage}
+                >
+                  <ImageIcon size={20} />
+                </button>
+                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
+              </div>
+              <Button 
+                variant="primary" 
+                size="sm" 
+                onClick={handlePost} 
+                disabled={(!newPostText.trim() && !newPostImage) || isUploadingImage}
+                style={{ borderRadius: '20px', padding: '0 20px', minHeight: '36px' }}
+              >
+                {t('social.publish')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Posts List */}
+      <div className="flex flex-col">
+        {posts.map((post) => (
+          <div key={post.id} className="social-post-card">
+            <div className="social-post-container">
+              <div className="social-thread-column">
+                <div className="social-avatar">
+                  {post.author[0]}
                 </div>
-                <button className="p-2 text-slate-400 hover:text-slate-600 border-none bg-transparent cursor-pointer"><MoreHorizontal size={20} /></button>
+                {post.comments?.length > 0 && <div className="social-thread-line" />}
               </div>
               
-              {/* Post Content */}
-              <div className="px-6 pb-4">
-                <p className="text-slate-800 leading-relaxed mb-6 font-medium" style={{ fontSize: '1.05rem' }}>
-                  {post.text}
-                </p>
-              </div>
-
-              {post.image && (
-                <div className="mb-4">
-                  <img src={post.image} style={{ width: '100%', maxHeight: '500px', objectFit: 'cover' }} alt="Post" />
-                </div>
-              )}
-
-              {/* Post Stats & Actions */}
-              <div className="px-6 py-4 flex items-center justify-between border-t border-slate-50">
-                <div className="flex items-center gap-6">
-                  <button 
-                    onClick={() => likePost(post.id)}
-                    className={`flex items-center gap-2 border-none bg-transparent cursor-pointer font-bold text-sm transition-all ${post.likedBy?.includes(user?.id || user?.email) ? 'text-rose-500' : 'text-slate-500 hover:text-rose-500'}`}
-                  >
-                    <Heart size={20} fill={post.likedBy?.includes(user?.id || user?.email) ? "currentColor" : "none"} /> {post.likes || 0}
-                  </button>
-                  <button 
-                    onClick={() => setActiveComments(prev => ({ ...prev, [post.id]: !prev[post.id] }))}
-                    className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors border-none bg-transparent cursor-pointer font-bold text-sm"
-                  >
-                    <MessageSquare size={20} /> {post.comments?.length || 0}
-                  </button>
+              <div className="social-post-content">
+                <div className="social-post-header">
+                  <div className="social-post-author">
+                    {post.author}
+                    {post.authorRole === 'admin' && <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center"><Plus size={8} className="text-white" /></div>}
+                  </div>
+                  <span className="social-post-time">{new Date(post.date).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ', { day: 'numeric', month: 'short' })}</span>
                 </div>
                 
-                <div className="flex items-center gap-3">
-                   <button 
-                    onClick={() => shareToSocial('wa', post)}
-                    className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-all border-none cursor-pointer"
-                    title={t('social.share_wa')}
-                   >
-                     <Send size={18} />
-                   </button>
-                   <button 
-                    onClick={() => shareToSocial('tg', post)}
-                    className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center hover:bg-sky-100 transition-all border-none cursor-pointer"
-                    title={t('social.share_tg')}
-                   >
-                     <Share2 size={18} />
-                   </button>
+                <p className="social-post-text">{post.text}</p>
+                
+                {post.image && (
+                  <div className="social-post-image-container">
+                    <img src={post.image} className="social-post-image" alt="" />
+                  </div>
+                )}
+
+                <div className="social-actions-row">
+                  <button 
+                    onClick={() => likePost(post.id)}
+                    className={`social-action-btn ${post.likedBy?.includes(user?.id || user?.email) ? 'active' : ''}`}
+                  >
+                    <Heart size={20} fill={post.likedBy?.includes(user?.id || user?.email) ? 'currentColor' : 'none'} />
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setActiveReplyId(activeReplyId === post.id ? null : post.id);
+                      setReplyText('');
+                    }}
+                    className="social-action-btn"
+                  >
+                    <MessageSquare size={20} />
+                  </button>
+                  <button className="social-action-btn"><Repeat2 size={20} /></button>
+                  <button onClick={() => shareToSocial('wa', post)} className="social-action-btn"><Send size={20} /></button>
+                </div>
+
+                <div className="social-post-stats">
+                  {post.likes > 0 && <span>{post.likes} {t('social.likes')}</span>}
+                  {post.comments?.length > 0 && <span>{post.comments.length} {t('social.replies')}</span>}
+                </div>
+
+                {/* Inline Reply for Post */}
+                {activeReplyId === post.id && (
+                  <div className="mt-4 animate-fade-in flex gap-3">
+                    <input 
+                      autoFocus
+                      className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-4 py-2 text-sm outline-none focus:border-primary"
+                      placeholder={t('social.comment_placeholder')}
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleReply(post.id)}
+                    />
+                    <button 
+                      onClick={() => handleReply(post.id)}
+                      className="text-primary font-bold text-sm px-2"
+                    >
+                      {t('social.publish')}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Threaded Comments */}
+            {post.comments?.map((comment, idx) => (
+              <div key={comment.id} className="social-comment">
+                <div className="social-comment-line" style={{ display: idx === post.comments.length - 1 && activeReplyId !== post.id ? 'none' : 'block' }} />
+                <div className="social-thread-column" style={{ width: '48px' }}>
+                  <div className="social-comment-avatar">
+                    {comment.author[0]}
+                  </div>
+                </div>
+                <div className="social-post-content">
+                  <div className="social-post-header">
+                    <span className="social-post-author" style={{ fontSize: '0.85rem' }}>{comment.author}</span>
+                    <span className="social-post-time" style={{ fontSize: '0.75rem' }}>{new Date(comment.date).toLocaleDateString()}</span>
+                  </div>
+                  <p className="social-post-text" style={{ fontSize: '0.9rem', marginBottom: 'var(--space-2)' }}>{comment.text}</p>
+                  
+                  <div className="social-actions-row">
+                    <button 
+                      onClick={() => likeComment(post.id, comment.id)}
+                      className={`social-action-btn ${comment.likedBy?.includes(user?.id || user?.email) ? 'active' : ''}`}
+                      style={{ padding: '4px' }}
+                    >
+                      <Heart size={16} fill={comment.likedBy?.includes(user?.id || user?.email) ? 'currentColor' : 'none'} />
+                    </button>
+                    <button className="social-action-btn" style={{ padding: '4px' }}><MessageSquare size={16} /></button>
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+        ))}
 
-              {/* Comments Section */}
-              {activeComments[post.id] && (
-                <div className="bg-slate-50 p-6 border-t border-slate-100 animate-fade-in">
-                   <div className="flex flex-col gap-4 mb-6">
-                     {post.comments?.map(comment => (
-                       <div key={comment.id} className="flex gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
-                           {comment.author[0]}
-                         </div>
-                         <div className="flex-1 bg-white p-3 rounded-2xl shadow-sm">
-                            <div className="flex justify-between items-center mb-1">
-                               <p className="text-xs font-bold text-slate-900">{comment.author}</p>
-                               <span className="text-[9px] text-muted">{new Date(comment.date).toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ')}</span>
-                            </div>
-                            <p className="text-sm text-slate-700">{comment.text}</p>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                   
-                   <div className="flex items-center gap-3">
-                     <input 
-                        type="text" 
-                        placeholder={t('social.comment_placeholder')} 
-                        className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-primary transition-all"
-                        value={commentText[post.id] || ''}
-                        onChange={(e) => setCommentText(prev => ({ ...prev, [post.id]: e.target.value }))}
-                        onKeyPress={(e) => e.key === 'Enter' && handleComment(post.id)}
-                     />
-                     <button 
-                        onClick={() => handleComment(post.id)}
-                        disabled={!commentText[post.id]?.trim()}
-                        className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center border-none cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                     >
-                       <SendHorizonal size={18} />
-                     </button>
-                   </div>
-                </div>
-              )}
-            </Card>
-          ))}
-          {posts.length === 0 && (
-            <div className="py-20 text-center">
-               <ImageIcon size={64} className="mx-auto text-slate-100 mb-6" />
-               <p className="text-slate-400 font-bold">{t('social.no_posts')}</p>
+        {posts.length === 0 && (
+          <div className="py-24 text-center">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ImageIcon size={32} className="text-slate-200" />
             </div>
-          )}
-        </div>
-      </section>
+            <p className="text-slate-400 font-bold">{t('social.no_posts')}</p>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 };
+

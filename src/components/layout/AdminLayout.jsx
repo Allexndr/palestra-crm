@@ -7,7 +7,6 @@ import { Menu, X, LogOut, Shield, ChevronDown, Check, MapPin } from 'lucide-reac
 import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 import { ClubLogo } from '../ui/ClubLogo';
 import { PageLoader } from '../ui/PageLoader';
-import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 
 export const AdminLayout = () => {
   const { user, clubInfo, logout, locations, selectedLocationId, setSelectedLocationId, isStateReady } = useAdmin();
@@ -188,8 +187,7 @@ export const AdminLayout = () => {
               <h1 className="mobile-only" style={{ fontSize: '1.1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 800 }}>{pageTitle}</h1>
             </div>
           </div>
-          <div className="member-header-pill desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <LanguageSwitcher />
+          <div className="member-header-pill desktop-only">
             <span>{user?.email || `${user?.role || 'admin'}@palestra.fit`}</span>
           </div>
         </header>
