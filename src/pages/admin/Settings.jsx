@@ -26,7 +26,7 @@ export const Settings = () => {
   const { t, language } = useTranslation();
   const navigate = useNavigate();
   
-  const [activeTab, setActiveTab] = useState('palestra-tariff');
+  const [activeTab, setActiveTab] = useState('club');
   
   const [isAddingLoc, setIsAddingLoc] = useState(false);
   const [newLoc, setNewLoc] = useState({ name: '', address: '', phone: '', isActive: true });
@@ -113,7 +113,6 @@ export const Settings = () => {
         {/* Sidebar Tabs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
           {[
-            { id: 'palestra-tariff', label: t('settings.tabs.palestra_tariff'), icon: <SettingsIcon size={18} /> },
             { id: 'club', label: t('settings.tabs.club_profile'), icon: <Globe size={18} /> },
             { id: 'locations', label: t('settings.tabs.locations'), icon: <Globe size={18} /> },
             { id: 'plans', label: t('settings.tabs.plans'), icon: <Save size={18} /> },
@@ -148,70 +147,6 @@ export const Settings = () => {
 
         {/* Content Area */}
         <Card style={{ padding: 'var(--space-8)' }}>
-          {activeTab === 'palestra-tariff' && (
-            <div className="animate-fade-in">
-              <div className="flex justify-between items-start gap-6 mb-8">
-                <div>
-                  <h3 className="h4 mb-2">{t('settings.tariff.title')}</h3>
-                  <p className="text-secondary admin-readable">
-                    {t('settings.tariff.desc')}
-                  </p>
-                </div>
-                <span className="text-xs font-bold uppercase tracking-widest text-primary bg-indigo-50 px-4 py-2 rounded-full">
-                  {subscription.plan === 'starter' ? t('settings.tariff.starter_free') : t('settings.tariff.growth')}
-                </span>
-              </div>
-
-              <div className="tariff-res-grid">
-                {[
-                  ['members', t('settings.tariff.res_members'), members.length],
-                  ['coaches', t('settings.tariff.res_coaches'), coaches.length],
-                  ['locations', t('settings.tariff.res_locations'), locations.length],
-                  ['groups', t('settings.tariff.res_groups'), groups.length],
-                ].map(([key, label, count]) => {
-                  const status = getLimitStatus(key);
-                  return (
-                    <div key={key} className={`tariff-res-card ${status.isReached ? 'border-primary' : ''}`}>
-                      <div className="tariff-res-card__head">
-                        <div className="tariff-res-card__info">
-                          <h5 className="tariff-res-card__label">{label}</h5>
-                          <p className="tariff-res-card__usage">
-                            {count} / {formatLimit(status.limit)} <span className="opacity-40">{t('settings.tariff.used')}</span>
-                          </p>
-                        </div>
-                        {status.isReached && (
-                          <span className="text-[9px] font-black uppercase px-2 py-1 text-white rounded-md" style={{ backgroundColor: 'var(--color-primary)' }}>Limit</span>
-                        )}
-                      </div>
-                      <div className="usage-limit-card__bar h-1 bg-slate-100 rounded-full overflow-hidden mt-4">
-                        <div style={{ 
-                          width: `${status.percent}%`, 
-                          height: '100%',
-                          transition: 'width 1s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                          backgroundColor: status.isReached ? 'var(--color-primary)' : status.isWarning ? 'var(--color-primary)' : 'var(--color-primary)' 
-                        }} />
-                      </div>
-                      <div className="mt-4 flex justify-between items-center">
-                        <span className="text-[10px] font-black uppercase text-slate-300 tracking-wider">
-                          {status.isReached ? t('settings.tariff.limit_reached') : t('settings.tariff.available', { count: status.remaining })}
-                        </span>
-                        <span className="text-[11px] font-black">{status.percent}%</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <AdminTariffConstructor
-                subscription={subscription}
-                usage={usage}
-                getLimitStatus={getLimitStatus}
-                updateSubscription={updateSubscription}
-                clubInfo={clubInfo}
-              />
-            </div>
-          )}
-
           {activeTab === 'club' && (
             <div className="animate-fade-in">
               <h3 className="h4 mb-8 flex items-center gap-3">

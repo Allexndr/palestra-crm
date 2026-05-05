@@ -231,8 +231,12 @@ export const AdminProvider = ({ children }) => {
           }
         } else {
           console.error(`Failed to fetch state: ${stateResponse.status} ${stateResponse.statusText}`);
-          // If 401, we might want to redirect to login, but usually RequireAuth handles it.
-          // If 500, we definitely shouldn't reset the state to empty.
+          if (stateResponse.status === 401) {
+            setUser(null);
+            if (!window.location.pathname.includes('/auth/')) {
+              window.location.href = '/auth/login';
+            }
+          }
         }
       } catch (error) {
         console.error('Critical failure in hydrate Palestra state', error);
