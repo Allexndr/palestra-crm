@@ -35,15 +35,16 @@ export function setSessionCookies(res, session) {
   const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
   const maxAge = session?.expires_in || 60 * 60;
   res.setHeader('Set-Cookie', [
-    `palestra-access-token=${encodeURIComponent(session.access_token)}; HttpOnly;${secure} SameSite=Strict; Path=/; Max-Age=${maxAge}`,
-    `palestra-refresh-token=${encodeURIComponent(session.refresh_token)}; HttpOnly;${secure} SameSite=Strict; Path=/; Max-Age=${60 * 60 * 24 * 30}`,
+    `palestra-access-token=${encodeURIComponent(session.access_token)}; HttpOnly;${secure} SameSite=Lax; Path=/; Max-Age=${maxAge}`,
+    `palestra-refresh-token=${encodeURIComponent(session.refresh_token)}; HttpOnly;${secure} SameSite=Lax; Path=/; Max-Age=${60 * 60 * 24 * 30}`,
   ]);
 }
 
 export function clearSessionCookies(res) {
   const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
   res.setHeader('Set-Cookie', [
-    `palestra-access-token=; HttpOnly;${secure} SameSite=Strict; Path=/; Max-Age=0`,
-    `palestra-refresh-token=; HttpOnly;${secure} SameSite=Strict; Path=/; Max-Age=0`,
+    `palestra-access-token=; HttpOnly;${secure} SameSite=Lax; Path=/; Max-Age=0`,
+    `palestra-refresh-token=; HttpOnly;${secure} SameSite=Lax; Path=/; Max-Age=0`,
+    `palestra-demo-role=; HttpOnly;${secure} SameSite=Lax; Path=/; Max-Age=0`,
   ]);
 }
