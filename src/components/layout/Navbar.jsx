@@ -28,59 +28,62 @@ export const Navbar = () => {
           style={{
             display: 'flex',
             justifyContent: 'space-between',
-            gap: 'var(--space-4)',
-            minHeight: '90px',
+            gap: 'var(--space-6)',
+            minHeight: '110px',
+            padding: '0 var(--space-8)',
             borderRadius: 'var(--radius-full)',
             boxShadow: 'var(--shadow-md)',
             border: '1px solid rgba(255,255,255,0.4)',
             overflow: 'visible',
           }}
         >
-          <div className="navbar-logo-wrap">
+          <div className="navbar-logo-wrap" style={{ flexShrink: 0, marginLeft: '-20px', marginRight: '40px' }}>
             <Link to="/" className="navbar-logo-link" aria-label="Palestra — на главную" onClick={closeMenu}>
               <img
                 src="/palestra-logo-nav-full.png"
                 alt=""
                 className="navbar-brand-logo"
-                style={{ height: '50px', width: 'auto' }}
+                style={{ height: '80px', width: 'auto' }}
                 decoding="async"
               />
             </Link>
           </div>
 
-          <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-4)' }}>
-            {NAV_LINKS.map((link) => (
-              <a 
-                key={link.label}
-                href={link.href} 
-                className="nav-link"
-                style={{ 
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
-                  fontWeight: 900,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  color: 'var(--color-text-secondary)',
-                  fontFamily: 'var(--font-family-display)',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-          
-          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '80px', flex: 1, justifyContent: 'flex-end', minWidth: 0 }}>
+            <nav className="mobile-hidden navbar-desktop-nav" aria-label="Навигация по лендингу" style={{ display: 'flex', gap: 'var(--space-4)' }}>
+              {NAV_LINKS.map((link) => (
+                <a 
+                  key={link.label}
+                  href={link.href} 
+                  className="nav-link"
+                  style={{ 
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    fontWeight: 900,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.12em',
+                    color: 'var(--color-text-secondary)',
+                    fontFamily: 'var(--font-family-display)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+
             <div className="mobile-hidden">
               <LanguageSwitcher />
             </div>
-
+          </div>
+          
+          <div className="navbar-auth-actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
             <Link to="/auth/login" style={{ textDecoration: 'none' }} className="mobile-hidden">
               <Button variant="ghost" className="font-display" style={{ fontWeight: 700, fontSize: '0.8rem' }}>{t('nav.login') || 'Войти'}</Button>
             </Link>
             
             <Link to="/auth/register" style={{ textDecoration: 'none' }} onClick={closeMenu}>
-              <Button variant="primary" size="sm" className="font-display" style={{ paddingLeft: 'var(--space-5)', paddingRight: 'var(--space-5)', fontWeight: 800, fontSize: '0.8rem' }}>
+              <Button variant="primary" size="sm" className="font-display" style={{ paddingLeft: 'var(--space-8)', paddingRight: 'var(--space-8)', fontWeight: 800, fontSize: '0.8rem' }}>
                 {t('nav.register_free') || 'Подключить'}
               </Button>
             </Link>
