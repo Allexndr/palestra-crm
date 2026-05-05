@@ -106,7 +106,6 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
 
     if (error) throw error;
     profile = data;
-  }
 
   const tgCode = Math.random().toString(36).substring(2, 10).toUpperCase();
 
