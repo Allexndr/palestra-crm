@@ -32,8 +32,7 @@ export async function requireUser(req, res, { allowDemo = false } = {}) {
     return requestUser;
   }
 
-  const cookies = Object.keys(parseCookies(req));
-  sendJson(res, 401, { error: 'Unauthorized', foundCookies: cookies });
+  sendJson(res, 401, { error: 'Unauthorized' });
   return null;
 }
 
