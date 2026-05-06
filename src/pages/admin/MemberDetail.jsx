@@ -270,9 +270,18 @@ export const MemberDetail = () => {
                     <Copy size={16} />
                  </button>
               </div>
-              <div className="p-4 bg-slate-50 rounded-2xl">
-                 <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('member_detail.password')}</p>
-                 <code className="text-sm font-bold text-primary">{member.password || '—'}</code>
+              <div className="p-4 bg-slate-50 rounded-2xl flex justify-between items-center group/copy">
+                 <div className="flex-1">
+                    <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('member_detail.password')}</p>
+                    <code className="text-sm font-bold text-primary">{member.password || '—'}</code>
+                 </div>
+                 <button 
+                    onClick={() => navigator.clipboard.writeText(member.password || '')}
+                    className="p-2 hover:text-primary transition-colors text-slate-300"
+                    title={t('member_detail.copy_credentials')}
+                 >
+                    <Copy size={16} />
+                 </button>
               </div>
             </div>
           </Card>
