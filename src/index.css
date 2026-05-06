@@ -2209,27 +2209,32 @@ a:focus:not(:focus-visible) {
 .member-user-card {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: 16px;
-  background: var(--color-primary-soft);
-  border: 1px solid rgba(49, 70, 166, 0.12);
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.04);
+  border: none;
   min-width: 0;
   overflow: hidden;
+  transition: background 0.15s;
+}
+
+.member-user-card:hover {
+  background: rgba(0,0,0,0.07);
 }
 
 .member-user-avatar {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
-  border-radius: 12px;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-primary);
   color: #fff;
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   flex-shrink: 0;
 }
 
@@ -2240,21 +2245,23 @@ a:focus:not(:focus-visible) {
 }
 
 .member-user-card p {
-  font-weight: 800;
-  line-height: 1.3;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--color-text);
 }
 
 .member-user-card span {
   display: block;
-  margin-top: 3px;
+  margin-top: 1px;
   color: var(--color-text-muted);
-  font-size: 0.7rem;
-  font-weight: 800;
+  font-size: 0.65rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
