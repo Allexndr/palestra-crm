@@ -83,22 +83,10 @@ export const NotificationProvider = ({ children }) => {
       {/* Global Confirm Modal */}
       {confirmState && (
         <div 
-          className="fixed inset-0 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in" 
-          style={{ 
-            position: 'fixed', 
-            top: 0, 
-            left: 0, 
-            right: 0, 
-            bottom: 0, 
-            zIndex: 999999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100vw',
-            height: '100vh'
-          }}
+          className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
         >
-          <div className="bg-white rounded-[32px] p-8 w-full max-w-md shadow-2xl animate-scale-up border border-slate-100 relative">
+          <div className="bg-white rounded-[32px] p-8 w-full max-w-md shadow-2xl animate-scale-up border border-slate-100 relative mx-auto">
             <h3 className="text-2xl font-black text-slate-800 mb-4">{confirmState.title}</h3>
             <p className="text-slate-600 mb-8 leading-relaxed font-medium">{confirmState.message}</p>
             <div className="flex gap-4">
