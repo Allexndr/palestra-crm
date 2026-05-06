@@ -550,7 +550,7 @@ export const MemberForm = () => {
           {activeTab === 'parent' && (
             <div className="flex flex-col gap-10 animate-fade-in">
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
-                 <div className="p-10 border-b border-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                 <div className="px-6 py-4 border-b border-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                    <div>
                      <h3 className="h4 mb-1">{t('members.parent_rep')}</h3>
                      <p className="text-xs text-secondary font-black uppercase tracking-widest opacity-60">{t('members.parent_minor')}</p>
@@ -562,7 +562,7 @@ export const MemberForm = () => {
                    )}
                  </div>
                 
-                <div className="p-12">
+                <div className="p-6">
                   <div className="admin-form-grid">
                     <Input label="ФИО Родителя" value={formData.parentName} onChange={e => handleParentNameChange(e.target.value)} placeholder="Иванов Иван Иванович" />
                     <Input label="Телефон" type="tel" placeholder="+7 (777) 000 00 00" value={formData.parentPhone} onChange={e => handleInputChange('parentPhone', e.target.value)} />
@@ -578,8 +578,8 @@ export const MemberForm = () => {
                   </div>
 
                   {(formData.hasParent || formData.parentLogin) && (
-                    <div className="mt-12 p-10 bg-emerald-50/50 rounded-3xl border border-emerald-100 animate-up">
-                      <h4 className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.4em] mb-10 flex items-center gap-3">
+                    <div className="mt-6 p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 animate-up">
+                      <h4 className="text-[10px] font-black text-emerald-700 uppercase tracking-[0.4em] mb-4 flex items-center gap-3">
                         <Shield size={18} /> {t('members.parent_active')}
                       </h4>
                       <div className="admin-form-grid">
