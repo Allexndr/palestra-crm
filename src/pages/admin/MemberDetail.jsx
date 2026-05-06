@@ -13,7 +13,7 @@ export const MemberDetail = () => {
   const { t, language } = useTranslation();
   const [activeTab, setActiveTab] = React.useState('overview');
   
-  const member = members.find(m => m.id === id);
+  const member = (Array.isArray(members) ? members : []).find(m => m.id === id);
 
   if (!member) {
     return (

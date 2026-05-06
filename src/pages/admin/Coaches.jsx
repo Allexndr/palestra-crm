@@ -125,7 +125,7 @@ export const Coaches = () => {
     }
   };
 
-  const filteredCoaches = (coaches || []).filter(c => 
+  const filteredCoaches = (Array.isArray(coaches) ? coaches : []).filter(c => 
     `${c.firstName || ''} ${c.lastName || ''}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (c.specialization || '').toLowerCase().includes(searchTerm.toLowerCase())
   );

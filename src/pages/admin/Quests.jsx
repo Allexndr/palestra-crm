@@ -99,13 +99,13 @@ export const Quests = () => {
         <div className="flex flex-col gap-6">
           <h3 className="h4 flex items-center gap-2"><Target size={20} className="text-primary" /> {t('quests.active_title')}</h3>
           <div className="grid grid-cols-1 gap-4">
-            {quests.length === 0 ? (
+            {(!Array.isArray(quests) || quests.length === 0) ? (
               <Card className="text-center py-12 text-slate-400">
                 <Target size={48} className="mx-auto mb-4 opacity-20" />
                 <p>{t('quests.empty_active')}</p>
               </Card>
             ) : (
-              quests.map(quest => (
+              (Array.isArray(quests) ? quests : []).map(quest => (
                 <Card key={quest.id} className="flex flex-col gap-4 border-none shadow-xl shadow-slate-100">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
@@ -150,7 +150,7 @@ export const Quests = () => {
               </div>
             ) : (
               pendingCompletions.map((comp, idx) => {
-                const student = members.find(m => m.id === comp.studentId);
+                const student = (Array.isArray(members) ? members : []).find(m => m.id === comp.studentId);
                 return (
                   <Card key={`${comp.questId}-${idx}`} className="border-none shadow-lg">
                     <div className="flex items-center gap-3 mb-4">

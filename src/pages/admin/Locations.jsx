@@ -31,7 +31,7 @@ export const Locations = () => {
       </div>
 
       <div className="tariff-res-grid">
-        {locations.map(location => (
+        {(Array.isArray(locations) ? locations : []).map(location => (
           <article key={location.id} className="tariff-res-card hover:border-primary transition-all">
             <div className="tariff-res-card__head">
               <div className="w-12 h-12 text-white rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--color-primary)' }}>
