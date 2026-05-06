@@ -53,8 +53,12 @@ export default async function handler(req, res) {
         ? (Date.now() - new Date(lastUpdated).getTime()) < 7 * 24 * 60 * 60 * 1000
         : false;
 
+      const clubInfoName = appState.clubInfo?.name;
+      const displayName = clubInfoName || club.name || 'Без названия';
+
       return {
         ...club,
+        name: displayName,
         lastActivity: lastUpdated,
         isActive,
         stats: {
