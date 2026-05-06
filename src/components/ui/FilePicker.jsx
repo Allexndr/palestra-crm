@@ -45,35 +45,30 @@ export const FilePicker = ({
         disabled={isUploading}
       />
 
-      {/* Photo Preview Card */}
+      {/* Photo Preview — compact inline */}
       {previewUrl && !isUploading ? (
-        <div className="relative inline-block">
-          <div 
-            className="relative rounded-xl overflow-hidden border border-slate-200 bg-white cursor-pointer hover:border-primary transition-colors"
-            style={{ width: '200px', height: '200px' }}
-            onClick={() => document.getElementById(inputId)?.click()}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div
+            style={{ width: 56, height: 56, borderRadius: 12, border: '1px solid #e2e8f0', background: '#f8fafc', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
-            <img 
-              src={previewUrl} 
-              alt="Preview" 
-              className="w-full h-full object-cover"
-            />
-            {/* Overlay on hover */}
-            <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
-              <span className="text-white text-sm font-medium">Изменить</span>
-            </div>
+            <img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
-          
-          {/* Delete button - top right corner */}
-          <button
-            onClick={handleClear}
-            className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors z-10"
-            title="Удалить"
-          >
-            <X size={16} strokeWidth={2.5} />
-          </button>
-          
-          <p className="text-xs text-slate-500 mt-2 text-center">Нажмите на фото, чтобы изменить</p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <label
+              htmlFor={inputId}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer', fontSize: 11, fontWeight: 700, color: '#374151' }}
+            >
+              <Camera size={13} /> Изменить
+            </label>
+            {onClear && (
+              <button
+                onClick={handleClear}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 10px', borderRadius: 8, border: '1px solid #fecaca', background: '#fff5f5', cursor: 'pointer', fontSize: 11, fontWeight: 700, color: '#dc2626' }}
+              >
+                <X size={13} />
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         <label
