@@ -44,10 +44,10 @@ export function setSessionCookies(res, session) {
 }
 
 export function clearSessionCookies(res) {
-  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
   res.setHeader('Set-Cookie', [
     `palestra-access-token=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0`,
     `palestra-refresh-token=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0`,
     `palestra-demo-role=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0`,
+    `palestra-member-data=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0`,
   ]);
 }

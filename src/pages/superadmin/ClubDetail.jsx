@@ -7,8 +7,6 @@ import {
   Clock, Package, Trophy, ExternalLink, X, Settings
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
-import { AlertModal } from '../../components/ui/AlertModal';
-import { useAlertModal } from '../../hooks/useModal';
 
 const fmt = (n) => Number(n || 0).toLocaleString('ru-RU');
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : '—';
@@ -328,7 +326,7 @@ const TariffModal = ({ isOpen, onClose, clubId, currentSubscription, onSaved }) 
   const [plan, setPlan] = useState(currentSubscription?.plan || 'Starter');
   const [limits, setLimits] = useState(currentSubscription?.limits || { members: 15, coaches: 3, locations: 1 });
   const [isSaving, setIsSaving] = useState(false);
-  const { isOpen: isAlertOpen, modalProps, closeModal, error: showError } = useAlertModal();
+  const [errorMsg, setErrorMsg] = useState('');
 
   if (!isOpen) return null;
 
@@ -348,7 +346,7 @@ const TariffModal = ({ isOpen, onClose, clubId, currentSubscription, onSaved }) 
       onSaved(data.subscription);
       onClose();
     } catch (err) {
-      showError(err.message);
+      setErrorMsg(err.message);
     } finally {
       setIsSaving(false);
     }
@@ -396,6 +394,7 @@ const TariffModal = ({ isOpen, onClose, clubId, currentSubscription, onSaved }) 
           </div>
         </div>
 
+        {errorMsg && <p style={{ color: '#dc2626', fontSize: 13, marginBottom: 12, textAlign: 'center' }}>{errorMsg}</p>}
         <button onClick={handleSave} disabled={isSaving} style={{
           width: '100%', padding: 14, background: '#3146A6', color: 'white', border: 'none', borderRadius: 12,
           fontWeight: 800, fontSize: 15, cursor: isSaving ? 'not-allowed' : 'pointer', opacity: isSaving ? 0.7 : 1

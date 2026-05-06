@@ -44,6 +44,30 @@ export async function getRequestUser(req) {
     const cookies = parseCookies(req);
     const token = cookies['palestra-access-token'];
     const demoRole = cookies['palestra-demo-role'];
+    const memberDataRaw = cookies['palestra-member-data'];
+
+    // Member login (student/coach with login+password, no Supabase account)
+    if (memberDataRaw) {
+      try {
+        const memberData = JSON.parse(memberDataRaw);
+        if (memberData && memberData.clubId && memberData.role) {
+          return {
+            authUser: null,
+            profile: {
+              id: memberData.id,
+              auth_user_id: null,
+              club_id: memberData.clubId,
+              role: memberData.role,
+              name: memberData.name,
+              email: memberData.email || memberData.login,
+              login: memberData.login,
+            },
+            isDemo: false,
+            isMember: true,
+          };
+        }
+      } catch {}
+    }
 
     if (token && hasSupabaseEnv()) {
       try {
