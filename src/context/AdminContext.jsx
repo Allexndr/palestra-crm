@@ -233,9 +233,6 @@ export const AdminProvider = ({ children }) => {
           console.error(`Failed to fetch state: ${stateResponse.status} ${stateResponse.statusText}`);
           if (stateResponse.status === 401) {
             setUser(null);
-            if (!window.location.pathname.includes('/auth/')) {
-              window.location.href = '/auth/login';
-            }
           }
         }
       } catch (error) {
