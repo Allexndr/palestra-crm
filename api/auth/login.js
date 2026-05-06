@@ -22,7 +22,25 @@ export default async function handler(req, res) {
     if (email && password && hasSupabaseEnv() && email.includes('@')) {
       const { data, error } = await getAnonClient().auth.signInWithPassword({ email, password });
       if (!error && data?.session) {
-        const profile = await getProfileByAuthUserId(data.user.id);
+        let profile = await getProfileByAuthUserId(data.user.id);
+        
+        // Fallback: try to find profile by email if auth_user_id lookup failed
+        if (!profile && hasSupabaseServiceEnv()) {
+          const { getServiceClient } = await import('../_lib/supabase.js');
+          const supabase = getServiceClient();
+          const { data: profileByEmail } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('email', email.toLowerCase())
+            .maybeSingle();
+          
+          if (profileByEmail) {
+            // Update the profile with auth_user_id for future lookups
+            await supabase.from('profiles').update({ auth_user_id: data.user.id }).eq('id', profileByEmail.id);
+            profile = { ...profileByEmail, auth_user_id: data.user.id };
+          }
+        }
+        
         if (!profile) {
           // Account was deleted — deny access
           await getAnonClient().auth.signOut();
