@@ -382,6 +382,17 @@ export async function getNormalizedState(user, fallbackState = createSeedState()
   if (!hasNormalizedRows) {
     return {
       ...fallbackState,
+      // Always use empty arrays for real data — never leak mock/seed data to real clubs
+      members: [],
+      coaches: [],
+      groups: [],
+      locations: [],
+      leads: [],
+      schedule: [],
+      plans: [],
+      activities: [],
+      achievements: [],
+      attendance: [],
       clubInfo: {
         name: club?.name || fallbackState.clubInfo?.name || 'Palestra Fight Club',
         logo: club?.logo_blob_url || fallbackState.clubInfo?.logo || '/palestra-logo-nav-full.png',

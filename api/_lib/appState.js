@@ -51,7 +51,8 @@ export async function getAppState(user) {
     
     if (data?.state) return getNormalizedState(user, data.state);
 
-    const seeded = createSeedState();
+    // Real clubs get empty state (no mock data); demo users get seed with examples
+    const seeded = createSeedState(!!hasSupabaseServiceEnv());
     await saveAppState(user, seeded);
     return getNormalizedState(user, seeded);
   } catch (err) {
