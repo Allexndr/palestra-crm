@@ -108,7 +108,8 @@ export const MemberForm = () => {
 
   const generateCredentials = (first, last, isParent = false) => {
     if (!first) return;
-    const login = translit(first) + (last ? '.' + translit(last) : '');
+    const base = translit(first) + (last ? translit(last) : '');
+    const login = isParent ? base + '.parent' : base + '.student';
     const password = randomPassword();
     
     if (isParent) {

@@ -61,7 +61,7 @@ export const Coaches = () => {
 
   const generateCredentials = (first, last) => {
     if (!first) return;
-    const login = translit(first) + (last ? '.' + translit(last) : '');
+    const login = translit(first) + '.coach';
     const password = randomPassword();
     
     setFormData(prev => ({ 

@@ -30,13 +30,15 @@ export default async function handler(req, res) {
 
     let demoRole = role || String(email || '').split('@')[0] || 'admin';
     
-    // Smart role detection for demo/mock logins
-    if (demoRole.length === 1 || demoRole.includes('student')) {
+    // Explicit suffix-based role detection for demo/mock logins
+    if (demoRole.endsWith('.student')) {
       demoRole = 'student';
-    } else if (demoRole.includes('coach')) {
+    } else if (demoRole.endsWith('.coach')) {
       demoRole = 'coach';
-    } else if (demoRole.includes('parent')) {
+    } else if (demoRole.endsWith('.parent')) {
       demoRole = 'parent';
+    } else if (demoRole.endsWith('.admin') || demoRole === 'admin') {
+      demoRole = 'admin';
     }
 
     const profile = createDemoProfile(['admin', 'coach', 'parent', 'student'].includes(demoRole) ? demoRole : 'admin');
