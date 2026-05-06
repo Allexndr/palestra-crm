@@ -48,7 +48,7 @@ export const League = () => {
     );
   }
 
-  const currentLeague = leagues.find(l => l.id === selectedLeagueId) || null;
+  const currentLeague = (Array.isArray(leagues) ? leagues : []).find(l => l.id === selectedLeagueId) || null;
   
   const handleCreateLeague = (e) => {
     e.preventDefault();
@@ -100,7 +100,7 @@ export const League = () => {
   };
 
   // Filter members for the selected league
-  const leagueMembers = members.filter(m => {
+  const leagueMembers = (Array.isArray(members) ? members : []).filter(m => {
     if (selectedLeagueId === 'all') return true;
     if (!currentLeague) return false;
     return (currentLeague.participantIds?.includes(m.id)) || (currentLeague.groupIds?.includes(m.groupId));
@@ -164,7 +164,7 @@ export const League = () => {
                 <label className="input-label">{t('league.sport_label')}</label>
                 <select className="input-field" value={newLeague.sport} onChange={e => setNewLeague({...newLeague, sport: e.target.value})}>
                   <option>{t('common.all_types')}</option>
-                  {sports.map(s => <option key={s}>{s}</option>)}
+                  {(Array.isArray(sports) ? sports : []).map(s => <option key={s}>{s}</option>)}
                 </select>
               </div>
               <Input label={t('league.start_date')} type="date" required value={newLeague.startDate} onChange={e => setNewLeague({...newLeague, startDate: e.target.value})} />
@@ -175,7 +175,7 @@ export const League = () => {
               <div>
                 <label className="text-[10px] font-black uppercase text-muted tracking-widest mb-4 block">{t('league.groups_participants')}</label>
                 <div className="flex flex-wrap gap-2">
-                  {groups.length === 0 ? (
+                  {(!Array.isArray(groups) || groups.length === 0) ? (
                     <p className="text-xs text-muted">{t('league.no_groups')}</p>
                   ) : groups.map(g => (
                     <button 
@@ -194,7 +194,7 @@ export const League = () => {
               <div>
                 <label className="text-[10px] font-black uppercase text-muted tracking-widest mb-4 block">{t('league.individual_participants', { count: newLeague.participantIds.length })}</label>
                 <div className="bg-slate-50 rounded-2xl p-4 max-h-40 overflow-y-auto scrollbar-hide">
-                   {members.map(m => (
+                   {(Array.isArray(members) ? members : []).map(m => (
                      <div 
                       key={m.id} 
                       onClick={() => {
@@ -235,7 +235,7 @@ export const League = () => {
         >
           {t('league.general_ranking')}
         </button>
-        {leagues.map(l => (
+        {(Array.isArray(leagues) ? leagues : []).map(l => (
           <button 
             key={l.id} 
             onClick={() => setSelectedLeagueId(l.id)}
@@ -417,7 +417,7 @@ export const League = () => {
                   )}
                 </div>
                 <div className="flex flex-col gap-4">
-                   {achievements.map((ach, i) => (
+                   {(Array.isArray(achievements) ? achievements : []).map((ach, i) => (
                       <div key={ach.id || i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl group hover:translate-x-1 transition-all">
                           <div className="flex items-center gap-4">
                             <div style={{ backgroundColor: ach.color, color: ach.iconColor }} className="w-12 h-12 rounded-xl flex items-center justify-center shadow-sm shrink-0 border-2 border-white">

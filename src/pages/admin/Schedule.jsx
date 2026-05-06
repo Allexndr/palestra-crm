@@ -23,7 +23,8 @@ export const Schedule = () => {
   const { showNotification, confirm } = useNotifications();
 
   if (!isStateReady) return <PageLoader />;
-  const DAYS = t('schedule.days_short', { returnObjects: true }) || ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const _rawDays = t('schedule.days_short', { returnObjects: true });
+  const DAYS = Array.isArray(_rawDays) ? _rawDays : ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
   const isParent = user?.role === 'parent';
@@ -225,14 +226,14 @@ export const Schedule = () => {
                 <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{t('schedule.discipline')}</span>
                 <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-primary cursor-pointer outline-none" value={filterSport} onChange={e => setFilterSport(e.target.value)}>
                    <option value="all">{t('common.all')}</option>
-                   {sports.map(s => <option key={s} value={s}>{s}</option>)}
+                   {(Array.isArray(sports) ? sports : []).map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
              </div>
              <div className="flex items-center gap-4">
                 <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{t('schedule.coach')}</span>
                 <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-primary cursor-pointer outline-none" value={filterCoach} onChange={e => setFilterCoach(e.target.value)}>
                    <option value="all">{t('common.all')}</option>
-                   {[...new Set(schedule.map(s => s.coach))].filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
+                   {[...new Set((Array.isArray(schedule) ? schedule : []).map(s => s.coach))].filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
              </div>
              <div className="relative group min-w-[200px]">
@@ -273,7 +274,7 @@ export const Schedule = () => {
               <div className="input-group">
                 <label className="input-label">{t('schedule.day_label')}</label>
                 <select className="input-field" value={formData.day} onChange={e => setFormData({...formData, day: e.target.value})}>
-                  {DAYS.map(d => <option key={d}>{d}</option>)}
+                  {(Array.isArray(DAYS) ? DAYS : []).map(d => <option key={d}>{d}</option>)}
                 </select>
               </div>
               <Input label={t('schedule.time_start')} type="time" required value={formData.time} onChange={e => setFormData({...formData, time: e.target.value})} />

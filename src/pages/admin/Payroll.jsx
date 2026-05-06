@@ -15,19 +15,20 @@ export const Payroll = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-  const months = t('common.months', { returnObjects: true }) || [
+  const _rawMonths = t('common.months', { returnObjects: true });
+  const months = Array.isArray(_rawMonths) ? _rawMonths : [
     'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
     'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
   ];
 
   const payrollData = useMemo(() => {
-    const data = (coaches || []).map(coach => {
+    const data = (Array.isArray(coaches) ? coaches : []).map(coach => {
       // Find all classes led by this coach
-      const coachClasses = schedule.filter(s => s.coachId === coach.id);
+      const coachClasses = (Array.isArray(schedule) ? schedule : []).filter(s => s.coachId === coach.id);
       const coachClassIds = coachClasses.map(s => s.id);
 
       // Find attendance records for these classes in the selected month
-      const relevantAttendance = attendance.filter(a => {
+      const relevantAttendance = (Array.isArray(attendance) ? attendance : []).filter(a => {
         const date = new Date(a.date);
         return coachClassIds.includes(a.classId) && 
                date.getMonth() === selectedMonth && 

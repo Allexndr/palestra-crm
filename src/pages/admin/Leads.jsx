@@ -22,7 +22,8 @@ export const Leads = () => {
   const [isAdding, setIsAdding] = useState(false);
   
   // Filter leads by location
-  const filteredLeads = selectedLocationId === 'all' ? leads : leads.filter(l => l.locationId === selectedLocationId);
+  const safeLeads = Array.isArray(leads) ? leads : [];
+  const filteredLeads = selectedLocationId === 'all' ? safeLeads : safeLeads.filter(l => l.locationId === selectedLocationId);
 
   const [newLead, setNewLead] = useState({ 
     name: '', 
@@ -95,7 +96,7 @@ export const Leads = () => {
             <div style={{ flex: 1, width: '100%' }} className="input-group">
               <label className="input-label">{t('leads.form.sport')}</label>
               <select className="input-field" value={newLead.sport} onChange={e => setNewLead({...newLead, sport: e.target.value})}>
-                {sports.map(sport => (
+                {(Array.isArray(sports) ? sports : []).map(sport => (
                   <option key={sport} value={sport}>{sport}</option>
                 ))}
               </select>

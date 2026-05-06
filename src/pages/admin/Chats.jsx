@@ -29,18 +29,22 @@ export const Chats = () => {
   }, [messages, selectedChatId]);
 
   // Derive chats from groups, coaches, and members (for admin monitoring)
+  const safeGroups = Array.isArray(groups) ? groups : [];
+  const safeCoaches = Array.isArray(coaches) ? coaches : [];
+  const safeMembers = Array.isArray(members) ? members : [];
+
   const availableChats = [
-    ...groups.map(g => ({
+    ...safeGroups.map(g => ({
       id: `group-${g.id}`,
       type: 'group',
       name: g.name,
       icon: <Users size={18} />,
-      participants: members.filter(m => m.groupId === g.id).length + 1,
+      participants: safeMembers.filter(m => m.groupId === g.id).length + 1,
       coachId: g.coachId,
       groupId: g.id,
-      coachName: coaches.find(c => c.id === g.coachId)?.firstName || t('chats.no_coach')
+      coachName: safeCoaches.find(c => c.id === g.coachId)?.firstName || t('chats.no_coach')
     })),
-    ...coaches.map(c => ({
+    ...safeCoaches.map(c => ({
       id: `direct-${user?.id}-${c.id}`,
       type: 'direct',
       name: `${c.firstName} ${c.lastName}`,
@@ -48,7 +52,7 @@ export const Chats = () => {
       role: t('roles.coach'),
       userId: c.id
     })),
-    ...(user?.role === 'admin' ? members.map(m => ({
+    ...(user?.role === 'admin' ? safeMembers.map(m => ({
       id: `direct-monitor-${m.id}`,
       type: 'direct',
       name: `${m.firstName} ${m.lastName}`,

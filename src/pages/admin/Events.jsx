@@ -180,7 +180,7 @@ export const Events = () => {
       )}
 
       <div className="admin-card-grid admin-card-grid--wide">
-        {events.length === 0 ? (
+        {(Array.isArray(events) ? events : []).length === 0 ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '100px 0' }}>
             <Calendar size={64} className="text-muted mb-6" style={{ margin: '0 auto', opacity: 0.2 }} />
             <p className="text-secondary">{t('events_page.empty_text')}</p>

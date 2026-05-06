@@ -34,9 +34,12 @@ export const Dashboard = () => {
   const [feedbackTarget, setFeedbackTarget] = useState(null);
 
   // Filter data by location
-  const filteredMembers = selectedLocationId === 'all' ? members : members.filter(m => m.locationId === selectedLocationId);
-  const filteredLeads = selectedLocationId === 'all' ? leads : leads.filter(l => l.locationId === selectedLocationId);
-  const filteredSchedule = selectedLocationId === 'all' ? schedule : schedule.filter(s => s.locationId === selectedLocationId);
+  const safeMembers = Array.isArray(members) ? members : [];
+  const safeLeads = Array.isArray(leads) ? leads : [];
+  const safeSchedule = Array.isArray(schedule) ? schedule : [];
+  const filteredMembers = selectedLocationId === 'all' ? safeMembers : safeMembers.filter(m => m.locationId === selectedLocationId);
+  const filteredLeads = selectedLocationId === 'all' ? safeLeads : safeLeads.filter(l => l.locationId === selectedLocationId);
+  const filteredSchedule = selectedLocationId === 'all' ? safeSchedule : safeSchedule.filter(s => s.locationId === selectedLocationId);
 
   // Filter schedule for coaches (only their classes)
   const coachSchedule = isCoach ? filteredSchedule.filter(s => s.coach === user.name) : filteredSchedule;
@@ -48,9 +51,9 @@ export const Dashboard = () => {
 
   const handleSelectAll = () => {
     if (!selectedClass) return;
-    const classGroup = groups.find(g => g.name === selectedClass.groupName);
-    const groupMemberIds = members.filter(m => m.groupId === classGroup?.id).map(m => m.id);
-    setSelectedMemberIds(groupMemberIds.length > 0 ? groupMemberIds : members.map(m => m.id));
+    const classGroup = (Array.isArray(groups) ? groups : []).find(g => g.name === selectedClass.groupName);
+    const groupMemberIds = safeMembers.filter(m => m.groupId === classGroup?.id).map(m => m.id);
+    setSelectedMemberIds(groupMemberIds.length > 0 ? groupMemberIds : safeMembers.map(m => m.id));
   };
 
   const handleMarkAttendance = () => {
@@ -437,7 +440,7 @@ export const Dashboard = () => {
                     <button onClick={handleSelectAll} className="px-4 py-2 bg-indigo-50 text-primary text-xs font-bold rounded-xl hover:bg-indigo-100 transition-all border-none cursor-pointer flex-shrink-0">{t('dashboard.attendance_modal.select_all')}</button>
                   </div>
                   <div style={{ maxHeight: 'min(400px, 50vh)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px', paddingRight: '4px' }} className="custom-scrollbar scrollbar-hide">
-                    {members.map(member => (
+                    {safeMembers.map(member => (
                       <div key={member.id} onClick={() => toggleMemberSelection(member.id)} className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between ${selectedMemberIds.includes(member.id) ? 'border-primary bg-indigo-50/50' : 'border-slate-100 hover:border-slate-200 bg-white'}`}>
                         <div className="flex items-center gap-4 min-w-0">
                           <div style={{ width: 40, height: 40, borderRadius: '12px', backgroundColor: selectedMemberIds.includes(member.id) ? 'var(--color-primary)' : 'var(--color-bg)', color: selectedMemberIds.includes(member.id) ? 'white' : 'var(--color-text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px', flexShrink: 0 }}>
@@ -456,7 +459,7 @@ export const Dashboard = () => {
                                 </div>
                               )}
                             </div>
-                            <p className="text-[10px] font-bold text-muted uppercase tracking-wider truncate">{groups.find(g => g.id === member.groupId)?.name || t('dashboard.attendance_modal.individual')}</p>
+                            <p className="text-[10px] font-bold text-muted uppercase tracking-wider truncate">{(Array.isArray(groups) ? groups : []).find(g => g.id === member.groupId)?.name || t('dashboard.attendance_modal.individual')}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">

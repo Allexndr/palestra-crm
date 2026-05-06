@@ -43,23 +43,24 @@ export const Profile = () => {
   const isParent = user?.role === 'parent';
   const isStudent = user?.role === 'student';
 
+  const safeMembers = Array.isArray(members) ? members : [];
   const children = useMemo(
-    () => (isParent ? members.filter((m) => m.parentId === user?.id) : []),
-    [isParent, members, user?.id]
+    () => (isParent ? safeMembers.filter((m) => m.parentId === user?.id) : []),
+    [isParent, safeMembers, user?.id]
   );
 
   const profileData = (() => {
     if (isParent) {
-      return members.find((m) => m.id === activeChildId) || children[0];
+      return safeMembers.find((m) => m.id === activeChildId) || children[0];
     }
     if (isStudent) {
       return (
-        members.find((m) => m.id === user?.id) ||
-        members.find((m) => m.login === user?.login) ||
-        members[0]
+        safeMembers.find((m) => m.id === user?.id) ||
+        safeMembers.find((m) => m.login === user?.login) ||
+        safeMembers[0]
       );
     }
-    return members.find((m) => m.login === user?.login) || members[0];
+    return safeMembers.find((m) => m.login === user?.login) || safeMembers[0];
   })();
 
   if (!profileData) {
@@ -76,12 +77,12 @@ export const Profile = () => {
     );
   }
 
-  const studentAttendance = attendance.filter(
+  const studentAttendance = (Array.isArray(attendance) ? attendance : []).filter(
     (a) => Array.isArray(a?.memberIds) && a.memberIds.includes(profileData.id)
   );
-  const group = groups.find(g => g.id === profileData.groupId);
-  const childSchedule = schedule.filter((s) => !group?.name || s.groupName === group.name);
-  const memberAchievements = achievements.filter(
+  const group = (Array.isArray(groups) ? groups : []).find(g => g.id === profileData.groupId);
+  const childSchedule = (Array.isArray(schedule) ? schedule : []).filter((s) => !group?.name || s.groupName === group.name);
+  const memberAchievements = (Array.isArray(achievements) ? achievements : []).filter(
     (a) => !Array.isArray(a?.memberIds) || a.memberIds.includes(profileData.id)
   );
   const points = Number(profileData.points) || 0;

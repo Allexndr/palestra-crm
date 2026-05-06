@@ -357,7 +357,7 @@ export const Settings = () => {
               )}
 
               <div className="flex flex-col gap-4">
-                {locations.length === 0 ? (
+                {(!Array.isArray(locations) || locations.length === 0) ? (
                    <p className="text-center p-8 text-muted border-2 border-dashed rounded-xl">{t('settings.locations.no_locations')}</p>
                 ) : locations.map(loc => (
                   <div key={loc.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -401,7 +401,7 @@ export const Settings = () => {
               )}
 
               <div className="admin-card-grid">
-                {plans.length === 0 ? (
+                {(!Array.isArray(plans) || plans.length === 0) ? (
                   <p className="text-center p-8 text-muted border-2 border-dashed rounded-xl" style={{ gridColumn: '1 / -1' }}>{t('settings.plans.no_plans')}</p>
                 ) : plans.map(plan => (
                   <Card key={plan.id} style={{ borderBottom: '4px solid var(--color-primary)', position: 'relative' }}>
@@ -457,7 +457,7 @@ export const Settings = () => {
                     }}>{t('settings.motivation.add_ach_btn')}</Button>
                   </h5>
                   <div className="flex flex-col gap-4">
-                    {achievements.length === 0 ? (
+                    {(!Array.isArray(achievements) || achievements.length === 0) ? (
                       <p className="text-center p-8 text-muted border-2 border-dashed rounded-xl">{t('settings.motivation.no_achievements')}</p>
                     ) : achievements.map((ach, i) => (
                       <div key={ach.id || i} className="flex items-center justify-between p-4 bg-white rounded-xl border">

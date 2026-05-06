@@ -12,7 +12,7 @@ export const GroupDetail = () => {
   const { groups, members, locations } = useAdmin();
   const { t } = useTranslation();
   
-  const group = groups.find(g => g.id === id);
+  const group = (Array.isArray(groups) ? groups : []).find(g => g.id === id);
 
   if (!group) {
     return (
@@ -23,8 +23,8 @@ export const GroupDetail = () => {
     );
   }
 
-  const location = locations.find(l => l.id === group.locationId);
-  const groupMembers = members.filter(m => m.groupId === group.id);
+  const location = (Array.isArray(locations) ? locations : []).find(l => l.id === group.locationId);
+  const groupMembers = (Array.isArray(members) ? members : []).filter(m => m.groupId === group.id);
   const studentCount = groupMembers.length;
 
   return (
