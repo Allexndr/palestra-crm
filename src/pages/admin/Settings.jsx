@@ -203,6 +203,18 @@ export const Settings = () => {
     );
   };
 
+  const TABS = [
+    { id: 'club',             label: t('settings.tabs.club_profile'),      icon: <Globe size={18} /> },
+    { id: 'locations',        label: t('settings.tabs.locations'),          icon: <SettingsIcon size={18} /> },
+    { id: 'plans',            label: t('settings.tabs.plans'),              icon: <Save size={18} /> },
+    { id: 'motivation',       label: t('settings.tabs.motivation'),         icon: <Trophy size={18} /> },
+    { id: 'team',             label: t('settings.tabs.team'),               icon: <Users size={18} /> },
+    { id: 'dashboard',        label: t('settings.tabs.admin_constructor'),  icon: <LayoutDashboard size={18} /> },
+    { id: 'student_dashboard',label: t('settings.tabs.student_widgets'),    icon: <Sparkles size={18} /> },
+    { id: 'notif',            label: t('settings.tabs.notifications'),      icon: <Bell size={18} /> },
+    { id: 'security',         label: t('settings.tabs.security'),           icon: <Lock size={18} /> },
+  ];
+
   return (
     <div className="animate-fade-in">
       <div className="admin-page-header">
@@ -212,38 +224,33 @@ export const Settings = () => {
         </div>
       </div>
 
+      {/* Mobile horizontal scrollable tab bar */}
+      <div className="settings-mobile-tabs">
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className="settings-mobile-tab"
+            data-active={activeTab === tab.id ? 'true' : 'false'}
+          >
+            <span className="settings-mobile-tab__icon">{tab.icon}</span>
+            <span className="settings-mobile-tab__label">{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
       <div className="settings-layout">
-        {/* Sidebar Tabs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-          {[
-            { id: 'club', label: t('settings.tabs.club_profile'), icon: <Globe size={18} /> },
-            { id: 'locations', label: t('settings.tabs.locations'), icon: <Globe size={18} /> },
-            { id: 'plans', label: t('settings.tabs.plans'), icon: <Save size={18} /> },
-            { id: 'motivation', label: t('settings.tabs.motivation'), icon: <Trophy size={18} /> },
-            { id: 'team', label: t('settings.tabs.team'), icon: <Users size={18} /> },
-            { id: 'dashboard', label: t('settings.tabs.admin_constructor'), icon: <LayoutDashboard size={18} /> },
-            { id: 'student_dashboard', label: t('settings.tabs.student_widgets'), icon: <Sparkles size={18} /> },
-            { id: 'notif', label: t('settings.tabs.notifications'), icon: <Bell size={18} /> },
-            { id: 'security', label: t('settings.tabs.security'), icon: <Lock size={18} /> }
-          ].map(tab => (
+        {/* Desktop Sidebar Tabs */}
+        <div className="settings-sidebar">
+          {TABS.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className="flex items-center gap-8 px-10 py-5 transition-all border-none cursor-pointer text-left w-full group"
-              style={{
-                borderRadius: '24px',
-                backgroundColor: activeTab === tab.id ? 'var(--color-primary)' : 'transparent',
-                color: activeTab === tab.id ? 'white' : '#64748b',
-                fontWeight: activeTab === tab.id ? '900' : '700',
-                fontSize: '13px',
-                border: activeTab === tab.id ? 'none' : '1px solid transparent',
-                boxShadow: activeTab === tab.id ? 'var(--shadow-primary)' : 'none'
-              }}
+              className="settings-sidebar__btn"
+              data-active={activeTab === tab.id ? 'true' : 'false'}
             >
-              <div className={`flex items-center justify-center transition-transform duration-300 ${activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110 text-slate-400'}`} style={{ width: '24px' }}>
-                {tab.icon}
-              </div>
-              <span className="uppercase tracking-[0.2em] text-[10px]">{tab.label}</span>
+              <span className="settings-sidebar__icon">{tab.icon}</span>
+              <span className="settings-sidebar__label">{tab.label}</span>
             </button>
           ))}
         </div>
