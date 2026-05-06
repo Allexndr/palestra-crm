@@ -28,7 +28,17 @@ export default async function handler(req, res) {
       }
     }
 
-    const demoRole = role || String(email || '').split('@')[0] || 'admin';
+    let demoRole = role || String(email || '').split('@')[0] || 'admin';
+    
+    // Smart role detection for demo/mock logins
+    if (demoRole.length === 1 || demoRole.includes('student')) {
+      demoRole = 'student';
+    } else if (demoRole.includes('coach')) {
+      demoRole = 'coach';
+    } else if (demoRole.includes('parent')) {
+      demoRole = 'parent';
+    }
+
     const profile = createDemoProfile(['admin', 'coach', 'parent', 'student'].includes(demoRole) ? demoRole : 'admin');
     setDemoCookie(res, profile.role);
     return sendJson(res, 200, { user: mapProfileToUser(profile) });
