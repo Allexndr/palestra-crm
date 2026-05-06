@@ -6,13 +6,28 @@ const DEMO_CLUB_ID = '00000000-0000-0000-0000-000000000001';
 let memoryState = createSeedState();
 
 function getClubId(user) {
-  return user?.profile?.club_id || DEMO_CLUB_ID;
+  if (user?.profile?.club_id && user.profile.club_id !== DEMO_CLUB_ID) {
+    return user.profile.club_id;
+  }
+  // For demo users, create a stable club ID based on their user ID or email
+  if (user?.isDemo && user?.profile?.id) {
+    const seed = user.profile.email || user.profile.id;
+    // Simple deterministic pseudo-UUID from string
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+      hash |= 0;
+    }
+    const hex = Math.abs(hash).toString(16).padEnd(12, '0');
+    return `00000000-0000-4000-8000-${hex.substring(0, 12)}`;
+  }
+  return DEMO_CLUB_ID;
 }
 
 export async function getAppState(user) {
   const clubId = getClubId(user);
 
-  if (!hasSupabaseServiceEnv() || user?.isDemo) {
+  if (!hasSupabaseServiceEnv()) {
     return memoryState;
   }
 
@@ -34,7 +49,7 @@ export async function getAppState(user) {
 export async function saveAppState(user, state) {
   const clubId = getClubId(user);
 
-  if (!hasSupabaseServiceEnv() || user?.isDemo) {
+  if (!hasSupabaseServiceEnv()) {
     memoryState = { ...memoryState, ...state };
     return memoryState;
   }
