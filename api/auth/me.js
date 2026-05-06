@@ -23,6 +23,15 @@ export default async function handler(req, res) {
         await deleteClubCompletely(clubId);
       }
 
+      // Delete the Supabase Auth user so they can't log in again
+      const authUserId = requestUser.authUser?.id;
+      if (authUserId) {
+        const { getServiceClient, hasSupabaseServiceEnv } = await import('../_lib/supabase.js');
+        if (hasSupabaseServiceEnv()) {
+          await getServiceClient().auth.admin.deleteUser(authUserId);
+        }
+      }
+
       clearSessionCookies(res);
       return sendJson(res, 200, { success: true });
     }
