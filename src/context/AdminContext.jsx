@@ -168,8 +168,9 @@ export const AdminProvider = ({ children }) => {
 
         if (cancelled) return;
 
+        let meData = null;
         if (meResponse.ok) {
-          const meData = await meResponse.json();
+          meData = await meResponse.json();
           setUser(meData.user || null);
           
           // Auto-select first child for parents on load
@@ -222,8 +223,7 @@ export const AdminProvider = ({ children }) => {
           setStudentDashboardLayout(Array.isArray(remote.studentDashboardLayout) ? remote.studentDashboardLayout : DEFAULT_STUDENT_LAYOUT);
 
           // Parent child auto-selection
-          const meData = meResponse.ok ? await meResponse.clone().json().catch(() => ({})) : {};
-          if (meData.user?.role === 'parent' && Array.isArray(remote.members)) {
+          if (meData?.user?.role === 'parent' && Array.isArray(remote.members)) {
             const children = remote.members.filter(m => m.parentId === meData.user.id);
             if (children.length > 0) {
               setActiveChildId(children[0].id);

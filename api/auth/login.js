@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     const { email, password, role } = parseOrThrow(loginSchema, await parseJsonBody(req));
     const allowDemo = process.env.ALLOW_DEMO_AUTH !== 'false';
 
-    if (email && password && hasSupabaseEnv()) {
+    if (email && password && hasSupabaseEnv() && email.includes('@')) {
       const { data, error } = await getAnonClient().auth.signInWithPassword({ email, password });
       if (!error && data?.session) {
         const profile = await getProfileByAuthUserId(data.user.id);
