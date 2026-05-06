@@ -1,4 +1,4 @@
-import { sendJson } from '../_lib/http.js';
+import { sendJson, clearSessionCookies } from '../_lib/http.js';
 import { rateLimit } from '../_lib/rateLimit.js';
 import { safeError } from '../_lib/security.js';
 import { getRequestUser, mapProfileToUser } from '../_lib/supabase.js';
@@ -23,6 +23,7 @@ export default async function handler(req, res) {
         await deleteClubCompletely(clubId);
       }
 
+      clearSessionCookies(res);
       return sendJson(res, 200, { success: true });
     }
 
