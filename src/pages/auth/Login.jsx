@@ -7,12 +7,13 @@ import { AlertModal } from '../../components/ui/AlertModal';
 import { useAlertModal } from '../../hooks/useModal';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
-import { Shield, PlusCircle, HelpCircle } from 'lucide-react';
+import { Shield, PlusCircle, HelpCircle, ChevronDown } from 'lucide-react';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
   const { isOpen, modalProps, closeModal, error: showError } = useAlertModal();
   const { login } = useAdmin();
   const { t } = useTranslation();
@@ -83,8 +84,35 @@ export const Login = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <label className="text-sm font-bold text-slate-700">{t('auth.password')}</label>
-                  <a href="#" className="text-xs text-primary font-bold hover:underline">{t('auth.forgot_password')}</a>
+                  <button
+                    type="button"
+                    onClick={() => setShowForgot(v => !v)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', fontSize: 12, fontWeight: 700, padding: 0 }}
+                  >
+                    {t('auth.forgot_password')} <ChevronDown size={13} style={{ transform: showForgot ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                  </button>
                 </div>
+                {showForgot && (
+                  <div style={{ background: '#f0f4ff', border: '1px solid #c7d2fe', borderRadius: 12, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10, marginTop: 4 }}>
+                    <p style={{ margin: 0, fontSize: 12, color: '#374151', lineHeight: 1.5 }}>
+                      Восстановите доступ через нашего Telegram-бота — он найдёт ваш логин и пароль по номеру телефона.
+                    </p>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <a
+                        href="https://t.me/palestra_platform_bot"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: '#229ED9', color: 'white', borderRadius: 8, fontSize: 12, fontWeight: 700, textDecoration: 'none' }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+                        Восстановить через бота
+                      </a>
+                    </div>
+                    <p style={{ margin: 0, fontSize: 11, color: '#6b7280' }}>
+                      Напишите боту и нажмите «Восстановить доступ»
+                    </p>
+                  </div>
+                )}
                 <Input 
                   type="password" 
                   placeholder="••••••••" 
