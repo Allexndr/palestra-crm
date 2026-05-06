@@ -2038,7 +2038,7 @@ a:focus:not(:focus-visible) {
 }
 
 .member-desktop-sidebar {
-  width: 260px;
+  width: var(--sidebar-width, 260px);
   flex-shrink: 0;
   height: 100vh;
   position: fixed;
@@ -2053,6 +2053,19 @@ a:focus:not(:focus-visible) {
   flex-direction: column;
   gap: var(--space-4);
   overflow-y: auto;
+}
+
+.sidebar-drag-indicator {
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s;
+}
+
+.member-desktop-sidebar:hover .sidebar-drag-indicator {
+  opacity: 1;
+}
+
+.member-desktop-sidebar .sidebar-drag-indicator:hover {
+  background-color: var(--color-primary) !important;
 }
 
 .member-sidebar-brand {
@@ -2270,7 +2283,7 @@ a:focus:not(:focus-visible) {
 .member-main-region {
   flex: 1;
   min-width: 0;
-  margin-left: 260px;
+  margin-left: var(--sidebar-width, 260px);
   height: 100vh;
   overflow-y: auto;
 }

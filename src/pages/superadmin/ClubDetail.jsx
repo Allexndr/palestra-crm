@@ -32,11 +32,12 @@ const ModalAlert = ({ isOpen, onClose, title, message, isConfirm, onConfirm }) =
   );
 };
 
-const UserManagement = ({ clubId, setModalData }) => {
+const UserManagement = ({ clubId }) => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingUser, setEditingUser] = useState(null);
   const [newPassword, setNewPassword] = useState('');
+  const [modalData, setModalData] = useState({ isOpen: false });
   
   const loadUsers = async () => {
     setIsLoading(true);
@@ -171,12 +172,20 @@ const UserManagement = ({ clubId, setModalData }) => {
             <p style={{ margin: '0 0 12px', fontSize: 13, color: '#64748b' }}>Пользователь: <b>{editingUser.name}</b></p>
             <input type="text" placeholder="Новый пароль" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={{ width: '100%', padding: 10, border: '1px solid #e2e8f0', borderRadius: 8, marginBottom: 16, boxSizing: 'border-box' }} />
             <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
-              <button onClick={handleSave} disabled={isSaving} style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#4338ca', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14, opacity: isSaving ? 0.6 : 1 }}>Сохранить</button>
-              <button onClick={onClose} style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#f1f5f9', color: '#0f172a', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>Отмена</button>
+              <button onClick={handleUpdatePassword} style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#4338ca', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>Сохранить</button>
+              <button onClick={() => setEditingUser(null)} style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#f1f5f9', color: '#0f172a', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>Отмена</button>
             </div>
           </div>
         </div>
       )}
+      <ModalAlert
+        isOpen={modalData.isOpen}
+        onClose={() => setModalData({ isOpen: false })}
+        title={modalData.title}
+        message={modalData.message}
+        isConfirm={modalData.isConfirm}
+        onConfirm={modalData.onConfirm}
+      />
     </div>
   );
 };
@@ -191,6 +200,7 @@ const ClubSettingsModal = ({ isOpen, onClose, club, appState, onSaved, onDelete 
   });
   const [isSaving, setIsSaving] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [modalData, setModalData] = useState({ isOpen: false });
 
   if (!isOpen) return null;
 
@@ -274,6 +284,14 @@ const ClubSettingsModal = ({ isOpen, onClose, club, appState, onSaved, onDelete 
           </div>
         </div>
       </div>
+      <ModalAlert
+        isOpen={modalData.isOpen}
+        onClose={() => setModalData({ isOpen: false })}
+        title={modalData.title}
+        message={modalData.message}
+        isConfirm={modalData.isConfirm}
+        onConfirm={modalData.onConfirm}
+      />
     </div>
   );
 };
@@ -605,7 +623,7 @@ export const ClubDetail = () => {
         )}
 
         {/* USERS / HIERARCHY */}
-        {activeTab === 'users' && <UserManagement clubId={clubId} setModalData={setModalData} />}
+        {activeTab === 'users' && <UserManagement clubId={clubId} />}
 
         {/* MEMBERS */}
         {activeTab === 'members' && (
