@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
 
 const NotificationContext = createContext();
@@ -80,33 +81,54 @@ export const NotificationProvider = ({ children }) => {
         ))}
       </div>
 
-      {/* Global Confirm Modal */}
-      {confirmState && (
-        <div 
-          className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-        >
-          <div className="bg-white rounded-[32px] p-8 w-full max-w-md shadow-2xl animate-scale-up border border-slate-100 relative mx-auto">
-            <h3 className="text-2xl font-black text-slate-800 mb-4">{confirmState.title}</h3>
-            <p className="text-slate-600 mb-8 leading-relaxed font-medium">{confirmState.message}</p>
-            <div className="flex gap-4">
-              <button 
+      {/* Global Confirm Modal via Portal */}
+      {confirmState && createPortal(
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          zIndex: 999999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)',
+          padding: '16px',
+        }}>
+          <div style={{
+            background: '#fff', borderRadius: '20px', padding: '28px',
+            width: '100%', maxWidth: '400px',
+            boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+            border: '1px solid #f1f5f9',
+          }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#1e293b', marginBottom: '8px' }}>
+              {confirmState.title}
+            </h3>
+            <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', lineHeight: 1.5 }}>
+              {confirmState.message}
+            </p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
                 onClick={() => confirmState.resolve(false)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 transition-all border-none cursor-pointer"
+                style={{
+                  flex: 1, padding: '12px 16px', borderRadius: '12px',
+                  fontWeight: 700, fontSize: '14px', color: '#64748b',
+                  background: '#f8fafc', border: '1px solid #e2e8f0',
+                  cursor: 'pointer',
+                }}
               >
                 {confirmState.cancelText || 'Отмена'}
               </button>
-              <button 
+              <button
                 onClick={() => confirmState.resolve(true)}
-                className={`flex-1 px-6 py-4 rounded-2xl font-bold text-white transition-all border-none cursor-pointer shadow-lg active:scale-95 ${
-                  confirmState.variant === 'danger' ? 'bg-rose-500 shadow-rose-100 hover:bg-rose-600' : 'bg-primary shadow-indigo-100 hover:bg-indigo-600'
-                }`}
+                style={{
+                  flex: 1, padding: '12px 16px', borderRadius: '12px',
+                  fontWeight: 700, fontSize: '14px', color: '#fff',
+                  background: confirmState.variant === 'danger' ? '#ef4444' : '#4f46e5',
+                  border: 'none', cursor: 'pointer',
+                }}
               >
                 {confirmState.confirmText || 'Подтвердить'}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </NotificationContext.Provider>
   );
