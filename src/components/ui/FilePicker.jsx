@@ -38,31 +38,31 @@ export const FilePicker = ({
         <label
           htmlFor={inputId}
           className={`
-            flex items-center gap-3 p-3 rounded-2xl border-2 border-dashed transition-all cursor-pointer
-            ${isUploading ? 'bg-slate-50 border-slate-200 cursor-wait' : 'bg-white border-slate-100 hover:border-primary hover:bg-primary-soft/30'}
+            flex items-center gap-3 p-2 rounded-xl border border-dashed transition-all cursor-pointer
+            ${isUploading ? 'bg-slate-50 border-slate-200 cursor-wait' : 'bg-white border-slate-200 hover:border-primary hover:bg-primary-soft/10'}
           `}
         >
           <div className={`
-            w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors
+            w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors
             ${isUploading ? 'bg-slate-100 text-slate-400' : 'bg-primary-soft text-primary group-hover:bg-primary group-hover:text-white'}
           `}>
             {isUploading ? (
-              <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
             ) : getIcon()}
           </div>
           
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-slate-800 truncate">
-              {isUploading ? 'Загрузка...' : (previewUrl ? 'Изменить файл' : 'Выберите файл')}
+            <p className="text-[11px] font-bold text-slate-800 truncate leading-tight">
+              {isUploading ? 'Загрузка...' : (previewUrl ? 'Изменить лого' : 'Загрузить лого')}
             </p>
-            <p className="text-[9px] text-slate-400 font-medium uppercase tracking-wider">
+            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">
               {accept.includes('image') ? 'JPG, PNG до 5MB' : 'Все форматы'}
             </p>
           </div>
           
           {previewUrl && !isUploading && (
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-100 shadow-sm">
-              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+            <div className="w-12 h-12 rounded-lg overflow-hidden border border-slate-100 bg-slate-50 shrink-0">
+              <img src={previewUrl} alt="Preview" className="w-full h-full object-contain p-1" />
             </div>
           )}
         </label>
