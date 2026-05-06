@@ -279,7 +279,7 @@ export const Settings = () => {
                     value={tempClubInfo.name} 
                     onChange={e => setTempClubInfo({...tempClubInfo, name: e.target.value})} 
                   />
-                  <div className="input-group">
+                  <div className="input-group" style={{ maxWidth: '400px' }}>
                     <label className="input-label">{t('settings.profile.club_logo')}</label>
                     <FilePicker 
                       onChange={handleLogoUpload}
