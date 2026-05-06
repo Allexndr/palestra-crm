@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { DEFAULT_SUBSCRIPTION, normalizeSubscription } from '../lib/tariff';
 import { useTranslation } from './LanguageContext';
 
@@ -117,6 +117,8 @@ const DEFAULT_STUDENT_LAYOUT = [
 
 export const AdminProvider = ({ children }) => {
   const [isStateReady, setIsStateReady] = useState(false);
+  const [hydrateTick, setHydrateTick] = useState(0);
+  const isHydratedRef = useRef(false); // true only after server state is loaded
   const [members, setMembers] = useState([]);
   const [leads, setLeads] = useState([]);
   const [schedule, setSchedule] = useState([]);
@@ -237,7 +239,10 @@ export const AdminProvider = ({ children }) => {
       } catch (error) {
         console.error('Critical failure in hydrate Palestra state', error);
       } finally {
-        if (!cancelled) setIsStateReady(true);
+        if (!cancelled) {
+          isHydratedRef.current = true;
+          setIsStateReady(true);
+        }
       }
     }
 
@@ -245,7 +250,7 @@ export const AdminProvider = ({ children }) => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [hydrateTick]);
 
   const persistState = async (updates = {}) => {
     if (!isStateReady) return false;
@@ -291,7 +296,7 @@ export const AdminProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!isStateReady) return;
+    if (!isStateReady || !isHydratedRef.current) return;
     const timeout = setTimeout(() => persistState(), 2000); // Debounced auto-save
     localStorage.setItem('palestra_posts', JSON.stringify(posts));
     return () => clearTimeout(timeout);
@@ -509,14 +514,15 @@ export const AdminProvider = ({ children }) => {
     }
 
     setUser(data.user);
-    logActivity(`Вход в систему: ${data.user.name}`, 'info');
+    setHydrateTick(t => t + 1); // Re-run hydrate to load fresh state after login
     return data.user;
   };
 
   const logout = async () => {
-    if (user) logActivity(`Выход из системы: ${user.name}`, 'info');
+    isHydratedRef.current = false;
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
     setUser(null);
+    setIsStateReady(false);
   };
 
   const addMember = async (memberData) => {
