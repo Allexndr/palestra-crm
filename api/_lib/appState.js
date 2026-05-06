@@ -26,6 +26,11 @@ function getClubId(user) {
 
 export async function getAppState(user) {
   try {
+    // Superadmin has no club — return seed state without persisting
+    if (user?.profile?.role === 'superadmin' && !user?.profile?.club_id) {
+      return createSeedState();
+    }
+
     const clubId = getClubId(user);
 
     if (!hasSupabaseServiceEnv()) {
@@ -57,6 +62,11 @@ export async function getAppState(user) {
 
 export async function saveAppState(user, state) {
   try {
+    // Superadmin has no club — nothing to save
+    if (user?.profile?.role === 'superadmin' && !user?.profile?.club_id) {
+      return state;
+    }
+
     const clubId = getClubId(user);
 
     if (!hasSupabaseServiceEnv()) {

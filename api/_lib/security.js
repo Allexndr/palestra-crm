@@ -13,6 +13,11 @@ export function assertSameOrigin(req, res) {
   try {
     const originHost = new URL(origin).host;
     if (originHost === host) return true;
+    // Allow all Vercel preview/deployment URLs for the same project
+    const isVercel = (h) => h === 'palestra-beta.vercel.app' || h.endsWith('.vercel.app');
+    if (isVercel(originHost) && isVercel(host)) return true;
+    // Allow localhost in any environment
+    if (originHost.startsWith('localhost') || originHost.startsWith('127.0.0.1')) return true;
   } catch {
     return false;
   }
