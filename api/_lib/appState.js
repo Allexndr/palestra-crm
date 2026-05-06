@@ -12,14 +12,15 @@ function getClubId(user) {
   // For demo users, create a stable club ID based on their user ID or email
   if (user?.isDemo && user?.profile?.id) {
     const seed = user.profile.email || user.profile.id;
-    // Simple deterministic pseudo-UUID from string
+    // Generate a pseudo-UUID v4 based on the seed
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
       hash = ((hash << 5) - hash) + seed.charCodeAt(i);
       hash |= 0;
     }
-    const hex = Math.abs(hash).toString(16).padEnd(12, '0');
-    return `00000000-0000-4000-8000-${hex.substring(0, 12)}`;
+    const part1 = Math.abs(hash).toString(16).padStart(8, '0');
+    const part2 = Math.abs(hash * 31).toString(16).padStart(12, '0');
+    return `${part1}-1234-4321-8888-${part2.substring(0, 12)}`;
   }
   return DEMO_CLUB_ID;
 }

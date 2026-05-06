@@ -24,9 +24,9 @@ export const Schedule = () => {
   const isParent = user?.role === 'parent';
   const isStudent = user?.role === 'student';
   const memberView = useMatch({ path: '/schedule', end: true }) != null;
-  const currentCoach = coaches.find(c => c.name === user?.name || c.email === user?.email);
-  const myGroupIds = groups.filter(g => g.coachId === currentCoach?.id).map(g => g.id);
-  const myGroupNames = groups.filter(g => g.coachId === currentCoach?.id).map(g => g.name);
+  const currentCoach = (coaches || []).find(c => c.name === user?.name || c.email === user?.email);
+  const myGroupIds = (groups || []).filter(g => g.coachId === currentCoach?.id).map(g => g.id);
+  const myGroupNames = (groups || []).filter(g => g.coachId === currentCoach?.id).map(g => g.name);
   const canTakeAttendance = (isAdmin || isCoach) && !memberView;
 
   // Filters state
