@@ -76,3 +76,9 @@ export async function deleteBlobUrl(url) {
     body: JSON.stringify({ url }),
   });
 }
+
+export const fixBlobUrl = (url) => {
+  if (!url) return '';
+  if (typeof url !== 'string') return '';
+  return url;
+};

@@ -13,7 +13,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { CSS } from '@dnd-kit/utilities';
 import { STUDENT_WIDGET_CATALOG } from '../../context/AdminContext';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
-import { uploadBlobFile } from '../../lib/blobClient';
+import { uploadBlobFile, fixBlobUrl } from '../../lib/blobClient';
 import { AdminTariffConstructor } from '../../components/admin/AdminTariffConstructor';
 import { formatLimit } from '../../lib/tariff';
 

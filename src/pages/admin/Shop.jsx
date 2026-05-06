@@ -8,7 +8,7 @@ import { Input } from '../../components/ui/Input';
 import { FilePicker } from '../../components/ui/FilePicker';
 import { Plus, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User, Phone, Tag, Zap } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
-import { uploadBlobFile } from '../../lib/blobClient';
+import { uploadBlobFile, fixBlobUrl } from '../../lib/blobClient';
 import { LockedFeature } from '../../components/admin/LockedFeature';
 import { useTranslation } from '../../context/LanguageContext';
 import { useNotifications } from '../../context/NotificationContext';

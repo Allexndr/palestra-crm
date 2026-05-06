@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { FilePicker } from '../../components/ui/FilePicker';
 import { Plus, Users, Trash2, Edit2, Camera, Phone, Mail, Award, MapPin, Copy } from 'lucide-react';
-import { uploadBlobFile } from '../../lib/blobClient';
+import { uploadBlobFile, fixBlobUrl } from '../../lib/blobClient';
 
 const translit = (str) => {
   if (!str) return '';

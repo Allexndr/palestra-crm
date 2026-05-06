@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { FilePicker } from '../../components/ui/FilePicker';
 import { ArrowLeft, Save, Camera, Zap, Star, Plus, Shield, Copy, Check } from 'lucide-react';
-import { uploadBlobFile } from '../../lib/blobClient';
+import { uploadBlobFile, fixBlobUrl } from '../../lib/blobClient';
 import { useNotifications } from '../../context/NotificationContext';
 import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 
