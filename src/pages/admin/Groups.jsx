@@ -24,10 +24,10 @@ export const Groups = () => {
       </div>
 
       <div className="admin-card-grid">
-        {groups.map(group => {
-          const location = locations.find(l => l.id === group.locationId);
-          const groupMembers = members.filter(m => m.groupId === group.id);
-          const studentCount = groupMembers.length;
+        {groups && groups.map(group => {
+          const location = locations?.find(l => l.id === group.locationId);
+          const groupMembers = members?.filter(m => m.groupId === group.id);
+          const studentCount = groupMembers?.length;
           
           return (
             <Card key={group.id} className="card-hover relative group overflow-hidden">

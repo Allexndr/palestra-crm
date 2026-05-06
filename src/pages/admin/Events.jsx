@@ -66,7 +66,7 @@ export const Events = () => {
   };
 
   const handleSelectGroup = (groupId) => {
-    const groupMemberIds = members.filter(m => m.groupId === groupId).map(m => m.id);
+    const groupMemberIds = (Array.isArray(members) ? members : []).filter(m => m.groupId === groupId).map(m => m.id);
     setFormData(prev => ({
       ...prev,
       participantIds: [...new Set([...prev.participantIds, ...groupMemberIds])]
@@ -154,13 +154,13 @@ export const Events = () => {
                   <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <p className="text-[10px] font-bold text-muted uppercase mb-1">{t('events_page.add_group')}</p>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {groups.map(g => (
+                      {(Array.isArray(groups) ? groups : []).map(g => (
                         <button key={g.id} type="button" onClick={() => handleSelectGroup(g.id)} className="text-[10px] font-bold bg-white border px-2 py-1 rounded-lg hover:border-primary transition-all">
                           + {g.name}
                         </button>
                       ))}
                     </div>
-                    {members.filter(m => `${m.firstName || ''} ${m.lastName || ''}`.toLowerCase().includes(searchTerm.toLowerCase())).map(m => (
+                    {(Array.isArray(members) ? members : []).filter(m => `${m.firstName || ''} ${m.lastName || ''}`.toLowerCase().includes(searchTerm.toLowerCase())).map(m => (
                       <div key={m.id} onClick={() => toggleParticipant(m.id)} className="flex items-center justify-between p-2 hover:bg-white rounded-lg cursor-pointer transition-all border border-transparent hover:border-slate-100">
                         <span className="text-xs font-medium">{m.firstName || t('events_page.student_default')} {m.lastName || ''}</span>
                         {formData.participantIds.includes(m.id) ? <CheckCircle size={14} className="text-primary" /> : <Plus size={14} className="text-muted" />}
@@ -186,7 +186,7 @@ export const Events = () => {
             <p className="text-secondary">{t('events_page.empty_text')}</p>
           </div>
         ) : (
-          events.map(event => (
+          (Array.isArray(events) ? events : []).map(event => (
             <Card key={event.id} className="card-hover" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', padding: '32px', position: 'relative' }}>
               <div className="flex justify-between items-start">
                 <div style={{ backgroundColor: 'var(--color-bg)', padding: '12px', borderRadius: '16px' }}>

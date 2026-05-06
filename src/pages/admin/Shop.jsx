@@ -196,7 +196,7 @@ export const Shop = () => {
             onClick={() => setSelectedCategory('all')}
             className={`px-6 py-4 rounded-3xl font-bold text-sm whitespace-nowrap transition-all border-none cursor-pointer ${selectedCategory === 'all' ? 'bg-primary text-white shadow-lg shadow-indigo-100' : 'bg-white text-secondary border border-slate-100 hover:border-slate-300'}`}
           >{t('common.all')}</button>
-          {categories.map(cat => (
+          {(Array.isArray(categories) ? categories : []).map(cat => (
             <button 
               key={cat}
               onClick={() => setSelectedCategory(cat)}
@@ -225,7 +225,7 @@ export const Shop = () => {
                <div className="input-group">
                  <label className="input-label">{t('shop.form.category_label')}</label>
                  <select className="input-field" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                   {categories.map(cat => (
+                   {(Array.isArray(categories) ? categories : []).map(cat => (
                      <option key={cat} value={cat}>
                        {cat === 'Защита' ? t('shop.categories.protection') : 
                         cat === 'Снаряжение' ? t('shop.categories.equipment') : 
@@ -276,7 +276,7 @@ export const Shop = () => {
 
       {activeTab === 'products' && (
         <div className="admin-card-grid">
-          {filteredProducts.map(product => (
+          {(Array.isArray(filteredProducts) && filteredProducts.length > 0) ? filteredProducts.map(product => (
             <Card key={product.id} className="p-0 overflow-hidden card-hover group h-full flex flex-col">
                <div style={{ height: '240px', backgroundColor: 'var(--color-bg)', position: 'relative', overflow: 'hidden' }}>
                  {product.image ? (
@@ -315,13 +315,18 @@ export const Shop = () => {
                   </div>
                </div>
             </Card>
-          ))}
+          )) : (
+            <div className="col-span-full py-20 text-center">
+                <ShoppingBag size={64} className="mx-auto text-slate-200 mb-6" />
+                <h3 className="h4 text-slate-400">{t('shop.no_products')}</h3>
+             </div>
+          )}
         </div>
       )}
 
       {activeTab === 'browse' && (
         <div className="admin-card-grid">
-          {filteredProducts.map(product => (
+          {(Array.isArray(filteredProducts) ? filteredProducts : []).map(product => (
             <Card key={product.id} className="p-0 overflow-hidden card-hover h-full flex flex-col border-none shadow-xl shadow-slate-100">
                <div style={{ height: '280px', backgroundColor: 'var(--color-bg)', position: 'relative' }}>
                  {product.image ? (
@@ -344,7 +349,7 @@ export const Shop = () => {
                   <div className="mt-auto pt-8 border-t border-slate-100 flex items-center justify-between">
                     <div>
                       <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-1">{product.isPointsOnly ? t('shop.product.price_points') : t('shop.product.price_kzt')}</p>
-                     <p className={`text-2xl font-black ${product.isPointsOnly ? 'text-amber-500 flex items-center gap-2' : 'text-slate-900'}`} style={{ fontFamily: 'var(--font-family-display)' }}>
+                     <p className={`text-2xl font-black ${product.isPointsOnly ? 'text-amber-500 flex items-center gap-1' : 'text-slate-900'}`} style={{ fontFamily: 'var(--font-family-display)' }}>
                        {product.isPointsOnly && <Zap size={24} fill="currentColor" />}
                        {Number(product.price).toLocaleString()} <span className="text-sm font-bold">{product.isPointsOnly ? 'N' : '₸'}</span>
                      </p>
@@ -370,7 +375,7 @@ export const Shop = () => {
 
       {activeTab === 'orders' && (
         <div className="flex flex-col gap-6">
-          {orders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).map(order => (
+          {(Array.isArray(orders) ? orders : []).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).map(order => (
             <Card key={order.id} className="p-8 border-none shadow-xl shadow-slate-100 animate-up">
               <div className="flex flex-col lg:flex-row justify-between gap-8">
                 <div className="flex-1">

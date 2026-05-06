@@ -18,17 +18,29 @@ export const GroupForm = () => {
 
   const [formData, setFormData] = useState({
     name: '', 
-    sport: sports[0] || '', 
-    locationId: locations[0]?.id || (selectedLocationId !== 'all' ? selectedLocationId : '1'),
-    coachId: coaches[0]?.id || '',
+    sport: (sports && Array.isArray(sports) && sports.length > 0) ? sports[0] : '', 
+    locationId: (locations && Array.isArray(locations) && locations.length > 0) 
+      ? locations[0]?.id 
+      : (selectedLocationId !== 'all' ? selectedLocationId : '1'),
+    coachId: (coaches && Array.isArray(coaches) && coaches.length > 0) ? coaches[0]?.id || '' : '',
     maxCapacity: '20'
   });
 
   useEffect(() => {
     if (isEditing && existingGroup) {
       setFormData(existingGroup);
+    } else if (!isEditing) {
+      // Update defaults when arrays are loaded
+      setFormData(prev => ({
+        ...prev,
+        sport: (sports && Array.isArray(sports) && sports.length > 0) ? sports[0] : prev.sport,
+        locationId: (locations && Array.isArray(locations) && locations.length > 0) 
+          ? locations[0]?.id 
+          : (selectedLocationId !== 'all' ? selectedLocationId : '1'),
+        coachId: (coaches && Array.isArray(coaches) && coaches.length > 0) ? coaches[0]?.id || '' : prev.coachId,
+      }));
     }
-  }, [isEditing, existingGroup]);
+  }, [isEditing, existingGroup, sports, locations, coaches, selectedLocationId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -65,21 +77,21 @@ export const GroupForm = () => {
             <div className="input-group">
               <label className="input-label">{t('groups.sport_label')}</label>
               <select className="input-field" value={formData.sport} onChange={e => setFormData({...formData, sport: e.target.value})}>
-                {sports.map(s => <option key={s} value={s}>{s}</option>)}
+                {(Array.isArray(sports) && sports.length > 0) ? sports.map(s => <option key={s} value={s}>{s}</option>) : <option value="">No sports available</option>}
               </select>
             </div>
             
             <div className="input-group">
               <label className="input-label">{t('groups.location_label')}</label>
               <select className="input-field" value={formData.locationId} onChange={e => setFormData({...formData, locationId: e.target.value})}>
-                {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                {(Array.isArray(locations) && locations.length > 0) ? locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>) : <option value="">No locations available</option>}
               </select>
             </div>
             <div className="input-group">
               <label className="input-label">{t('groups.coach_label')}</label>
               <select className="input-field" value={formData.coachId || ''} onChange={e => setFormData({...formData, coachId: e.target.value})}>
                 <option value="">{t('groups.form.no_coach')}</option>
-                {coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                {(Array.isArray(coaches) && coaches.length > 0) ? coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>) : <option value="">No coaches available</option>}
               </select>
             </div>
             <Input label={t('groups.capacity_label')} type="number" min="1" value={formData.maxCapacity} onChange={e => setFormData({...formData, maxCapacity: e.target.value})} />

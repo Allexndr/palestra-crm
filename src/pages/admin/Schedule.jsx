@@ -29,9 +29,9 @@ export const Schedule = () => {
   const isParent = user?.role === 'parent';
   const isStudent = user?.role === 'student';
   const memberView = useMatch({ path: '/schedule', end: true }) != null;
-  const currentCoach = (coaches || []).find(c => c.name === user?.name || c.email === user?.email);
-  const myGroupIds = (groups || []).filter(g => g.coachId === currentCoach?.id).map(g => g.id);
-  const myGroupNames = (groups || []).filter(g => g.coachId === currentCoach?.id).map(g => g.name);
+  const currentCoach = (Array.isArray(coaches) ? coaches : []).find(c => c.name === user?.name || c.email === user?.email);
+  const myGroupIds = (Array.isArray(groups) ? groups : []).filter(g => g.coachId === currentCoach?.id).map(g => g.id);
+  const myGroupNames = (Array.isArray(groups) ? groups : []).filter(g => g.coachId === currentCoach?.id).map(g => g.name);
   const canTakeAttendance = (isAdmin || isCoach) && !memberView;
 
   // Filters state
@@ -39,7 +39,7 @@ export const Schedule = () => {
   const [filterCoach, setFilterCoach] = useState('all');
   const [calendarSearch, setCalendarSearch] = useState('');
 
-  const filteredSchedule = schedule.filter(s => {
+  const filteredSchedule = (Array.isArray(schedule) ? schedule : []).filter(s => {
     const locMatch = selectedLocationId === 'all' || s.locationId === selectedLocationId;
     const sportMatch = filterSport === 'all' || s.type === filterSport;
     const coachMatch = filterCoach === 'all' || s.coach === filterCoach;
@@ -56,13 +56,13 @@ export const Schedule = () => {
     if (memberView) {
       let targetMember = null;
       if (isParent && activeChildId) {
-        targetMember = members.find(m => m.id === activeChildId);
+        targetMember = (Array.isArray(members) ? members : []).find(m => m.id === activeChildId);
       } else if (isStudent) {
-        targetMember = members.find(m => m.id === user?.id || m.login === user?.login);
+        targetMember = (Array.isArray(members) ? members : []).find(m => m.id === user?.id || m.login === user?.login);
       }
       
       if (targetMember && targetMember.groupId) {
-        const group = groups.find(g => g.id === targetMember.groupId);
+        const group = (Array.isArray(groups) ? groups : []).find(g => g.id === targetMember.groupId);
         if (group && s.groupName !== group.name) {
           return false; // Filter out classes that don't belong to the member's group
         }
@@ -152,9 +152,9 @@ export const Schedule = () => {
   };
 
   const handleSelectAll = () => {
-    const classGroup = groups.find(g => g.name === selectedClass.groupName);
-    const groupMemberIds = members.filter(m => m.groupId === classGroup?.id).map(m => m.id);
-    setSelectedMemberIds(groupMemberIds.length > 0 ? groupMemberIds : members.map(m => m.id));
+    const classGroup = (Array.isArray(groups) ? groups : []).find(g => g.name === selectedClass.groupName);
+    const groupMemberIds = (Array.isArray(members) ? members : []).filter(m => m.groupId === classGroup?.id).map(m => m.id);
+    setSelectedMemberIds(groupMemberIds.length > 0 ? groupMemberIds : (Array.isArray(members) ? members : []).map(m => m.id));
   };
 
   const handleMarkAttendance = () => {
@@ -470,7 +470,7 @@ export const Schedule = () => {
                     </button>
                   </div>
                   <div style={{ maxHeight: '320px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px', paddingRight: '4px' }} className="custom-scrollbar">
-                    {members.map(member => (
+                    {(Array.isArray(members) ? members : []).map(member => (
                       <div 
                         key={member.id} 
                         onClick={() => toggleMemberSelection(member.id)}
@@ -483,7 +483,7 @@ export const Schedule = () => {
                           <div>
                             <p className="font-bold text-sm text-slate-900">{member.firstName} {member.lastName}</p>
                              <p className="text-[10px] font-bold text-muted uppercase tracking-wider">
-                               {groups.find(g => g.id === member.groupId)?.name || t('dashboard.attendance_modal.individual')}
+                               {(Array.isArray(groups) ? groups : []).find(g => g.id === member.groupId)?.name || t('dashboard.attendance_modal.individual')}
                              </p>
                           </div>
                         </div>

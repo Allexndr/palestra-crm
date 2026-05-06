@@ -8,10 +8,13 @@ import { Input } from '../../components/ui/Input';
 import { FilePicker } from '../../components/ui/FilePicker';
 import { AlertModal } from '../../components/ui/AlertModal';
 import { useAlertModal } from '../../hooks/useModal';
+import { CopyToast } from '../../components/ui/CopyToast';
+import { useCopyToast } from '../../hooks/useCopyToast';
 import { ArrowLeft, Save, Camera, Zap, Star, Plus, Shield, Copy, Check } from 'lucide-react';
 import { uploadBlobFile, fixBlobUrl } from '../../lib/blobClient';
 import { useNotifications } from '../../context/NotificationContext';
 import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
+import { isValidBirthDate, getBirthDateError } from '../../utils/dateValidation';
 
 const translit = (str) => {
   const ru = {
@@ -41,6 +44,8 @@ export const MemberForm = () => {
   const { t } = useTranslation();
   const { showNotification } = useNotifications();
   const { isOpen, modalProps, closeModal, error: showError } = useAlertModal();
+  const { toast, copyWithToast } = useCopyToast();
+  const [birthDateError, setBirthDateError] = useState('');
   const isAdmin = user?.role === 'admin';
 
   if (!isStateReady) return <PageLoader />;
@@ -275,14 +280,29 @@ export const MemberForm = () => {
                   <div className="admin-form-grid">
                     <Input label={t('members.first_name')} required minLength={2} placeholder={t('members.first_name')} value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
                     <Input label={t('members.last_name')} required minLength={2} placeholder={t('members.last_name')} value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
-                    <Input label={t('members.birth_date')} type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} />
+                    <Input 
+                      label={t('members.birth_date')} 
+                      type="date" 
+                      value={formData.birthDate} 
+                      onChange={e => {
+                        const value = e.target.value;
+                        setFormData({...formData, birthDate: value});
+                        const error = getBirthDateError(value);
+                        setBirthDateError(error);
+                      }}
+                      min="1900-01-01"
+                      max={new Date().toISOString().split('T')[0]}
+                    />
+                    {birthDateError && (
+                      <p className="text-red-500 text-xs mt-1">{birthDateError}</p>
+                    )}
                     <Input label={t('members.phone')} type="tel" placeholder="+7 (777) 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
                     
                     <div className="input-group">
                       <label className="input-label">{t('members.branch')}</label>
                       <select className="input-field" style={{ height: '58px' }} value={formData.locationId} onChange={e => handleInputChange('locationId', e.target.value)}>
-                        {locations.length === 0 && <option value="1">{t('settings.locations.main_hall')}</option>}
-                        {locations.map(loc => (
+                        {(!Array.isArray(locations) || locations.length === 0) && <option value="1">{t('settings.locations.main_hall')}</option>}
+                        {(Array.isArray(locations) ? locations : []).map(loc => (
                           <option key={loc.id} value={loc.id}>{loc.name}</option>
                         ))}
                       </select>
@@ -509,7 +529,7 @@ export const MemberForm = () => {
                   <label className="input-label">{t('members.plan_select')}</label>
                   <select className="input-field" style={{ height: '58px' }} value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})}>
                     <option value="">{t('members.no_plan')}</option>
-                    {plans.map(p => (
+                    {(Array.isArray(plans) ? plans : []).map(p => (
                       <option key={p.id} value={p.name}>{p.name} ({p.price.toLocaleString()} ₸)</option>
                     ))}
                   </select>

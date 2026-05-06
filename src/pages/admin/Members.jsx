@@ -16,10 +16,10 @@ export const Members = () => {
   const isCoach = user?.role === 'coach';
   const [searchTerm, setSearchTerm] = useState('');
 
-  const currentCoach = (coaches || []).find(c => c.name === user?.name || c.email === user?.email);
-  const myGroupIds = (groups || []).filter(g => g.coachId === currentCoach?.id).map(g => g.id);
+  const currentCoach = (Array.isArray(coaches) ? coaches : []).find(c => c.name === user?.name || c.email === user?.email);
+  const myGroupIds = (Array.isArray(groups) ? groups : []).filter(g => g.coachId === currentCoach?.id).map(g => g.id);
 
-  const filteredMembers = (members || []).filter(m => {
+  const filteredMembers = (Array.isArray(members) ? members : []).filter(m => {
     const fullName = `${m.firstName || ''} ${m.lastName || ''}`.toLowerCase();
     const matchesSearch = fullName.includes(searchTerm.toLowerCase()) ||
                           (m.phone && m.phone.includes(searchTerm));
