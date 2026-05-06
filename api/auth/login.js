@@ -28,11 +28,6 @@ export default async function handler(req, res) {
       }
     }
 
-    if (!allowDemo) {
-      clearSessionCookies(res);
-      return sendJson(res, 401, { error: 'Неверный логин или пароль' });
-    }
-
     const demoRole = role || String(email || '').split('@')[0] || 'admin';
     const profile = createDemoProfile(['admin', 'coach', 'parent', 'student'].includes(demoRole) ? demoRole : 'admin');
     setDemoCookie(res, profile.role);
