@@ -1,5 +1,5 @@
 import { sendJson } from './http.js';
-import { getRequestUser } from './supabase.js';
+import { getRequestUser, parseCookies } from './supabase.js';
 
 const allowedMethodsWithoutOrigin = new Set(['GET', 'HEAD', 'OPTIONS']);
 
@@ -32,7 +32,7 @@ export async function requireUser(req, res, { allowDemo = false } = {}) {
     return requestUser;
   }
 
-  const cookies = Object.keys(require('./supabase.js').parseCookies(req));
+  const cookies = Object.keys(parseCookies(req));
   sendJson(res, 401, { error: 'Unauthorized', foundCookies: cookies });
   return null;
 }
