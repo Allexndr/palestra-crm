@@ -156,7 +156,6 @@ export const Members = () => {
             </div>
           )}
         </div>
-        </div>
       </Card>
     </div>
   );
