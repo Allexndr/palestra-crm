@@ -52,7 +52,7 @@ export async function getAppState(user) {
     if (data?.state) return getNormalizedState(user, data.state);
 
     // Real clubs get empty state (no mock data); demo users get seed with examples
-    const seeded = createSeedState(!!hasSupabaseServiceEnv());
+    const seeded = createSeedState();
     await saveAppState(user, seeded);
     return getNormalizedState(user, seeded);
   } catch (err) {
@@ -174,7 +174,7 @@ export async function ensureClubForRegistration(formData, ownerAuthUserId = null
   await supabase.from('app_state').upsert({
     club_id: club.id,
     state: {
-      ...createSeedState(true),
+      ...createSeedState(),
       clubInfo: { 
         name: club.name, 
         logo: '/palestra-logo-nav-full.png', 

@@ -291,7 +291,6 @@ export const Feed = () => {
         )}
       </div>
       
-      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </div>
   );
 };
