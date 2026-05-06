@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Send, ArrowRight } from 'lucide-react';
+import { Send, ArrowRight, Copy, Check } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
@@ -28,7 +28,15 @@ export const RegisterClub = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [successData, setSuccessData] = useState(null);
   const [errors, setErrors] = useState({});
+  const [codeCopied, setCodeCopied] = useState(false);
   const navigate = useNavigate();
+
+  const handleCopyCode = (code) => {
+    navigator.clipboard.writeText(code).then(() => {
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    });
+  };
   const { t } = useTranslation();
   const { login: signIn } = useAdmin();
   const [searchParams] = useSearchParams();
@@ -295,6 +303,33 @@ export const RegisterClub = () => {
 
                 {successData?.credentials?.tgCode && (
                   <div style={{ marginBottom: 'var(--space-8)' }}>
+                    {/* Bot name */}
+                    <div style={{
+                      marginBottom: '16px',
+                      padding: '14px 18px',
+                      backgroundColor: 'rgba(0, 136, 204, 0.06)',
+                      borderRadius: '16px',
+                      border: '1px solid rgba(0, 136, 204, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '10px'
+                    }}>
+                      <Send size={16} color="#0088cc" />
+                      <span style={{ fontSize: '14px', color: '#475569', fontWeight: 600 }}>
+                        {t('register.bot_label') || 'Наш бот:'}
+                      </span>
+                      <a
+                        href="https://t.me/palestra_platform_bot"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: '15px', fontWeight: 800, color: '#0088cc', textDecoration: 'none' }}
+                      >
+                        @palestra_platform_bot
+                      </a>
+                    </div>
+
+                    {/* Main CTA button */}
                     <a 
                       href={`https://t.me/palestra_platform_bot?start=${successData.credentials.tgCode}`}
                       target="_blank"
@@ -310,11 +345,11 @@ export const RegisterClub = () => {
                         backgroundColor: '#0088cc',
                         color: '#ffffff',
                         borderRadius: '16px',
-                        fontSize: '18px',
-                        fontWeight: '600',
+                        fontSize: '17px',
+                        fontWeight: '700',
                         textDecoration: 'none',
                         transition: 'all 0.3s ease',
-                        boxShadow: '0 10px 20px rgba(0, 136, 204, 0.2)',
+                        boxShadow: '0 10px 20px rgba(0, 136, 204, 0.25)',
                         border: 'none',
                         cursor: 'pointer'
                       }}
@@ -324,9 +359,11 @@ export const RegisterClub = () => {
                       <Send size={22} color="white" />
                       {t('register.tg_btn')}
                     </a>
+
+                    {/* Hint */}
                     <div style={{ 
-                      marginTop: '16px', 
-                      padding: '12px', 
+                      marginTop: '12px', 
+                      padding: '12px 16px', 
                       backgroundColor: 'rgba(0, 136, 204, 0.05)', 
                       borderRadius: '12px',
                       fontSize: '13px', 
@@ -338,6 +375,56 @@ export const RegisterClub = () => {
                     }}>
                       <span>ℹ️</span>
                       {t('register.tg_hint')}
+                    </div>
+
+                    {/* Manual code block */}
+                    <div style={{
+                      marginTop: '20px',
+                      padding: '18px',
+                      backgroundColor: '#f8fafc',
+                      borderRadius: '16px',
+                      border: '1px dashed #cbd5e1'
+                    }}>
+                      <p style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
+                        {t('register.manual_code_label') || 'Или введите код вручную в боте'}
+                      </p>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        backgroundColor: 'white',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '12px',
+                        padding: '12px 16px'
+                      }}>
+                        <code style={{ flex: 1, fontSize: '16px', fontWeight: 900, color: '#1e293b', letterSpacing: '0.05em', wordBreak: 'break-all' }}>
+                          {successData.credentials.tgCode}
+                        </code>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyCode(successData.credentials.tgCode)}
+                          style={{
+                            flexShrink: 0,
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '10px',
+                            backgroundColor: codeCopied ? '#10b981' : '#f1f5f9',
+                            color: codeCopied ? 'white' : '#64748b',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          title={t('common.copy') || 'Копировать'}
+                        >
+                          {codeCopied ? <Check size={16} /> : <Copy size={16} />}
+                        </button>
+                      </div>
+                      <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '8px', lineHeight: 1.5 }}>
+                        {t('register.manual_code_hint') || 'Откройте @palestra_platform_bot в Telegram, нажмите «Запустить» и введите этот код'}
+                      </p>
                     </div>
                   </div>
                 )}
