@@ -1,156 +1,33 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSocial } from '../../context/SocialContext';
+import React, { useState, useRef } from 'react';
 import { useAdmin } from '../../context/AdminContext';
-import { PostCard } from '../../components/social/PostCard';
-import { CreatePostModal } from '../../components/social/CreatePostModal';
+import { useTranslation } from '../../context/LanguageContext';
+import { useSocial } from '../../context/SocialContext';
 import { Button } from '../../components/ui/Button';
-import { Sparkles, Users, Flame, TrendingUp, Plus } from 'lucide-react';
+import { uploadBlobFile } from '../../lib/blobClient';
+import { Heart, MessageSquare, Repeat2, Send, X, MoreHorizontal, Search, Image as ImageIcon, Trash2, Plus } from 'lucide-react';
 
 export const Feed = () => {
-  const navigate = useNavigate();
   const { user } = useAdmin();
-  const { 
-    posts, 
-    topics, 
-    isLoading, 
-    hasMore, 
-    feedType, 
-    setFeedType,
-    loadPosts, 
-    loadMore, 
-    refreshFeed 
-  } = useSocial();
-  
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('for-you'); // for-you, following, trending
+  const { t, lang: language } = useTranslation();
+  const { posts, likePost, deletePost: removePost, createPost, addComment, likeComment } = useSocial();
 
-  useEffect(() => {
-    loadPosts();
-  }, [feedType]);
+  const [newPostText, setNewPostText] = useState('');
+  const [newPostImage, setNewPostImage] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [activeMenuId, setActiveMenuId] = useState(null);
+  const [activeReplyId, setActiveReplyId] = useState(null);
+  const [replyText, setReplyText] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const fileInputRef = useRef(null);
 
-  const handleTabChange = useCallback((tab) => {
-    setActiveTab(tab);
-    setFeedType(tab);
-  }, [setFeedType]);
+  const handlePost = () => {
+    if (!newPostText.trim() && !newPostImage) return;
+    createPost({ text: newPostText, image: newPostImage });
+    setNewPostText('');
+    setNewPostImage('');
+  };
 
-  const handleScroll = useCallback((e) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
-    if (scrollHeight - scrollTop - clientHeight < 100 && !isLoading && hasMore) {
-      loadMore();
-    }
-  }, [isLoading, hasMore, loadMore]);
-
-  return (
-    <div className="min-h-screen bg-slate-50 dark:bg-zinc-950">
-      <div className="max-w-2xl mx-auto">
-        {/* Header with tabs */}
-        <div className="sticky top-0 z-10 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800">
-          <div className="flex items-center justify-between px-4 py-3">
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">Сообщество</h1>
-            <Button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition-colors"
-            >
-              <Plus size={18} />
-              <span className="hidden sm:inline">Создать</span>
-            </Button>
-          </div>
-          
-          {/* Tabs */}
-          <div className="flex">
-            <TabButton 
-              active={activeTab === 'for-you'}
-              onClick={() => handleTabChange('for-you')}
-              icon={Sparkles}
-              label="Для вас"
-            />
-            <TabButton 
-              active={activeTab === 'following'}
-              onClick={() => handleTabChange('following')}
-              icon={Users}
-              label="Подписки"
-            />
-            <TabButton 
-              active={activeTab === 'trending'}
-              onClick={() => handleTabChange('trending')}
-              icon={Flame}
-              label="Тренды"
-            />
-          </div>
-        </div>
-
-        {/* Create post prompt */}
-        <div className="bg-white dark:bg-zinc-900 p-4 border-b border-slate-200 dark:border-zinc-800">
-          <div className="flex gap-3">
-            <img 
-              src={user?.avatar || '/default-avatar.png'}
-              alt={user?.name}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-            <button 
-              onClick={() => setIsCreateModalOpen(true)}
-              className="flex-1 text-left px-4 py-2.5 bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 rounded-full hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors"
-            >
-              Что нового?
-            </button>
-          </div>
-        </div>
-
-        {/* Feed */}
-        <div 
-          className="divide-y divide-slate-200 dark:divide-zinc-800"
-          onScroll={handleScroll}
-        >
-          {posts.map(post => (
-            <PostCard key={post.id} post={post} />
-          ))}
-          
-          {isLoading && (
-            <div className="p-8 text-center">
-              <div className="inline-block w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-            </div>
-          )}
-          
-          {!isLoading && posts.length === 0 && (
-            <div className="p-12 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
-                <Sparkles size={32} className="text-slate-400" />
-              </div>
-              <p className="text-slate-500 dark:text-zinc-400">Нет постов</p>
-              <p className="text-sm text-slate-400 dark:text-zinc-500 mt-1">Будьте первым, кто создаст пост!</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Create Post Modal */}
-      <CreatePostModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
-    </div>
-  );
-};
-
-const TabButton = ({ active, onClick, icon: Icon, label }) => (
-  <button
-    onClick={onClick}
-    className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors relative ${
-      active 
-        ? 'text-primary' 
-        : 'text-slate-500 dark:text-zinc-400 hover:text-slate-700 dark:hover:text-zinc-300'
-    }`}
-  >
-    <Icon size={18} />
-    <span className="hidden sm:inline">{label}</span>
-    {active && (
-      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary rounded-full" />
-    )}
-  </button>
-);
-
-export default Feed;
+  const handleReply = (postId, parentCommentId = null) => {
     if (!replyText.trim()) return;
     addComment(postId, replyText, parentCommentId);
     setReplyText('');
@@ -160,13 +37,12 @@ export default Feed;
   const handleImageUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     setIsUploadingImage(true);
     try {
       const url = await uploadBlobFile(file, 'posts');
       setNewPostImage(url);
     } catch (error) {
-      showError(error.message || (language === 'ru' ? 'Ошибка загрузки' : 'Жүктеу қатесі'));
+      console.error(error.message);
     } finally {
       setIsUploadingImage(false);
     }
