@@ -115,14 +115,14 @@ export const MemberForm = () => {
     if (isParent) {
       setFormData(prev => ({ 
         ...prev, 
-        parentLogin: prev.parentLogin || login, 
-        parentPassword: prev.parentPassword || password 
+        parentLogin: login, 
+        parentPassword: password 
       }));
     } else {
       setFormData(prev => ({ 
         ...prev, 
-        login: prev.login || login, 
-        password: prev.password || password 
+        login: login, 
+        password: password 
       }));
     }
   };

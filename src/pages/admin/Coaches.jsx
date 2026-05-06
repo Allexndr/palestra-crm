@@ -66,8 +66,8 @@ export const Coaches = () => {
     
     setFormData(prev => ({ 
       ...prev, 
-      login: prev.login || login, 
-      password: prev.password || password 
+      login: login, 
+      password: password 
     }));
   };
 
