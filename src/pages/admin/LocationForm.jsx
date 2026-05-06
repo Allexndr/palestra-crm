@@ -4,6 +4,8 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 import { useTranslation } from '../../context/LanguageContext';
 import { ArrowLeft, Save, MapPin, Building, Phone, Globe } from 'lucide-react';
 
@@ -22,6 +24,7 @@ export const LocationForm = () => {
     phone: '',
     isActive: true
   });
+  const { isOpen, modalProps, closeModal, warning: showWarning } = useAlertModal();
 
   useEffect(() => {
     if (isEditing && existingLocation) {
@@ -32,7 +35,7 @@ export const LocationForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.address) {
-      alert(t('settings.locations.form.alert_fill'));
+      showWarning(t('settings.locations.form.alert_fill'));
       return;
     }
 
@@ -139,6 +142,8 @@ export const LocationForm = () => {
           </div>
         </Card>
       </form>
+      
+      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </div>
   );
 };

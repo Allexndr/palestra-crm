@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 import { Users, DollarSign, Calendar, Target, ArrowUpRight, Plus, Trophy, MessageSquare, TrendingUp, Activity, CheckCircle, AlertCircle, Info, ShoppingBag, Star, X, Sparkles, Flame, ShieldAlert, HeartPulse, Zap } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
@@ -18,6 +20,7 @@ export const Dashboard = () => {
     removeActivity, sendFeedback, dashboardLayout, clubInfo, subscription, automations, isStateReady
   } = useAdmin();
   const { t, language } = useTranslation();
+  const { isOpen, modalProps, closeModal, alert: showAlert } = useAlertModal();
   
   if (!isStateReady) return <PageLoader />;
   const isAdmin = user?.role === 'admin';
@@ -445,7 +448,7 @@ export const Dashboard = () => {
                               <p className="font-bold text-sm text-slate-900 truncate">{member.firstName} {member.lastName}</p>
                               {member.medicalNotes && (
                                 <div 
-                                  onClick={(e) => { e.stopPropagation(); alert(t('dashboard.attendance_modal.medical_alert', { note: member.medicalNotes })); }}
+                                  onClick={(e) => { e.stopPropagation(); showAlert(member.medicalNotes, { title: t('dashboard.attendance_modal.medical_title') || 'Медицинские заметки', variant: 'warning' }); }}
                                   className="flex items-center justify-center w-5 h-5 bg-rose-50 text-rose-500 rounded-full cursor-help"
                                   title={member.medicalNotes}
                                 >
@@ -540,6 +543,8 @@ export const Dashboard = () => {
           }
         }
       `}</style>
+      
+      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </div>
   );
 };

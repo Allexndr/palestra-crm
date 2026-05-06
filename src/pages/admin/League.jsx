@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 import { useAdmin } from '../../context/AdminContext';
 import { Trophy, Medal, Target, TrendingUp, Award, Star, ArrowUpRight, Edit2, Trash2, X, Plus } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
@@ -14,6 +16,7 @@ import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 export const League = () => {
   const { members, user, leagues, addLeague, removeLeague, updateLeague, sports, achievements, addAchievement, removeAchievement, monthlyAward, groups, updateMember, canUseFeature, getUpgradeMessage, activeChildId, clubInfo, updateClubInfo } = useAdmin();
   const { t, language } = useTranslation();
+  const { isOpen, modalProps, closeModal, success: showSuccess } = useAlertModal();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   const isParent = user?.role === 'parent';
@@ -84,7 +87,7 @@ export const League = () => {
     });
     setResultPoints({});
     setResultDesc('');
-    alert(t('league.award_success'));
+    showSuccess(t('league.award_success'));
   };
 
   const toggleGroup = (groupId) => {
@@ -503,6 +506,8 @@ export const League = () => {
         title={t('league.delete_title')} message={t('league.delete_confirm', { name: leagueToDelete?.name })}
         confirmText={t('common.delete')} variant="danger"
       />
+      
+      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 import { useTranslation } from '../../context/LanguageContext';
 import { Send, Paperclip, MoreVertical, Users, User, Hash, MessageSquare, Filter, X, Image as ImageIcon, File as FileIcon } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
@@ -16,6 +18,7 @@ export const Chats = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [filterType, setFilterType] = useState('all'); // all, group, direct
   const messagesEndRef = useRef(null);
+  const { isOpen, modalProps, closeModal, error: showError } = useAlertModal();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -92,7 +95,7 @@ export const Chats = () => {
       const url = await uploadBlobFile(file, 'chat-attachments');
       sendMessage(selectedChatId, '', [{ url, type: file.type, name: file.name }]);
     } catch (error) {
-      alert(error.message);
+      showError(error.message);
     } finally {
       setIsUploading(false);
     }
@@ -287,6 +290,8 @@ export const Chats = () => {
         }
         .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
       `}</style>
+      
+      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </div>
   );
 };

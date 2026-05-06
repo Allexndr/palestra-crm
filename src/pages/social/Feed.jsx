@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
 import { MessageSquare, Heart, Share2, Send, Plus, Image as ImageIcon, X, SendHorizonal, MoreHorizontal, Repeat2, Search, Trash2 } from 'lucide-react';
@@ -17,6 +19,7 @@ export const Feed = () => {
   const [activeReplyId, setActiveReplyId] = useState(null); // postId or commentId
   const [replyText, setReplyText] = useState('');
   const fileInputRef = useRef(null);
+  const { isOpen, modalProps, closeModal, error: showError } = useAlertModal();
 
   const handlePost = (e) => {
     e.preventDefault();
@@ -42,7 +45,7 @@ export const Feed = () => {
       const url = await uploadBlobFile(file, 'posts');
       setNewPostImage(url);
     } catch (error) {
-      alert(error.message || (language === 'ru' ? 'Ошибка загрузки' : 'Жүктеу қатесі'));
+      showError(error.message || (language === 'ru' ? 'Ошибка загрузки' : 'Жүктеу қатесі'));
     } finally {
       setIsUploadingImage(false);
     }
@@ -290,6 +293,8 @@ export const Feed = () => {
           </div>
         )}
       </div>
+      
+      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </div>
   );
 };

@@ -7,6 +7,8 @@ import {
   Clock, Package, Trophy, ExternalLink, X, Settings
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 
 const fmt = (n) => Number(n || 0).toLocaleString('ru-RU');
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : '—';
@@ -168,9 +170,9 @@ const UserManagement = ({ clubId, setModalData }) => {
             <h3 style={{ margin: '0 0 16px', fontSize: 16 }}>Сброс пароля</h3>
             <p style={{ margin: '0 0 12px', fontSize: 13, color: '#64748b' }}>Пользователь: <b>{editingUser.name}</b></p>
             <input type="text" placeholder="Новый пароль" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={{ width: '100%', padding: 10, border: '1px solid #e2e8f0', borderRadius: 8, marginBottom: 16, boxSizing: 'border-box' }} />
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={() => setEditingUser(null)} style={{ flex: 1, padding: 10, background: '#f1f5f9', border: 'none', borderRadius: 8, fontWeight: 600 }}>Отмена</button>
-              <button onClick={handleUpdatePassword} style={{ flex: 1, padding: 10, background: '#3146A6', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600 }}>Сохранить</button>
+            <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>
+              <button onClick={handleSave} disabled={isSaving} style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#4338ca', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14, opacity: isSaving ? 0.6 : 1 }}>Сохранить</button>
+              <button onClick={onClose} style={{ flex: 1, height: 48, borderRadius: 12, backgroundColor: '#f1f5f9', color: '#0f172a', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 14 }}>Отмена</button>
             </div>
           </div>
         </div>
@@ -308,6 +310,7 @@ const TariffModal = ({ isOpen, onClose, clubId, currentSubscription, onSaved }) 
   const [plan, setPlan] = useState(currentSubscription?.plan || 'Starter');
   const [limits, setLimits] = useState(currentSubscription?.limits || { members: 15, coaches: 3, locations: 1 });
   const [isSaving, setIsSaving] = useState(false);
+  const { isOpen: isAlertOpen, modalProps, closeModal, error: showError } = useAlertModal();
 
   if (!isOpen) return null;
 
@@ -327,7 +330,7 @@ const TariffModal = ({ isOpen, onClose, clubId, currentSubscription, onSaved }) 
       onSaved(data.subscription);
       onClose();
     } catch (err) {
-      alert(err.message);
+      showError(err.message);
     } finally {
       setIsSaving(false);
     }

@@ -8,11 +8,14 @@ import { PageLoader } from '../../components/ui/PageLoader';
 import { EventCarousel } from '../../components/features/EventCarousel';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 
 export const Profile = () => {
   const { user, members, attendance, achievements, groups, schedule, activeChildId, clubInfo, studentDashboardPool, studentDashboardLayout, updateMemberProfile, isStateReady } = useAdmin();
   const { t, language } = useTranslation();
+  const { isOpen, modalProps, closeModal, error: showError } = useAlertModal();
   
   if (!isStateReady) return <PageLoader />;
   const [activeTab, setActiveTab] = useState('sports'); // 'sports', 'rpg', or 'settings'
@@ -24,7 +27,7 @@ export const Profile = () => {
   const handlePasswordChange = (e) => {
     e.preventDefault();
     if (!passData.new || passData.new !== passData.confirm) {
-      alert(t('settings.security.pass_mismatch'));
+      showError(t('settings.security.pass_mismatch'));
       return;
     }
     setPassLoading(true);
@@ -496,6 +499,8 @@ export const Profile = () => {
           </div>
         </aside>
       </section>
+      
+      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </main>
   );
 };

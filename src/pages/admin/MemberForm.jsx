@@ -6,6 +6,8 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { FilePicker } from '../../components/ui/FilePicker';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 import { ArrowLeft, Save, Camera, Zap, Star, Plus, Shield, Copy, Check } from 'lucide-react';
 import { uploadBlobFile, fixBlobUrl } from '../../lib/blobClient';
 import { useNotifications } from '../../context/NotificationContext';
@@ -38,6 +40,7 @@ export const MemberForm = () => {
   const { members, addMember, updateMember, user, locations, plans, selectedLocationId, groups, clubInfo, isStateReady, fixBlobUrl } = useAdmin();
   const { t } = useTranslation();
   const { showNotification } = useNotifications();
+  const { isOpen, modalProps, closeModal, error: showError } = useAlertModal();
   const isAdmin = user?.role === 'admin';
 
   if (!isStateReady) return <PageLoader />;
@@ -203,7 +206,7 @@ export const MemberForm = () => {
       }
     } catch (error) {
       console.error('Submit error:', error);
-      alert(error.message || 'Произошла непредвиденная ошибка');
+      showError(error.message || 'Произошла непредвиденная ошибка');
     } finally {
       setIsSaving(false);
     }
@@ -729,6 +732,8 @@ export const MemberForm = () => {
           scrollbar-width: none;
         }
       `}</style>
+      
+      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </div>
   );
 };

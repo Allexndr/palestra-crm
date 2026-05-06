@@ -3,6 +3,8 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
+import { AlertModal } from '../../components/ui/AlertModal';
+import { useAlertModal } from '../../hooks/useModal';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
 import { Shield, PlusCircle, HelpCircle } from 'lucide-react';
@@ -11,6 +13,7 @@ export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { isOpen, modalProps, closeModal, error: showError } = useAlertModal();
   const { login } = useAdmin();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -47,7 +50,7 @@ export const Login = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      alert(error.message || 'Не удалось войти');
+      showError(error.message || 'Не удалось войти');
     }
   };
 
@@ -138,6 +141,8 @@ export const Login = () => {
           </div>
         </div>
       </main>
+      
+      <AlertModal isOpen={isOpen} onClose={closeModal} {...modalProps} />
     </>
   );
 };
