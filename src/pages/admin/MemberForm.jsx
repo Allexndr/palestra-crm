@@ -172,24 +172,37 @@ export const MemberForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.firstName.length < 2 || formData.lastName.length < 2) {
       alert(t('members.name_min_length'));
       return;
     }
     
-    const safeMemberData = { ...formData };
-    // In a real app, passwords shouldn't be stored like this, but we follow the current pattern
-    
-    if (isEditing) {
-      updateMember(id, safeMemberData);
-    } else {
-      const created = addMember(safeMemberData);
-      if (created === false) return;
+    setIsSaving(true);
+    try {
+      const safeMemberData = { ...formData };
+      
+      let success = false;
+      if (isEditing) {
+        success = await updateMember(id, safeMemberData);
+      } else {
+        success = await addMember(safeMemberData);
+      }
+      
+      if (success) {
+        navigate('/admin/members');
+      } else {
+        alert(t('common.error_saving') || 'Ошибка при сохранении данных. Проверьте интернет-соединение.');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      alert(error.message || 'Произошла непредвиденная ошибка');
+    } finally {
+      setIsSaving(false);
     }
-    
-    navigate('/admin/members');
   };
 
   const tabs = [
@@ -576,8 +589,9 @@ export const MemberForm = () => {
           >
             {t('members.save_and_exit')}
           </button>
-          <Button variant="primary" type="submit" className="gap-4 px-16 h-16 text-lg shadow-2xl shadow-primary/30 rounded-3xl w-full sm:w-auto">
-            <Save size={24} /> {isEditing ? t('common.save') : t('members.enroll_btn')}
+          <Button variant="primary" type="submit" disabled={isSaving} className="gap-4 px-16 h-16 text-lg shadow-2xl shadow-primary/30 rounded-3xl w-full sm:w-auto">
+            {isSaving ? <Zap size={24} className="animate-pulse" /> : <Save size={24} />} 
+            {isSaving ? t('common.saving') || 'Сохранение...' : (isEditing ? t('common.save') : t('members.enroll_btn'))}
           </Button>
         </Card>
       </form>

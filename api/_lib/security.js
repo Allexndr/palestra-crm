@@ -1,5 +1,5 @@
-import { sendJson } from './http.js';
-import { getRequestUser, parseCookies } from './supabase.js';
+import { sendJson, parseCookies } from './http.js';
+import { getRequestUser } from './supabase.js';
 
 const allowedMethodsWithoutOrigin = new Set(['GET', 'HEAD', 'OPTIONS']);
 

@@ -12,72 +12,90 @@ function getClubId(user) {
   // For demo users, create a stable club ID based on their user ID or email
   if (user?.isDemo && user?.profile?.id) {
     const seed = user.profile.email || user.profile.id;
-    // Generate a pseudo-UUID v4 based on the seed
+    // Generate a stable pseudo-UUID
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
       hash = ((hash << 5) - hash) + seed.charCodeAt(i);
       hash |= 0;
     }
-    const part1 = Math.abs(hash).toString(16).padStart(8, '0');
-    const part2 = Math.abs(hash * 31).toString(16).padStart(12, '0');
-    return `${part1}-1234-4321-8888-${part2.substring(0, 12)}`;
+    const hex = Math.abs(hash).toString(16).padStart(12, '0');
+    return `00000000-0000-4000-8000-${hex.substring(0, 12)}`;
   }
   return DEMO_CLUB_ID;
 }
 
 export async function getAppState(user) {
-  const clubId = getClubId(user);
+  try {
+    const clubId = getClubId(user);
 
-  if (!hasSupabaseServiceEnv()) {
-    return memoryState;
+    if (!hasSupabaseServiceEnv()) {
+      return memoryState;
+    }
+
+    const supabase = getServiceClient();
+    const { data, error } = await supabase
+      .from('app_state')
+      .select('state')
+      .eq('club_id', clubId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('[getAppState] Supabase error:', error.message);
+      return getNormalizedState(user, memoryState);
+    }
+    
+    if (data?.state) return getNormalizedState(user, data.state);
+
+    const seeded = createSeedState();
+    await saveAppState(user, seeded);
+    return getNormalizedState(user, seeded);
+  } catch (err) {
+    console.error('[getAppState] Crash:', err.message);
+    return getNormalizedState(user, memoryState);
   }
-
-  const supabase = getServiceClient();
-  const { data, error } = await supabase
-    .from('app_state')
-    .select('state')
-    .eq('club_id', clubId)
-    .maybeSingle();
-
-  if (error) throw error;
-  if (data?.state) return getNormalizedState(user, data.state);
-
-  const seeded = createSeedState();
-  await saveAppState(user, seeded);
-  return getNormalizedState(user, seeded);
 }
 
 export async function saveAppState(user, state) {
-  const clubId = getClubId(user);
-
-  if (!hasSupabaseServiceEnv()) {
-    memoryState = { ...memoryState, ...state };
-    return memoryState;
-  }
-
-  const supabase = getServiceClient();
-  const { data: existing, error: readError } = await supabase
-    .from('app_state')
-    .select('state')
-    .eq('club_id', clubId)
-    .maybeSingle();
-
-  if (readError) throw readError;
-
-  const mergedState = { ...(existing?.state || {}), ...state };
-  const { error } = await supabase
-    .from('app_state')
-    .upsert({ club_id: clubId, state: mergedState, updated_at: new Date().toISOString() }, { onConflict: 'club_id' });
-
-  if (error) throw error;
-  
   try {
-    await syncNormalizedState(user, mergedState);
-  } catch (syncError) {
-    console.error('Failed to sync normalized state, but app_state was saved:', syncError);
+    const clubId = getClubId(user);
+
+    if (!hasSupabaseServiceEnv()) {
+      memoryState = { ...memoryState, ...state };
+      return memoryState;
+    }
+
+    const supabase = getServiceClient();
+    const { data: existing, error: readError } = await supabase
+      .from('app_state')
+      .select('state')
+      .eq('club_id', clubId)
+      .maybeSingle();
+
+    if (readError) {
+      console.error('[saveAppState] Read error:', readError.message);
+    }
+
+    const mergedState = { ...(existing?.state || {}), ...state };
+    const { error } = await supabase
+      .from('app_state')
+      .upsert({ club_id: clubId, state: mergedState, updated_at: new Date().toISOString() }, { onConflict: 'club_id' });
+
+    if (error) {
+      console.error('[saveAppState] Upsert error:', error.message);
+      throw error;
+    }
+    
+    try {
+      await syncNormalizedState(user, mergedState);
+    } catch (syncError) {
+      console.error('Failed to sync normalized state, but app_state was saved:', syncError);
+    }
+    
+    return mergedState;
+  } catch (err) {
+    console.error('[saveAppState] Crash:', err.message);
+    return state;
   }
-  
-  return mergedState;
 }
 
 export async function ensureClubForRegistration(formData, ownerAuthUserId = null) {

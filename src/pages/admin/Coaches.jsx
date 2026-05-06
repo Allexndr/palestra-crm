@@ -42,9 +42,9 @@ export const Coaches = () => {
     lastName: '',
     phone: '',
     email: '',
-    specialization: sports[0] || '',
+    specialization: (sports || [])[0] || '',
     experience: '',
-    locationId: locations[0]?.id || '',
+    locationId: (locations || [])[0]?.id || '',
     bio: '',
     avatar: '',
     salaryRate: '2000',
@@ -118,9 +118,9 @@ export const Coaches = () => {
     }
   };
 
-  const filteredCoaches = coaches.filter(c => 
-    `${c.firstName} ${c.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCoaches = (coaches || []).filter(c => 
+    `${c.firstName || ''} ${c.lastName || ''}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.specialization || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -175,7 +175,7 @@ export const Coaches = () => {
               <div className="input-group">
                 <label className="input-label">{t('coaches.form.spec')}</label>
                 <select className="input-field" value={formData.specialization} onChange={e => setFormData({...formData, specialization: e.target.value})}>
-                  {sports.map(s => <option key={s} value={s}>{s}</option>)}
+                  {(sports || []).map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <Input label={t('coaches.form.exp')} type="number" value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} />
@@ -183,7 +183,7 @@ export const Coaches = () => {
                 <label className="input-label">{t('coaches.form.location')}</label>
                 <select className="input-field" value={formData.locationId} onChange={e => setFormData({...formData, locationId: e.target.value})}>
                   <option value="">{t('coaches.form.all_locations')}</option>
-                  {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                  {(locations || []).map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                 </select>
               </div>
             </div>
@@ -284,7 +284,7 @@ export const Coaches = () => {
                   <Award size={14} className="text-muted" /> <span>{t('coaches.list.exp_years', { count: coach.experience })}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-secondary">
-                  <MapPin size={14} className="text-muted" /> <span>{locations.find(l => l.id === coach.locationId)?.name || t('coaches.form.all_locations')}</span>
+                  <MapPin size={14} className="text-muted" /> <span>{(locations || []).find(l => l.id === coach.locationId)?.name || t('coaches.form.all_locations')}</span>
                 </div>
                 {coach.phone && (
                   <div className="flex items-center gap-2 text-sm text-secondary">

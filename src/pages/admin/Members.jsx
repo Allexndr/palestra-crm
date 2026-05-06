@@ -16,17 +16,17 @@ export const Members = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [memberToDelete, setMemberToDelete] = useState(null);
 
-  const currentCoach = coaches.find(c => c.name === user?.name || c.email === user?.email);
-  const myGroupIds = groups.filter(g => g.coachId === currentCoach?.id).map(g => g.id);
+  const currentCoach = (coaches || []).find(c => c.name === user?.name || c.email === user?.email);
+  const myGroupIds = (groups || []).filter(g => g.coachId === currentCoach?.id).map(g => g.id);
 
-  const filteredMembers = members.filter(m => {
+  const filteredMembers = (members || []).filter(m => {
     const fullName = `${m.firstName || ''} ${m.lastName || ''}`.toLowerCase();
     const matchesSearch = fullName.includes(searchTerm.toLowerCase()) ||
                           (m.phone && m.phone.includes(searchTerm));
     const matchesLocation = selectedLocationId === 'all' || m.locationId === selectedLocationId;
     
     if (isCoach) {
-      return matchesSearch && matchesLocation && myGroupIds.includes(m.groupId);
+      return matchesSearch && matchesLocation && (myGroupIds || []).includes(m.groupId);
     }
     return matchesSearch && matchesLocation;
   });
@@ -99,7 +99,7 @@ export const Members = () => {
                   <td className="py-5 px-6 border-y border-slate-50">
                     <div className="flex items-center gap-3">
                       <span style={{ padding: '6px 12px', borderRadius: '10px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', fontSize: '11px', fontWeight: '800' }}>
-                        {groups.find(g => g.id === member.groupId)?.name || t('members.no_group')}
+                        {(groups || []).find(g => g.id === member.groupId)?.name || t('members.no_group')}
                       </span>
                       <span className="text-slate-400 font-medium">/</span>
                       <span style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--color-text-secondary)' }}>

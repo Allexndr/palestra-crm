@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import { parseCookies } from './http.js';
-export { parseCookies };
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -41,28 +40,44 @@ export function getServiceClient() {
 }
 
 export async function getRequestUser(req) {
-  const cookies = parseCookies(req);
-  const token = cookies['palestra-access-token'];
-  const demoRole = cookies['palestra-demo-role'];
+  try {
+    const cookies = parseCookies(req);
+    const token = cookies['palestra-access-token'];
+    const demoRole = cookies['palestra-demo-role'];
 
-  if (token && hasSupabaseEnv()) {
-    const { data, error } = await getAnonClient().auth.getUser(token);
-    if (!error && data?.user) {
-      const profile = await getProfileByAuthUserId(data.user.id);
+    if (token && hasSupabaseEnv()) {
+      try {
+        const { data, error } = await getAnonClient().auth.getUser(token);
+        if (!error && data?.user) {
+          // If we have service key, get full profile. Otherwise return minimal user.
+          if (hasSupabaseServiceEnv()) {
+            const profile = await getProfileByAuthUserId(data.user.id);
+            return {
+              authUser: data.user,
+              profile,
+              isDemo: false,
+            };
+          }
+          return {
+            authUser: data.user,
+            profile: { id: data.user.id, role: 'admin', email: data.user.email, name: data.user.email },
+            isDemo: false,
+          };
+        }
+      } catch (authError) {
+        console.error('Supabase auth check failed:', authError.message);
+      }
+    }
+
+    if (demoRole) {
       return {
-        authUser: data.user,
-        profile,
-        isDemo: false,
+        authUser: null,
+        profile: createDemoProfile(demoRole),
+        isDemo: true,
       };
     }
-  }
-
-  if (demoRole) {
-    return {
-      authUser: null,
-      profile: createDemoProfile(demoRole),
-      isDemo: true,
-    };
+  } catch (err) {
+    console.error('Critical failure in getRequestUser:', err);
   }
 
   return null;
@@ -80,14 +95,23 @@ export function createDemoProfile(role = 'admin') {
 }
 
 export async function getProfileByAuthUserId(authUserId) {
-  const { data, error } = await getServiceClient()
-    .from('profiles')
-    .select('*')
-    .eq('auth_user_id', authUserId)
-    .maybeSingle();
+  try {
+    if (!hasSupabaseServiceEnv()) return null;
+    const { data, error } = await getServiceClient()
+      .from('profiles')
+      .select('*')
+      .eq('auth_user_id', authUserId)
+      .maybeSingle();
 
-  if (error) throw error;
-  return data;
+    if (error) {
+      console.error('Error fetching profile:', error.message);
+      return null;
+    }
+    return data;
+  } catch (err) {
+    console.error('Profile fetch crash:', err.message);
+    return null;
+  }
 }
 
 export function mapProfileToUser(profile) {

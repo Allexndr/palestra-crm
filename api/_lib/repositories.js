@@ -245,54 +245,58 @@ function mapEvent(row, clubId) {
 }
 
 export async function syncNormalizedState(user, state) {
-  if (!hasSupabaseServiceEnv() || user?.isDemo) return;
+  try {
+    if (!hasSupabaseServiceEnv() || user?.isDemo) return;
 
-  const clubId = user.profile.club_id;
-  const supabase = getServiceClient();
+    const clubId = user.profile.club_id;
+    const supabase = getServiceClient();
 
-  const clubInfo = state.clubInfo || {};
-  await supabase
-    .from('clubs')
-    .update({
-      name: clubInfo.name || 'Palestra Fight Club',
-      logo_blob_url: clubInfo.logo || '/palestra-logo-nav-full.png',
-      primary_color: clubInfo.primaryColor || '#3146A6',
+    const clubInfo = state.clubInfo || {};
+    await supabase
+      .from('clubs')
+      .update({
+        name: clubInfo.name || 'Palestra Fight Club',
+        logo_blob_url: clubInfo.logo || '/palestra-logo-nav-full.png',
+        primary_color: clubInfo.primaryColor || '#3146A6',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', clubId);
+
+    await replaceRows(supabase, 'locations', clubId, withValidIds(tableRows(state, 'locations')).map((row) => mapLocation(row, clubId)));
+    await replaceRows(supabase, 'coaches', clubId, withValidIds(tableRows(state, 'coaches')).map((row) => mapCoach(row, clubId)));
+    await replaceRows(supabase, 'groups', clubId, withValidIds(tableRows(state, 'groups')).map((row) => mapGroup(row, clubId)));
+    await replaceRows(
+      supabase,
+      'parents',
+      clubId,
+      uniqueById(tableRows(state, 'members')
+        .filter((row) => isUuid(row?.parentId) && (row.parentName || row.parentPhone))
+        .map((row) => mapParent(row, clubId)))
+    );
+    await replaceRows(supabase, 'members', clubId, withValidIds(tableRows(state, 'members')).map((row) => mapMember(row, clubId)));
+    await replaceRows(supabase, 'leads', clubId, withValidIds(tableRows(state, 'leads')).map((row) => mapLead(row, clubId)));
+    await replaceRows(supabase, 'schedule_sessions', clubId, withValidIds(tableRows(state, 'schedule')).map((row) => mapSchedule(row, clubId)));
+    await replaceRows(supabase, 'plans', clubId, withValidIds(tableRows(state, 'plans')).map((row) => mapPlan(row, clubId)));
+    await replaceRows(supabase, 'financial_transactions', clubId, withValidIds(tableRows(state, 'transactions')).map((row) => mapTransaction(row, clubId)));
+    await replaceRows(supabase, 'achievements', clubId, withValidIds(tableRows(state, 'achievements')).map((row) => mapAchievement(row, clubId)));
+    await replaceRows(supabase, 'leagues', clubId, withValidIds(tableRows(state, 'leagues')).map((row) => mapLeague(row, clubId)));
+    await replaceRows(supabase, 'posts', clubId, withValidIds(tableRows(state, 'posts')).map((row) => mapPost(row, clubId)));
+    await replaceRows(supabase, 'products', clubId, withValidIds(tableRows(state, 'products')).map((row) => mapProduct(row, clubId)));
+    await replaceRows(supabase, 'orders', clubId, withValidIds(tableRows(state, 'orders')).map((row) => mapOrder(row, clubId)));
+    await replaceRows(supabase, 'activities', clubId, withValidIds(tableRows(state, 'activities')).map((row) => mapActivity(row, clubId)));
+    await replaceRows(supabase, 'events', clubId, withValidIds(tableRows(state, 'events')).map((row) => mapEvent(row, clubId)));
+
+    const award = state.monthlyAward || {};
+    await supabase.from('monthly_awards').upsert({
+      club_id: clubId,
+      title: award.title || '',
+      description: award.description || '',
+      days_left: asNumber(award.daysLeft),
       updated_at: new Date().toISOString(),
-    })
-    .eq('id', clubId);
-
-  await replaceRows(supabase, 'locations', clubId, withValidIds(tableRows(state, 'locations')).map((row) => mapLocation(row, clubId)));
-  await replaceRows(supabase, 'coaches', clubId, withValidIds(tableRows(state, 'coaches')).map((row) => mapCoach(row, clubId)));
-  await replaceRows(supabase, 'groups', clubId, withValidIds(tableRows(state, 'groups')).map((row) => mapGroup(row, clubId)));
-  await replaceRows(
-    supabase,
-    'parents',
-    clubId,
-    uniqueById(tableRows(state, 'members')
-      .filter((row) => isUuid(row?.parentId) && (row.parentName || row.parentPhone))
-      .map((row) => mapParent(row, clubId)))
-  );
-  await replaceRows(supabase, 'members', clubId, withValidIds(tableRows(state, 'members')).map((row) => mapMember(row, clubId)));
-  await replaceRows(supabase, 'leads', clubId, withValidIds(tableRows(state, 'leads')).map((row) => mapLead(row, clubId)));
-  await replaceRows(supabase, 'schedule_sessions', clubId, withValidIds(tableRows(state, 'schedule')).map((row) => mapSchedule(row, clubId)));
-  await replaceRows(supabase, 'plans', clubId, withValidIds(tableRows(state, 'plans')).map((row) => mapPlan(row, clubId)));
-  await replaceRows(supabase, 'financial_transactions', clubId, withValidIds(tableRows(state, 'transactions')).map((row) => mapTransaction(row, clubId)));
-  await replaceRows(supabase, 'achievements', clubId, withValidIds(tableRows(state, 'achievements')).map((row) => mapAchievement(row, clubId)));
-  await replaceRows(supabase, 'leagues', clubId, withValidIds(tableRows(state, 'leagues')).map((row) => mapLeague(row, clubId)));
-  await replaceRows(supabase, 'posts', clubId, withValidIds(tableRows(state, 'posts')).map((row) => mapPost(row, clubId)));
-  await replaceRows(supabase, 'products', clubId, withValidIds(tableRows(state, 'products')).map((row) => mapProduct(row, clubId)));
-  await replaceRows(supabase, 'orders', clubId, withValidIds(tableRows(state, 'orders')).map((row) => mapOrder(row, clubId)));
-  await replaceRows(supabase, 'activities', clubId, withValidIds(tableRows(state, 'activities')).map((row) => mapActivity(row, clubId)));
-  await replaceRows(supabase, 'events', clubId, withValidIds(tableRows(state, 'events')).map((row) => mapEvent(row, clubId)));
-
-  const award = state.monthlyAward || {};
-  await supabase.from('monthly_awards').upsert({
-    club_id: clubId,
-    title: award.title || '',
-    description: award.description || '',
-    days_left: asNumber(award.daysLeft),
-    updated_at: new Date().toISOString(),
-  }, { onConflict: 'club_id' });
+    }, { onConflict: 'club_id' });
+  } catch (err) {
+    console.error('[syncNormalizedState] Critical sync failure:', err.message);
+  }
 }
 
 async function selectByClub(supabase, table, clubId, columns = '*') {

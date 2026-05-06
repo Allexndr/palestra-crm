@@ -248,40 +248,54 @@ export const AdminProvider = ({ children }) => {
     };
   }, []);
 
+  const persistState = async (updates = {}) => {
+    if (!isStateReady) return false;
+    
+    try {
+      const state = {
+        members, leads, schedule, locations, groups, activities, leagues, plans, posts,
+        coaches, events, attendance, finances, achievements, monthlyAward,
+        quests, feedbacks,
+        automations, messages,
+        selectedLocationId, clubInfo, subscription,
+        dashboardLayout,
+        studentDashboardPool,
+        studentDashboardLayout,
+        partners,
+        ...updates
+      };
+
+      const impersonatedClubId = sessionStorage.getItem('palestra-impersonate-club-id');
+      const headers = { 'Content-Type': 'application/json' };
+      if (impersonatedClubId) {
+        headers['x-palestra-club-id'] = impersonatedClubId;
+      }
+
+      const response = await fetch('/api/app/state', {
+        method: 'PUT',
+        credentials: 'include',
+        headers,
+        body: JSON.stringify({ state }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('State persisted successfully');
+      return true;
+    } catch (error) {
+      console.error('Failed to persist Palestra state', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
     if (!isStateReady) return;
-
-    const controller = new AbortController();
-    const state = {
-      members, leads, schedule, locations, groups, activities, leagues, plans, posts,
-      coaches, events, attendance, finances, achievements, monthlyAward,
-      quests, feedbacks,
-      automations, messages,
-      selectedLocationId, clubInfo, subscription,
-      dashboardLayout,
-      studentDashboardPool,
-      studentDashboardLayout,
-      partners,
-    };
-
-    const impersonatedClubId = sessionStorage.getItem('palestra-impersonate-club-id');
-    const headers = { 'Content-Type': 'application/json' };
-    if (impersonatedClubId) {
-      headers['x-palestra-club-id'] = impersonatedClubId;
-    }
-
-    fetch('/api/app/state', {
-      method: 'PUT',
-      credentials: 'include',
-      headers,
-      body: JSON.stringify({ state }),
-      ...(process.env.NODE_ENV !== 'test' ? { signal: controller.signal } : {}),
-    }).catch((error) => {
-      if (error.name !== 'AbortError') console.error('Failed to persist Palestra state', error);
-    });
-
+    const timeout = setTimeout(() => persistState(), 2000); // Debounced auto-save
     localStorage.setItem('palestra_posts', JSON.stringify(posts));
-    return () => controller.abort();
+    return () => clearTimeout(timeout);
   }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches, dashboardLayout, studentDashboardPool, studentDashboardLayout, messages, partners]);
 
   // --- AUTOMATIONS ---
@@ -417,27 +431,41 @@ export const AdminProvider = ({ children }) => {
     logActivity('Обновлена конфигурация тарифа Palestra', 'success');
   };
 
-  const addGroup = (group) => {
+  const addGroup = async (group) => {
     if (!ensureCanCreate('groups', 'количество групп')) return false;
     const newGroup = { ...group, id: createId() };
-    setGroups([...groups, newGroup]);
+    const updatedGroups = [...groups, newGroup];
+    setGroups(updatedGroups);
     logActivity(`Создана новая группа: ${group.name}`, 'info');
-    return true;
+    return await persistState({ groups: updatedGroups });
   };
 
-  const updateGroup = (id, updatedData) => {
-    setGroups(groups.map(g => g.id === id ? { ...g, ...updatedData } : g));
+  const updateGroup = async (id, updatedData) => {
+    const updatedGroups = groups.map(g => g.id === id ? { ...g, ...updatedData } : g);
+    setGroups(updatedGroups);
+    return await persistState({ groups: updatedGroups });
   };
 
-  const removeGroup = (id) => {
+  const removeGroup = async (id) => {
     const group = groups.find(g => g.id === id);
-    setGroups(groups.filter(g => g.id !== id));
-    setMembers(members.map(m => m.groupId === id ? { ...m, groupId: '' } : m));
-    // Cascade: remove schedule entries for this group
+    const updatedGroups = groups.filter(g => g.id !== id);
+    setGroups(updatedGroups);
+    
+    const updatedMembers = members.map(m => m.groupId === id ? { ...m, groupId: '' } : m);
+    setMembers(updatedMembers);
+    
+    let updatedSchedule = schedule;
     if (group) {
-      setSchedule(prev => prev.filter(s => s.groupName !== group.name));
+      updatedSchedule = schedule.filter(s => s.groupName !== group.name);
+      setSchedule(updatedSchedule);
       logActivity(`Удалена группа: ${group.name}`, 'warning');
     }
+    
+    return await persistState({ 
+      groups: updatedGroups,
+      members: updatedMembers,
+      schedule: updatedSchedule
+    });
   };
 
   const addLeague = (leagueData) => {
@@ -492,7 +520,7 @@ export const AdminProvider = ({ children }) => {
     setUser(null);
   };
 
-  const addMember = (memberData) => {
+  const addMember = async (memberData) => {
     if (!ensureCanCreate('members', 'количество учеников')) return false;
     const newMember = { 
       id: createId(), 
@@ -503,12 +531,17 @@ export const AdminProvider = ({ children }) => {
       avatar: '',
       ...memberData 
     };
-    setMembers(prev => [...prev, newMember]);
+    
+    const updatedMembers = [...members, newMember];
+    setMembers(updatedMembers);
     logActivity(`Новый ученик: ${memberData.firstName} ${memberData.lastName}`, 'success');
+    
     if (memberData.paidAmount && canUseFeature('finance')) {
       addTransaction({ amount: parseFloat(memberData.paidAmount), type: 'income', description: `Оплата: ${memberData.firstName} ${memberData.lastName}` });
     }
-    return true;
+    
+    const success = await persistState({ members: updatedMembers });
+    return success;
   };
 
   const removeMember = (id) => {
@@ -517,8 +550,11 @@ export const AdminProvider = ({ children }) => {
     if (member) logActivity(`Исключен ученик: ${member.firstName} ${member.lastName}`, 'warning');
   };
   
-  const updateMember = (id, updatedData) => {
-    setMembers(prev => prev.map(m => m.id === id ? { ...m, ...updatedData } : m));
+  const updateMember = async (id, updatedData) => {
+    const updatedMembers = members.map(m => m.id === id ? { ...m, ...updatedData } : m);
+    setMembers(updatedMembers);
+    const success = await persistState({ members: updatedMembers });
+    return success;
   };
 
   const addLead = (leadData) => {
@@ -742,24 +778,30 @@ export const AdminProvider = ({ children }) => {
   };
 
 
-  const addCoach = (coachData) => {
+  const addCoach = async (coachData) => {
     if (!ensureCanCreate('coaches', 'количество тренеров')) return false;
     const newCoach = { id: createId(), createdAt: new Date().toISOString(), ...coachData };
-    setCoaches(prev => [...prev, newCoach]);
-    logActivity(`Зарегистрирован тренер: ${coachData.name}`, 'success');
-    return true;
+    const updatedCoaches = [...coaches, newCoach];
+    setCoaches(updatedCoaches);
+    logActivity(`Зарегистрирован тренер: ${coachData.firstName} ${coachData.lastName}`, 'success');
+    return await persistState({ coaches: updatedCoaches });
   };
 
-  const removeCoach = (id) => {
+  const removeCoach = async (id) => {
     const coach = coaches.find(c => c.id === id);
-    setCoaches(prev => prev.filter(c => c.id !== id));
+    const updatedCoaches = coaches.filter(c => c.id !== id);
+    setCoaches(updatedCoaches);
     // Cascade: unassign coach from groups
-    setGroups(prev => prev.map(g => g.coachId === id ? { ...g, coachId: '' } : g));
-    if (coach) logActivity(`Удалён тренер: ${coach.name}`, 'warning');
+    const updatedGroups = groups.map(g => g.coachId === id ? { ...g, coachId: '' } : g);
+    setGroups(updatedGroups);
+    if (coach) logActivity(`Удалён тренер: ${coach.firstName} ${coach.lastName}`, 'warning');
+    return await persistState({ coaches: updatedCoaches, groups: updatedGroups });
   };
 
-  const updateCoach = (id, updatedData) => {
-    setCoaches(prev => prev.map(c => c.id === id ? { ...c, ...updatedData } : c));
+  const updateCoach = async (id, updatedData) => {
+    const updatedCoaches = coaches.map(c => c.id === id ? { ...c, ...updatedData } : c);
+    setCoaches(updatedCoaches);
+    return await persistState({ coaches: updatedCoaches });
   };
 
   const addEvent = (eventData) => {

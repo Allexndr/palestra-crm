@@ -24,9 +24,9 @@ export const MemberDetail = () => {
     );
   }
 
-  const groupName = groups.find(g => g.id === member.groupId)?.name || t('member_detail.without_group');
-  const locationName = locations.find(l => l.id === member.locationId)?.name || t('member_detail.main_branch');
-  const planInfo = plans.find(p => p.name === member.plan);
+  const groupName = (groups || []).find(g => g.id === member.groupId)?.name || t('member_detail.without_group');
+  const locationName = (locations || []).find(l => l.id === member.locationId)?.name || t('member_detail.main_branch');
+  const planInfo = (plans || []).find(p => p.name === member.plan);
 
   const stats = [
     { id: 'strength', label: t('member_detail.stats_strength'), value: member.strength || 50, icon: '💪', color: 'bg-red-500' },
