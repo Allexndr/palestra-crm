@@ -76,6 +76,7 @@ function mapCoach(row, clubId) {
     bio: row.bio || row.experience || null,
     avatar_blob_url: row.avatar || row.avatarUrl || null,
     tg_chat_id: row.tg_chat_id || null,
+    tg_lang: row.tg_lang || 'ru',
     tg_link_code: row.tg_link_code || null,
     tg_user_info: row.tg_user_info || null,
   };
@@ -102,6 +103,7 @@ function mapMember(row, clubId) {
     endurance: asNumber(metrics.endurance || row.endurance),
     avatar_blob_url: row.avatar || null,
     tg_chat_id: row.tg_chat_id || null,
+    tg_lang: row.tg_lang || 'ru',
     tg_link_code: row.tg_link_code || null,
     tg_user_info: row.tg_user_info || null,
     created_at: asDate(row.createdAt),
