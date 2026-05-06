@@ -91,7 +91,6 @@ export const Sidebar = () => {
   };
 
   const filteredLinks = ADMIN_NAV_LINKS.filter(link => link.roles.includes(user?.role || 'admin'));
-  const roleLabel = user?.role === 'admin' ? t('roles.admin') : t('roles.coach');
 
   return (
     <aside className="member-desktop-sidebar desktop-only" style={{ width: sidebarWidth, minWidth: sidebarWidth, overflow: collapsed ? 'hidden' : undefined }}>
@@ -127,15 +126,6 @@ export const Sidebar = () => {
         <ClubLogo src={clubInfo?.logo} name={clubInfo?.name} height={collapsed ? 40 : 100} />
       </NavLink>
 
-      {!collapsed && (
-      <NavLink to="/admin/settings" className="member-user-card" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-        <div className="member-user-avatar">{user?.name?.charAt(0) || 'U'}</div>
-        <div>
-          <p>{user?.name || roleLabel}</p>
-          <span>{roleLabel}</span>
-        </div>
-      </NavLink>
-      )}
 
       {!collapsed && <div className="sidebar-location-switcher" style={{ margin: 'var(--space-4) 0', position: 'relative' }}>
         <div 

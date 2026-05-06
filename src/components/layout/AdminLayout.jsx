@@ -36,6 +36,7 @@ export const AdminLayout = () => {
   if (!isStateReady) return <PageLoader />;
 
   const filteredLinks = ADMIN_NAV_LINKS.filter(link => link.roles.includes(user?.role || 'admin'));
+  const roleLabel = user?.role === 'admin' ? t('roles.admin') : user?.role === 'coach' ? t('roles.coach') : t('roles.admin');
 
   return (
     <div className="member-app-shell">
@@ -187,8 +188,9 @@ export const AdminLayout = () => {
               <h1 className="mobile-only" style={{ fontSize: '1.1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 800 }}>{pageTitle}</h1>
             </div>
           </div>
-          <Link to="/admin/settings" className="member-header-pill desktop-only" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-            <span>{user?.email || `${user?.role || 'admin'}@palestra.fit`}</span>
+          <Link to="/admin/settings" className="member-header-pill desktop-only" style={{ textDecoration: 'none', cursor: 'pointer', flexDirection: 'column', alignItems: 'flex-end', gap: '2px', padding: '8px 16px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-text)' }}>{user?.name || roleLabel}</span>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--color-text-muted)', letterSpacing: '0.04em' }}>{user?.email || `${user?.role || 'admin'}@palestra.fit`}</span>
           </Link>
         </header>
 
