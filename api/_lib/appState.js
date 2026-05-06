@@ -76,6 +76,14 @@ export async function saveAppState(user, state) {
     }
 
     const mergedState = { ...(existing?.state || {}), ...state };
+    
+    // Safety check: ensure club still exists before upserting state
+    const { data: clubCheck } = await supabase.from('clubs').select('id').eq('id', clubId).maybeSingle();
+    if (!clubCheck) {
+      console.warn('[saveAppState] Club no longer exists, skipping state save');
+      return mergedState;
+    }
+
     const { error } = await supabase
       .from('app_state')
       .upsert({ club_id: clubId, state: mergedState, updated_at: new Date().toISOString() }, { onConflict: 'club_id' });

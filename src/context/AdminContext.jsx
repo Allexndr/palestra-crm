@@ -1056,6 +1056,7 @@ export const AdminProvider = ({ children }) => {
       try {
         const response = await fetch('/api/auth/me', { method: 'DELETE', credentials: 'include' });
         if (response.ok) {
+          localStorage.clear();
           setUser(null);
           window.location.href = '/';
           return true;

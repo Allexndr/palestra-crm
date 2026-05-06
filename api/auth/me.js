@@ -11,6 +11,21 @@ export default async function handler(req, res) {
 
   try {
     const requestUser = await getRequestUser(req);
+    
+    if (req.method === 'DELETE') {
+      if (!requestUser || requestUser.isDemo) {
+        return sendJson(res, 401, { error: 'Unauthorized or demo account' });
+      }
+
+      const clubId = requestUser.profile?.club_id;
+      if (clubId && clubId !== '00000000-0000-0000-0000-000000000001') {
+        const { deleteClubCompletely } = await import('./_lib/repositories.js');
+        await deleteClubCompletely(clubId);
+      }
+
+      return sendJson(res, 200, { success: true });
+    }
+
     return sendJson(res, 200, { user: mapProfileToUser(requestUser?.profile) });
   } catch (error) {
     return safeError(res, error, 'Unable to read session');

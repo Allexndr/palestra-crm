@@ -444,3 +444,40 @@ export async function getNormalizedState(user, fallbackState = createSeedState()
     },
   };
 }
+export async function deleteClubCompletely(clubId) {
+  if (!hasSupabaseServiceEnv() || !isUuid(clubId)) return;
+  const supabase = getServiceClient();
+
+  const tables = [
+    'app_state',
+    'locations',
+    'coaches',
+    'groups',
+    'members',
+    'parents',
+    'leads',
+    'schedule_sessions',
+    'plans',
+    'financial_transactions',
+    'achievements',
+    'leagues',
+    'posts',
+    'products',
+    'orders',
+    'activities',
+    'events',
+    'monthly_awards'
+  ];
+
+  for (const table of tables) {
+    try {
+      await supabase.from(table).delete().eq('club_id', clubId);
+    } catch (err) {
+      console.warn(`Failed to clean up table ${table}:`, err.message);
+    }
+  }
+
+  // Delete profiles and finally the club
+  await supabase.from('profiles').delete().eq('club_id', clubId);
+  await supabase.from('clubs').delete().eq('id', clubId);
+}
