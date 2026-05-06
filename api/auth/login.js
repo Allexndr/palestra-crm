@@ -5,8 +5,7 @@ import { createDemoProfile, getAnonClient, getProfileByAuthUserId, hasSupabaseEn
 import { loginSchema, parseOrThrow } from '../_lib/validation.js';
 
 function setDemoCookie(res, role) {
-  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
-  res.setHeader('Set-Cookie', `palestra-demo-role=${encodeURIComponent(role)}; HttpOnly;${secure} SameSite=Lax; Path=/; Max-Age=${60 * 60 * 24 * 7}`);
+  res.setHeader('Set-Cookie', `palestra-demo-role=${encodeURIComponent(role)}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=${60 * 60 * 24 * 7}`);
 }
 
 export default async function handler(req, res) {

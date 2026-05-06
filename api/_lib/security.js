@@ -32,7 +32,8 @@ export async function requireUser(req, res, { allowDemo = false } = {}) {
     return requestUser;
   }
 
-  sendJson(res, 401, { error: 'Unauthorized' });
+  const cookies = Object.keys(require('./supabase.js').parseCookies(req));
+  sendJson(res, 401, { error: 'Unauthorized', foundCookies: cookies });
   return null;
 }
 
