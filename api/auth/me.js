@@ -1,7 +1,8 @@
 import { sendJson, clearSessionCookies } from '../_lib/http.js';
 import { rateLimit } from '../_lib/rateLimit.js';
 import { safeError } from '../_lib/security.js';
-import { getRequestUser, mapProfileToUser } from '../_lib/supabase.js';
+import { getRequestUser, mapProfileToUser, getServiceClient } from '../_lib/supabase.js';
+import { notifyAccountDeleted, logNotification } from '../_lib/telegram.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'DELETE') return sendJson(res, 405, { error: 'Method not allowed' });
@@ -23,13 +24,30 @@ export default async function handler(req, res) {
         await deleteClubCompletely(clubId);
       }
 
+      // Get user data for notification before deletion
+      const userData = mapProfileToUser(requestUser?.profile);
+      const tgChatId = requestUser?.profile?.tg_chat_id;
+
       // Delete the Supabase Auth user so they can't log in again
       const authUserId = requestUser.authUser?.id;
+      const supabase = getServiceClient();
+      
       if (authUserId) {
-        const { getServiceClient, hasSupabaseServiceEnv } = await import('../_lib/supabase.js');
+        const { hasSupabaseServiceEnv } = await import('../_lib/supabase.js');
         if (hasSupabaseServiceEnv()) {
-          await getServiceClient().auth.admin.deleteUser(authUserId);
+          await supabase.auth.admin.deleteUser(authUserId);
         }
+      }
+
+      // Send Telegram notification if user has linked Telegram
+      if (tgChatId && userData) {
+        await notifyAccountDeleted(tgChatId, userData, new Date().toISOString());
+        await logNotification(supabase, {
+          userId: requestUser.profile.id,
+          type: 'account_deleted',
+          status: 'sent',
+          content: 'Account deleted notification sent via Telegram'
+        });
       }
 
       clearSessionCookies(res);

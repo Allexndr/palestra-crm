@@ -522,6 +522,10 @@ export const AdminProvider = ({ children }) => {
 
   const addMember = async (memberData) => {
     if (!ensureCanCreate('members', 'количество учеников')) return false;
+    
+    // Generate Telegram link code for students to connect their Telegram
+    const tgLinkCode = 'STU-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    
     const newMember = { 
       id: createId(), 
       createdAt: new Date().toISOString(), 
@@ -529,6 +533,7 @@ export const AdminProvider = ({ children }) => {
       level: 'Новичок',
       parentId: memberData.hasParent ? createId() : memberData.parentId,
       avatar: '',
+      tg_link_code: tgLinkCode,
       ...memberData 
     };
     
@@ -780,7 +785,11 @@ export const AdminProvider = ({ children }) => {
 
   const addCoach = async (coachData) => {
     if (!ensureCanCreate('coaches', 'количество тренеров')) return false;
-    const newCoach = { id: createId(), createdAt: new Date().toISOString(), ...coachData };
+    
+    // Generate Telegram link code for coaches
+    const tgLinkCode = 'STU-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+    
+    const newCoach = { id: createId(), createdAt: new Date().toISOString(), tg_link_code: tgLinkCode, ...coachData };
     const updatedCoaches = [...coaches, newCoach];
     setCoaches(updatedCoaches);
     logActivity(`Зарегистрирован тренер: ${coachData.firstName} ${coachData.lastName}`, 'success');

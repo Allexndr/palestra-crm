@@ -50,6 +50,34 @@ export default async function handler(req, res) {
         });
       }
 
+      // 1.1 Check: existing student/coach/parent cannot register as admin
+      const { data: existingByEmail } = await supabase
+        .from('profiles')
+        .select('id, role')
+        .eq('email', formData.email)
+        .in('role', ['student', 'coach', 'parent'])
+        .maybeSingle();
+      
+      const { data: existingByPhone } = await supabase
+        .from('profiles')
+        .select('id, role')
+        .eq('phone', normalizedPhone)
+        .in('role', ['student', 'coach', 'parent'])
+        .maybeSingle();
+
+      const existingNonAdmin = existingByEmail || existingByPhone;
+      if (existingNonAdmin) {
+        return sendJson(res, 400, {
+          error: 'Пользователь уже существует как ученик, тренер или родитель',
+          details: {
+            fieldErrors: {
+              email: existingByEmail ? ['Этот email уже используется как ' + existingByEmail.role] : undefined,
+              phone: existingByPhone ? ['Этот телефон уже используется как ' + existingByPhone.role] : undefined
+            }
+          }
+        });
+      }
+
       // 2. Create Auth User
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
         email: formData.email,

@@ -68,10 +68,16 @@ function mapCoach(row, clubId) {
     id: row.id,
     club_id: clubId,
     name: [row.firstName, row.lastName].filter(Boolean).join(' ') || row.name || 'Тренер',
+    first_name: row.firstName || null,
+    last_name: row.lastName || null,
     phone: row.phone || null,
+    email: row.email || null,
     specialization: row.specialization || null,
     bio: row.bio || row.experience || null,
     avatar_blob_url: row.avatar || row.avatarUrl || null,
+    tg_chat_id: row.tg_chat_id || null,
+    tg_link_code: row.tg_link_code || null,
+    tg_user_info: row.tg_user_info || null,
   };
 }
 
@@ -85,6 +91,7 @@ function mapMember(row, clubId) {
     first_name: row.firstName || row.name || 'Ученик',
     last_name: row.lastName || null,
     phone: row.phone || null,
+    email: row.email || null,
     sport: row.sport || null,
     plan: row.plan || null,
     points: asNumber(metrics.points || row.points),
@@ -94,6 +101,9 @@ function mapMember(row, clubId) {
     technique: asNumber(metrics.technique || row.technique),
     endurance: asNumber(metrics.endurance || row.endurance),
     avatar_blob_url: row.avatar || null,
+    tg_chat_id: row.tg_chat_id || null,
+    tg_link_code: row.tg_link_code || null,
+    tg_user_info: row.tg_user_info || null,
     created_at: asDate(row.createdAt),
   };
 }

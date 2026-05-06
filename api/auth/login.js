@@ -23,10 +23,17 @@ export default async function handler(req, res) {
       const { data, error } = await getAnonClient().auth.signInWithPassword({ email, password });
       if (!error && data?.session) {
         const profile = await getProfileByAuthUserId(data.user.id);
+        if (!profile) {
+          // Account was deleted — deny access
+          await getAnonClient().auth.signOut();
+          return sendJson(res, 401, { error: 'Аккаунт не найден или был удалён' });
+        }
         setSessionCookies(res, data.session);
-        return sendJson(res, 200, { user: mapProfileToUser(profile) || { id: data.user.id, role: 'admin', email: data.user.email, name: data.user.email } });
+        return sendJson(res, 200, { user: mapProfileToUser(profile) });
       }
     }
+
+    if (!allowDemo) return sendJson(res, 401, { error: 'Авторизация не удалась' });
 
     let demoRole = role || String(email || '').split('@')[0] || 'admin';
     
