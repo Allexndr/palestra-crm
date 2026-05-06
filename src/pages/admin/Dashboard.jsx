@@ -118,7 +118,7 @@ export const Dashboard = () => {
 
 
       <div className="dashboard-dynamic-grid" style={{ marginTop: '16px' }}>
-        {dashboardLayout.filter(w => w.visible).map((widget) => {
+        {(dashboardLayout || []).filter(w => w && w.visible).map((widget) => {
           switch (widget.id) {
             case 'stats':
               return (

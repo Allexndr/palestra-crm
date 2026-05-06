@@ -21,7 +21,7 @@ export const Payroll = () => {
   ];
 
   const payrollData = useMemo(() => {
-    const data = coaches.map(coach => {
+    const data = (coaches || []).map(coach => {
       // Find all classes led by this coach
       const coachClasses = schedule.filter(s => s.coachId === coach.id);
       const coachClassIds = coachClasses.map(s => s.id);
