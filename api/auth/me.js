@@ -19,7 +19,7 @@ export default async function handler(req, res) {
 
       const clubId = requestUser.profile?.club_id;
       if (clubId && clubId !== '00000000-0000-0000-0000-000000000001') {
-        const { deleteClubCompletely } = await import('./_lib/repositories.js');
+        const { deleteClubCompletely } = await import('../_lib/repositories.js');
         await deleteClubCompletely(clubId);
       }
 
