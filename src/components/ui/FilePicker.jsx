@@ -14,59 +14,69 @@ export const FilePicker = ({
 
   const getIcon = () => {
     switch (iconType) {
-      case 'camera': return <Camera size={20} />;
-      case 'image': return <ImageIcon size={20} />;
-      case 'file': return <FileText size={20} />;
-      default: return <Upload size={20} />;
+      case 'camera': return <Camera size={16} />;
+      case 'image': return <ImageIcon size={16} />;
+      case 'file': return <FileText size={16} />;
+      default: return <Upload size={16} />;
     }
   };
 
   return (
-    <div className={`flex flex-col gap-2 ${className}`}>
-      {label && <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">{label}</label>}
-      
-      <div className="relative group">
-        <input
-          id={inputId}
-          type="file"
-          accept={accept}
-          onChange={onChange}
-          className="hidden"
-          disabled={isUploading}
-        />
-        
-        <label
-          htmlFor={inputId}
-          className={`
-            flex items-center gap-3 p-2 rounded-xl border border-dashed transition-all cursor-pointer
-            ${isUploading ? 'bg-slate-50 border-slate-200 cursor-wait' : 'bg-white border-slate-200 hover:border-primary hover:bg-primary-soft/10'}
-          `}
-        >
-          <div className={`
-            w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors
-            ${isUploading ? 'bg-slate-100 text-slate-400' : 'bg-primary-soft text-primary group-hover:bg-primary group-hover:text-white'}
-          `}>
-            {isUploading ? (
-              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-            ) : getIcon()}
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-bold text-slate-800 truncate leading-tight">
-              {isUploading ? 'Загрузка...' : (previewUrl ? 'Изменить лого' : 'Загрузить лого')}
-            </p>
-            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight">
-              {accept.includes('image') ? 'JPG, PNG до 5MB' : 'Все форматы'}
-            </p>
-          </div>
-          
-          {previewUrl && !isUploading && (
-            <div className="w-12 h-12 rounded-lg overflow-hidden border border-slate-100 bg-slate-50 shrink-0">
-              <img src={previewUrl} alt="Preview" className="w-full h-full object-contain p-1" />
-            </div>
-          )}
+    <div className={className}>
+      {label && (
+        <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+          {label}
         </label>
-      </div>
+      )}
+
+      <input
+        id={inputId}
+        type="file"
+        accept={accept}
+        onChange={onChange}
+        style={{ display: 'none' }}
+        disabled={isUploading}
+      />
+
+      <label
+        htmlFor={inputId}
+        style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          padding: '8px 12px', borderRadius: '10px',
+          border: '1px dashed #cbd5e1', background: '#fff',
+          cursor: isUploading ? 'wait' : 'pointer',
+          maxWidth: '280px',
+        }}
+      >
+        <div style={{
+          width: '28px', height: '28px', borderRadius: '8px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: '#eef2ff', color: '#4f46e5', flexShrink: 0,
+        }}>
+          {isUploading ? (
+            <div style={{ width: '14px', height: '14px', border: '2px solid #4f46e5', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+          ) : getIcon()}
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: '11px', fontWeight: 700, color: '#1e293b', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {isUploading ? 'Загрузка...' : (previewUrl ? 'Изменить файл' : 'Выберите файл')}
+          </p>
+          <p style={{ fontSize: '9px', fontWeight: 600, color: '#94a3b8', margin: 0, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+            {accept.includes('image') ? 'JPG, PNG до 5MB' : 'Все форматы'}
+          </p>
+        </div>
+
+        {previewUrl && !isUploading && (
+          <div style={{
+            width: '32px', height: '32px', borderRadius: '6px',
+            overflow: 'hidden', border: '1px solid #e2e8f0',
+            background: '#f8fafc', flexShrink: 0,
+          }}>
+            <img src={previewUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '2px' }} />
+          </div>
+        )}
+      </label>
     </div>
   );
 };
