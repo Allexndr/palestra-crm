@@ -9,6 +9,7 @@ import { Profile } from './pages/profile/Profile';
 import { AdminProvider, useAdmin } from './context/AdminContext';
 import { ShopProvider } from './context/ShopContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { SocialProvider } from './context/SocialContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { PageLoader } from './components/ui/PageLoader';
 import { SkipToMain } from './components/layout/SkipToMain';
@@ -106,6 +107,7 @@ function App() {
     <LanguageProvider>
       <NotificationProvider>
         <AdminProvider>
+          <SocialProvider>
           <ShopProvider>
           <BrowserRouter>
             <SkipToMain />
@@ -166,6 +168,7 @@ function App() {
             </Suspense>
           </BrowserRouter>
           </ShopProvider>
+          </SocialProvider>
         </AdminProvider>
       </NotificationProvider>
     </LanguageProvider>
