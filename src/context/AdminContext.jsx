@@ -908,6 +908,29 @@ export const AdminProvider = ({ children }) => {
     setClubInfo(normalizeClubInfo({ name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' }));
     setSubscription(normalizeSubscription(DEFAULT_SUBSCRIPTION));
     setDashboardLayout(DEFAULT_DASHBOARD_LAYOUT);
+    
+    await persistState({
+      members: [],
+      leads: [],
+      schedule: [],
+      locations: [],
+      groups: [],
+      activities: [],
+      leagues: [],
+      plans: [],
+      posts: [],
+      coaches: [],
+      events: [],
+      attendance: [],
+      finances: { revenue: 0, transactions: [] },
+      achievements: [],
+      monthlyAward: { title: '', description: '', daysLeft: 0 },
+      clubInfo: { name: 'Palestra Fight Club', logo: '/palestra-logo-nav-full.png', primaryColor: '#3146A6' },
+      subscription: DEFAULT_SUBSCRIPTION,
+      dashboardLayout: DEFAULT_DASHBOARD_LAYOUT
+    });
+    
+    logActivity('Данные клуба сброшены до заводских настроек', 'warning');
   };
 
   const toggleWidget = (id) => {
@@ -939,7 +962,6 @@ export const AdminProvider = ({ children }) => {
         return prev.filter(wId => wId !== id);
       }
       if (prev.length >= 7) {
-        alert('Максимальный пул для учеников — 7 виджетов');
         return prev;
       }
       return [...prev, id];
@@ -1030,6 +1052,20 @@ export const AdminProvider = ({ children }) => {
     partners, addPartner, updatePartner, removePartner,
     subscription, updateSubscription, usage, getLimitStatus, canUseFeature, getUpgradeMessage, ensureCanCreate,
     user, login, logout,
+    deleteAccount: async () => {
+      try {
+        const response = await fetch('/api/auth/me', { method: 'DELETE', credentials: 'include' });
+        if (response.ok) {
+          setUser(null);
+          window.location.href = '/';
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error('Failed to delete account', error);
+        return false;
+      }
+    },
     activeChildId, setActiveChildId,
     dashboardLayout, setDashboardLayout, toggleWidget, moveWidget,
     studentDashboardPool, studentDashboardLayout, toggleStudentPoolWidget, moveStudentWidget, toggleStudentWidget,

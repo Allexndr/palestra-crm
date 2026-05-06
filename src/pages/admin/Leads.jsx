@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Plus, Trash2, ArrowRight, CheckCircle2, Phone, MessageSquare } from 'lucide-react';
 
 const getColumns = (t) => [
@@ -16,6 +17,7 @@ const getColumns = (t) => [
 export const Leads = () => {
   const { leads, addLead, updateLeadStatus, removeLead, convertLeadToMember, selectedLocationId, locations, sports } = useAdmin();
   const { t } = useTranslation();
+  const { showNotification, confirm } = useNotifications();
   const COLUMNS = getColumns(t);
   const [isAdding, setIsAdding] = useState(false);
   
@@ -52,9 +54,16 @@ export const Leads = () => {
     if (nextIdx < COLUMNS.length) {
       const nextColId = COLUMNS[nextIdx].id;
       if (nextColId === 'won') {
-        if (window.confirm(t('leads.actions.convert_confirm', { name: lead.name }))) {
-          convertLeadToMember(lead.id);
-        }
+        confirm({
+          title: t('common.are_you_sure'),
+          message: t('leads.actions.convert_confirm', { name: lead.name }),
+          confirmText: t('common.confirm'),
+        }).then(ok => {
+          if (ok) {
+            convertLeadToMember(lead.id);
+            showNotification({ message: t('common.success'), type: 'success' });
+          }
+        });
       } else {
         updateLeadStatus(lead.id, nextColId);
       }

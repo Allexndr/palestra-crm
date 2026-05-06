@@ -4,17 +4,17 @@ import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { ConfirmModal } from '../../components/ui/ConfirmModal';
+import { useNotifications } from '../../context/NotificationContext';
 import { Plus, Trash2, Edit2, Eye, Copy } from 'lucide-react';
 
 export const Members = () => {
   const navigate = useNavigate();
   const { members, removeMember, user, selectedLocationId, groups, coaches, fixBlobUrl } = useAdmin();
   const { t } = useTranslation();
+  const { showNotification, confirm } = useNotifications();
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
   const [searchTerm, setSearchTerm] = useState('');
-  const [memberToDelete, setMemberToDelete] = useState(null);
 
   const currentCoach = (coaches || []).find(c => c.name === user?.name || c.email === user?.email);
   const myGroupIds = (groups || []).filter(g => g.coachId === currentCoach?.id).map(g => g.id);
@@ -115,7 +115,7 @@ export const Members = () => {
                         onClick={() => {
                           const text = `Login: ${member.login || member.email}\nPassword: ${member.password || '123456'}`;
                           navigator.clipboard.writeText(text);
-                          alert(t('common.success'));
+                          showNotification({ message: t('common.success'), type: 'success' });
                         }}
                       >
                         <Copy size={18} />
@@ -129,7 +129,18 @@ export const Members = () => {
                         </button>
                       )}
                       {isAdmin && (
-                        <button className="action-btn-pill action-btn-pill--danger" title={t('common.delete')} onClick={() => setMemberToDelete(member)}>
+                        <button className="action-btn-pill action-btn-pill--danger" title={t('common.delete')} onClick={async () => {
+                          const ok = await confirm({
+                            title: t('members.delete_title'),
+                            message: t('members.delete_confirm', { name: `${member.firstName} ${member.lastName}` }),
+                            confirmText: t('members.delete_btn'),
+                            variant: 'danger'
+                          });
+                          if (ok) {
+                            removeMember(member.id);
+                            showNotification({ message: t('common.success'), type: 'success' });
+                          }
+                        }}>
                           <Trash2 size={18} />
                         </button>
                       )}
@@ -145,19 +156,8 @@ export const Members = () => {
             </div>
           )}
         </div>
+        </div>
       </Card>
-      
-      <ConfirmModal 
-        isOpen={!!memberToDelete}
-        onClose={() => setMemberToDelete(null)}
-        onConfirm={() => {
-          if (memberToDelete) removeMember(memberToDelete.id);
-        }}
-        title={t('members.delete_title')}
-        message={t('members.delete_confirm', { name: `${memberToDelete?.firstName} ${memberToDelete?.lastName}` })}
-        confirmText={t('members.delete_btn')}
-        variant="danger"
-      />
     </div>
   );
 };

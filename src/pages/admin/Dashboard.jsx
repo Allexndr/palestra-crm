@@ -5,17 +5,21 @@ import { Badge } from '../../components/ui/Badge';
 import { Users, DollarSign, Calendar, Target, ArrowUpRight, Plus, Trophy, MessageSquare, TrendingUp, Activity, CheckCircle, AlertCircle, Info, ShoppingBag, Star, X, Sparkles, Flame, ShieldAlert, HeartPulse, Zap } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { EventCarousel } from '../../components/features/EventCarousel';
 import { formatKzt } from '../../utils/money';
+import { PageLoader } from '../../components/ui/PageLoader';
 import { scheduleTypeLabel, coachLine, firstGrapheme } from '../../utils/displayStrings';
 
 export const Dashboard = () => {
   const { 
     members, leads, schedule, finances, user, events, selectedLocationId, 
     achievements, monthlyAward, activities, markAttendance, groups, 
-    removeActivity, sendFeedback, dashboardLayout, clubInfo, subscription, automations
+    removeActivity, sendFeedback, dashboardLayout, clubInfo, subscription, automations, isStateReady
   } = useAdmin();
   const { t, language } = useTranslation();
+  
+  if (!isStateReady) return <PageLoader />;
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
   const navigate = useNavigate();

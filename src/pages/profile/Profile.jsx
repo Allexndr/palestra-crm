@@ -4,14 +4,17 @@ import { Calendar, ChevronRight, CreditCard, Medal, Shield, Trophy, TrendingUp, 
 import { useAdmin, STUDENT_WIDGET_CATALOG } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
 import { Button } from '../../components/ui/Button';
+import { PageLoader } from '../../components/ui/PageLoader';
 import { EventCarousel } from '../../components/features/EventCarousel';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 
 export const Profile = () => {
-  const { user, members, attendance, achievements, groups, schedule, activeChildId, clubInfo, studentDashboardPool, studentDashboardLayout, updateMemberProfile } = useAdmin();
+  const { user, members, attendance, achievements, groups, schedule, activeChildId, clubInfo, studentDashboardPool, studentDashboardLayout, updateMemberProfile, isStateReady } = useAdmin();
   const { t, language } = useTranslation();
+  
+  if (!isStateReady) return <PageLoader />;
   const [activeTab, setActiveTab] = useState('sports'); // 'sports', 'rpg', or 'settings'
   const [passData, setPassData] = useState({ old: '', new: '', confirm: '' });
   const [passLoading, setPassLoading] = useState(false);
@@ -79,8 +82,9 @@ export const Profile = () => {
     (a) => !Array.isArray(a?.memberIds) || a.memberIds.includes(profileData.id)
   );
   const points = Number(profileData.points) || 0;
-  const level = Math.floor(points / 100) + 1;
-  const nextRankProgress = Math.min(100, Math.max(8, points % 500 === 0 ? 100 : Math.round(((points % 500) / 500) * 100)));
+  const level = Math.floor(points / 500) + 1;
+  const xpInCurrentLevel = points % 500;
+  const nextRankProgress = points === 0 ? 0 : Math.min(100, Math.max(8, Math.round((xpInCurrentLevel / 500) * 100)));
 
   const activeTemplate = LEAGUE_TEMPLATES[clubInfo?.activeLeagueTemplate || 'martial_arts'];
   const stats = (activeTemplate?.metrics || []).map(m => ({

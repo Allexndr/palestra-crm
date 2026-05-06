@@ -5,8 +5,10 @@ import { useTranslation } from '../../context/LanguageContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { FilePicker } from '../../components/ui/FilePicker';
 import { ArrowLeft, Save, Camera, Zap, Star, Plus, Shield, Copy, Check } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
+import { useNotifications } from '../../context/NotificationContext';
 import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
 
 const translit = (str) => {
@@ -35,6 +37,7 @@ export const MemberForm = () => {
   const navigate = useNavigate();
   const { members, addMember, updateMember, user, locations, plans, selectedLocationId, groups, clubInfo, isStateReady, fixBlobUrl } = useAdmin();
   const { t } = useTranslation();
+  const { showNotification } = useNotifications();
   const isAdmin = user?.role === 'admin';
 
   if (!isStateReady) return <PageLoader />;
@@ -135,8 +138,9 @@ export const MemberForm = () => {
     try {
       const url = await uploadBlobFile(file, 'avatars');
       setFormData((prev) => ({ ...prev, avatar: url }));
+      showNotification({ title: t('common.success'), type: 'success' });
     } catch (error) {
-      alert(error.message || t('members.upload_error'));
+      showNotification({ title: t('common.error'), message: error.message || t('members.upload_error'), type: 'error' });
     } finally {
       setIsUploadingAvatar(false);
       event.target.value = '';
@@ -157,7 +161,7 @@ export const MemberForm = () => {
 
   const handleCreateParent = () => {
     if (!formData.parentName) {
-      alert(t('members.parent_name_required'));
+      showNotification({ message: t('members.parent_name_required'), type: 'warning' });
       return;
     }
     const names = formData.parentName.split(' ');
@@ -167,8 +171,7 @@ export const MemberForm = () => {
 
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text).then(() => {
-      // Small feedback could be added here, but user just asked for the button
-      // We'll use a simple alert or just assume it worked
+      showNotification({ message: t('common.success'), type: 'success' });
     });
   };
 
@@ -177,7 +180,7 @@ export const MemberForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.firstName.length < 2 || formData.lastName.length < 2) {
-      alert(t('members.name_min_length'));
+      showNotification({ message: t('members.name_min_length'), type: 'warning' });
       return;
     }
     
@@ -193,9 +196,10 @@ export const MemberForm = () => {
       }
       
       if (success) {
+        showNotification({ message: t('common.success'), type: 'success' });
         navigate('/admin/members');
       } else {
-        alert(t('common.error_saving') || 'Ошибка при сохранении данных. Проверьте интернет-соединение.');
+        showNotification({ message: t('common.error_saving') || 'Ошибка при сохранении данных', type: 'error' });
       }
     } catch (error) {
       console.error('Submit error:', error);
@@ -283,17 +287,13 @@ export const MemberForm = () => {
 
                     <div className="input-group">
                       <label className="input-label">{t('members.avatar')}</label>
-                      <div className="flex items-center gap-6 p-2 pr-6 bg-slate-50 rounded-3xl border border-slate-100">
-                        <div className="w-14 h-14 rounded-3xl bg-white flex items-center justify-center overflow-hidden border border-slate-200 shadow-sm shrink-0">
-                           {formData.avatar ? <img src={fixBlobUrl(formData.avatar)} className="w-full h-full object-cover" /> : <Camera size={22} className="text-slate-300" />}
-                        </div>
-                        <div className="flex-1">
-                          <input className="hidden" id="avatar-input" type="file" accept="image/*" onChange={handleAvatarUpload} />
-                          <label htmlFor="avatar-input" className="text-xs font-black text-primary hover:underline cursor-pointer">
-                            {isUploadingAvatar ? t('common.loading') : t('members.upload_new')}
-                          </label>
-                        </div>
-                      </div>
+                      <FilePicker 
+                        onChange={handleAvatarUpload}
+                        previewUrl={fixBlobUrl(formData.avatar)}
+                        isUploading={isUploadingAvatar}
+                        iconType="camera"
+                        className="mt-2"
+                      />
                     </div>
                   </div>
                   

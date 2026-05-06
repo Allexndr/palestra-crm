@@ -9,6 +9,7 @@ import { Profile } from './pages/profile/Profile';
 import { AdminProvider, useAdmin } from './context/AdminContext';
 import { ShopProvider } from './context/ShopContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { NotificationProvider } from './context/NotificationContext';
 import { PageLoader } from './components/ui/PageLoader';
 import { SkipToMain } from './components/layout/SkipToMain';
 import { AdminRoleGuard, SuperAdminRoleGuard, RequireAuth, MemberLayout } from './components/auth/Access';
@@ -103,68 +104,70 @@ const LeagueRedirect = () => {
 function App() {
   return (
     <LanguageProvider>
-      <AdminProvider>
-        <ShopProvider>
-        <BrowserRouter>
-          <SkipToMain />
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth/login" element={<Login />} />
-              <Route path="/auth/register" element={<RegisterClub />} />
-              <Route path="/billing/success" element={<BillingSuccess />} />
-              <Route path="/billing/failure" element={<BillingFailure />} />
-
-              <Route path="/admin" element={<AdminRoleGuard />}>
-                <Route element={<AdminLayout />}>
-                  <Route index element={<Dashboard />} />
-                  <Route path="members" element={<Members />} />
-                  <Route path="members/new" element={<MemberForm />} />
-                  <Route path="members/:id" element={<MemberDetail />} />
-                  <Route path="members/:id/edit" element={<MemberForm />} />
-                  <Route path="groups" element={<Groups />} />
-                  <Route path="groups/new" element={<GroupForm />} />
-                  <Route path="groups/:id" element={<GroupDetail />} />
-                  <Route path="groups/:id/edit" element={<GroupForm />} />
-                  <Route path="quests" element={<Quests />} />
-                  <Route path="coaches" element={<Coaches />} />
-                  <Route path="payroll" element={<Payroll />} />
-                  <Route path="locations" element={<Locations />} />
-                  <Route path="locations/new" element={<LocationForm />} />
-                  <Route path="locations/:id/edit" element={<LocationForm />} />
-                  <Route path="leads" element={<Leads />} />
-                  <Route path="schedule" element={<SchedulePage />} />
-                  <Route path="events" element={<Events />} />
-                  <Route path="league" element={<LeaguePage />} />
-                  <Route path="billing" element={<Billing />} />
-                  <Route path="chats" element={<Chats />} />
-                  <Route path="shop" element={<Shop />} />
-                  <Route path="settings" element={<Settings />} />
-                  <Route path="feed" element={<Feed />} />
+      <NotificationProvider>
+        <AdminProvider>
+          <ShopProvider>
+          <BrowserRouter>
+            <SkipToMain />
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/auth/login" element={<Login />} />
+                <Route path="/auth/register" element={<RegisterClub />} />
+                <Route path="/billing/success" element={<BillingSuccess />} />
+                <Route path="/billing/failure" element={<BillingFailure />} />
+  
+                <Route path="/admin" element={<AdminRoleGuard />}>
+                  <Route element={<AdminLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="members" element={<Members />} />
+                    <Route path="members/new" element={<MemberForm />} />
+                    <Route path="members/:id" element={<MemberDetail />} />
+                    <Route path="members/:id/edit" element={<MemberForm />} />
+                    <Route path="groups" element={<Groups />} />
+                    <Route path="groups/new" element={<GroupForm />} />
+                    <Route path="groups/:id" element={<GroupDetail />} />
+                    <Route path="groups/:id/edit" element={<GroupForm />} />
+                    <Route path="quests" element={<Quests />} />
+                    <Route path="coaches" element={<Coaches />} />
+                    <Route path="payroll" element={<Payroll />} />
+                    <Route path="locations" element={<Locations />} />
+                    <Route path="locations/new" element={<LocationForm />} />
+                    <Route path="locations/:id/edit" element={<LocationForm />} />
+                    <Route path="leads" element={<Leads />} />
+                    <Route path="schedule" element={<SchedulePage />} />
+                    <Route path="events" element={<Events />} />
+                    <Route path="league" element={<LeaguePage />} />
+                    <Route path="billing" element={<Billing />} />
+                    <Route path="chats" element={<Chats />} />
+                    <Route path="shop" element={<Shop />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="feed" element={<Feed />} />
+                  </Route>
                 </Route>
-              </Route>
-
-              <Route path="/superadmin" element={<SuperAdminRoleGuard />}>
-                <Route index element={<SuperDashboard />} />
-                <Route path="club/:clubId" element={<ClubDetail />} />
-              </Route>
-
-              <Route element={<RequireAuth />}>
-                <Route element={<MemberLayout />}>
-                  <Route path="/feed" element={<FeedRedirect />} />
-                  <Route path="/schedule" element={<ScheduleRedirect />} />
-                  <Route path="/quests" element={<QuestsRedirect />} />
-                  <Route path="/league" element={<LeagueRedirect />} />
-                  <Route path="/profile" element={<ProfileRedirect />} />
+  
+                <Route path="/superadmin" element={<SuperAdminRoleGuard />}>
+                  <Route index element={<SuperDashboard />} />
+                  <Route path="club/:clubId" element={<ClubDetail />} />
                 </Route>
-              </Route>
-
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        </ShopProvider>
-      </AdminProvider>
+  
+                <Route element={<RequireAuth />}>
+                  <Route element={<MemberLayout />}>
+                    <Route path="/feed" element={<FeedRedirect />} />
+                    <Route path="/schedule" element={<ScheduleRedirect />} />
+                    <Route path="/quests" element={<QuestsRedirect />} />
+                    <Route path="/league" element={<LeagueRedirect />} />
+                    <Route path="/profile" element={<ProfileRedirect />} />
+                  </Route>
+                </Route>
+  
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+          </ShopProvider>
+        </AdminProvider>
+      </NotificationProvider>
     </LanguageProvider>
   );
 }

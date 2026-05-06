@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, LayoutList, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Eye, EyeOff, MessageSquare } from 'lucide-react';
+import { FilePicker } from '../../components/ui/FilePicker';
+import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, ShieldAlert, LayoutList, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Eye, EyeOff, MessageSquare, GripVertical } from 'lucide-react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { STUDENT_WIDGET_CATALOG } from '../../context/AdminContext';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
@@ -18,12 +23,13 @@ export const Settings = () => {
   const { 
     members, coaches, groups, subscription, usage, getLimitStatus, updateSubscription,
     achievements, addAchievement, removeAchievement, monthlyAward, updateMonthlyAward, resetData,
-    dashboardLayout, toggleWidget, moveWidget, clubInfo, setClubInfo,
+    dashboardLayout, toggleWidget, moveWidget, clubInfo, setClubInfo, setDashboardLayout,
     addLocation, removeLocation, updateLocation, locations,
     addPlan, removePlan, plans, isStateReady,
     studentDashboardPool, studentDashboardLayout, toggleStudentPoolWidget, moveStudentWidget, toggleStudentWidget, user,
-    automations, updateAutomationConfig
+    automations, updateAutomationConfig, deleteAccount
   } = useAdmin();
+  const { showNotification, confirm } = useNotifications();
   const { t, language } = useTranslation();
   const navigate = useNavigate();
   
@@ -62,8 +68,9 @@ export const Settings = () => {
     try {
       const url = await uploadBlobFile(file, 'club-logo');
       setTempClubInfo((prev) => ({ ...prev, logo: url }));
+      showNotification({ title: t('common.success'), message: t('settings.profile.logo_success'), type: 'success' });
     } catch (error) {
-      alert(error.message || t('settings.profile.logo_error'));
+      showNotification({ title: t('common.error'), message: error.message || t('settings.profile.logo_error'), type: 'error' });
     } finally {
       setIsUploadingLogo(false);
       event.target.value = '';
@@ -88,7 +95,7 @@ export const Settings = () => {
   const handlePasswordChange = (e) => {
     e.preventDefault();
     if (!passData.new || passData.new !== passData.confirm) {
-      alert(t('settings.security.pass_mismatch'));
+      showNotification({ title: t('common.error'), message: t('settings.security.pass_mismatch'), type: 'error' });
       return;
     }
     setPassLoading(true);
@@ -99,6 +106,101 @@ export const Settings = () => {
       setPassData({ old: '', new: '', confirm: '' });
       setTimeout(() => setPassSuccess(false), 3000);
     }, 1000);
+  };
+
+  const handleDeleteAccount = async () => {
+    const isConfirmed = await confirm({
+      title: t('settings.profile.delete_account_confirm_title'),
+      message: t('settings.profile.delete_account_confirm_desc'),
+      confirmText: t('settings.profile.delete_account_confirm_btn'),
+      cancelText: t('common.cancel'),
+      variant: 'danger'
+    });
+
+    if (isConfirmed) {
+      const success = await deleteAccount();
+      if (!success) {
+        showNotification({ 
+          title: t('common.error'), 
+          message: t('settings.profile.delete_account_error'), 
+          type: 'error' 
+        });
+      }
+    }
+  };
+  const handleResetData = async () => {
+    const isConfirmed = await confirm({
+      title: t('settings.motivation.reset_confirm_title'),
+      message: t('settings.motivation.reset_confirm_desc'),
+      confirmText: t('settings.motivation.reset_btn'),
+      cancelText: t('common.cancel'),
+      variant: 'danger'
+    });
+
+    if (isConfirmed) {
+      await resetData();
+      showNotification({ 
+        title: t('common.success'), 
+        message: t('settings.motivation.reset_success'), 
+        type: 'success' 
+      });
+    }
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const oldIndex = dashboardLayout.findIndex((i) => i.id === active.id);
+      const newIndex = dashboardLayout.findIndex((i) => i.id === over.id);
+      setDashboardLayout(arrayMove(dashboardLayout, oldIndex, newIndex));
+    }
+  };
+
+  const SortableWidget = ({ widget, index }) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: widget.id });
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      zIndex: isDragging ? 100 : 1,
+      opacity: isDragging ? 0.5 : (widget.visible ? 1 : 0.6),
+    };
+
+    return (
+      <div 
+        ref={setNodeRef} 
+        style={style} 
+        className={`flex flex-col p-6 rounded-[32px] border transition-all ${widget.visible ? 'bg-white border-slate-100 shadow-xl shadow-slate-200/50' : 'bg-slate-50 border-dashed border-slate-200 opacity-60'}`}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl text-slate-400 hover:text-primary transition-all">
+            <GripVertical size={24} />
+          </div>
+          <button 
+            onClick={() => toggleWidget(widget.id)}
+            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer ${widget.visible ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-200 text-slate-500'}`}
+          >
+            {widget.visible ? t('settings.locations.active') : t('settings.student_constructor.hidden')}
+          </button>
+        </div>
+        
+        <div className="mt-auto">
+          <div className="w-12 h-12 bg-primary-soft text-primary rounded-2xl flex items-center justify-center mb-4">
+             <LayoutDashboard size={24} />
+          </div>
+          <p className="font-black text-slate-800 text-base leading-tight uppercase tracking-tight">{widget.label}</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mt-2">
+            {t('settings.admin_constructor.block_label')} #{index + 1}
+          </p>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -179,9 +281,13 @@ export const Settings = () => {
                   />
                   <div className="input-group">
                     <label className="input-label">{t('settings.profile.club_logo')}</label>
-                    <input className="input-field" type="file" accept="image/*" onChange={handleLogoUpload} />
-                    {isUploadingLogo && <p className="text-xs text-muted mt-2">{t('settings.profile.logo_uploading')}</p>}
-                    {tempClubInfo.logo && <p className="text-xs text-primary mt-2">{t('settings.profile.logo_uploaded')}</p>}
+                    <FilePicker 
+                      onChange={handleLogoUpload}
+                      previewUrl={fixBlobUrl(tempClubInfo.logo)}
+                      isUploading={isUploadingLogo}
+                      iconType="image"
+                      className="mt-2"
+                    />
                   </div>
                 </div>
                 
@@ -191,6 +297,41 @@ export const Settings = () => {
                   </Button>
                 </div>
               </form>
+
+              <div className="mt-16 pt-8 border-t border-rose-100">
+                <h4 className="text-rose-600 font-black text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <ShieldAlert size={16} /> {t('settings.profile.danger_zone')}
+                </h4>
+                <div className="flex flex-col gap-4">
+                  <div className="p-8 bg-rose-50/30 rounded-[32px] border border-rose-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex-1">
+                      <p className="font-bold text-slate-800 mb-1">{t('settings.motivation.reset_title')}</p>
+                      <p className="text-xs text-secondary leading-relaxed">{t('settings.motivation.reset_desc')}</p>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      className="text-rose-600 hover:bg-rose-600 hover:text-white border-rose-200 transition-all px-8 shrink-0"
+                      onClick={handleResetData}
+                    >
+                      <Sparkles size={18} /> {t('settings.motivation.reset_btn')}
+                    </Button>
+                  </div>
+
+                  <div className="p-8 bg-rose-50/30 rounded-[32px] border border-rose-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex-1">
+                      <p className="font-bold text-slate-800 mb-1">{t('settings.profile.delete_account_title')}</p>
+                      <p className="text-xs text-secondary leading-relaxed">{t('settings.profile.delete_account_desc')}</p>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      className="text-rose-600 hover:bg-rose-600 hover:text-white border-rose-200 transition-all px-8 shrink-0"
+                      onClick={handleDeleteAccount}
+                    >
+                      <Trash2 size={18} /> {t('settings.profile.delete_account_btn')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -338,11 +479,17 @@ export const Settings = () => {
                 </div>
 
                 <div className="pt-12 mt-12 border-t">
-                   <h5 className="font-bold text-danger mb-4">{t('settings.motivation.danger_zone')}</h5>
                    <p className="text-sm text-secondary mb-6">{t('settings.motivation.reset_desc')}</p>
-                   <Button variant="ghost" className="text-danger border-danger" onClick={() => {
-                     if (window.confirm(t('settings.motivation.reset_confirm'))) {
+                   <Button variant="ghost" className="text-danger border-danger" onClick={async () => {
+                     const ok = await confirm({
+                       title: t('settings.motivation.reset_confirm_title') || t('common.are_you_sure'),
+                       message: t('settings.motivation.reset_confirm'),
+                       confirmText: t('common.delete'),
+                       variant: 'danger'
+                     });
+                     if (ok) {
                        resetData();
+                       showNotification({ message: t('common.success'), type: 'success' });
                      }
                    }}>{t('settings.motivation.reset_btn')}</Button>
                 </div>
@@ -516,7 +663,17 @@ export const Settings = () => {
                   return (
                     <Card 
                       key={widget.id} 
-                      onClick={() => toggleStudentPoolWidget(widget.id)}
+                      onClick={() => {
+                        if (!studentDashboardPool.includes(widget.id) && studentDashboardPool.length >= 7) {
+                          showNotification({ 
+                            title: t('common.error'), 
+                            message: t('settings.student_constructor.limit_error') || 'Максимальный пул — 7 виджетов', 
+                            type: 'error' 
+                          });
+                          return;
+                        }
+                        toggleStudentPoolWidget(widget.id);
+                      }}
                       style={{ 
                         cursor: 'pointer',
                         border: isActive ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
@@ -591,56 +748,24 @@ export const Settings = () => {
                 </div>
               </div>
               
-              <div className="flex flex-col gap-3">
-                {dashboardLayout.map((widget, index) => (
-                  <div key={widget.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${widget.visible ? 'bg-white border-slate-100 shadow-sm' : 'bg-slate-50 border-dashed border-slate-200 opacity-60'}`}>
-                    <div className="flex items-center gap-5">
-                      <div className="flex flex-col items-center gap-0.5 bg-slate-50/80 p-1.5 rounded-[16px] border border-slate-100 shadow-inner">
-                        <button 
-                          disabled={index < 2}
-                          onClick={() => moveWidget(widget.id, 'up')}
-                          className="p-1 hover:bg-white rounded shadow-sm text-slate-500 disabled:opacity-20 disabled:shadow-none border-none bg-transparent cursor-pointer transition-all"
-                        >
-                          <ArrowUp size={14} />
-                        </button>
-                        <div className="flex gap-4">
-                          <button 
-                            disabled={index % 2 === 0}
-                            onClick={() => moveWidget(widget.id, 'left')}
-                            className="p-1 hover:bg-white rounded shadow-sm text-slate-500 disabled:opacity-20 disabled:shadow-none border-none bg-transparent cursor-pointer transition-all"
-                          >
-                            <ArrowLeft size={14} />
-                          </button>
-                          <button 
-                            disabled={index % 2 !== 0 || index === dashboardLayout.length - 1}
-                            onClick={() => moveWidget(widget.id, 'right')}
-                            className="p-1 hover:bg-white rounded shadow-sm text-slate-500 disabled:opacity-20 disabled:shadow-none border-none bg-transparent cursor-pointer transition-all"
-                          >
-                            <ArrowRight size={14} />
-                          </button>
-                        </div>
-                        <button 
-                          disabled={index >= dashboardLayout.length - 2}
-                          onClick={() => moveWidget(widget.id, 'down')}
-                          className="p-1 hover:bg-white rounded shadow-sm text-slate-500 disabled:opacity-20 disabled:shadow-none border-none bg-transparent cursor-pointer transition-all"
-                        >
-                          <ArrowDown size={14} />
-                        </button>
-                      </div>
-                      <div>
-                        <p className={`font-bold ${widget.visible ? 'text-slate-800' : 'text-slate-400'}`}>{widget.label}</p>
-                        <p className="text-[10px] uppercase tracking-wider text-slate-400 font-black">{t('settings.admin_constructor.block_label')} #{index + 1}</p>
-                      </div>
+              <div className="mb-10">
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                  <SortableContext items={dashboardLayout.map(i => i.id)} strategy={rectSortingStrategy}>
+                    <div style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: 'repeat(2, 1fr)', 
+                      gap: '24px',
+                      padding: '24px',
+                      background: '#f8fafc',
+                      borderRadius: '32px',
+                      border: '2px dashed #e2e8f0'
+                    }}>
+                      {dashboardLayout.map((widget, index) => (
+                        <SortableWidget key={widget.id} widget={widget} index={index} />
+                      ))}
                     </div>
-                    
-                    <button 
-                      onClick={() => toggleWidget(widget.id)}
-                      className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer ${widget.visible ? 'bg-indigo-50 text-primary' : 'bg-slate-200 text-slate-500'}`}
-                    >
-                      {widget.visible ? t('settings.locations.active') : t('settings.student_constructor.hidden')}
-                    </button>
-                  </div>
-                ))}
+                  </SortableContext>
+                </DndContext>
               </div>
 
               <div className="mt-12 p-8 bg-indigo-50 rounded-[32px] border border-indigo-100/50">

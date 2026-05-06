@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { FilePicker } from '../../components/ui/FilePicker';
 import { Plus, Users, Trash2, Edit2, Camera, Phone, Mail, Award, MapPin, Copy } from 'lucide-react';
 import { uploadBlobFile } from '../../lib/blobClient';
 
@@ -32,6 +34,7 @@ const randomPassword = () => {
 export const Coaches = () => {
   const { coaches, addCoach, removeCoach, updateCoach, locations, sports, fixBlobUrl } = useAdmin();
   const { t } = useTranslation();
+  const { showNotification, confirm } = useNotifications();
   const [isAdding, setIsAdding] = useState(false);
   const [editingCoachId, setEditingCoachId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,6 +58,7 @@ export const Coaches = () => {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
+    showNotification({ message: t('common.success'), type: 'success' });
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -85,9 +89,11 @@ export const Coaches = () => {
 
     if (editingCoachId) {
       updateCoach(editingCoachId, formData);
+      showNotification({ message: t('common.success'), type: 'success' });
     } else {
       const created = addCoach(formData);
       if (created === false) return;
+      showNotification({ message: t('common.success'), type: 'success' });
     }
 
     setFormData(initialFormState);
@@ -110,8 +116,9 @@ export const Coaches = () => {
     try {
       const url = await uploadBlobFile(file, 'coach-avatars');
       setFormData((prev) => ({ ...prev, avatar: url }));
+      showNotification({ message: t('common.success'), type: 'success' });
     } catch (error) {
-      alert(error.message || t('coaches.form.photo_error'));
+      showNotification({ message: error.message || t('coaches.form.photo_error'), type: 'error' });
     } finally {
       setIsUploadingAvatar(false);
       event.target.value = '';
@@ -212,9 +219,13 @@ export const Coaches = () => {
 
             <div className="input-group">
               <label className="input-label">{t('coaches.form.photo')}</label>
-              <input className="input-field" type="file" accept="image/*" onChange={handleAvatarUpload} />
-              {isUploadingAvatar && <p className="text-xs text-muted mt-2">{t('coaches.form.photo_uploading')}</p>}
-              {formData.avatar && <p className="text-xs text-primary mt-2">{t('coaches.form.photo_uploaded')}</p>}
+              <FilePicker 
+                onChange={handleAvatarUpload}
+                previewUrl={fixBlobUrl(formData.avatar)}
+                isUploading={isUploadingAvatar}
+                iconType="camera"
+                className="mt-2"
+              />
             </div>
 
             <div className="flex justify-end gap-4 border-t pt-8">
@@ -295,7 +306,18 @@ export const Coaches = () => {
 
               <div className="flex justify-end gap-2 border-t pt-4">
                 <button onClick={() => handleEdit(coach)} className="p-2 text-slate-400 hover:text-primary transition-colors bg-transparent border-none cursor-pointer"><Edit2 size={18} /></button>
-                <button onClick={() => removeCoach(coach.id)} className="p-2 text-slate-400 hover:text-danger transition-colors bg-transparent border-none cursor-pointer"><Trash2 size={18} /></button>
+                <button onClick={async () => {
+                  const ok = await confirm({
+                    title: t('common.are_you_sure'),
+                    message: t('coaches.list.delete_confirm', { name: `${coach.firstName} ${coach.lastName}` }),
+                    confirmText: t('common.delete'),
+                    variant: 'danger'
+                  });
+                  if (ok) {
+                    removeCoach(coach.id);
+                    showNotification({ message: t('common.success'), type: 'success' });
+                  }
+                }} className="p-2 text-slate-400 hover:text-danger transition-colors bg-transparent border-none cursor-pointer"><Trash2 size={18} /></button>
               </div>
             </Card>
           ))}

@@ -5,16 +5,19 @@ import { useAdmin } from '../../context/AdminContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { FilePicker } from '../../components/ui/FilePicker';
 import { Plus, ShoppingBag, Filter, ShoppingCart, Check, X, Package, Clock, User, Phone, Tag, Zap } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile } from '../../lib/blobClient';
 import { LockedFeature } from '../../components/admin/LockedFeature';
 import { useTranslation } from '../../context/LanguageContext';
+import { useNotifications } from '../../context/NotificationContext';
 
 export const Shop = () => {
   const { products, categories, orders, addProduct, updateProduct, removeProduct, updateOrderStatus, placeOrder } = useShop();
   const { user, members, canUseFeature, getUpgradeMessage, updateMemberXP, activeChildId } = useAdmin();
   const { t, language } = useTranslation();
+  const { showNotification, confirm } = useNotifications();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   
@@ -73,9 +76,9 @@ export const Shop = () => {
     setIsUploadingImage(true);
     try {
       const url = await uploadBlobFile(file, 'products');
-      setFormData((prev) => ({ ...prev, image: url }));
+      showNotification({ title: t('common.success'), type: 'success' });
     } catch (error) {
-      alert(error.message || t('shop.alerts.image_error'));
+      showNotification({ title: t('common.error'), message: error.message || t('shop.alerts.image_error'), type: 'error' });
     } finally {
       setIsUploadingImage(false);
       event.target.value = '';
@@ -99,18 +102,18 @@ export const Shop = () => {
 
     if (product.isPointsOnly) {
       if (!student) {
-        alert(t('shop.alerts.points_select'));
+        showNotification({ message: t('shop.alerts.points_select'), type: 'error' });
         return;
       }
       if ((student.xp || 0) < Number(product.price)) {
-        alert(t('shop.alerts.points_insufficient', { xp: (student.xp || 0), price: product.price }));
+        showNotification({ message: t('shop.alerts.points_insufficient', { xp: (student.xp || 0), price: product.price }), type: 'error' });
         return;
       }
       // Deduct XP
       updateMemberXP(studentId, -Number(product.price));
-      alert(t('shop.alerts.points_success'));
+      showNotification({ message: t('shop.alerts.points_success'), type: 'success' });
     } else {
-      alert(t('shop.alerts.order_success'));
+      showNotification({ message: t('shop.alerts.order_success'), type: 'success' });
     }
 
     const order = {
@@ -235,9 +238,13 @@ export const Shop = () => {
                </div>
                <div className="input-group">
                  <label className="input-label">{t('shop.form.image_label')}</label>
-                 <input className="input-field" type="file" accept="image/*" onChange={handleProductImageUpload} />
-                 {isUploadingImage && <p className="text-xs text-muted mt-2">{t('shop.form.image_uploading')}</p>}
-                 {formData.image && <p className="text-xs text-primary mt-2">{t('shop.form.image_uploaded')}</p>}
+                 <FilePicker 
+                   onChange={handleProductImageUpload}
+                   previewUrl={fixBlobUrl(formData.image)}
+                   isUploading={isUploadingImage}
+                   iconType="image"
+                   className="mt-2"
+                 />
                </div>
                <Input label={t('shop.form.stock_label')} type="number" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} />
                <div className="flex items-center gap-2 mt-4">

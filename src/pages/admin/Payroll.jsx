@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -10,6 +11,7 @@ import { formatKzt } from '../../utils/money';
 export const Payroll = () => {
   const { coaches, attendance, schedule, addTransaction } = useAdmin();
   const { t, language } = useTranslation();
+  const { showNotification, confirm } = useNotifications();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -65,18 +67,22 @@ export const Payroll = () => {
 
   const totalPayout = payrollData.reduce((acc, coach) => acc + coach.totalEarned, 0);
 
-  const handlePaySalary = (coach) => {
+  const handlePaySalary = async (coach) => {
     if (coach.totalEarned <= 0) return;
     
-    const confirmPay = window.confirm(t('payroll.confirm_pay', { name: `${coach.firstName} ${coach.lastName}`, amount: formatKzt(coach.totalEarned) }));
-    if (confirmPay) {
+    const ok = await confirm({
+      title: t('common.are_you_sure'),
+      message: t('payroll.confirm_pay', { name: `${coach.firstName} ${coach.lastName}`, amount: formatKzt(coach.totalEarned) }),
+      confirmText: t('common.confirm'),
+    });
+    if (ok) {
       addTransaction({
         type: 'expense',
         amount: coach.totalEarned,
         description: t('payroll.transaction_desc', { name: `${coach.firstName} ${coach.lastName}`, month: months[selectedMonth] }),
         category: t('payroll.category')
       });
-      alert(t('payroll.success_msg'));
+      showNotification({ message: t('payroll.success_msg'), type: 'success' });
     }
   };
 

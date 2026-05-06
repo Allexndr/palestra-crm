@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useMatch } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { PageLoader } from '../../components/ui/PageLoader';
 import { Plus, ChevronLeft, ChevronRight, Clock, User, X, CheckCircle2, Edit2, Trash2, Zap } from 'lucide-react';
 
 // DAYS constant is now derived from t('schedule.days_short') inside the component
@@ -16,8 +18,11 @@ function sessionOnDay(session, day) {
 }
 
 export const Schedule = () => {
-  const { schedule, addScheduleItem, updateScheduleItem, removeScheduleItem, members, markAttendance, user, selectedLocationId, groups, sports, coaches, activeChildId } = useAdmin();
+  const { schedule, addScheduleItem, updateScheduleItem, removeScheduleItem, members, markAttendance, user, selectedLocationId, groups, sports, coaches, activeChildId, isStateReady } = useAdmin();
   const { t, language } = useTranslation();
+  const { showNotification, confirm } = useNotifications();
+
+  if (!isStateReady) return <PageLoader />;
   const DAYS = t('schedule.days_short', { returnObjects: true }) || ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   const isAdmin = user?.role === 'admin';
   const isCoach = user?.role === 'coach';
@@ -132,9 +137,16 @@ export const Schedule = () => {
     setSelectedClass(null);
   };
 
-  const handleRemoveClass = (id) => {
-    if (window.confirm(t('schedule.remove_confirm'))) {
+  const handleRemoveClass = async (id) => {
+    const ok = await confirm({
+      title: t('common.are_you_sure'),
+      message: t('schedule.remove_confirm'),
+      confirmText: t('common.delete'),
+      variant: 'danger'
+    });
+    if (ok) {
       removeScheduleItem(id);
+      showNotification({ message: t('common.success'), type: 'success' });
       setSelectedClass(null);
     }
   };
