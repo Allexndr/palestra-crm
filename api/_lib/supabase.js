@@ -73,7 +73,7 @@ export function createDemoProfile(role = 'admin') {
     auth_user_id: null,
     club_id: '00000000-0000-0000-0000-000000000001',
     role,
-    name: role === 'admin' ? 'Администратор' : role === 'coach' ? 'Тренер' : role === 'parent' ? 'Александр Иванов' : 'Артем Иванов',
+    name: role === 'admin' ? 'Администратор' : role === 'coach' ? 'Тренер' : role === 'parent' ? 'Родитель' : 'Ученик',
     email: `${role}@palestra.fit`,
   };
 }
