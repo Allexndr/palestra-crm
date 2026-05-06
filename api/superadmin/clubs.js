@@ -54,7 +54,12 @@ export default async function handler(req, res) {
         : false;
 
       const clubInfoName = appState.clubInfo?.name;
-      const displayName = clubInfoName || club.name || 'Без названия';
+      // Prefer clubs.name from DB unless it's the default placeholder; fall back to clubInfo.name
+      const isDefaultName = (n) => !n || n === 'Palestra Fight Club';
+      const displayName = (!isDefaultName(club.name) ? club.name : null)
+        || (!isDefaultName(clubInfoName) ? clubInfoName : null)
+        || club.name
+        || 'Без названия';
 
       return {
         ...club,

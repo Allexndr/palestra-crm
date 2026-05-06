@@ -124,9 +124,8 @@ export const AdminProvider = ({ children }) => {
   const [groups, setGroups] = useState([]);
   const [activities, setActivities] = useState([]);
   const { t } = useTranslation();
-  const sports = t('common.sports', { returnObjects: true }) || [
-    'Бокс', 'ММА', 'Бразильское джиу-джитсу', 'Каратэ', 'Дзюдо', 'Кикбоксинг', 'Грэпплинг', 'Тайский бокс'
-  ];
+  const sportsRaw = t('common.sports', { returnObjects: true });
+  const sports = Array.isArray(sportsRaw) ? sportsRaw : ['Бокс', 'ММА', 'Бразильское джиу-джитсу', 'Каратэ', 'Дзюдо', 'Кикбоксинг', 'Грэпплинг', 'Тайский бокс'];
   const [leagues, setLeagues] = useState([]);
   const [plans, setPlans] = useState([]);
   const [posts, setPosts] = useState([]);

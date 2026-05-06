@@ -264,10 +264,15 @@ export async function syncNormalizedState(user, state) {
     const supabase = getServiceClient();
 
     const clubInfo = state.clubInfo || {};
+    const clubNameUpdate = {};
+    // Only update the name if it's a real custom name (not the default placeholder)
+    if (clubInfo.name && clubInfo.name !== 'Palestra Fight Club') {
+      clubNameUpdate.name = clubInfo.name;
+    }
     await supabase
       .from('clubs')
       .update({
-        name: clubInfo.name || 'Palestra Fight Club',
+        ...clubNameUpdate,
         logo_blob_url: clubInfo.logo || '/palestra-logo-nav-full.png',
         primary_color: clubInfo.primaryColor || '#3146A6',
         updated_at: new Date().toISOString(),
