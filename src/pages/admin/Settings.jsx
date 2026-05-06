@@ -504,36 +504,39 @@ export const Settings = () => {
                 <Button variant="secondary" size="sm" onClick={() => setActiveTab('team_add')}>{t('settings.team.add_staff')}</Button>
               </div>
               
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
                 {/* Current User */}
-                <div className="flex items-center justify-between p-5 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                  <div className="flex items-center gap-4">
-                    <div style={{ width: 48, height: 48, borderRadius: '14px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800' }}>
+                <div className="flex items-center justify-between gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div style={{ width: 48, height: 48, minWidth: 48, borderRadius: '14px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '18px' }}>
                       {user?.name?.charAt(0) || 'A'}
                     </div>
-                    <div>
-                      <p className="font-bold text-slate-800">{user?.name || t('settings.team.admin_role')} <span className="ml-2 text-[10px] bg-primary text-white px-2 py-0.5 rounded-full">{t('settings.team.you_label')}</span></p>
-                      <p className="text-xs text-secondary">{user?.email}</p>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-bold text-slate-800 truncate">{user?.name || t('settings.team.admin_role')}</p>
+                        <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-bold shrink-0">{t('settings.team.you_label')}</span>
+                      </div>
+                      <p className="text-xs text-secondary mt-0.5 truncate">{user?.email}</p>
                     </div>
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-primary">{t('settings.team.admin_role')}</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-primary shrink-0">{t('settings.team.admin_role')}</span>
                 </div>
 
                 {/* Coaches as staff */}
                 {Array.isArray(coaches) && coaches.map(coach => (
-                  <div key={coach.id} className="flex items-center justify-between p-5 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div className="flex items-center gap-4">
-                      <div style={{ width: 48, height: 48, borderRadius: '14px', backgroundColor: '#f1f5f9', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800' }}>
+                  <div key={coach.id} className="flex items-center justify-between gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div style={{ width: 48, height: 48, minWidth: 48, borderRadius: '14px', backgroundColor: '#f1f5f9', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '18px' }}>
                         {coach.firstName ? coach.firstName.charAt(0) : (coach.name ? coach.name.charAt(0) : 'T')}
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-800">
-                          {coach.firstName ? `${coach.firstName} ${coach.lastName || ''}` : (coach.name || t('settings.team.coach_role'))}
+                      <div className="min-w-0">
+                        <p className="font-bold text-slate-800 truncate">
+                          {coach.firstName ? `${coach.firstName} ${coach.lastName || ''}`.trim() : (coach.name || t('settings.team.coach_role'))}
                         </p>
-                        <p className="text-xs text-secondary">{coach.email || coach.phone || t('settings.team.no_contacts')}</p>
+                        <p className="text-xs text-secondary mt-0.5 truncate">{coach.email || coach.phone || t('settings.team.no_contacts')}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 shrink-0">
                       <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('settings.team.coach_role')}</span>
                       <Button variant="ghost" size="sm" className="text-slate-400" onClick={() => navigate('/admin/coaches')}>{t('settings.team.configure')}</Button>
                     </div>
@@ -651,13 +654,13 @@ export const Settings = () => {
 
 
           {activeTab === 'student_dashboard' && (
-            <div className="animate-fade-in">
-              <div className="mb-10">
-                <h3 className="h4 flex items-center gap-3"><Sparkles className="text-primary" /> {t('settings.student_constructor.title')}</h3>
-                <p className="text-secondary text-sm mt-1">{t('settings.student_constructor.subtitle')}</p>
+            <div className="animate-fade-in pb-8">
+              <div className="mb-8 pb-6" style={{ borderBottom: '1px solid var(--color-border)' }}>
+                <h3 className="h4 flex items-center gap-3 mb-2"><Sparkles className="text-primary" /> {t('settings.student_constructor.title')}</h3>
+                <p className="text-secondary text-sm">{t('settings.student_constructor.subtitle')}</p>
               </div>
 
-              <div className="admin-card-grid mb-12">
+              <div className="admin-card-grid mb-10" style={{ paddingBottom: '4px' }}>
                 {STUDENT_WIDGET_CATALOG.map(widget => {
                   const isActive = studentDashboardPool.includes(widget.id);
                   return (
