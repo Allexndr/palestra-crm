@@ -7,6 +7,7 @@ import { Menu, X, LogOut, Shield, ChevronDown, Check, MapPin } from 'lucide-reac
 import { ADMIN_NAV_LINKS } from '../../constants/adminNavigation';
 import { ClubLogo } from '../ui/ClubLogo';
 import { PageLoader } from '../ui/PageLoader';
+import { HelpChat } from '../ui/HelpChat';
 
 export const AdminLayout = () => {
   const { user, clubInfo, logout, locations, selectedLocationId, setSelectedLocationId, isStateReady } = useAdmin();
@@ -204,6 +205,7 @@ export const AdminLayout = () => {
           </div>
         </main>
       </section>
+      <HelpChat />
     </div>
   );
 };
