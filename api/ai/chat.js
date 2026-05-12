@@ -38,8 +38,9 @@ export default async function handler(req, res) {
   const requestUser = await requireUser(req, res, { allowDemo: true });
   if (!requestUser) return;
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  const primary = process.env.GEMINI_API_KEY;
+  const backup = process.env.GEMINI_API_KEY_BACKUP;
+  if (!primary && !backup) {
     return sendJson(res, 503, { error: 'AI-помощник временно недоступен.' });
   }
 
@@ -66,23 +67,36 @@ export default async function handler(req, res) {
       },
     };
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+    const tryGemini = async (apiKey) => {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        }
+      );
+      if (!res.ok) throw new Error(`Gemini ${res.status}`);
+      const data = await res.json();
+      return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    };
+
+    let text = '';
+    try {
+      text = await tryGemini(primary);
+    } catch (e) {
+      console.warn('[ai/chat] Primary Gemini failed, trying backup:', e.message);
+      if (backup) {
+        try {
+          text = await tryGemini(backup);
+        } catch (e2) {
+          console.error('[ai/chat] Backup Gemini also failed:', e2.message);
+          return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
+        }
+      } else {
+        return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
       }
-    );
-
-    if (!geminiRes.ok) {
-      const errText = await geminiRes.text();
-      console.error('[ai/chat] Gemini error:', errText);
-      return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
     }
-
-    const geminiData = await geminiRes.json();
-    const text = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
     return sendJson(res, 200, { reply: text });
   } catch (error) {
