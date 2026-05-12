@@ -38,10 +38,9 @@ export default async function handler(req, res) {
   const requestUser = await requireUser(req, res, { allowDemo: true });
   if (!requestUser) return;
 
-  const geminiPrimary = process.env.GEMINI_API_KEY;
-  const geminiBackup = process.env.GEMINI_API_KEY_BACKUP;
+  const geminiKey = process.env.GEMINI_API_KEY;
   const grokKey = process.env.GROK_API_KEY;
-  if (!geminiPrimary && !geminiBackup && !grokKey) {
+  if (!geminiKey && !grokKey) {
     return sendJson(res, 503, { error: 'AI-помощник временно недоступен.' });
   }
 
@@ -109,36 +108,18 @@ export default async function handler(req, res) {
 
     let text = '';
     try {
-      text = await tryGemini(geminiPrimary);
+      text = await tryGemini(geminiKey);
     } catch (e) {
-      console.warn('[ai/chat] Primary Gemini failed, trying backup:', e.message);
-      if (geminiBackup) {
+      console.warn('[ai/chat] Gemini failed, trying Grok:', e.message);
+      if (grokKey) {
         try {
-          text = await tryGemini(geminiBackup);
+          text = await tryGrok();
         } catch (e2) {
-          console.warn('[ai/chat] Backup Gemini failed, trying Grok:', e2.message);
-          if (grokKey) {
-            try {
-              text = await tryGrok();
-            } catch (e3) {
-              console.error('[ai/chat] Grok also failed:', e3.message);
-              return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
-            }
-          } else {
-            return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
-          }
-        }
-      } else {
-        if (grokKey) {
-          try {
-            text = await tryGrok();
-          } catch (e2) {
-            console.error('[ai/chat] Grok failed:', e2.message);
-            return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
-          }
-        } else {
+          console.error('[ai/chat] Grok also failed:', e2.message);
           return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
         }
+      } else {
+        return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
       }
     }
 
