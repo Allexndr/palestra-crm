@@ -38,9 +38,10 @@ export default async function handler(req, res) {
   const requestUser = await requireUser(req, res, { allowDemo: true });
   if (!requestUser) return;
 
-  const primary = process.env.GEMINI_API_KEY;
-  const backup = process.env.GEMINI_API_KEY_BACKUP;
-  if (!primary && !backup) {
+  const geminiPrimary = process.env.GEMINI_API_KEY;
+  const geminiBackup = process.env.GEMINI_API_KEY_BACKUP;
+  const grokKey = process.env.GROK_API_KEY;
+  if (!geminiPrimary && !geminiBackup && !grokKey) {
     return sendJson(res, 503, { error: 'AI-помощник временно недоступен.' });
   }
 
@@ -81,20 +82,63 @@ export default async function handler(req, res) {
       return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
     };
 
+    const tryGrok = async () => {
+      const grokBody = {
+        model: 'grok-3-mini',
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...messages
+            .filter(m => m.role === 'user' || m.role === 'assistant')
+            .map(m => ({ role: m.role, content: String(m.content) })),
+        ],
+        temperature: 0.4,
+        max_tokens: 512,
+      };
+      const res = await fetch('https://api.x.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${grokKey}`,
+        },
+        body: JSON.stringify(grokBody),
+      });
+      if (!res.ok) throw new Error(`Grok ${res.status}`);
+      const data = await res.json();
+      return data?.choices?.[0]?.message?.content || '';
+    };
+
     let text = '';
     try {
-      text = await tryGemini(primary);
+      text = await tryGemini(geminiPrimary);
     } catch (e) {
       console.warn('[ai/chat] Primary Gemini failed, trying backup:', e.message);
-      if (backup) {
+      if (geminiBackup) {
         try {
-          text = await tryGemini(backup);
+          text = await tryGemini(geminiBackup);
         } catch (e2) {
-          console.error('[ai/chat] Backup Gemini also failed:', e2.message);
-          return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
+          console.warn('[ai/chat] Backup Gemini failed, trying Grok:', e2.message);
+          if (grokKey) {
+            try {
+              text = await tryGrok();
+            } catch (e3) {
+              console.error('[ai/chat] Grok also failed:', e3.message);
+              return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
+            }
+          } else {
+            return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
+          }
         }
       } else {
-        return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
+        if (grokKey) {
+          try {
+            text = await tryGrok();
+          } catch (e2) {
+            console.error('[ai/chat] Grok failed:', e2.message);
+            return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
+          }
+        } else {
+          return sendJson(res, 502, { error: 'Ошибка AI-сервиса. Попробуйте позже.' });
+        }
       }
     }
 
