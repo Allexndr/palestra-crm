@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { useTranslation } from '../../context/LanguageContext';
@@ -7,7 +7,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { FilePicker } from '../../components/ui/FilePicker';
-import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, ShieldAlert, LayoutList, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Eye, EyeOff, MessageSquare, GripVertical } from 'lucide-react';
+import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, ShieldAlert, LayoutList, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Eye, EyeOff, MessageSquare, GripVertical, DatabaseBackup, RotateCcw, Clock } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -18,6 +18,103 @@ import { AdminTariffConstructor } from '../../components/admin/AdminTariffConstr
 import { formatLimit } from '../../lib/tariff';
 
 import { PageLoader } from '../../components/ui/PageLoader';
+
+function BackupsTab({ showNotification, confirm }) {
+  const [backups, setBackups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [restoring, setRestoring] = useState(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/app/backups', { credentials: 'include' });
+      const data = await res.json();
+      setBackups(data.backups || []);
+    } catch {
+      setBackups([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleRestore = async (backup) => {
+    const ok = await confirm({
+      title: 'Восстановить бэкап?',
+      message: `Все текущие данные будут заменены состоянием от ${new Date(backup.created_at).toLocaleString('ru')}. Это действие нельзя отменить.`,
+      confirmText: 'Восстановить',
+      variant: 'danger',
+    });
+    if (!ok) return;
+    setRestoring(backup.id);
+    try {
+      const res = await fetch('/api/app/backups', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ backupId: backup.id }),
+      });
+      if (res.ok) {
+        showNotification({ message: 'Бэкап восстановлен. Обновите страницу.', type: 'success' });
+      } else {
+        showNotification({ message: 'Ошибка восстановления', type: 'error' });
+      }
+    } catch {
+      showNotification({ message: 'Ошибка восстановления', type: 'error' });
+    } finally {
+      setRestoring(null);
+    }
+  };
+
+  return (
+    <div className="animate-fade-in">
+      <h3 className="h4 mb-2 flex items-center gap-3"><DatabaseBackup className="text-primary" /> Бэкапы данных</h3>
+      <p className="text-secondary text-sm mb-8">Автоматически сохраняется один снимок в час. Хранится 30 дней. Можно восстановить любой.</p>
+
+      {loading ? (
+        <div className="text-center py-12 text-secondary text-sm">Загрузка...</div>
+      ) : backups.length === 0 ? (
+        <Card style={{ backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)' }}>
+          <div className="text-center py-10 text-secondary">
+            <Clock size={32} className="mx-auto mb-3 opacity-30" />
+            <p className="font-medium">Бэкапов пока нет</p>
+            <p className="text-sm mt-1">Первый появится после следующего сохранения данных</p>
+          </div>
+        </Card>
+      ) : (
+        <Card style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="flex flex-col">
+            {backups.map((b, i) => (
+              <div key={b.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: i < backups.length - 1 ? '1px solid var(--color-border)' : 'none' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Clock size={16} />
+                  </div>
+                  <div>
+                    <p style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--color-text)', margin: 0 }}>
+                      {new Date(b.created_at).toLocaleString('ru', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                    {i === 0 && <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Последний</span>}
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  style={{ gap: 6, fontSize: '0.8rem', padding: '6px 12px' }}
+                  disabled={restoring === b.id}
+                  onClick={() => handleRestore(b)}
+                >
+                  <RotateCcw size={14} />
+                  {restoring === b.id ? 'Восстановление...' : 'Восстановить'}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+}
 
 export const Settings = () => {
   const { 
@@ -213,6 +310,7 @@ export const Settings = () => {
     { id: 'student_dashboard',label: t('settings.tabs.student_widgets'),    icon: <Sparkles size={18} /> },
     { id: 'notif',            label: t('settings.tabs.notifications'),      icon: <Bell size={18} /> },
     { id: 'security',         label: t('settings.tabs.security'),           icon: <Lock size={18} /> },
+    { id: 'backups',          label: 'Бэкапы',                               icon: <DatabaseBackup size={18} /> },
   ];
 
   return (
@@ -593,6 +691,10 @@ export const Settings = () => {
                 <Button variant="primary" className="relative z-10 bg-indigo-500 border-none hover:bg-indigo-400 px-8 h-12 rounded-xl font-bold">{t('settings.notifications.tg_connect_btn')}</Button>
               </div>
             </div>
+          )}
+
+          {activeTab === 'backups' && (
+            <BackupsTab showNotification={showNotification} confirm={confirm} />
           )}
 
           {activeTab === 'security' && (

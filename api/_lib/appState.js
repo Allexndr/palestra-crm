@@ -109,6 +109,19 @@ export async function saveAppState(user, state) {
     } catch (syncError) {
       console.error('Failed to sync normalized state, but app_state was saved:', syncError);
     }
+
+    // Hourly backup: upsert into app_state_backups (unique per club+hour)
+    try {
+      await supabase
+        .from('app_state_backups')
+        .upsert(
+          { club_id: clubId, state: mergedState, created_at: new Date().toISOString() },
+          { onConflict: 'club_id,hour_bucket', ignoreDuplicates: false }
+        );
+    } catch (backupError) {
+      // Backup failure is non-critical — log and continue
+      console.warn('[saveAppState] Backup failed (non-critical):', backupError.message);
+    }
     
     return mergedState;
   } catch (err) {
