@@ -148,10 +148,10 @@ export const Shop = () => {
 
   return (
     <div className="animate-fade-in pb-20">
-      <div className="admin-page-header">
+      <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h1">{t('shop.title')}</h1>
-          <p className="text-secondary font-medium">{t('shop.subtitle')}</p>
+          <h1 className="h2">{t('shop.title')}</h1>
+          <p className="text-secondary text-lg">{t('shop.subtitle')}</p>
         </div>
 
         <div className="admin-page-actions">

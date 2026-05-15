@@ -4140,7 +4140,7 @@ a:focus:not(:focus-visible) {
   .mt-12 { margin-top: var(--space-5) !important; }
 
   /* Hide duplicate page title block — title is already in the top navbar */
-  .page-title-block {
+  .page-title-block:not(.page-title-block--in-hero) {
     display: none !important;
   }
 

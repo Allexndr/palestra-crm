@@ -16,11 +16,14 @@ export const Groups = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex justify-between items-end mb-12">
-        <div className="page-title-block">
-          <h1 className="h1 m-0">{t('groups.title')}</h1>
-          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-muted mt-3">{t('groups.subtitle')}</p>
+      <div className="admin-page-header admin-page-header--center">
+        <div className="page-title-block page-title-block--row">
+          <h1 className="h2">{t('groups.title')}</h1>
+          <p className="text-secondary text-lg">{t('groups.subtitle')}</p>
         </div>
+        <Button variant="primary" onClick={() => navigate('/admin/groups/new')} style={{ gap: '8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+          <Plus size={18} /> {t('groups.add_group')}
+        </Button>
       </div>
 
       <div className="admin-card-grid">

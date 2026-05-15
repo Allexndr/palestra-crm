@@ -114,7 +114,7 @@ export const League = () => {
     <div className="animate-fade-in pb-12">
       <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h1">{t('league.title')}</h1>
+          <h1 className="h2">{t('league.title')}</h1>
           <p className="text-secondary font-medium uppercase tracking-widest text-[10px] opacity-60">{t('league.subtitle')}</p>
         </div>
         {isAdmin && (

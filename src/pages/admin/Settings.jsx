@@ -260,7 +260,7 @@ export const Settings = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="admin-page-header">
+      <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
           <h1 className="h2">{t('settings.title')}</h1>
           <p className="text-secondary text-lg">{t('settings.subtitle')}</p>

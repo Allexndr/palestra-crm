@@ -89,10 +89,10 @@ export const Payroll = () => {
 
   return (
     <div className="animate-fade-in pb-20">
-      <div className="admin-page-header">
+      <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block page-title-block--row">
-          <h1 className="h1">{t('payroll.title')}</h1>
-          <p className="text-secondary font-medium">{t('payroll.subtitle')}</p>
+          <h1 className="h2">{t('payroll.title')}</h1>
+          <p className="text-secondary text-lg">{t('payroll.subtitle')}</p>
         </div>
 
         <div className="flex gap-4 items-center bg-white p-2 rounded-2xl border shadow-sm">
