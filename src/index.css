@@ -1666,6 +1666,12 @@ body, #root {
   max-width: 100%;
 }
 
+textarea.input-field {
+  vertical-align: top;
+  resize: vertical;
+  line-height: 1.6;
+}
+
 @media (max-width: 900px) {
   .admin-main {
     padding-left: var(--space-5);

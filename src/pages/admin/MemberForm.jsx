@@ -345,7 +345,7 @@ export const MemberForm = () => {
                       <label className="input-label text-rose-600 font-black">{t('members.medical_notes')}</label>
                       <textarea 
                         className="input-field min-h-[100px] border-rose-100 focus:border-rose-300 bg-rose-50/10" 
-                        style={{ padding: '20px' }}
+                        style={{ padding: '16px 20px', verticalAlign: 'top', resize: 'vertical' }}
                         value={formData.medicalNotes} 
                         onChange={e => setFormData({...formData, medicalNotes: e.target.value})}
                         placeholder={t('members.medical_placeholder')}
