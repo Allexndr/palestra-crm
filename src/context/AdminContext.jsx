@@ -295,7 +295,7 @@ export const AdminProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      console.log('State persisted successfully');
+      if (import.meta.env.DEV) console.log('State persisted successfully');
       return true;
     } catch (error) {
       console.error('Failed to persist Palestra state', error);

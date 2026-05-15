@@ -7,15 +7,15 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { FilePicker } from '../../components/ui/FilePicker';
-import { Settings as SettingsIcon, Globe, Lock, Bell, Users, Camera, Save, Trophy, Trash2, ShieldAlert, LayoutList, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Eye, EyeOff, MessageSquare, GripVertical, DatabaseBackup, RotateCcw, Clock } from 'lucide-react';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { STUDENT_WIDGET_CATALOG } from '../../context/AdminContext';
+import { Settings as SettingsIcon, Globe, Lock, Save, Trophy, Trash2, ShieldAlert, CheckCircle, LayoutDashboard, Sparkles, Plus, ArrowLeft, ArrowRight, DatabaseBackup, RotateCcw, Clock } from 'lucide-react';
 import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import { uploadBlobFile, fixBlobUrl } from '../../lib/blobClient';
 import { AdminTariffConstructor } from '../../components/admin/AdminTariffConstructor';
 import { formatLimit } from '../../lib/tariff';
+import { StudentDashboardTab } from '../../components/admin/settings/StudentDashboardTab';
+import { DashboardConstructorTab } from '../../components/admin/settings/DashboardConstructorTab';
+import { TeamTab } from '../../components/admin/settings/TeamTab';
+import { NotificationsTab } from '../../components/admin/settings/NotificationsTab';
 
 import { PageLoader } from '../../components/ui/PageLoader';
 
@@ -244,61 +244,6 @@ export const Settings = () => {
     }
   };
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-    if (active.id !== over.id) {
-      const oldIndex = dashboardLayout.findIndex((i) => i.id === active.id);
-      const newIndex = dashboardLayout.findIndex((i) => i.id === over.id);
-      setDashboardLayout(arrayMove(dashboardLayout, oldIndex, newIndex));
-    }
-  };
-
-  const SortableWidget = ({ widget, index }) => {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: widget.id });
-    const style = {
-      transform: CSS.Transform.toString(transform),
-      transition,
-      zIndex: isDragging ? 100 : 1,
-      opacity: isDragging ? 0.5 : (widget.visible ? 1 : 0.6),
-    };
-
-    return (
-      <div 
-        ref={setNodeRef} 
-        style={style} 
-        className={`flex flex-col p-6 rounded-[32px] border transition-all ${widget.visible ? 'bg-white border-slate-100 shadow-xl shadow-slate-200/50' : 'bg-slate-50 border-dashed border-slate-200 opacity-60'}`}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl text-slate-400 hover:text-primary transition-all">
-            <GripVertical size={24} />
-          </div>
-          <button 
-            onClick={() => toggleWidget(widget.id)}
-            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer ${widget.visible ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-200 text-slate-500'}`}
-          >
-            {widget.visible ? t('settings.locations.active') : t('settings.student_constructor.hidden')}
-          </button>
-        </div>
-        
-        <div className="mt-auto">
-          <div className="w-12 h-12 bg-primary-soft text-primary rounded-2xl flex items-center justify-center mb-4">
-             <LayoutDashboard size={24} />
-          </div>
-          <p className="font-black text-slate-800 text-base leading-tight uppercase tracking-tight">{widget.label}</p>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold mt-2">
-            {t('settings.admin_constructor.block_label')} #{index + 1}
-          </p>
-        </div>
-      </div>
-    );
-  };
 
   const TABS = [
     { id: 'club',             label: t('settings.tabs.club_profile'),      icon: <Globe size={18} /> },
@@ -603,94 +548,11 @@ export const Settings = () => {
           )}
 
           {activeTab === 'team' && (
-            <div className="animate-fade-in">
-              <div className="flex justify-between items-center mb-8">
-                <h3 className="h4 flex items-center gap-3"><Users className="text-primary" /> {t('settings.team.title')}</h3>
-                <Button variant="secondary" size="sm" onClick={() => setActiveTab('team_add')}>{t('settings.team.add_staff')}</Button>
-              </div>
-              
-              <div className="flex flex-col gap-3">
-                {/* Current User */}
-                <div className="flex items-center justify-between gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div style={{ width: 48, height: 48, minWidth: 48, borderRadius: '14px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '18px' }}>
-                      {user?.name?.charAt(0) || 'A'}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-bold text-slate-800 truncate">{user?.name || t('settings.team.admin_role')}</p>
-                        <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-bold shrink-0">{t('settings.team.you_label')}</span>
-                      </div>
-                      <p className="text-xs text-secondary mt-0.5 truncate">{user?.email}</p>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-primary shrink-0">{t('settings.team.admin_role')}</span>
-                </div>
-
-                {/* Coaches as staff */}
-                {Array.isArray(coaches) && coaches.map(coach => (
-                  <div key={coach.id} className="flex items-center justify-between gap-4 p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                    <div className="flex items-center gap-4 min-w-0">
-                      <div style={{ width: 48, height: 48, minWidth: 48, borderRadius: '14px', backgroundColor: '#f1f5f9', color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '18px' }}>
-                        {coach.firstName ? coach.firstName.charAt(0) : (coach.name ? coach.name.charAt(0) : 'T')}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-bold text-slate-800 truncate">
-                          {coach.firstName ? `${coach.firstName} ${coach.lastName || ''}`.trim() : (coach.name || t('settings.team.coach_role'))}
-                        </p>
-                        <p className="text-xs text-secondary mt-0.5 truncate">{coach.email || coach.phone || t('settings.team.no_contacts')}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('settings.team.coach_role')}</span>
-                      <Button variant="ghost" size="sm" className="text-slate-400" onClick={() => navigate('/admin/coaches')}>{t('settings.team.configure')}</Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <TeamTab user={user} coaches={coaches} navigate={navigate} setActiveTab={setActiveTab} />
           )}
 
           {activeTab === 'notif' && (
-            <div className="animate-fade-in">
-              <h3 className="h4 mb-8 flex items-center gap-3"><Bell className="text-primary" /> {t('settings.notifications.title')}</h3>
-              <div className="flex flex-col gap-4">
-                {[
-                  { id: 'birthday', title: t('settings.notifications.leads_title'), desc: t('settings.notifications.leads_desc') },
-                  { id: 'billing', title: t('settings.notifications.billing_title'), desc: t('settings.notifications.billing_desc') },
-                  { id: 'trial', title: t('settings.notifications.trial_title'), desc: t('settings.notifications.trial_desc') },
-                  { id: 'reports', title: t('settings.notifications.reports_title'), desc: t('settings.notifications.reports_desc') },
-                ].map(item => {
-                  const configObj = automations?.config || { birthday: true, billing: true, trial: false, reports: true };
-                  const isChecked = configObj[item.id] !== false;
-                  return (
-                  <label key={item.id} className="flex items-center justify-between p-6 bg-white rounded-[24px] border border-slate-100 hover:border-primary/30 hover:shadow-xl hover:shadow-slate-100 transition-all cursor-pointer group">
-                    <div className="flex-1">
-                      <p className="font-bold text-slate-800 mb-1 group-hover:text-primary transition-colors">{item.title}</p>
-                      <p className="text-xs text-secondary">{item.desc}</p>
-                    </div>
-                    <div className={`w-14 h-7 rounded-full p-1 transition-all duration-500 ${isChecked ? 'bg-primary shadow-lg shadow-indigo-100' : 'bg-slate-100'}`}>
-                      <div className={`w-5 h-5 bg-white rounded-full transition-transform duration-500 shadow-md flex items-center justify-center ${isChecked ? 'translate-x-7' : 'translate-x-0'}`}>
-                        {isChecked && <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />}
-                      </div>
-                    </div>
-                    <input type="checkbox" className="hidden" checked={isChecked} onChange={(e) => updateAutomationConfig(item.id, e.target.checked)} />
-                  </label>
-                  );
-                })}
-              </div>
-              <div className="mt-16 p-8 bg-slate-900 text-white rounded-[32px] border-none flex items-center justify-between overflow-hidden relative group">
-                <div className="absolute top-[-20px] right-[-20px] opacity-10 rotate-12 transition-transform group-hover:rotate-45 duration-700">
-                   <MessageSquare size={160} fill="white" />
-                </div>
-                <div className="relative z-10">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400 mb-2">{t('settings.notifications.tg_integration')}</p>
-                  <h4 className="font-bold text-xl mb-2">{t('settings.notifications.tg_link_title')}</h4>
-                  <p className="text-sm opacity-60">{t('settings.notifications.tg_link_desc')}</p>
-                </div>
-                <Button variant="primary" className="relative z-10 bg-indigo-500 border-none hover:bg-indigo-400 px-8 h-12 rounded-xl font-bold">{t('settings.notifications.tg_connect_btn')}</Button>
-              </div>
-            </div>
+            <NotificationsTab automations={automations} updateAutomationConfig={updateAutomationConfig} />
           )}
 
           {activeTab === 'backups' && (
@@ -763,133 +625,22 @@ export const Settings = () => {
 
 
           {activeTab === 'student_dashboard' && (
-            <div className="animate-fade-in pb-8">
-              <div className="mb-8 pb-6" style={{ borderBottom: '1px solid var(--color-border)' }}>
-                <h3 className="h4 flex items-center gap-3 mb-2"><Sparkles className="text-primary" /> {t('settings.student_constructor.title')}</h3>
-                <p className="text-secondary text-sm">{t('settings.student_constructor.subtitle')}</p>
-              </div>
-
-              <div className="admin-card-grid mb-10" style={{ paddingBottom: '4px' }}>
-                {STUDENT_WIDGET_CATALOG.map(widget => {
-                  const isActive = studentDashboardPool.includes(widget.id);
-                  return (
-                    <Card 
-                      key={widget.id} 
-                      onClick={() => {
-                        if (!studentDashboardPool.includes(widget.id) && studentDashboardPool.length >= 7) {
-                          showNotification({ 
-                            title: t('common.error'), 
-                            message: t('settings.student_constructor.limit_error') || 'Максимальный пул — 7 виджетов', 
-                            type: 'error' 
-                          });
-                          return;
-                        }
-                        toggleStudentPoolWidget(widget.id);
-                      }}
-                      style={{ 
-                        cursor: 'pointer',
-                        border: isActive ? '2px solid var(--color-primary)' : '1px solid var(--color-border)',
-                        backgroundColor: isActive ? 'var(--color-primary-soft)' : 'white',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h5 className={`font-bold ${isActive ? 'text-primary' : 'text-slate-800'}`}>{widget.label}</h5>
-                        {isActive && <CheckCircle size={16} className="text-primary" />}
-                      </div>
-                      <p className="text-[11px] text-secondary leading-relaxed">{widget.desc}</p>
-                    </Card>
-                  );
-                })}
-              </div>
-
-              <div className="pt-8 border-t">
-                <div className="mb-8">
-                  <h3 className="h4 flex items-center gap-3"><LayoutList className="text-primary" /> {t('settings.student_constructor.default_title')}</h3>
-                  <p className="text-secondary text-sm mt-1">{t('settings.student_constructor.default_desc')}</p>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  {studentDashboardLayout.filter(w => studentDashboardPool.includes(w.id)).map((widget, index) => {
-                    const catalogInfo = STUDENT_WIDGET_CATALOG.find(c => c.id === widget.id);
-                    return (
-                      <div key={widget.id} className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${widget.visible ? 'bg-white border-slate-100 shadow-sm' : 'bg-slate-50 border-dashed border-slate-200 opacity-60'}`}>
-                        <div className="flex items-center gap-5">
-                          <div className="flex flex-col gap-1">
-                            <button 
-                              disabled={index === 0}
-                              onClick={() => moveStudentWidget(widget.id, 'up')}
-                              className="p-1 hover:bg-slate-100 rounded text-slate-400 disabled:opacity-20 border-none bg-transparent cursor-pointer"
-                            >
-                              <ArrowUp size={14} />
-                            </button>
-                            <button 
-                              disabled={index === studentDashboardLayout.filter(w => studentDashboardPool.includes(w.id)).length - 1}
-                              onClick={() => moveStudentWidget(widget.id, 'down')}
-                              className="p-1 hover:bg-slate-100 rounded text-slate-400 disabled:opacity-20 border-none bg-transparent cursor-pointer"
-                            >
-                              <ArrowDown size={14} />
-                            </button>
-                          </div>
-                          <div>
-                            <p className={`font-bold ${widget.visible ? 'text-slate-800' : 'text-slate-400'}`}>{catalogInfo?.label || widget.id}</p>
-                            <p className="text-[10px] uppercase tracking-wider text-slate-400 font-black">{t('settings.student_constructor.position_label')} #{index + 1}</p>
-                          </div>
-                        </div>
-                        
-                        <button 
-                          onClick={() => toggleStudentWidget(widget.id)}
-                          className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-none cursor-pointer ${widget.visible ? 'bg-indigo-50 text-primary' : 'bg-slate-200 text-slate-500'}`}
-                        >
-                          {widget.visible ? <div className="flex items-center gap-2"><Eye size={12} /> {t('settings.student_constructor.visible')}</div> : <div className="flex items-center gap-2"><EyeOff size={12} /> {t('settings.student_constructor.hidden')}</div>}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            <StudentDashboardTab
+              studentDashboardPool={studentDashboardPool}
+              studentDashboardLayout={studentDashboardLayout}
+              toggleStudentPoolWidget={toggleStudentPoolWidget}
+              moveStudentWidget={moveStudentWidget}
+              toggleStudentWidget={toggleStudentWidget}
+              showNotification={showNotification}
+            />
           )}
 
           {activeTab === 'dashboard' && (
-            <div className="animate-fade-in">
-              <div className="flex justify-between items-center mb-8">
-                <div>
-                  <h3 className="h4 flex items-center gap-3"><LayoutDashboard className="text-primary" /> {t('settings.admin_constructor.title')}</h3>
-                  <p className="text-secondary text-sm mt-1">{t('settings.admin_constructor.desc')}</p>
-                </div>
-              </div>
-              
-              <div className="mb-10">
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                  <SortableContext items={dashboardLayout.map(i => i.id)} strategy={rectSortingStrategy}>
-                    <div style={{ 
-                      display: 'grid', 
-                      gridTemplateColumns: 'repeat(2, 1fr)', 
-                      gap: '24px',
-                      padding: '24px',
-                      background: '#f8fafc',
-                      borderRadius: '32px',
-                      border: '2px dashed #e2e8f0'
-                    }}>
-                      {dashboardLayout.map((widget, index) => (
-                        <SortableWidget key={widget.id} widget={widget} index={index} />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
-              </div>
-
-              <div className="mt-12 p-8 bg-indigo-50 rounded-[32px] border border-indigo-100/50">
-                 <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm"><Sparkles size={24} /></div>
-                    <h5 className="font-bold text-slate-800">{t('settings.admin_constructor.personal_title')}</h5>
-                 </div>
-                 <p className="text-sm text-slate-600 leading-relaxed">
-                   {t('settings.admin_constructor.personal_desc')}
-                 </p>
-              </div>
-            </div>
+            <DashboardConstructorTab
+              dashboardLayout={dashboardLayout}
+              setDashboardLayout={setDashboardLayout}
+              toggleWidget={toggleWidget}
+            />
           )}
 
         </Card>
