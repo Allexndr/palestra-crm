@@ -297,7 +297,7 @@ export const AdminProvider = ({ children }) => {
 
   useEffect(() => {
     if (!isStateReady || !isHydratedRef.current) return;
-    const timeout = setTimeout(() => persistState(), 2000); // Debounced auto-save
+    const timeout = setTimeout(() => persistState(), 800); // Debounced auto-save
     localStorage.setItem('palestra_posts', JSON.stringify(posts));
     return () => clearTimeout(timeout);
   }, [isStateReady, members, leads, schedule, locations, groups, leagues, plans, posts, events, attendance, finances, achievements, monthlyAward, quests, feedbacks, automations, selectedLocationId, clubInfo, subscription, activities, coaches, dashboardLayout, studentDashboardPool, studentDashboardLayout, messages, partners]);
@@ -546,12 +546,16 @@ export const AdminProvider = ({ children }) => {
     setMembers(updatedMembers);
     logActivity(`Новый ученик: ${memberData.firstName} ${memberData.lastName}`, 'success');
     
+    let updatedFinances = finances;
     if (memberData.paidAmount && canUseFeature('finance')) {
-      addTransaction({ amount: parseFloat(memberData.paidAmount), type: 'income', description: `Оплата: ${memberData.firstName} ${memberData.lastName}` });
+      const safe = normalizeFinances(finances);
+      const newTransaction = { id: createId(), date: new Date().toISOString(), amount: parseFloat(memberData.paidAmount), type: 'income', description: `Оплата: ${memberData.firstName} ${memberData.lastName}` };
+      updatedFinances = { revenue: safe.revenue + parseFloat(memberData.paidAmount), transactions: [newTransaction, ...safe.transactions] };
+      setFinances(updatedFinances);
     }
     
-    const success = await persistState({ members: updatedMembers });
-    return success;
+    await persistState({ members: updatedMembers, finances: updatedFinances });
+    return true;
   };
 
   const removeMember = (id) => {
@@ -563,8 +567,8 @@ export const AdminProvider = ({ children }) => {
   const updateMember = async (id, updatedData) => {
     const updatedMembers = members.map(m => m.id === id ? { ...m, ...updatedData } : m);
     setMembers(updatedMembers);
-    const success = await persistState({ members: updatedMembers });
-    return success;
+    await persistState({ members: updatedMembers });
+    return true;
   };
 
   const addLead = (leadData) => {
