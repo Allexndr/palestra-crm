@@ -252,8 +252,16 @@ export const AdminProvider = ({ children }) => {
     };
   }, [hydrateTick]);
 
+  const waitForHydration = () => new Promise(resolve => {
+    if (isHydratedRef.current) return resolve();
+    const check = setInterval(() => {
+      if (isHydratedRef.current) { clearInterval(check); resolve(); }
+    }, 100);
+    setTimeout(() => { clearInterval(check); resolve(); }, 5000);
+  });
+
   const persistState = async (updates = {}) => {
-    if (!isStateReady) return false;
+    if (!isStateReady || !isHydratedRef.current) return false;
     
     try {
       const state = {
@@ -554,6 +562,7 @@ export const AdminProvider = ({ children }) => {
       setFinances(updatedFinances);
     }
     
+    await waitForHydration();
     await persistState({ members: updatedMembers, finances: updatedFinances });
     return true;
   };
@@ -567,6 +576,7 @@ export const AdminProvider = ({ children }) => {
   const updateMember = async (id, updatedData) => {
     const updatedMembers = members.map(m => m.id === id ? { ...m, ...updatedData } : m);
     setMembers(updatedMembers);
+    await waitForHydration();
     await persistState({ members: updatedMembers });
     return true;
   };
