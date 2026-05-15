@@ -139,29 +139,13 @@ export const MemberForm = () => {
     }
   };
 
-  const compressImage = (file, maxW = 800, quality = 0.85) => new Promise((resolve) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      const scale = Math.min(1, maxW / Math.max(img.width, img.height));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(blob => resolve(new File([blob], file.name, { type: 'image/webp' })), 'image/webp', quality);
-    };
-    img.src = url;
-  });
-
   const handleAvatarUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setIsUploadingAvatar(true);
     try {
-      const compressed = await compressImage(file);
-      const url = await uploadBlobFile(compressed, 'avatars');
+      const url = await uploadBlobFile(file, 'avatars');
       setFormData((prev) => ({ ...prev, avatar: url }));
       showNotification({ title: t('common.success'), type: 'success' });
     } catch (error) {

@@ -42,6 +42,7 @@ export async function requireUser(req, res, { allowDemo = false } = {}) {
 }
 
 export function safeError(res, error, fallback = 'Request failed') {
+  console.error('[safeError]', fallback, error?.message || error);
   if (process.env.NODE_ENV !== 'production') {
     return sendJson(res, 500, { error: error.message || fallback });
   }

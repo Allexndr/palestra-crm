@@ -563,7 +563,12 @@ export const AdminProvider = ({ children }) => {
     }
     
     await waitForHydration();
-    await persistState({ members: updatedMembers, finances: updatedFinances });
+    const saved = await persistState({ members: updatedMembers, finances: updatedFinances });
+    if (!saved) {
+      // Fallback: retry once after short delay (state may not be hydrated yet)
+      await new Promise(r => setTimeout(r, 300));
+      await persistState({ members: updatedMembers, finances: updatedFinances });
+    }
     return true;
   };
 
@@ -577,7 +582,11 @@ export const AdminProvider = ({ children }) => {
     const updatedMembers = members.map(m => m.id === id ? { ...m, ...updatedData } : m);
     setMembers(updatedMembers);
     await waitForHydration();
-    await persistState({ members: updatedMembers });
+    const saved = await persistState({ members: updatedMembers });
+    if (!saved) {
+      await new Promise(r => setTimeout(r, 300));
+      await persistState({ members: updatedMembers });
+    }
     return true;
   };
 
