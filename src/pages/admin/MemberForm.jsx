@@ -248,7 +248,7 @@ export const MemberForm = () => {
         </div>
       </div>
 
-      <div className="chrome-tabs-container overflow-x-auto scrollbar-hide">
+      <div className="chrome-tabs-container">
         {tabs.map(tab => (
           <button
             key={tab.id}
@@ -399,14 +399,14 @@ export const MemberForm = () => {
           )}
 
           {activeTab === 'physical' && (
-            <div className="animate-fade-in flex flex-col lg:flex-row gap-16">
-              <Card className="flex-1 border border-slate-100 shadow-sm mform-card-body" style={{ borderRadius: '40px' }}>
-                <div className="space-y-10">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="animate-fade-in">
+              <Card className="border border-slate-100 shadow-sm mform-card-body" style={{ borderRadius: '40px' }}>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {(LEAGUE_TEMPLATES[clubInfo?.activeLeagueTemplate || 'martial_arts']?.metrics || []).map(stat => (
                       <div 
                         key={stat.id} 
-                        className="p-8 bg-slate-50/50 rounded-[40px] border border-slate-100/60 hover:bg-white hover:shadow-2xl hover:shadow-slate-200/30 transition-all duration-500 group relative overflow-hidden"
+                        className="stat-card bg-slate-50/50 rounded-[24px] border border-slate-100/60 hover:bg-white hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
                       >
                         {/* Subtle background glow */}
                         <div 
@@ -414,7 +414,7 @@ export const MemberForm = () => {
                           style={{ backgroundColor: stat.color }}
                         ></div>
 
-                        <div className="flex justify-between items-center mb-8 relative z-10">
+                        <div className="flex justify-between items-center mb-4 relative z-10">
                           <div className="flex items-center gap-4">
                             <div 
                               className="w-14 h-14 rounded-[20px] bg-white flex items-center justify-center shadow-sm text-3xl group-hover:scale-110 transition-transform duration-500"
@@ -428,7 +428,7 @@ export const MemberForm = () => {
                                stat.id === 'technique' ? '🥋' : 
                                stat.id === 'reaction' ? '👁️' : '📊'}
                             </div>
-                            <span className="font-black text-slate-800 uppercase tracking-[0.15em] text-[13px]">{stat.label}</span>
+                            <span className="font-black text-slate-800 uppercase tracking-[0.15em] text-[13px]">{t(stat.label)}</span>
                           </div>
                           <div className="relative">
                             <input 
@@ -447,7 +447,7 @@ export const MemberForm = () => {
                           </div>
                         </div>
 
-                        <div className="space-y-5 relative z-10">
+                        <div className="space-y-3 relative z-10">
                           <input 
                             type="range" 
                             min="1" max="100" 
@@ -641,13 +641,41 @@ export const MemberForm = () => {
           white-space: nowrap;
           flex-shrink: 0;
         }
-        @media (max-width: 600px) {
-          .chrome-tab {
-            padding: 10px 14px;
+
+        /* Mobile: replace chrome tabs with 2×2 grid pills */
+        @media (max-width: 640px) {
+          .chrome-tabs-container {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr;
+            border-bottom: none;
+            padding: 0;
+            margin-bottom: 20px;
+            gap: 8px;
           }
-          .chrome-tab-icon { font-size: 16px; }
-          .chrome-tab-label { font-size: 11px; letter-spacing: 0.08em; }
-          .chrome-tab-content { gap: 6px; }
+          .chrome-tab {
+            padding: 12px 10px;
+            border-radius: 16px;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0 !important;
+            white-space: normal;
+            flex-shrink: unset;
+            text-align: center;
+          }
+          .chrome-tab.active {
+            background: var(--color-primary-soft) !important;
+            border-color: var(--color-primary) !important;
+          }
+          .chrome-tab.active::before { display: none; }
+          .chrome-tab-curve-left,
+          .chrome-tab-curve-right { display: none; }
+          .chrome-tab-content { justify-content: center; gap: 6px; }
+          .chrome-tab-icon { font-size: 18px; }
+          .chrome-tab-label { font-size: 11px; letter-spacing: 0.06em; }
+        }
+
+        .stat-card { padding: 20px; }
+        @media (max-width: 640px) {
+          .stat-card { padding: 14px; }
         }
 
         .chrome-tab.active {
