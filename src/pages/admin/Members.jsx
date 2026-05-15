@@ -31,6 +31,30 @@ export const Members = () => {
     return matchesSearch && matchesLocation;
   });
 
+  const MemberActions = ({ member }) => (
+    <div className="flex gap-2">
+      <button className="action-btn-pill" title={t('coaches.form.copy_creds')} onClick={() => {
+        const text = `Login: ${member.login || member.email}\nPassword: ${member.password || '123456'}`;
+        navigator.clipboard.writeText(text);
+        showNotification({ message: t('common.success'), type: 'success' });
+      }}><Copy size={16} /></button>
+      <button className="action-btn-pill" title={t('members.view_profile')} onClick={() => navigate(`/admin/members/${member.id}`)}>
+        <Eye size={16} />
+      </button>
+      {isAdmin && (
+        <button className="action-btn-pill" title={t('common.edit')} onClick={() => navigate(`/admin/members/${member.id}/edit`)}>
+          <Edit2 size={16} />
+        </button>
+      )}
+      {isAdmin && (
+        <button className="action-btn-pill action-btn-pill--danger" title={t('common.delete')} onClick={async () => {
+          const ok = await confirm({ title: t('members.delete_title'), message: t('members.delete_confirm', { name: `${member.firstName} ${member.lastName}` }), confirmText: t('members.delete_btn'), variant: 'danger' });
+          if (ok) { removeMember(member.id); showNotification({ message: t('common.success'), type: 'success' }); }
+        }}><Trash2 size={16} /></button>
+      )}
+    </div>
+  );
+
   return (
     <div className="animate-fade-in">
       <div className="admin-page-header admin-page-header--center">
@@ -43,119 +67,101 @@ export const Members = () => {
           </p>
         </div>
         <Link to="/admin/members/new">
-          <Button variant="primary" style={{ gap: '8px' }}>
-            <Plus size={18} /> {t('members.add_btn')}
+          <Button variant="primary" style={{ gap: '8px', whiteSpace: 'nowrap' }}>
+            <Plus size={16} /> {t('members.add_btn')}
           </Button>
         </Link>
       </div>
 
-      <Card className="shadow-sm border-slate-100" style={{ padding: 'var(--space-8)' }}>
-        <div className="mb-10 relative group">
-          <input 
-            type="text" 
+      <Card className="shadow-sm border-slate-100" style={{ padding: 'var(--space-4)' }}>
+        <div className="mb-6 relative">
+          <input
+            type="text"
             placeholder={t('members.placeholder_search')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: '20px', 
-              borderRadius: '20px', 
-              border: '1.5px solid var(--color-border)',
-              backgroundColor: 'var(--color-bg)',
-              fontSize: '1rem',
-              fontWeight: '500',
-              transition: 'all 0.3s ease'
+            style={{
+              width: '100%', padding: '12px 16px', borderRadius: '14px',
+              border: '1.5px solid var(--color-border)', backgroundColor: 'var(--color-bg)',
+              fontSize: '0.9rem', fontWeight: '500', transition: 'all 0.2s ease', boxSizing: 'border-box'
             }}
-            className="focus:border-primary focus:bg-white focus:shadow-lg focus:shadow-primary/5 outline-none"
+            className="focus:border-primary focus:bg-white outline-none"
           />
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'separate', borderSpacing: '0 8px', minWidth: '800px' }}>
-            <thead>
-              <tr>
-                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_member')}</th>
-                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_contacts')}</th>
-                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_plan')}</th>
-                <th className="pb-4 px-6 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('common.actions')}</th>
-              </tr>
-            </thead>
-            <tbody className="before:block before:h-2">
+        {filteredMembers.length === 0 ? (
+          <div className="text-center py-10 text-secondary">
+            <p>{t('members.no_members')}</p>
+          </div>
+        ) : (
+          <>
+            {/* Mobile cards */}
+            <div className="members-mobile-list">
               {filteredMembers.map(member => (
-                <tr key={member.id} className="bg-white hover:bg-slate-50 transition-all group shadow-sm">
-                  <td className="py-5 px-6 rounded-l-2xl border-y border-l border-slate-50">
-                    <div className="flex items-center gap-4">
-                      <div style={{ width: 44, height: 44, borderRadius: '14px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '16px', overflow: 'hidden' }}>
-                        {member.avatar ? (
-                          <img src={fixBlobUrl(member.avatar)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          member.firstName?.charAt(0) || '?'
-                        )}
-                      </div>
-                      <span className="font-bold text-slate-900 text-base">{member.firstName || ''} {member.lastName || ''}</span>
+                <div key={member.id} className="members-mobile-card" onClick={() => navigate(`/admin/members/${member.id}`)}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '12px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '15px', flexShrink: 0, overflow: 'hidden' }}>
+                      {member.avatar ? <img src={fixBlobUrl(member.avatar)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : member.firstName?.charAt(0) || '?'}
                     </div>
-                  </td>
-                  <td className="py-5 px-6 border-y border-slate-50 text-slate-600 font-bold">{member.phone || '—'}</td>
-                  <td className="py-5 px-6 border-y border-slate-50">
-                    <div className="flex items-center gap-3">
-                      <span style={{ padding: '6px 12px', borderRadius: '10px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', fontSize: '11px', fontWeight: '800' }}>
-                        {(groups || []).find(g => g.id === member.groupId)?.name || t('members.no_group')}
-                      </span>
-                      <span className="text-slate-400 font-medium">/</span>
-                      <span style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--color-text-secondary)' }}>
-                        {member.plan || t('members.no_plan')}
-                      </span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--color-text)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {member.firstName} {member.lastName}
+                      </p>
+                      <p style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', margin: 0, marginTop: 2 }}>
+                        {member.phone || '—'} · {(groups || []).find(g => g.id === member.groupId)?.name || t('members.no_group')}
+                      </p>
                     </div>
-                  </td>
-                  <td className="py-5 px-6 text-right rounded-r-2xl border-y border-r border-slate-50">
-                    <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        className="action-btn-pill" 
-                        title={t('coaches.form.copy_creds')} 
-                        onClick={() => {
-                          const text = `Login: ${member.login || member.email}\nPassword: ${member.password || '123456'}`;
-                          navigator.clipboard.writeText(text);
-                          showNotification({ message: t('common.success'), type: 'success' });
-                        }}
-                      >
-                        <Copy size={18} />
-                      </button>
-                      <button className="action-btn-pill" title={t('members.view_profile')} onClick={() => navigate(`/admin/members/${member.id}`)}>
-                        <Eye size={18} />
-                      </button>
-                      {isAdmin && (
-                        <button className="action-btn-pill" title={t('common.edit')} onClick={() => navigate(`/admin/members/${member.id}/edit`)}>
-                          <Edit2 size={18} />
-                        </button>
-                      )}
-                      {isAdmin && (
-                        <button className="action-btn-pill action-btn-pill--danger" title={t('common.delete')} onClick={async () => {
-                          const ok = await confirm({
-                            title: t('members.delete_title'),
-                            message: t('members.delete_confirm', { name: `${member.firstName} ${member.lastName}` }),
-                            confirmText: t('members.delete_btn'),
-                            variant: 'danger'
-                          });
-                          if (ok) {
-                            removeMember(member.id);
-                            showNotification({ message: t('common.success'), type: 'success' });
-                          }
-                        }}>
-                          <Trash2 size={18} />
-                        </button>
-                      )}
+                    <div onClick={e => e.stopPropagation()}>
+                      <MemberActions member={member} />
                     </div>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
-          {filteredMembers.length === 0 && (
-            <div className="text-center py-12 text-secondary">
-              <p>{t('members.no_members')}</p>
             </div>
-          )}
-        </div>
+
+            {/* Desktop table */}
+            <div className="members-desktop-table">
+              <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'separate', borderSpacing: '0 6px' }}>
+                <thead>
+                  <tr>
+                    <th className="pb-3 px-4 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_member')}</th>
+                    <th className="pb-3 px-4 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_contacts')}</th>
+                    <th className="pb-3 px-4 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em]">{t('members.table_plan')}</th>
+                    <th className="pb-3 px-4 text-slate-400 font-bold text-[10px] uppercase tracking-[0.2em] text-right">{t('common.actions')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredMembers.map(member => (
+                    <tr key={member.id} className="bg-white hover:bg-slate-50 transition-all group shadow-sm">
+                      <td className="py-4 px-4 rounded-l-2xl border-y border-l border-slate-50">
+                        <div className="flex items-center gap-3">
+                          <div style={{ width: 40, height: 40, borderRadius: '12px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '15px', overflow: 'hidden' }}>
+                            {member.avatar ? <img src={fixBlobUrl(member.avatar)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : member.firstName?.charAt(0) || '?'}
+                          </div>
+                          <span className="font-bold text-slate-900">{member.firstName || ''} {member.lastName || ''}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 border-y border-slate-50 text-slate-600 font-bold text-sm">{member.phone || '—'}</td>
+                      <td className="py-4 px-4 border-y border-slate-50">
+                        <div className="flex items-center gap-2">
+                          <span style={{ padding: '4px 10px', borderRadius: '8px', backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)', fontSize: '11px', fontWeight: '800' }}>
+                            {(groups || []).find(g => g.id === member.groupId)?.name || t('members.no_group')}
+                          </span>
+                          <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--color-text-secondary)' }}>{member.plan || t('members.no_plan')}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-right rounded-r-2xl border-y border-r border-slate-50">
+                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <MemberActions member={member} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </Card>
     </div>
   );

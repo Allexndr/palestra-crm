@@ -200,7 +200,7 @@ export const AdminLayout = () => {
           tabIndex={-1}
           className="member-page-frame"
         >
-          <div className="admin-container" style={{ maxWidth: '1280px', width: '100%', margin: '0 auto', padding: 'var(--space-12) var(--space-8)' }}>
+          <div className="admin-container" style={{ maxWidth: '1280px', width: '100%', margin: '0 auto' }}>
             <Outlet />
           </div>
         </main>

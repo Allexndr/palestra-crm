@@ -419,7 +419,7 @@ button,
   .container { padding: 0 var(--space-4) !important; }
   .glass { padding: var(--space-3) var(--space-4) !important; }
   .desktop-only { display: none !important; }
-  .member-main-region { margin-left: 0 !important; }
+  .member-main-region { margin-left: 0 !important; width: 100% !important; }
 }
 
 @media (min-width: 601px) {
@@ -1673,17 +1673,22 @@ body, #root {
   }
 
   .admin-page-header {
-    flex-direction: column;
-    align-items: stretch;
-    margin-bottom: var(--space-10);
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    gap: var(--space-3);
+  }
+
+  .admin-page-header--center {
+    align-items: center;
   }
 
   .admin-page-actions {
-    width: 100%;
+    flex-shrink: 0;
   }
 
   .admin-page-actions > * {
-    width: 100%;
+    white-space: nowrap;
   }
 
   /* Settings: hide sidebar, show horizontal scrollable tabs */
@@ -1785,7 +1790,14 @@ body, #root {
   .page-title-block h1,
   .page-title-block .h1,
   .page-title-block .h2 {
-    font-size: clamp(1.5rem, 8vw, 2rem);
+    font-size: 1.25rem;
+    margin-bottom: 2px;
+  }
+
+  .page-title-block p.text-secondary,
+  .page-title-block p.text-lg,
+  .page-title-block .text-lg {
+    font-size: 0.8rem;
   }
 }
 
@@ -2420,6 +2432,8 @@ a:focus:not(:focus-visible) {
   margin-left: var(--sidebar-width, 260px);
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  width: 0;
 }
 
 .member-desktop-header {
@@ -2472,12 +2486,48 @@ a:focus:not(:focus-visible) {
 
 .member-page-frame {
   min-width: 0;
-  padding: var(--space-6);
+  padding: var(--space-4);
 }
 
 @media (min-width: 768px) {
   .member-page-frame {
-    padding: var(--space-10);
+    padding: var(--space-8);
+  }
+}
+
+/* Members page: mobile cards / desktop table */
+.members-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.members-mobile-card {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.members-mobile-card:active {
+  background: var(--color-bg);
+}
+
+.members-desktop-table {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .members-mobile-list {
+    display: none;
+  }
+
+  .members-desktop-table {
+    display: block;
+    overflow-x: auto;
   }
 }
 
