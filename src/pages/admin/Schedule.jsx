@@ -212,54 +212,53 @@ export const Schedule = () => {
 
   return (
     <div className="animate-fade-in pb-12">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
-        <div className="flex-1">
-          <div className="flex items-center gap-6 mb-8">
-            <h1 className="h1 m-0">{t('schedule.title')}</h1>
-            <div className="flex items-center gap-1 bg-white p-1 rounded-full border border-slate-100 shadow-sm">
-              <button onClick={() => setWeekOffset(prev => prev - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-slate-50 rounded-full transition-all border-none bg-transparent cursor-pointer"><ChevronLeft size={16}/></button>
-              <span className="text-[11px] font-black uppercase tracking-widest px-3">
+      {/* Schedule top bar */}
+      <div className="schedule-topbar">
+        {/* Row 1: title + week nav + add button */}
+        <div className="schedule-topbar-row1">
+          <div className="flex items-center gap-3 min-w-0">
+            <h1 className="h2 m-0 shrink-0">{t('schedule.title')}</h1>
+            <div className="flex items-center gap-1 bg-white px-2 py-1 rounded-2xl border border-slate-100 shadow-sm">
+              <button onClick={() => setWeekOffset(prev => prev - 1)} className="w-7 h-7 flex items-center justify-center hover:bg-slate-50 rounded-xl transition-all border-none bg-transparent cursor-pointer"><ChevronLeft size={14}/></button>
+              <span className="text-[11px] font-black uppercase tracking-wider px-1 whitespace-nowrap">
                 {weekDates[0].toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ', { day: 'numeric', month: 'short' })} — {weekDates[6].toLocaleDateString(language === 'ru' ? 'ru-RU' : 'kk-KZ', { day: 'numeric', month: 'short' })}
               </span>
-              <button onClick={() => setWeekOffset(prev => prev + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-slate-50 rounded-full transition-all border-none bg-transparent cursor-pointer"><ChevronRight size={16}/></button>
+              <button onClick={() => setWeekOffset(prev => prev + 1)} className="w-7 h-7 flex items-center justify-center hover:bg-slate-50 rounded-xl transition-all border-none bg-transparent cursor-pointer"><ChevronRight size={14}/></button>
             </div>
           </div>
-          
-          <div className="flex flex-wrap gap-8 items-center">
-             <div className="flex items-center gap-4">
-                <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{t('schedule.discipline')}</span>
-                <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-primary cursor-pointer outline-none" value={filterSport} onChange={e => setFilterSport(e.target.value)}>
-                   <option value="all">{t('common.all')}</option>
-                   {(Array.isArray(sports) ? sports : []).map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-             </div>
-             <div className="flex items-center gap-4">
-                <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{t('schedule.coach')}</span>
-                <select className="bg-transparent border-none text-[12px] font-black uppercase tracking-widest text-primary cursor-pointer outline-none" value={filterCoach} onChange={e => setFilterCoach(e.target.value)}>
-                   <option value="all">{t('common.all')}</option>
-                   {[...new Set((Array.isArray(schedule) ? schedule : []).map(s => s.coach))].filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-             </div>
-             <div className="relative group min-w-[200px]">
-               <input 
-                 type="text" 
-                 placeholder={t('schedule.search')} 
-                 value={calendarSearch}
-                 onChange={(e) => setCalendarSearch(e.target.value)}
-                 className="w-full bg-transparent border-none px-0 pr-4 py-2 text-[11px] font-black uppercase tracking-widest outline-none"
-               />
-             </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
           {isAdmin && (
-            <button 
-              onClick={() => { setIsAdding(!isAdding); setEditingId(null); }} 
-              className="px-8 h-12 text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--color-primary)' }}
+            <button
+              onClick={() => { setIsAdding(!isAdding); setEditingId(null); }}
+              className="schedule-add-btn"
             >
-              {t('schedule.plan_btn')}
+              <Plus size={14} /> {t('schedule.plan_btn')}
             </button>
           )}
+        </div>
+
+        {/* Row 2: filters */}
+        <div className="schedule-topbar-filters">
+          <div className="schedule-filter-pill">
+            <span>{t('schedule.discipline')}</span>
+            <select value={filterSport} onChange={e => setFilterSport(e.target.value)}>
+              <option value="all">{t('common.all')}</option>
+              {(Array.isArray(sports) ? sports : []).map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div className="schedule-filter-pill">
+            <span>{t('schedule.coach')}</span>
+            <select value={filterCoach} onChange={e => setFilterCoach(e.target.value)}>
+              <option value="all">{t('common.all')}</option>
+              {[...new Set((Array.isArray(schedule) ? schedule : []).map(s => s.coach))].filter(Boolean).map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <input
+            type="text"
+            placeholder={t('schedule.search')}
+            value={calendarSearch}
+            onChange={e => setCalendarSearch(e.target.value)}
+            className="schedule-search-input"
+          />
         </div>
       </div>
 
