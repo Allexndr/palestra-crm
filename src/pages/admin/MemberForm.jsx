@@ -228,22 +228,22 @@ export const MemberForm = () => {
 
   return (
     <div className="animate-fade-in pb-20">
-      <div className="admin-page-header" style={{ marginBottom: 'var(--space-12)' }}>
-        <div className="flex items-center gap-8">
+      <div className="admin-page-header" style={{ marginBottom: 'var(--space-8)' }}>
+        <div className="member-form-header">
           <button 
             onClick={() => navigate('/admin/members')} 
-            className="w-14 h-14 flex items-center justify-center bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-md hover:bg-slate-50 transition-all cursor-pointer"
+            className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:bg-slate-50 transition-all cursor-pointer"
           >
-            <ArrowLeft size={22} className="text-slate-600" />
+            <ArrowLeft size={18} className="text-slate-600" />
           </button>
-          <div>
-            <div className="flex items-center gap-4 mb-3">
-              <span className="px-4 py-1.5 bg-primary-soft text-primary text-[11px] font-black uppercase tracking-widest rounded-xl">{t('members.title')}</span>
-              <h1 className="h1" style={{ margin: 0, fontSize: 'clamp(1.5rem, 4vw, 2.5rem)' }}>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="px-3 py-1 bg-primary-soft text-primary text-[10px] font-black uppercase tracking-widest rounded-lg flex-shrink-0">{t('members.title')}</span>
+              <h1 className="member-form-title">
                 {isEditing ? t('members.edit_member') : t('members.new_member')}
               </h1>
             </div>
-            <p className="text-secondary text-lg font-medium opacity-60">{t('members.registration_subtitle', { club: clubInfo?.name || 'Palestra' })}</p>
+            <p className="text-secondary text-sm font-medium opacity-60 truncate">{t('members.registration_subtitle', { club: clubInfo?.name || 'Palestra' })}</p>
           </div>
         </div>
       </div>
@@ -631,13 +631,23 @@ export const MemberForm = () => {
 
         .chrome-tab {
           position: relative;
-          padding: 16px 40px;
+          padding: 14px 24px;
           background: transparent;
           border: none;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           color: #94a3b8;
           z-index: 1;
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+        @media (max-width: 600px) {
+          .chrome-tab {
+            padding: 10px 14px;
+          }
+          .chrome-tab-icon { font-size: 16px; }
+          .chrome-tab-label { font-size: 11px; letter-spacing: 0.08em; }
+          .chrome-tab-content { gap: 6px; }
         }
 
         .chrome-tab.active {
@@ -718,6 +728,24 @@ export const MemberForm = () => {
 
         .admin-container {
           padding-top: var(--space-8);
+        }
+        .member-form-header {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          min-width: 0;
+        }
+        .member-form-title {
+          margin: 0;
+          font-size: clamp(1.2rem, 5vw, 2rem);
+          font-weight: 800;
+          line-height: 1.2;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        @media (max-width: 480px) {
+          .member-form-title { font-size: 1.2rem; }
         }
         .custom-range {
           -webkit-appearance: none;
