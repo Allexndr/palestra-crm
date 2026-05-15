@@ -21,6 +21,7 @@ export const AdminLayout = () => {
     link.to === location.pathname || (location.pathname.startsWith(link.to) && link.to !== '/admin')
   );
   const pageTitle = currentLink ? t(currentLink.labelKey) : t('nav.dashboard');
+  const pageSubtitle = currentLink?.subtitleKey ? t(currentLink.subtitleKey) : null;
 
   const isImpersonating = !!sessionStorage.getItem('palestra-impersonate-club-id');
 
@@ -186,7 +187,10 @@ export const AdminLayout = () => {
             <div style={{ minWidth: 0, flex: 1 }}>
               <p className="member-kicker">{clubInfo?.name || 'Palestra'}</p>
               <h1 className="desktop-only">{clubInfo?.name || 'Palestra'}</h1>
-              <h1 className="mobile-only" style={{ fontSize: '1.1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 800 }}>{pageTitle}</h1>
+              <div className="mobile-only" style={{ display: 'flex', alignItems: 'baseline', gap: '8px', minWidth: 0 }}>
+                <h1 style={{ fontSize: '1.1rem', fontWeight: 800, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flexShrink: 0 }}>{pageTitle}</h1>
+                {pageSubtitle && <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--color-text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pageSubtitle}</span>}
+              </div>
             </div>
           </div>
           <Link to="/admin/settings" className="member-header-pill desktop-only" style={{ textDecoration: 'none', cursor: 'pointer', flexDirection: 'column', alignItems: 'flex-end', gap: '2px', padding: '8px 16px' }}>

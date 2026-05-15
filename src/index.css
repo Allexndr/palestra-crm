@@ -4012,6 +4012,11 @@ a:focus:not(:focus-visible) {
   .mt-16 { margin-top: var(--space-6) !important; }
   .mt-12 { margin-top: var(--space-5) !important; }
 
+  /* Hide duplicate page title block — title is already in the top navbar */
+  .page-title-block {
+    display: none !important;
+  }
+
   /* Admin page header: compact on mobile */
   .admin-page-header {
     margin-bottom: var(--space-4) !important;
