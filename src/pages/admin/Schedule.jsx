@@ -193,6 +193,10 @@ export const Schedule = () => {
 
   const weekDates = getWeekDates();
 
+  // Mobile: track which day is selected (default = today's day index)
+  const todayDayIdx = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; })();
+  const [mobileDayIdx, setMobileDayIdx] = useState(todayDayIdx);
+
   const getSessionStyle = (session) => {
     const [h, m] = session.time.split(':').map(Number);
     const startMinutes = (h - startHour) * 60 + m;
@@ -354,13 +358,27 @@ export const Schedule = () => {
         </Card>
       )}
 
+      {/* Mobile day picker */}
+      <div className="schedule-mobile-daypicker">
+        {DAYS.map((day, idx) => (
+          <button
+            key={day}
+            onClick={() => setMobileDayIdx(idx)}
+            className={`schedule-mobile-day-btn${mobileDayIdx === idx ? ' active' : ''}`}
+          >
+            <span className="schedule-mobile-day-name">{day}</span>
+            <span className="schedule-mobile-day-num">{weekDates[idx].getDate()}</span>
+          </button>
+        ))}
+      </div>
+
       <Card style={{ padding: 0, overflow: 'auto', borderRadius: '32px', border: '1px solid var(--color-border)' }} className="shadow-2xl">
-        <div style={{ minWidth: '1000px', position: 'relative' }}>
+        <div className="schedule-grid-wrapper" style={{ position: 'relative' }}>
           {/* Header */}
-          <div style={{ display: 'grid', gridTemplateColumns: '120px repeat(7, 1fr)', backgroundColor: 'var(--color-bg)', borderBottom: '1px solid var(--color-border)', position: 'sticky', top: 0, zIndex: 50 }}>
+          <div className="schedule-header-row" style={{ display: 'grid', gridTemplateColumns: '120px repeat(7, 1fr)', backgroundColor: 'var(--color-bg)', borderBottom: '1px solid var(--color-border)', position: 'sticky', top: 0, zIndex: 50 }}>
             <div style={{ padding: 'var(--space-4)', borderRight: '1px solid var(--color-border)', backgroundColor: '#F8FAFC' }}></div>
             {weekDates.map((date, idx) => (
-              <div key={idx} style={{ padding: '24px 16px', textAlign: 'center', borderRight: '1px solid var(--color-border)', backgroundColor: date.toDateString() === new Date().toDateString() ? 'var(--color-primary-soft)' : 'transparent' }}>
+              <div key={idx} data-day-idx={idx} data-mobile-active={idx === mobileDayIdx ? 'true' : 'false'} style={{ padding: '24px 16px', textAlign: 'center', borderRight: '1px solid var(--color-border)', backgroundColor: date.toDateString() === new Date().toDateString() ? 'var(--color-primary-soft)' : 'transparent' }}>
                 <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">{DAYS[idx]}</p>
                 <p className={`text-xl font-bold ${date.toDateString() === new Date().toDateString() ? 'text-primary' : ''}`}>{date.getDate()}</p>
               </div>
@@ -368,7 +386,7 @@ export const Schedule = () => {
           </div>
 
           {/* Grid */}
-          <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '120px repeat(7, 1fr)' }}>
+          <div className="schedule-grid" style={{ position: 'relative', display: 'grid', gridTemplateColumns: '120px repeat(7, 1fr)' }}>
             {/* Time Column */}
             <div style={{ backgroundColor: '#F8FAFC', borderRight: '1px solid var(--color-border)' }}>
               {timeBlocks.map((time, i) => (
@@ -380,7 +398,7 @@ export const Schedule = () => {
 
             {/* Day Columns */}
             {DAYS.map((day, dayIdx) => (
-              <div key={day} style={{ position: 'relative', borderRight: '1px solid var(--color-border)' }}>
+              <div key={day} data-day-idx={dayIdx} data-mobile-active={dayIdx === mobileDayIdx ? 'true' : 'false'} style={{ position: 'relative', borderRight: '1px solid var(--color-border)' }}>
                 {/* Horizontal grid lines */}
                 {timeBlocks.map((_, i) => (
                   <div key={i} style={{ height: '60px', borderBottom: i % 2 === 1 ? '1px solid var(--color-border)' : '1px dashed var(--color-border-soft)' }} />

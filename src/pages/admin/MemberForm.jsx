@@ -267,16 +267,16 @@ export const MemberForm = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-16">
+        <div className="flex flex-col gap-8">
           {activeTab === 'general' && (
-            <div className="flex flex-col gap-16 animate-fade-in">
+            <div className="flex flex-col gap-8 animate-fade-in">
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
-                <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
+                <div className="mform-card-header">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
                     <div className="w-10 h-[3px] bg-primary rounded-full"></div> {t('members.personal_data')}
                   </h3>
                 </div>
-                <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
+                <div className="mform-card-body">
                   <div className="admin-form-grid">
                     <Input label={t('members.first_name')} required minLength={2} placeholder={t('members.first_name')} value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
                     <Input label={t('members.last_name')} required minLength={2} placeholder={t('members.last_name')} value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
@@ -336,12 +336,12 @@ export const MemberForm = () => {
               </Card>
 
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
-                <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
+                <div className="px-8 py-6 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
                     <div className="w-10 h-[3px] bg-primary rounded-full"></div> {t('members.sport_profile')}
                   </h3>
                 </div>
-                <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
+                <div className="px-8 py-12">
                   <div className="admin-form-grid admin-form-grid--compact">
                     <Input label={t('members.weight')} type="number" placeholder="0" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
                     <Input label={t('members.height')} type="number" placeholder="0" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
@@ -400,7 +400,7 @@ export const MemberForm = () => {
 
           {activeTab === 'physical' && (
             <div className="animate-fade-in flex flex-col lg:flex-row gap-16">
-              <Card className="flex-1 border border-slate-100 shadow-sm p-12" style={{ borderRadius: '40px' }}>
+              <Card className="flex-1 border border-slate-100 shadow-sm mform-card-body" style={{ borderRadius: '40px' }}>
                 <div className="space-y-10">
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     {(LEAGUE_TEMPLATES[clubInfo?.activeLeagueTemplate || 'martial_arts']?.metrics || []).map(stat => (
@@ -520,7 +520,7 @@ export const MemberForm = () => {
           )}
 
           {activeTab === 'finances' && (
-            <Card className="animate-fade-in border border-slate-100 shadow-sm p-12" style={{ borderRadius: '40px' }}>
+            <Card className="animate-fade-in border border-slate-100 shadow-sm mform-card-body" style={{ borderRadius: '40px' }}>
               <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] mb-12 flex items-center gap-4">
                 <div className="w-10 h-[3px] bg-primary rounded-full"></div> {t('members.finance_settings')}
               </h3>
@@ -726,6 +726,18 @@ export const MemberForm = () => {
           z-index: -1;
         }
 
+        .mform-card-header {
+          padding: 28px 40px;
+          border-bottom: 1px solid var(--color-border-soft, #f1f5f9);
+          background: linear-gradient(to right, rgba(248,250,252,0.5), transparent);
+        }
+        .mform-card-body {
+          padding: 40px;
+        }
+        @media (max-width: 640px) {
+          .mform-card-header { padding: 16px 20px; }
+          .mform-card-body   { padding: 20px; }
+        }
         .admin-container {
           padding-top: var(--space-8);
         }

@@ -3577,3 +3577,144 @@ a:focus:not(:focus-visible) {
 .social-post-card:last-child {
   border-bottom: none;
 }
+
+/* ============================================
+   SCHEDULE MOBILE
+   ============================================ */
+.schedule-mobile-daypicker {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  /* Show day picker */
+  .schedule-mobile-daypicker {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 0 0 12px 0;
+    margin-bottom: 12px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .schedule-mobile-daypicker::-webkit-scrollbar { display: none; }
+
+  .schedule-mobile-day-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border-radius: 14px;
+    border: 1.5px solid var(--color-border);
+    background: white;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.15s ease;
+    min-width: 44px;
+  }
+  .schedule-mobile-day-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+  }
+  .schedule-mobile-day-name {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .schedule-mobile-day-num {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  /* Grid: show only selected day column, collapse others */
+  .schedule-grid-wrapper {
+    min-width: unset !important;
+  }
+  .schedule-header-row {
+    grid-template-columns: 64px 1fr !important;
+  }
+  .schedule-grid {
+    grid-template-columns: 64px 1fr !important;
+  }
+  /* Hide inactive day header cells */
+  .schedule-header-row [data-mobile-active='false'],
+  .schedule-grid [data-mobile-active='false'] {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   GLOBAL MOBILE OVERRIDES (max-width: 640px)
+   Reduces excessive padding/gap on all admin pages
+   ============================================ */
+@media (max-width: 640px) {
+
+  /* Tailwind utility overrides on mobile */
+  .p-10 { padding: var(--space-5) !important; }
+  .p-12 { padding: var(--space-5) !important; }
+  .p-16 { padding: var(--space-5) !important; }
+  .gap-16 { gap: var(--space-6) !important; }
+  .gap-12 { gap: var(--space-5) !important; }
+  .gap-10 { gap: var(--space-4) !important; }
+  .mb-16 { margin-bottom: var(--space-6) !important; }
+  .mb-12 { margin-bottom: var(--space-5) !important; }
+  .mb-10 { margin-bottom: var(--space-4) !important; }
+  .mt-16 { margin-top: var(--space-6) !important; }
+  .mt-12 { margin-top: var(--space-5) !important; }
+
+  /* Admin page header: compact on mobile */
+  .admin-page-header {
+    margin-bottom: var(--space-4) !important;
+    gap: var(--space-3) !important;
+    flex-wrap: wrap;
+  }
+
+  /* Header with action button — stack vertically, button full-width */
+  .admin-page-header--center {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  .admin-page-header--center > :last-child {
+    flex-shrink: 0;
+  }
+
+  /* Cards: reduce internal padding */
+  .card, [class*="card"] {
+    padding: var(--space-4) !important;
+    border-radius: 20px !important;
+  }
+
+  /* Form sections: tighter */
+  .admin-form-section {
+    padding: var(--space-4) !important;
+    gap: var(--space-3) !important;
+  }
+
+  /* Form grid: single column always */
+  .admin-form-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-3) !important;
+  }
+
+  /* h1/h2 headings inside admin pages */
+  .admin-main h1, .h1 { font-size: 1.4rem !important; }
+  .admin-main h2, .h2 { font-size: 1.2rem !important; }
+  .admin-main h3, .h3 { font-size: 1.1rem !important; }
+  .admin-main .h4    { font-size: 1rem !important; }
+
+  /* Page title block */
+  .page-title-block h1 { font-size: 1.3rem !important; margin-bottom: 2px !important; }
+  .page-title-block p  { font-size: 0.85rem !important; }
+
+  /* Buttons: don't overflow */
+  .btn, button[class*="btn"] { min-width: unset !important; }
+
+  /* Remove large rounded corners on mobile (looks odd at small size) */
+  [style*="borderRadius: '40px'"],
+  [style*="border-radius: 40px"] { border-radius: 20px !important; }
+}
