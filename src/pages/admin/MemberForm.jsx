@@ -356,12 +356,12 @@ export const MemberForm = () => {
               </Card>
 
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
-                <div className="px-8 py-6 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
+                <div className="mform-card-header">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
                     <div className="w-10 h-[3px] bg-primary rounded-full"></div> {t('members.sport_profile')}
                   </h3>
                 </div>
-                <div className="px-8 py-12">
+                <div className="mform-card-body">
                   <div className="admin-form-grid admin-form-grid--compact">
                     <Input label={t('members.weight')} type="number" placeholder="0" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} />
                     <Input label={t('members.height')} type="number" placeholder="0" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} />
