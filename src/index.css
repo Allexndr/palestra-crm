@@ -3579,6 +3579,222 @@ a:focus:not(:focus-visible) {
 }
 
 /* ============================================
+   DATEPICKER
+   ============================================ */
+.datepicker-trigger {
+  width: 100%;
+  height: 58px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-bg, #fff);
+  border: 1.5px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-lg, 16px);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+.datepicker-trigger:hover { border-color: var(--color-primary); }
+.datepicker-trigger:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-soft); }
+.datepicker-value { font-size: 15px; font-weight: 600; color: var(--color-text-primary); }
+.datepicker-placeholder { font-size: 15px; color: var(--color-text-muted, #94a3b8); }
+.datepicker-icon { color: var(--color-text-muted, #94a3b8); flex-shrink: 0; }
+.datepicker-clear { color: var(--color-text-muted, #94a3b8); flex-shrink: 0; cursor: pointer; }
+.datepicker-clear:hover { color: var(--color-danger, #ef4444); }
+
+.datepicker-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 200;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.08);
+  width: 320px;
+  overflow: hidden;
+  animation: dp-appear 0.15s ease;
+}
+@keyframes dp-appear {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.datepicker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 8px;
+  gap: 8px;
+}
+.datepicker-header-center {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+}
+.datepicker-month-btn,
+.datepicker-year-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+.datepicker-month-btn:hover,
+.datepicker-year-btn:hover { background: var(--color-primary-soft); color: var(--color-primary); }
+
+.datepicker-nav {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: var(--color-bg-muted, #f8fafc);
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.datepicker-nav:hover { background: var(--color-primary-soft); color: var(--color-primary); }
+
+.datepicker-daynames {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0 12px;
+  margin-bottom: 4px;
+}
+.datepicker-daynames span {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, #94a3b8);
+  padding: 4px 0;
+}
+
+.datepicker-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0 12px;
+  gap: 2px;
+}
+.datepicker-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.datepicker-cell:hover:not(.disabled):not(.other-month) { background: var(--color-primary-soft); color: var(--color-primary); }
+.datepicker-cell.other-month { color: var(--color-text-muted, #cbd5e1); cursor: default; }
+.datepicker-cell.today { font-weight: 900; color: var(--color-primary); }
+.datepicker-cell.today::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+.datepicker-cell.selected {
+  background: var(--color-primary) !important;
+  color: white !important;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(49,70,166,0.35);
+}
+.datepicker-cell.disabled { opacity: 0.3; cursor: not-allowed; }
+
+.datepicker-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--color-border, #f1f5f9);
+  margin-top: 8px;
+}
+.datepicker-footer-btn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+.datepicker-footer-btn:hover { background: var(--color-primary-soft); }
+.datepicker-footer-btn.primary { background: var(--color-primary); color: white; }
+.datepicker-footer-btn.primary:hover { background: var(--color-primary-dark, #2d3ea0); }
+
+/* Month picker */
+.datepicker-months {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 12px 16px 16px;
+}
+.datepicker-month-cell {
+  padding: 10px 4px;
+  border: none;
+  border-radius: 12px;
+  background: var(--color-bg-muted, #f8fafc);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.datepicker-month-cell:hover { background: var(--color-primary-soft); color: var(--color-primary); }
+.datepicker-month-cell.active { background: var(--color-primary); color: white; }
+
+/* Year picker */
+.datepicker-years {
+  max-height: 240px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 12px 16px 16px;
+  scrollbar-width: thin;
+}
+.datepicker-year-cell {
+  padding: 8px 4px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.datepicker-year-cell:hover { background: var(--color-primary-soft); color: var(--color-primary); }
+.datepicker-year-cell.active { background: var(--color-primary); color: white; font-weight: 800; }
+
+@media (max-width: 400px) {
+  .datepicker-popup { width: calc(100vw - 32px); }
+}
+
+/* ============================================
    SCHEDULE MOBILE
    ============================================ */
 .schedule-mobile-daypicker {

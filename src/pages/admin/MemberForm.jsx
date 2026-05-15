@@ -14,6 +14,7 @@ import { ArrowLeft, Save, Camera, Zap, Star, Plus, Shield, Copy, Check } from 'l
 import { uploadBlobFile, fixBlobUrl } from '../../lib/blobClient';
 import { useNotifications } from '../../context/NotificationContext';
 import { LEAGUE_TEMPLATES } from '../../lib/leagueTemplates';
+import { DatePicker } from '../../components/ui/DatePicker';
 import { isValidBirthDate, getBirthDateError } from '../../utils/dateValidation';
 
 const translit = (str) => {
@@ -41,7 +42,7 @@ export const MemberForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { members, addMember, updateMember, user, locations, plans, selectedLocationId, groups, clubInfo, isStateReady, fixBlobUrl } = useAdmin();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { showNotification } = useNotifications();
   const { isOpen, modalProps, closeModal, error: showError } = useAlertModal();
   const { toast, copyWithToast } = useCopyToast();
@@ -280,22 +281,24 @@ export const MemberForm = () => {
                   <div className="admin-form-grid">
                     <Input label={t('members.first_name')} required minLength={2} placeholder={t('members.first_name')} value={formData.firstName} onChange={e => handleNameChange('firstName', e.target.value)} />
                     <Input label={t('members.last_name')} required minLength={2} placeholder={t('members.last_name')} value={formData.lastName} onChange={e => handleNameChange('lastName', e.target.value)} />
-                    <Input 
-                      label={t('members.birth_date')} 
-                      type="date" 
-                      value={formData.birthDate} 
-                      onChange={e => {
-                        const value = e.target.value;
-                        setFormData({...formData, birthDate: value});
-                        const error = getBirthDateError(value);
-                        setBirthDateError(error);
-                      }}
-                      min="1900-01-01"
-                      max={new Date().toISOString().split('T')[0]}
-                    />
-                    {birthDateError && (
-                      <p className="text-red-500 text-xs mt-1">{birthDateError}</p>
-                    )}
+                    <div>
+                      <DatePicker
+                        label={t('members.birth_date')}
+                        value={formData.birthDate}
+                        language={language}
+                        min="1900-01-01"
+                        max={new Date().toISOString().split('T')[0]}
+                        onChange={e => {
+                          const value = e.target.value;
+                          setFormData({...formData, birthDate: value});
+                          const error = getBirthDateError(value);
+                          setBirthDateError(error);
+                        }}
+                      />
+                      {birthDateError && (
+                        <p className="text-red-500 text-xs mt-1">{birthDateError}</p>
+                      )}
+                    </div>
                     <Input label={t('members.phone')} type="tel" placeholder="+7 (777) 000 00 00" value={formData.phone} onChange={e => handleInputChange('phone', e.target.value)} />
                     
                     <div className="input-group">
