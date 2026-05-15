@@ -32,12 +32,12 @@ export const Quests = () => {
 
   return (
     <div className="animate-fade-in pb-20">
-      <div className="admin-page-header">
+      <div className="admin-page-header admin-page-header--center">
         <div className="page-title-block">
           <h1 className="h1">{t('quests.title')}</h1>
           <p className="text-secondary font-medium">{t('quests.subtitle')}</p>
         </div>
-        <Button variant="primary" onClick={() => setIsAdding(true)} style={{ borderRadius: '16px', gap: '8px' }}>
+        <Button variant="primary" onClick={() => setIsAdding(true)} style={{ borderRadius: '16px', gap: '8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
           <Plus size={18} /> {t('quests.add_btn')}
         </Button>
       </div>
@@ -95,7 +95,7 @@ export const Quests = () => {
         </Card>
       )}
 
-      <div className="responsive-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px' }}>
+      <div className="quests-grid">
         <div className="flex flex-col gap-6">
           <h3 className="h4 flex items-center gap-2"><Target size={20} className="text-primary" /> {t('quests.active_title')}</h3>
           <div className="grid grid-cols-1 gap-4">

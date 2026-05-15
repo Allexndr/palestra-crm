@@ -3585,6 +3585,21 @@ a:focus:not(:focus-visible) {
 }
 
 /* ============================================
+   QUESTS PAGE
+   ============================================ */
+.quests-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 767px) {
+  .quests-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* ============================================
    FILEPICKER
    ============================================ */
 .filepicker-root {
