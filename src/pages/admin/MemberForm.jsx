@@ -642,35 +642,40 @@ export const MemberForm = () => {
           flex-shrink: 0;
         }
 
-        /* Mobile: replace chrome tabs with 2×2 grid pills */
+        /* Mobile: segmented 2×2 control */
         @media (max-width: 640px) {
           .chrome-tabs-container {
             display: grid !important;
             grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
             border-bottom: none;
-            padding: 0;
+            padding: 4px;
             margin-bottom: 20px;
-            gap: 8px;
+            gap: 4px;
+            background: #f1f5f9;
+            border-radius: 20px;
           }
           .chrome-tab {
-            padding: 12px 10px;
+            padding: 14px 8px;
             border-radius: 16px;
-            background: #f8fafc;
-            border: 1.5px solid #e2e8f0 !important;
+            background: transparent;
+            border: none !important;
             white-space: normal;
             flex-shrink: unset;
             text-align: center;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
           }
           .chrome-tab.active {
-            background: var(--color-primary-soft) !important;
-            border-color: var(--color-primary) !important;
+            background: white !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            color: var(--color-primary) !important;
           }
           .chrome-tab.active::before { display: none; }
           .chrome-tab-curve-left,
           .chrome-tab-curve-right { display: none; }
-          .chrome-tab-content { justify-content: center; gap: 6px; }
-          .chrome-tab-icon { font-size: 18px; }
-          .chrome-tab-label { font-size: 11px; letter-spacing: 0.06em; }
+          .chrome-tab-content { justify-content: center; gap: 8px; flex-direction: column; }
+          .chrome-tab-icon { font-size: 22px; }
+          .chrome-tab-label { font-size: 11px; letter-spacing: 0.08em; font-weight: 900; }
         }
 
         .stat-card { padding: 20px; }
