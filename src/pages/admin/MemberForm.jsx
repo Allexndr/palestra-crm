@@ -399,20 +399,20 @@ export const MemberForm = () => {
                 </div>
                 <div className="mform-card-body">
                   <div className="admin-form-grid">
-                    <div className="relative">
-                      <Input label={t('members.login')} placeholder={t('members.login_auto')} value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
-                      <button 
-                        type="button"
-                        onClick={() => copyToClipboard(`${formData.login} ${formData.password}`)}
-                        className="absolute right-4 top-[42px] p-2 text-slate-400 hover:text-primary transition-colors bg-white/80 rounded-lg border border-slate-100 shadow-sm"
-                        title={t('common.copy')}
-                      >
-                        <Copy size={16} />
-                      </button>
-                    </div>
+                    <Input label={t('members.login')} placeholder={t('members.login_auto')} value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
                     <Input label={t('members.password')} type="text" placeholder={t('members.login_auto')} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                   </div>
-                  <p className="text-[10px] text-slate-400 font-bold mt-12 uppercase tracking-widest border-t border-slate-100 pt-8">{t('members.access_ready')}</p>
+                  {(formData.login || formData.password) && (
+                    <button
+                      type="button"
+                      onClick={() => copyWithToast(`${formData.login} / ${formData.password}`)}
+                      className="mt-5 w-full flex items-center justify-center gap-3 py-3 px-5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-primary-soft hover:border-primary text-slate-600 hover:text-primary font-bold text-sm transition-all"
+                    >
+                      <Copy size={15} />
+                      {t('common.copy')} логин и пароль
+                    </button>
+                  )}
+                  <p className="text-[10px] text-slate-400 font-bold mt-5 uppercase tracking-widest border-t border-slate-100 pt-5">{t('members.access_ready')}</p>
                 </div>
               </Card>
             </div>
