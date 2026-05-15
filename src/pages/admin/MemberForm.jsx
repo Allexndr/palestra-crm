@@ -392,12 +392,12 @@ export const MemberForm = () => {
               </Card>
 
               <Card className="border border-slate-100 shadow-sm p-0 overflow-hidden" style={{ borderRadius: '40px' }}>
-                <div className="p-10 border-b border-slate-50 bg-gradient-to-r from-slate-50/50 to-transparent">
+                <div className="mform-card-header">
                   <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.4em] flex items-center gap-4">
                     <Shield size={18} className="text-primary" /> {t('members.app_access')}
                   </h3>
                 </div>
-                <div className="p-12" style={{ paddingTop: 'var(--space-16)' }}>
+                <div className="mform-card-body">
                   <div className="admin-form-grid">
                     <div className="relative">
                       <Input label={t('members.login')} placeholder={t('members.login_auto')} value={formData.login} onChange={e => setFormData({...formData, login: e.target.value})} />
