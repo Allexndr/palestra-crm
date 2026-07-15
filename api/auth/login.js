@@ -27,6 +27,20 @@ export default async function handler(req, res) {
     const { email, password, role } = parseOrThrow(loginSchema, await parseJsonBody(req));
     const allowDemo = process.env.ALLOW_DEMO_AUTH !== 'false';
 
+    // Hardcoded test manager account — works without Supabase
+    if (email === 'manager@palestra.test' && password === 'Palestra2026!') {
+      const managerUser = {
+        id: 'test-manager-001',
+        role: 'admin',
+        login: 'manager@palestra.test',
+        name: 'Тестовый Менеджер',
+        email: 'manager@palestra.test',
+        clubId: '00000000-0000-0000-0000-000000000001',
+      };
+      setMemberCookies(res, managerUser);
+      return sendJson(res, 200, { user: managerUser });
+    }
+
     // Member login (no @) — look up by login+password in appState.members/coaches
     if (email && password && !email.includes('@') && hasSupabaseServiceEnv()) {
       const supabase = getServiceClient();
